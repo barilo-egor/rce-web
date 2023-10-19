@@ -56,6 +56,12 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
     @Override
     public Function<ApiStatusCode, ObjectNode> mapFunction() {
         return apiStatusCode -> JacksonUtil.getEmpty()
+                .put("code", apiStatusCode.code)
+                .put("description", apiStatusCode.description);
+    }
+
+    public ObjectNode toJson() {
+        return JacksonUtil.getEmpty()
                 .put("code", this.code)
                 .put("description", this.description);
     }
