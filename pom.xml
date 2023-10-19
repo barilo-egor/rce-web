@@ -34,9 +34,9 @@
         <profile>
             <id>jitpack-getting-libraries</id>
             <activation>
-                <os>
-                    <family>windows</family>
-                </os>
+                <file>
+                    <missing>config/local.properties</missing>
+                </file>
             </activation>
             <repositories>
                 <repository>
