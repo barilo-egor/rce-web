@@ -1,2 +1,4 @@
 /config/local.properties
 /config/
+/src/main/resources/application.properties
+/src/main/java/tgb/btc/web/DevApplication.java

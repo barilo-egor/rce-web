@@ -26,14 +26,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/web/registration/**", "/static/**", "/extJS/**", "/fontawesome/**",
-                        "/js/login/**", "/login/**",
-                        "/js/util/**", "/js/registration/**",
-                        "/js/api/**",
-                        "/api/**",
-                        "/loginSuccess", "/loginError",
-                        "/css/**", "/web/main",
-                        "/api/**", "/documentation/**"
+                        "web/registration/**", "static/**", "extJS/**",
+                        "js/login/**", "login/**",
+                        "js/util/**", "js/registration/**",
+                        "js/api/**",
+                        "api/**",
+                        "loginSuccess", "loginError",
+                        "css/**", "web/main",
+                        "api/**", "documentation/**"
                 )
                 .permitAll();
         // Доступ для юзеров
@@ -70,16 +70,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("/web/main")
+                .loginPage("web/main")
                 //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("/loginSuccess", true)
-                .failureUrl("/loginError")
+                .defaultSuccessUrl("loginSuccess", true)
+                .failureUrl("loginError")
                 .permitAll()
                 .and()
                 .logout()
-                .logoutUrl("/logout")
+                .logoutUrl("logout")
                 .permitAll()
-                .logoutSuccessUrl("/web/main");
+                .logoutSuccessUrl("web/main");
     }
 
     @Override
