@@ -1,6 +1,5 @@
 package tgb.btc.web.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,18 +7,10 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    protected WebUserRepository webUserRepository;
-
-    @Autowired
-    protected RoleRepository roleRepository;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
