@@ -19,9 +19,9 @@
         <profile>
             <id>local-getting-libraries</id>
             <activation>
-                <os>
-                    <family>unix</family>
-                </os>
+                <file>
+                    <exists>config/local.properties</exists>
+                </file>
             </activation>
             <dependencies>
                 <dependency>
