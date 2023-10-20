@@ -18,6 +18,7 @@ import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.postman.bot.BotMessageReceiver;
+import tgb.btc.postman.bot.constants.enums.Keyboard;
 import tgb.btc.postman.bot.constants.enums.Receiver;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
@@ -99,7 +100,7 @@ public class ApiController extends BaseController {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
-            botMessageReceiver.put("Поступила новая api сделка.", Receiver.ADMIN);
+            botMessageReceiver.put("Поступила новая api сделка.", Keyboard.SHOW_API_DEAL, Receiver.ADMIN);
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
