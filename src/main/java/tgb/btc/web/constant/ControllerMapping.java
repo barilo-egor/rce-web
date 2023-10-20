@@ -17,7 +17,7 @@ public interface ControllerMapping {
 
     String SETTINGS = WEB + "/settings";
 
-    String BULK_DISCOUNTS = WEB + "/bulk_discounts";
+    String BULK_DISCOUNTS = WEB + "/bulkDiscount";
 
     String ENUM = WEB + "/enum";
 
