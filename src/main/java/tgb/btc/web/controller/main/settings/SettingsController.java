@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
@@ -21,7 +22,6 @@ import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.vo.form.CourseVO;
 
-import javax.ws.rs.core.MediaType;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
@@ -111,7 +111,7 @@ public class SettingsController extends BaseController {
         return objectNode;
     }
 
-    @PostMapping(value = "/saveUsdCourses", consumes = MediaType.APPLICATION_JSON)
+    @PostMapping(value = "/saveUsdCourses", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ObjectNode saveUsdCourses(@RequestBody List<CourseVO> courses) {
         for (CourseVO courseVO : courses) {

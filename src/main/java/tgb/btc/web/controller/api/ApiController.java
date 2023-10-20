@@ -17,6 +17,8 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.postman.bot.BotMessageReceiver;
+import tgb.btc.postman.bot.constants.enums.Receiver;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.controller.BaseController;
@@ -38,6 +40,13 @@ public class ApiController extends BaseController {
     private ApiUserRepository apiUserRepository;
 
     private ApiDealProcessService apiDealProcessService;
+
+    private BotMessageReceiver botMessageReceiver;
+
+    @Autowired
+    public void setBotMessageReceiver(BotMessageReceiver botMessageReceiver) {
+        this.botMessageReceiver = botMessageReceiver;
+    }
 
     @Autowired
     public void setApiDealProcessService(ApiDealProcessService apiDealProcessService) {
@@ -90,8 +99,7 @@ public class ApiController extends BaseController {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
-            // TODO
-//            adminService.notify("Поступила новая api сделка.", keyboardService.getShowApiDeal(id));
+            botMessageReceiver.put("Поступила новая api сделка.", Receiver.ADMIN);
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
