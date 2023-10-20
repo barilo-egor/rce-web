@@ -1,4 +1,4 @@
-package tgb.btc.web.controller.main.deal;
+package tgb.btc.web.controller.main.operator;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
