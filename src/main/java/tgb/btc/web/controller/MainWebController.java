@@ -32,8 +32,6 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Slf4j
 public class MainWebController extends BaseController {
 
-    public static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
-
     public final static Map<Long, String> AVAILABLE_TOKENS = new HashMap<>();
 
     private WebUserRepository webUserRepository;

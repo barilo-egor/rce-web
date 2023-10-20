@@ -1,11 +1,15 @@
 package tgb.btc.web.controller.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
@@ -17,9 +21,6 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.postman.bot.BotMessageReceiver;
-import tgb.btc.postman.bot.constants.enums.Keyboard;
-import tgb.btc.postman.bot.constants.enums.Receiver;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.controller.BaseController;
@@ -32,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Controller
 @RequestMapping(ControllerMapping.API10)
 public class ApiController extends BaseController {
@@ -42,11 +44,11 @@ public class ApiController extends BaseController {
 
     private ApiDealProcessService apiDealProcessService;
 
-    private BotMessageReceiver botMessageReceiver;
+    private INotifier notifier;
 
-    @Autowired
-    public void setBotMessageReceiver(BotMessageReceiver botMessageReceiver) {
-        this.botMessageReceiver = botMessageReceiver;
+    @Autowired(required = false)
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
     }
 
     @Autowired
@@ -79,7 +81,9 @@ public class ApiController extends BaseController {
                                @RequestParam(required = false) String requisite,
                                @RequestParam(required = false) FiatCurrency fiatCurrency) {
         ApiStatusCode apiStatusCode = hasAccess(token);
-        if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
+        if (Objects.nonNull(apiStatusCode)) {
+            return apiStatusCode.toJson();
+        }
         return apiDealProcessService.newDeal(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
     }
 
@@ -100,7 +104,7 @@ public class ApiController extends BaseController {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
-            botMessageReceiver.put("Поступила новая api сделка.", Keyboard.SHOW_API_DEAL, Receiver.ADMIN);
+            if (Objects.nonNull(notifier)) notifier.notifyNewApiDeal(id);
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
@@ -126,6 +130,7 @@ public class ApiController extends BaseController {
     @ResponseBody
     public ObjectNode getStatus(@RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
         ApiStatusCode apiStatusCode = hasAccess(token);
+
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.countByPid(id) == 0) {
