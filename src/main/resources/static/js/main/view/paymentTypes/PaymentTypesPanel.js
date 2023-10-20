@@ -100,14 +100,19 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                     xtype: 'actioncolumn',
                     width: 35,
                     handler: function (view, rowIndex, collIndex, item, e, record) {
-                        ExtUtil.request({
-                            url: '/web/paymentTypes/delete',
-                            method: 'GET',
-                            params: {
-                                pid: record.get('pid')
-                            },
-                            success: function (response) {
-                                Ext.getStore('paymentTypesStore').reload()
+                        ExtUtil.askBefore({
+                            title: 'Удаление типа оплаты',
+                            message: 'Вместе с типом оплаты будут удалены все </br>его реквизиты, а также информация о типе </br>оплате в сделках. Продолжить?',
+                            callback: function () {
+                                ExtUtil.request({
+                                    url: '/web/paymentTypes/delete',
+                                    params: {
+                                        pid: record.get('pid')
+                                    },
+                                    success: function (response) {
+                                        Ext.getStore('paymentTypesStore').reload()
+                                    }
+                                })
                             }
                         })
                     },

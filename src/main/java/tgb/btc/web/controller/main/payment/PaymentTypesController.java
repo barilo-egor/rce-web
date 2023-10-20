@@ -75,6 +75,7 @@ public class PaymentTypesController extends BaseController {
 
     @PostMapping("delete")
     public SuccessResponse<?> delete(Long pid) {
-        return null;
+        paymentTypeService.remove(pid);
+        return SuccessResponseUtil.toast("Тип оплаты успешно удален.");
     }
 }

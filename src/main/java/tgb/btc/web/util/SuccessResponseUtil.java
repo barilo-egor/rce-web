@@ -45,6 +45,10 @@ public class SuccessResponseUtil {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("message", message));
     }
 
+    public static <T> SuccessResponse<?> toast(String message) {
+        return new SuccessResponse<>(JacksonUtil.toObjectNode("toast", message));
+    }
+
     /**
      * Возвращает сообщение исключения.
      */

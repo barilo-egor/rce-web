@@ -14,8 +14,8 @@ let ExtUtil = {
         requestObj.success = function (rawResponse) {
             let response = Ext.JSON.decode(rawResponse.responseText)
             if (!response.success) {
-                let addingText = response.body && response.body.exceptionString
-                    ? ': ' + response.body.exceptionString
+                let addingText = response.description
+                    ? ': ' + response.description
                     : '. Информация отсутствует.'
                 Ext.Msg.alert('Ошибка', 'Ошибка сервера' + addingText)
                 if (config.loadingComponent) config.loadingComponent.setLoading(false)
@@ -23,6 +23,12 @@ let ExtUtil = {
                 Ext.Msg.alert('Внимание', response.body.warningString)
                 if (config.loadingComponent) config.loadingComponent.setLoading(false)
             } else {
+                if (response.body && response.body.message) {
+                    Ext.alert('Информация', response.body.message)
+                }
+                if (response.body && response.body.toast) {
+                    Ext.toast(response.body.toast)
+                }
                 config.success(response, rawResponse)
             }
         }
@@ -35,5 +41,19 @@ let ExtUtil = {
 
     closeWindow: function (btn) {
         btn.up('window').close()
+    },
+
+    askBefore(config) {
+        Ext.Msg.show({
+            title: config.title,
+            message: config.message,
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+                if (btn === 'yes') {
+                    config.callback()
+                }
+            }
+        });
     }
 }

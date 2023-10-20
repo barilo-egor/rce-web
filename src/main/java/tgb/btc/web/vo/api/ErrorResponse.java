@@ -1,4 +1,4 @@
-package tgb.btc.web.vo;
+package tgb.btc.web.vo.api;
 
 import lombok.Data;
 import lombok.Getter;
