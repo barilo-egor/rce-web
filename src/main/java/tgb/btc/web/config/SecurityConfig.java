@@ -26,39 +26,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "web/registration/**", "static/**", "extJS/**",
-                        "js/login/**", "login/**",
-                        "js/util/**", "js/registration/**",
-                        "js/api/**",
-                        "api/**",
-                        "loginSuccess", "loginError",
-                        "css/**", "web/main",
-                        "api/**", "documentation/**"
+                        "/web/registration/**", "/static/**", "/extJS/**",
+                        "/js/login/**", "/login/**",
+                        "/js/util/**", "/js/registration/**",
+                        "/js/api/**",
+                        "/api/**",
+                        "/loginSuccess", "/loginError",
+                        "/css/**", "/web/main",
+                        "/api/**", "/documentation/**"
                 )
                 .permitAll();
         // Доступ для юзеров
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/", "js/mainUser/**"
+                        "/", "/js/mainUser/**"
                 )
                 .hasRole("USER");
-
-        // Доступ для админов
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers(
-                        "js/main/**", "web/main/**", "web/roles/**", "web/deal"
-                )
-                .hasRole("ADMIN");
-
-        // Доступ для операторов
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers(
-                        "js/main/**", "web/main/**", "web/roles/**", "web/deal"
-                )
-                .hasRole("OPERATOR");
 
         // Доступ всех оставшихся юрлов
         httpSecurity
@@ -70,16 +54,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("web/main")
+                .loginPage("/web/main")
                 //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("loginSuccess", true)
-                .failureUrl("loginError")
+                .defaultSuccessUrl("/loginSuccess", true)
+                .failureUrl("/loginError")
                 .permitAll()
                 .and()
                 .logout()
-                .logoutUrl("logout")
+                .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("web/main");
+                .logoutSuccessUrl("/web/main");
     }
 
     @Override
