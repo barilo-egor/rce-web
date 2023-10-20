@@ -1,4 +1,4 @@
-package tgb.btc.web.constant.mapper;
+package tgb.btc.web.constant.enums.mapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
