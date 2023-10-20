@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.web.controller.BaseController;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class LoginController {
+public class LoginController extends BaseController {
 
     private WebUserRepository webUserRepository;
 

@@ -30,7 +30,7 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Controller
 @RequestMapping(ControllerMapping.WEB)
 @Slf4j
-public class MainWebController {
+public class MainWebController extends BaseController {
 
     public static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
 

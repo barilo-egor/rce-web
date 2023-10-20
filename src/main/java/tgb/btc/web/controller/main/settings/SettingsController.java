@@ -18,6 +18,7 @@ import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.ControllerMapping;
+import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.vo.form.CourseVO;
 
 import javax.ws.rs.core.MediaType;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(ControllerMapping.SETTINGS)
-public class SettingsController {
+public class SettingsController extends BaseController {
 
     private CalculateService calculateService;
 

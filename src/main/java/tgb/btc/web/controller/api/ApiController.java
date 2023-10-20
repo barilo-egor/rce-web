@@ -19,6 +19,7 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.process.ApiDealProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -30,7 +31,7 @@ import java.util.Objects;
 
 @Controller
 @RequestMapping(ControllerMapping.API10)
-public class ApiController {
+public class ApiController extends BaseController {
 
     private ApiDealRepository apiDealRepository;
 

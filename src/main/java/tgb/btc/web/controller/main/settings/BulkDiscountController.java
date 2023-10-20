@@ -13,6 +13,7 @@ import tgb.btc.library.exception.PropertyValueNotFoundException;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.vo.BulkDiscount;
 import tgb.btc.web.constant.ControllerMapping;
+import tgb.btc.web.controller.BaseController;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,7 +24,7 @@ import static tgb.btc.library.util.BulkDiscountUtil.BULK_DISCOUNTS;
 
 @Controller
 @RequestMapping(ControllerMapping.BULK_DISCOUNTS)
-public class BulkDiscountController {
+public class BulkDiscountController extends BaseController {
 
     @GetMapping(value = "/getDiscounts")
     @ResponseBody

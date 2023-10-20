@@ -9,6 +9,7 @@ import tgb.btc.library.service.bean.bot.PaymentTypeService;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.PaymentRequisiteMapper;
 import tgb.btc.web.constant.enums.mapper.PaymentTypeMapper;
+import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.process.PaymentTypeProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -19,7 +20,7 @@ import javax.persistence.EntityNotFoundException;
 @RestController
 @RequestMapping(ControllerMapping.PAYMENT_TYPES)
 @Slf4j
-public class PaymentTypesController {
+public class PaymentTypesController extends BaseController {
 
     private PaymentTypeService paymentTypeService;
 

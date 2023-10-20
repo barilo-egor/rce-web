@@ -10,6 +10,7 @@ import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.web.constant.ControllerMapping;
+import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.vo.form.CredentialsVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping(ControllerMapping.REGISTRATION)
 @Slf4j
-public class RegistrationController {
+public class RegistrationController extends BaseController {
 
     private WebUserService webUserService;
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(ControllerMapping.ENUM)
-public class EnumValuesController {
+public class EnumValuesController extends BaseController {
 
     @GetMapping("/fiatCurrencies")
     @ResponseBody

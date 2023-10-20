@@ -9,11 +9,12 @@ import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
+import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebDealService;
 
 @RestController
 @RequestMapping(ControllerMapping.BOT_DEAL)
-public class BotDealController {
+public class BotDealController extends BaseController {
 
     private WebDealService webDealService;
 
