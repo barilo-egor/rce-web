@@ -11,6 +11,8 @@ import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebDealService;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.SuccessResponse;
 
 @RestController
 @RequestMapping(ControllerMapping.BOT_DEAL)
@@ -33,5 +35,10 @@ public class BotDealController extends BaseController {
     @GetMapping("/findAll")
     public ObjectNode findAll(Integer page, Integer limit, Integer start) {
         return JacksonUtil.pagingData(webDealService.findAll(page, limit, start), dealRepository.count(), DealMapper.FIND_ALL);
+    }
+
+    @GetMapping("/get")
+    public SuccessResponse<?> get(Long pid) {
+        return SuccessResponseUtil.data(webDealService.get(pid), DealMapper.GET);
     }
 }

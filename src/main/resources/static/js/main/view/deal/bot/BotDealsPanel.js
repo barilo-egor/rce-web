@@ -1,6 +1,8 @@
 Ext.define('Main.view.deal.bot.BotDealsPanel', {
     extend: 'Main.view.components.FramePanel',
     xtype: 'botdealspanel',
+    requires: ['Main.view.deal.bot.BotDealsController'],
+    controller: 'botDealsController',
     title: {
         xtype: 'mainframetitle',
         text: 'Сделки из бота'
@@ -46,6 +48,7 @@ Ext.define('Main.view.deal.bot.BotDealsPanel', {
                 },
                 {
                     xtype: 'actioncolumn',
+                    handler: 'showDeal',
                     width: 30,
                     items: [
                         {
