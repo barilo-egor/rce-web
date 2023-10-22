@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.web.vo.bean.DealVO;
@@ -39,7 +40,7 @@ public class WebDealService {
     }
 
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
-        return pagingDealRepository.findAll(PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
+        return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW, PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
                 .map(deal -> DealVO.builder()
                         .pid(deal.getPid())
                         .dealStatus(deal.getDealStatus())
