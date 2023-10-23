@@ -21,12 +21,27 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
         })
     },
 
-    deleteDeal: function (btn) {
+    deleteDealWindow: function (btn) {
         Ext.create('Main.view.deal.bot.DeleteDealWindow', {
             viewModel: {
                 data: {
                     pid: btn.up('window').getViewModel().getData().deal.pid
                 }
+            }
+        })
+    },
+
+    deleteDeal: function (btn) {
+        ExtUtil.request({
+            url: '/web/deal/bot/delete',
+            params: {
+                pid: btn.up('window').getViewModel().getData().pid,
+                isBanUser: ExtUtil.idQuery('banUserCheckbox').getValue()
+            },
+            success: function (response) {
+                btn.up('window').close()
+                ExtUtil.idQuery('botDealWindow').close()
+                Ext.getStore('botDealStore').reload()
             }
         })
     }

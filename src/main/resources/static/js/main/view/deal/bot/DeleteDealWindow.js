@@ -1,5 +1,7 @@
 Ext.define('Main.view.deal.bot.DeleteDealWindow', {
     extend: 'Ext.window.Window',
+    requires: ['Main.view.deal.bot.BotDealsController'],
+    controller: 'botDealsController',
     width: 300,
     title: 'Удаление сделки',
     autoShow: true,
@@ -17,6 +19,7 @@ Ext.define('Main.view.deal.bot.DeleteDealWindow', {
         {
             xtype: 'checkbox',
             fieldLabel: 'Забанить пользователя',
+            id: 'banUserCheckbox',
             labelWidth: 150
         },
         {
@@ -33,7 +36,8 @@ Ext.define('Main.view.deal.bot.DeleteDealWindow', {
                 {
                     text: 'Удалить',
                     cls: 'redButton',
-                    margin: '0 5 0 0'
+                    margin: '0 5 0 0',
+                    handler: 'deleteDeal'
                 },
                 {
                     text: 'Отмена',

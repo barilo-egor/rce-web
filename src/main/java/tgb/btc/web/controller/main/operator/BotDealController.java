@@ -3,9 +3,11 @@ package tgb.btc.web.controller.main.operator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
@@ -21,6 +23,13 @@ public class BotDealController extends BaseController {
     private WebDealService webDealService;
 
     private DealRepository dealRepository;
+
+    private DealService dealService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -40,5 +49,11 @@ public class BotDealController extends BaseController {
     @GetMapping("/get")
     public SuccessResponse<?> get(Long pid) {
         return SuccessResponseUtil.data(webDealService.get(pid), DealMapper.GET);
+    }
+
+    @PostMapping("/delete")
+    public SuccessResponse<?> delete(Long pid, Boolean isBanUser) {
+        dealService.deleteDeal(pid, isBanUser);
+        return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
 }

@@ -2,6 +2,7 @@ package tgb.btc.web.constant.enums.mapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -27,6 +28,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         ObjectNode dealStatus = JacksonUtil.getEmpty()
                 .put("name", deal.getDealStatus().name())
                 .put("displayName", deal.getDealStatus().getDisplayName());
+        CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         ObjectNode result = JacksonUtil.getEmpty()
                 .put("pid", deal.getPid())
                 .put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
@@ -35,7 +37,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("username", StringUtils.isEmpty(deal.getUsername()) ? "Отсутствует" : deal.getUsername())
                 .put("dealsCount", deal.getDealsCount())
                 .put("chatId", deal.getChatId())
-                .put("cryptoCurrency", deal.getCryptoCurrency().getShortName())
+                .put("cryptoCurrency", Objects.nonNull(cryptoCurrency) ? cryptoCurrency.getShortName() : "Отсутствует")
                 .put("amountCrypto", BigDecimalUtil.roundToPlainString(deal.getAmountCrypto(), deal.getCryptoCurrency().getScale()))
                 .put("fiatCurrency", deal.getFiatCurrency().getGenitive())
                 .put("amountFiat", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()));

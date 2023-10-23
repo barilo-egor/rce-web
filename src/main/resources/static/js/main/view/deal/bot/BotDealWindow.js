@@ -1,5 +1,6 @@
 Ext.define('Main.view.deal.bot.BotDealWindow', {
     extend: 'Ext.window.Window',
+    id: 'botDealWindow',
     requires: ['Main.view.deal.bot.BotDealsController'],
     controller: 'botDealsController',
     width: '95%',
@@ -177,7 +178,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                         {
                             text: 'Удалить',
                             cls: 'redButton',
-                            handler: 'deleteDeal'
+                            handler: 'deleteDealWindow'
                         }
                     ]
                 }
