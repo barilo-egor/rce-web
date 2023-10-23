@@ -55,5 +55,9 @@ let ExtUtil = {
                 }
             }
         });
+    },
+
+    toClipboard(value) {
+        navigator.clipboard.writeText(value)
     }
 }

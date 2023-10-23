@@ -1,5 +1,7 @@
 Ext.define('Main.view.deal.bot.BotDealWindow', {
     extend: 'Ext.window.Window',
+    requires: ['Main.view.deal.bot.BotDealsController'],
+    controller: 'botDealsController',
     width: '95%',
     height: '95%',
     bind: {
@@ -7,9 +9,13 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
     },
     autoShow: true,
     modal: true,
-    layout: 'fit',
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
     items: [
         {
+            flex: 0.9,
             xtype: 'panel',
             layout: {
                 type: 'vbox',
@@ -19,7 +25,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
             defaults: {
                 xtype: 'displayfield',
                 labelStyle: 'font-weight:bold',
-                labelWidth: 200,
+                labelWidth: 180,
             },
             items: [
                 {
@@ -35,29 +41,51 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     }
                 },
                 {
-                    fieldLabel: 'Реквизиты пользователя',
-                    id: 'userRequisitesField',
-                    bind: {
-                        value: '{deal.requisite}'
-                    }
-                },
-                {
-                    xtype: 'container',
-                    margin: '0 0 10 0',
+                    xtype: 'panel',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
                     items: [
                         {
-                            xtype: 'button',
-                            text: 'Скопировать реквизиты',
-                            cls: 'blueButton',
-                            handler: function (btn) {
-                                navigator.clipboard.writeText(ExtUtil.idQuery('userRequisitesField').getValue())
-                                Ext.toast('Реквизиты скопированы в буфер обмена.')
+                            flex: 0.9,
+                            xtype: 'displayfield',
+                            fieldLabel: 'Реквизиты пользователя',
+                            id: 'userRequisitesField',
+                            labelStyle: 'font-weight:bold',
+                            labelWidth: 180,
+                            bind: {
+                                value: 'qwe'
                             }
+                        },
+                        {
+                            flex: 0.1,
+                            xtype: 'container',
+                            margin: '5 0 0 5',
+                            items: [
+                                {
+                                    xtype: 'button',
+                                    iconCls: 'fas fa-copy noColorBtn',
+                                    cls: 'noColorBtn',
+                                    handler: function (btn) {
+                                        ExtUtil.toClipboard(ExtUtil.idQuery('userRequisitesField').getValue())
+                                        Ext.toast('Реквизиты скопированы в буфер обмена.')
+                                    }
+                                },
+                            ]
                         },
                     ]
                 },
                 {
                     fieldLabel: 'Контакт',
+                    listeners: {
+                        afterrender: function (me) {
+                            let username = me.up('window').getViewModel().getData().deal.username
+                            if (username && username !== 'Отсутствует') {
+                                me.setValue('<a href="https://t.me/' + username + '">' + username + '</a>')
+                            }
+                        }
+                    },
                     bind: {
                         value: '{deal.username}'
                     }
@@ -71,14 +99,44 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                 {
                     fieldLabel: 'Статус',
                     bind: {
-                        value: '{deal.dealStatus}'
+                        value: '{deal.dealStatus.displayName}'
                     }
                 },
                 {
-                    fieldLabel: 'ID',
-                    bind: {
-                        value: '{deal.chatId}'
-                    }
+                    xtype: 'panel',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
+                    items: [
+                        {
+                            flex: 0.9,
+                            xtype: 'displayfield',
+                            id: 'chatIdField',
+                            labelStyle: 'font-weight:bold',
+                            labelWidth: 180,
+                            fieldLabel: 'ID',
+                            bind: {
+                                value: '{deal.chatId}'
+                            }
+                        },
+                        {
+                            flex: 0.1,
+                            xtype: 'container',
+                            margin: '5 0 0 5',
+                            items: [
+                                {
+                                    xtype: 'button',
+                                    iconCls: 'fas fa-copy noColorBtn',
+                                    cls: 'noColorBtn',
+                                    handler: function (btn) {
+                                        ExtUtil.toClipboard(ExtUtil.idQuery('chatIdField').getValue())
+                                        Ext.toast('Chat ID скопирован в буфер обмена.')
+                                    }
+                                },
+                            ]
+                        },
+                    ]
                 },
                 {
                     bind: {
@@ -91,6 +149,37 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                         fieldLabel: 'Сумма фиат',
                         value: '{deal.amountFiat} {deal.fiatCurrency}'
                     }
+                },
+                {
+                    xtype: 'panel',
+                    margin: '0 20 0 20',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    defaults: {
+                        xtype: 'button',
+                        margin: '10 0 0 0'
+                    },
+                    hidden: true,
+                    bind: {
+                        hidden: '{deal.dealStatus.name === "CONFIRMED"}'
+                    },
+                    items: [
+                        {
+                            text: 'Подтвердить',
+                            cls: 'greenBtn'
+                        },
+                        {
+                            text: 'Запросить верификацию',
+                            cls: 'blueButton'
+                        },
+                        {
+                            text: 'Удалить',
+                            cls: 'redButton',
+                            handler: 'deleteDeal'
+                        }
+                    ]
                 }
             ]
         }

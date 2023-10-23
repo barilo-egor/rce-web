@@ -19,6 +19,15 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
                 })
             }
         })
+    },
 
+    deleteDeal: function (btn) {
+        Ext.create('Main.view.deal.bot.DeleteDealWindow', {
+            viewModel: {
+                data: {
+                    pid: btn.up('window').getViewModel().getData().deal.pid
+                }
+            }
+        })
     }
 })

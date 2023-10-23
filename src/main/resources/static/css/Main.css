@@ -73,6 +73,26 @@
     color: red !important;
 }
 
+.blackColor {
+    color: black !important;
+}
+
+.violetColor {
+    color: #920e92 !important;
+}
+
+.orangeColor {
+    color: orange !important;
+}
+
+.mediumSeaGreenColor {
+    color: mediumseagreen !important;
+}
+
+.lightGrey {
+    color: lightgrey !important;
+}
+
 .noColorBtn {
     background-color: #ffffff !important;
     border-color: #919191 !important;

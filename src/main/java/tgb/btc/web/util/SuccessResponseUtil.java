@@ -7,6 +7,7 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class SuccessResponseUtil {
@@ -25,8 +26,16 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
     }
 
+    public static <T> SuccessResponse<?> data(T[] objects, Function<T, ObjectNode> mapper) {
+        return getDataObjectNode(JacksonUtil.toArrayNode(List.of(objects), mapper));
+    }
+
     public static <T> SuccessResponse<?> data(Collection<T> objects, ObjectNodeConvertable<T> mapper) {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
+    }
+
+    public static <T> SuccessResponse<?> data(T[] objects, ObjectNodeConvertable<T> mapper) {
+        return getDataObjectNode(JacksonUtil.toArrayNode(List.of(objects), mapper));
     }
 
     public static <T> SuccessResponse<?> data(T t, Function<T, ObjectNode> mapper) {

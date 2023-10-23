@@ -26,7 +26,7 @@ Ext.define('Main.view.deal.bot.BotDealsPanel', {
                 {
                     xtype: 'pagingtoolbar',
                     store: 'botDealStore',
-                    displayInfo: true
+                    displayInfo: false
                 }
             ],
             emptyText: 'Сделки отсутствуют',
@@ -34,7 +34,7 @@ Ext.define('Main.view.deal.bot.BotDealsPanel', {
                 {
                     text: 'Номер',
                     dataIndex: 'pid',
-                    width: 100
+                    width: 65
                 },
                 {
                     text: 'Статус',

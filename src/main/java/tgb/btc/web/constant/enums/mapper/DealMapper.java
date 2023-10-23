@@ -2,7 +2,6 @@ package tgb.btc.web.constant.enums.mapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
-import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -13,16 +12,21 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public enum DealMapper implements ObjectNodeConvertable<DealVO> {
-    FIND_ALL(deal -> JacksonUtil.getEmpty()
-            .put("pid", deal.getPid())
-            .put("dealStatus", Objects.nonNull(deal.getDealStatus())
-                    ? deal.getDealStatus().getDisplayName()
-                    : StringUtils.EMPTY)
-            .put("chatId", deal.getChatId())),
+    FIND_ALL(deal -> {
+        ObjectNode result = JacksonUtil.getEmpty()
+                .put("pid", deal.getPid())
+                .put("chatId", deal.getChatId())
+                .put("dealStatus", "<i class=\"fas fa-circle " + deal.getDealStatus().getColor() + "\">  "
+                        + deal.getDealStatus().getDisplayName() + "</i>");
+        return result;
+    }),
     GET(deal -> {
         ObjectNode dealType = JacksonUtil.getEmpty()
                 .put("name", deal.getDealType().name())
                 .put("genitive", deal.getDealType().getGenitive());
+        ObjectNode dealStatus = JacksonUtil.getEmpty()
+                .put("name", deal.getDealStatus().name())
+                .put("displayName", deal.getDealStatus().getDisplayName());
         ObjectNode result = JacksonUtil.getEmpty()
                 .put("pid", deal.getPid())
                 .put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
@@ -30,13 +34,13 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("requisite", deal.getRequisite())
                 .put("username", StringUtils.isEmpty(deal.getUsername()) ? "Отсутствует" : deal.getUsername())
                 .put("dealsCount", deal.getDealsCount())
-                .put("dealStatus", deal.getDealStatus().getDisplayName())
                 .put("chatId", deal.getChatId())
                 .put("cryptoCurrency", deal.getCryptoCurrency().getShortName())
                 .put("amountCrypto", BigDecimalUtil.roundToPlainString(deal.getAmountCrypto(), deal.getCryptoCurrency().getScale()))
                 .put("fiatCurrency", deal.getFiatCurrency().getGenitive())
                 .put("amountFiat", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()));
         result.set("dealType", dealType);
+        result.set("dealStatus", dealStatus);
         return result;
     }
     );
