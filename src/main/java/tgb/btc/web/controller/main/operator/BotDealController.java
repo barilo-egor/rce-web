@@ -56,4 +56,10 @@ public class BotDealController extends BaseController {
         dealService.deleteDeal(pid, isBanUser);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
+
+    @PostMapping("/confirm")
+    public SuccessResponse<?> confirm(Long pid) {
+        dealService.confirm(pid);
+        return SuccessResponseUtil.toast("Сделка подтверждена.");
+    }
 }

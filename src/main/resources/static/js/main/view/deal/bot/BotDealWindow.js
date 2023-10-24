@@ -169,6 +169,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     items: [
                         {
                             text: 'Подтвердить',
+                            handler: 'confirmDeal',
                             cls: 'greenBtn'
                         },
                         {
