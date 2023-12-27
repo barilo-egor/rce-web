@@ -50,11 +50,10 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
         ExtUtil.request({
             url: '/web/deal/bot/confirm',
             params: {
-                pid: btn.up('window').getViewModel().getData().pid
+                pid: btn.up('window').getViewModel().getData().deal.pid
             },
             success: function (response) {
                 btn.up('window').close()
-                ExtUtil.idQuery('botDealWindow').close()
                 Ext.getStore('botDealStore').reload()
             }
         })
