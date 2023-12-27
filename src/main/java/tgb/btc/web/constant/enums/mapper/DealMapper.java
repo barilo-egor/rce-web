@@ -13,14 +13,11 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public enum DealMapper implements ObjectNodeConvertable<DealVO> {
-    FIND_ALL(deal -> {
-        ObjectNode result = JacksonUtil.getEmpty()
-                .put("pid", deal.getPid())
-                .put("chatId", deal.getChatId())
-                .put("dealStatus", "<i class=\"fas fa-circle " + deal.getDealStatus().getColor() + "\">  "
-                        + deal.getDealStatus().getDisplayName() + "</i>");
-        return result;
-    }),
+    FIND_ALL(deal -> JacksonUtil.getEmpty()
+            .put("pid", deal.getPid())
+            .put("chatId", deal.getChatId())
+            .put("dealStatus", "<i class=\"fas fa-circle " + deal.getDealStatus().getColor() + "\">  "
+                    + deal.getDealStatus().getDisplayName() + "</i>")),
     GET(deal -> {
         ObjectNode dealType = JacksonUtil.getEmpty()
                 .put("name", deal.getDealType().name())
@@ -31,7 +28,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         CryptoCurrency cryptoCurrency = deal.getCryptoCurrency();
         ObjectNode result = JacksonUtil.getEmpty()
                 .put("pid", deal.getPid())
-                .put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                .put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:m:ss")))
                 .put("paymentType", Objects.nonNull(deal.getPaymentType()) ? deal.getPaymentType().getName() : "Отсутствует")
                 .put("requisite", deal.getRequisite())
                 .put("username", StringUtils.isEmpty(deal.getUsername()) ? "Отсутствует" : deal.getUsername())
