@@ -5,15 +5,10 @@ Ext.define('Main.view.Viewport', {
         'Main.view.MainController'
     ],
     alias: 'widget.mainViewport',
-    layout: {
-        type: 'vbox',
-        align: 'center'
-    },
+    layout: 'fit',
     viewModel: true,
     items: [
         {
-            flex: 1,
-            width: 800,
             xtype: 'mainpanel'
         }
     ]

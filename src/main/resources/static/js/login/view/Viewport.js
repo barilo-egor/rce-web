@@ -4,15 +4,10 @@ Ext.define('Login.view.Viewport', {
         'Login.view.LoginPanel'
     ],
     alias: 'widget.loginViewport',
-    layout: {
-        type: 'vbox',
-        align: 'center'
-    },
+    layout: 'fit',
     viewModel: true,
     items: [
         {
-            flex: 1,
-            width: 800,
             xtype: 'loginpanel'
         }
     ]
