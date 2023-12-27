@@ -4,10 +4,15 @@ Ext.define('Registration.view.Viewport', {
         'Registration.view.RegistrationPanel'
     ],
     alias: 'widget.registrationViewport',
-    layout: 'fit',
+    layout: {
+        type: 'vbox',
+        align: 'center'
+    },
     viewModel: true,
     items: [
         {
+            flex: 1,
+            width: 800,
             xtype: 'registrationpanel'
         }
     ]
