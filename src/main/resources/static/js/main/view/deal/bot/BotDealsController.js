@@ -57,5 +57,27 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
                 Ext.getStore('botDealStore').reload()
             }
         })
+    },
+
+    showVerification: function (btn) {
+        Ext.create('Ext.window.Window', {
+            autoShow: true,
+            maximized: true,
+            width: '95%',
+            height: '95%',
+            draggable: false,
+            scrollable: true,
+            items: [
+                {
+                    xtype: 'image',
+                    src: '/img/2.jpg',
+                    shrinkWrap: 3,
+                    listeners: {
+                        afterlayout: function (me) {
+                        }
+                    }
+                }
+            ]
+        })
     }
 })

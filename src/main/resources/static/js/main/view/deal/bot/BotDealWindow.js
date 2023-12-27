@@ -72,9 +72,9 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                                         ExtUtil.toClipboard(ExtUtil.idQuery('userRequisitesField').getValue())
                                         Ext.toast('Реквизиты скопированы в буфер обмена.')
                                     }
-                                },
+                                }
                             ]
-                        },
+                        }
                     ]
                 },
                 {
@@ -174,6 +174,15 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                         },
                         {
                             text: 'Запросить верификацию',
+                            bind: {
+                                hidden: '{deal.dealStatus.name === "VERIFICATION_RECEIVED"}'
+                            },
+                            cls: 'blueButton'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Показать верификацию',
+                            handler: 'showVerification',
                             cls: 'blueButton'
                         },
                         {
