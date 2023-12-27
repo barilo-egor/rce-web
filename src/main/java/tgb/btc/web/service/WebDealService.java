@@ -6,9 +6,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.bot.Deal;
+import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.repository.bot.PaymentReceiptRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
+import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.web.vo.bean.DealVO;
 
 import java.util.List;
@@ -20,6 +24,13 @@ public class WebDealService {
     private DealRepository dealRepository;
 
     private PagingDealRepository pagingDealRepository;
+
+    private DealService dealService;
+
+    @Autowired
+    public void setDealService(DealService dealService) {
+        this.dealService = dealService;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -54,6 +65,7 @@ public class WebDealService {
     public DealVO get(Long pid) {
         Deal deal = dealRepository.getById(pid);
         Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
+        List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
         return DealVO.builder()
                 .pid(deal.getPid())
                 .dateTime(deal.getDateTime())
@@ -68,6 +80,8 @@ public class WebDealService {
                 .fiatCurrency(deal.getFiatCurrency())
                 .amountFiat(deal.getAmount())
                 .dealType(deal.getDealType())
+                .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
+                .paymentReceipts(paymentReceipts)
                 .build();
     }
 }

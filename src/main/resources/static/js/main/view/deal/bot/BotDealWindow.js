@@ -26,9 +26,23 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
             defaults: {
                 xtype: 'displayfield',
                 labelStyle: 'font-weight:bold',
-                labelWidth: 180,
+                labelWidth: 180
             },
             items: [
+                {
+                    xtype: 'textfield',
+                    hidden: true,
+                    bind: {
+                        value: 'deal.check'
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    hidden: true,
+                    bind: {
+                        value: 'deal.verification'
+                    }
+                },
                 {
                     fieldLabel: 'Дата, время',
                     bind: {
@@ -168,21 +182,32 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     },
                     items: [
                         {
+                            text: 'Показать чек',
+                            bind: {
+                                hidden: '{deal.dealStatus.name === "NEW"}'
+                            },
+                            cls: 'blueButton',
+                            handler: 'showCheck'
+                        },
+                        {
                             text: 'Подтвердить',
                             handler: 'confirmDeal',
                             cls: 'greenBtn'
                         },
                         {
                             text: 'Запросить верификацию',
+                            cls: 'blueButton',
                             bind: {
                                 hidden: '{deal.dealStatus.name === "VERIFICATION_RECEIVED"}'
-                            },
-                            cls: 'blueButton'
+                            }
                         },
                         {
                             xtype: 'button',
                             text: 'Показать верификацию',
                             handler: 'showVerification',
+                            bind: {
+                                hidden: '{deal.dealStatus.name !== "VERIFICATION_RECEIVED"}'
+                            },
                             cls: 'blueButton'
                         },
                         {

@@ -60,24 +60,22 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
     },
 
     showVerification: function (btn) {
-        Ext.create('Ext.window.Window', {
-            autoShow: true,
-            maximized: true,
-            width: '95%',
-            height: '95%',
-            draggable: false,
-            scrollable: true,
-            items: [
-                {
-                    xtype: 'image',
-                    src: '/img/2.jpg',
-                    shrinkWrap: 3,
-                    listeners: {
-                        afterlayout: function (me) {
-                        }
-                    }
+        Ext.create('Main.view.components.ImageWindow', {
+            viewModel: {
+                data: {
+                    src: '/image/get?imageId=' + btn.up('window').getViewModel().getData().deal.additionalVerificationImageId
                 }
-            ]
+            }
+        })
+    },
+
+    showCheck: function (btn) {
+        Ext.create('Main.view.components.ImageWindow', {
+            viewModel: {
+                data: {
+                    src: '/image/get'
+                }
+            }
         })
     }
 })

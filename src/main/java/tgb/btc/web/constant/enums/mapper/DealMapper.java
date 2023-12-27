@@ -37,7 +37,8 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("cryptoCurrency", Objects.nonNull(cryptoCurrency) ? cryptoCurrency.getShortName() : "Отсутствует")
                 .put("amountCrypto", BigDecimalUtil.roundToPlainString(deal.getAmountCrypto(), deal.getCryptoCurrency().getScale()))
                 .put("fiatCurrency", deal.getFiatCurrency().getGenitive())
-                .put("amountFiat", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()));
+                .put("amountFiat", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()))
+                .put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
         result.set("dealType", dealType);
         result.set("dealStatus", dealStatus);
         return result;
