@@ -30,20 +30,6 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
             },
             items: [
                 {
-                    xtype: 'textfield',
-                    hidden: true,
-                    bind: {
-                        value: 'deal.check'
-                    }
-                },
-                {
-                    xtype: 'textfield',
-                    hidden: true,
-                    bind: {
-                        value: 'deal.verification'
-                    }
-                },
-                {
                     fieldLabel: 'Дата, время',
                     bind: {
                         value: '{deal.dateTime}'

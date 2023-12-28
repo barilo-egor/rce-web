@@ -9,15 +9,5 @@ Ext.define('Main.view.components.ImageWindow', {
     layout: {
         type: 'vbox',
         pack: 'center'
-    },
-    items: [
-        {
-            xtype: 'image',
-            bind: {
-                src: '{src}'
-            },
-            width: '100%',
-            height: 'auto',
-        }
-    ]
+    }
 })

@@ -20,6 +20,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .headers()
+                .frameOptions().disable();
+        httpSecurity
                 .csrf()
                 .disable();
         //  Доступ для всех

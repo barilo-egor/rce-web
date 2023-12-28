@@ -61,21 +61,56 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
 
     showVerification: function (btn) {
         Ext.create('Main.view.components.ImageWindow', {
-            viewModel: {
-                data: {
-                    src: '/image/get?imageId=' + btn.up('window').getViewModel().getData().deal.additionalVerificationImageId
+            items: [
+                {
+                    xtype: 'image',
+                    bind: {
+                        src: '/image/get?imageId=' + btn.up('window').getViewModel().getData().deal.additionalVerificationImageId
+                    },
+                    width: '100%',
+                    height: 'auto',
                 }
-            }
+            ]
         })
     },
 
     showCheck: function (btn) {
-        Ext.create('Main.view.components.ImageWindow', {
-            viewModel: {
-                data: {
-                    src: '/image/get'
-                }
+        let paymentReceipts = btn.up('window').getViewModel().getData().deal.paymentReceipts
+        let items = []
+        for (let paymentReceipt of paymentReceipts) {
+            if (paymentReceipt.format === 'PDF') {
+                items.push(
+                    {
+                        modal: true,
+                        closeAction: 'hide',
+                        width: '100%',
+                        height: '100%',
+                        items: [
+                            {
+                                xtype: 'box',
+                                autoEl: {
+                                    tag: 'iframe',
+                                    src: '/image/getPDF?fileId=' + paymentReceipt.fileId,
+                                    width: '100%',
+                                    height: '100%',
+                                }
+                            },
+                        ]
+                    }
+                )
+            } else if (paymentReceipt.format === 'PICTURE') {
+                items.push(
+                    {
+                        xtype: 'image',
+                        src: '/image/get?imageId=' + paymentReceipt.fileId,
+                        width: '100%',
+                        height: 'auto',
+                    }
+                )
             }
+        }
+        Ext.create('Main.view.components.ImageWindow', {
+            items: items
         })
     }
 })
