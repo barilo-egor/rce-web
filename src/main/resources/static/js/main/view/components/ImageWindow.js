@@ -8,6 +8,6 @@ Ext.define('Main.view.components.ImageWindow', {
     scrollable: true,
     layout: {
         type: 'vbox',
-        pack: 'center'
+        pack: 'start'
     }
 })

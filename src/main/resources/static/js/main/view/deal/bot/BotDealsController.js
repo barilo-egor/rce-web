@@ -59,11 +59,25 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
         })
     },
 
+    askVerification: function (btn) {
+        let dealPid = btn.up('window').getViewModel().getData().deal.pid
+        ExtUtil.request({
+            url: '/web/deal/bot/askVerification',
+            params: {
+                dealPid: dealPid
+            },
+            success: function (response) {
+                btn.up('window').close()
+            }
+        })
+    },
+
     showVerification: function (btn) {
         Ext.create('Main.view.components.ImageWindow', {
             items: [
                 {
                     xtype: 'image',
+                    scrollable: true,
                     bind: {
                         src: '/image/get?imageId=' + btn.up('window').getViewModel().getData().deal.additionalVerificationImageId
                     },
@@ -88,6 +102,7 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
                         items: [
                             {
                                 xtype: 'box',
+                                scrollable: true,
                                 autoEl: {
                                     tag: 'iframe',
                                     src: '/image/getPDF?fileId=' + paymentReceipt.fileId,

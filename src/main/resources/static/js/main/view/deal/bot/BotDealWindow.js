@@ -169,9 +169,6 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     items: [
                         {
                             text: 'Показать чек',
-                            bind: {
-                                hidden: '{deal.dealStatus.name === "NEW"}'
-                            },
                             cls: 'blueButton',
                             handler: 'showCheck'
                         },
@@ -184,8 +181,9 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                             text: 'Запросить верификацию',
                             cls: 'blueButton',
                             bind: {
-                                hidden: '{deal.dealStatus.name === "VERIFICATION_RECEIVED"}'
-                            }
+                                hidden: '{deal.dealStatus.name !== "PAID"}'
+                            },
+                            handler: 'askVerification'
                         },
                         {
                             xtype: 'button',
