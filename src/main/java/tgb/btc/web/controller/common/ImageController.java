@@ -19,13 +19,6 @@ public class ImageController {
 
     private FileService fileService;
 
-    private IFileDownloader fileDownloader;
-
-    @Autowired
-    public void setFileDownloader(IFileDownloader fileDownloader) {
-        this.fileDownloader = fileDownloader;
-    }
-
     @Autowired(required = false)
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
@@ -40,7 +33,6 @@ public class ImageController {
     @GetMapping(value = "/getPDF", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     public byte[] getPDF(@RequestParam String fileId) throws IOException {
-        String name = RandomStringUtils.randomAlphanumeric(7);
-        return fileService.getTelegramImage(fileId, "images/" + name + ".pdf");
+        return fileService.getTelegramImage(fileId, "images/" + RandomStringUtils.randomAlphanumeric(7) + ".pdf");
     }
 }
