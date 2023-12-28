@@ -14,7 +14,7 @@ public class FileService {
 
     private IFileDownloader fileDownloader;
 
-    @Autowired
+    @Autowired(required = false)
     public void setFileDownloader(IFileDownloader fileDownloader) {
         this.fileDownloader = fileDownloader;
     }

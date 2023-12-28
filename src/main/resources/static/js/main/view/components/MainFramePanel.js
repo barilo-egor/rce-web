@@ -1,3 +1,12 @@
+let STORE_UPDATE_RUNNER = new Ext.util.TaskRunner()
+let STORE_UPDATE_FUNCTION = function () {
+    Ext.getStore('botDealStore').reload()
+}
+STORE_UPDATE_RUNNER.start({
+    run: STORE_UPDATE_FUNCTION,
+    interval: 5000
+})
+
 Ext.define('Main.view.components.MainFramePanel', {
     extend: 'Ext.panel.Panel',
     xtype: 'mainframepanel',

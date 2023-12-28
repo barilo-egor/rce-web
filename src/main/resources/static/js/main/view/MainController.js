@@ -46,7 +46,7 @@ Ext.define('Main.view.MainController', {
         this.mainToolBarClick(btn, 'apiuserscontrolpanel')
     },
 
-    mainToolBarClick: function (btn, panel) {
+    mainToolBarClick: function (btn, panel, callback) {
         ExtUtil.idQuery('mainPanel').setLoading('Загрузка')
         Ext.Function.defer(function() {
             let toolbar = btn.up('toolbar')
@@ -57,6 +57,7 @@ Ext.define('Main.view.MainController', {
             mainFramePanel.update();
             mainFramePanel.updateLayout();
             ExtUtil.idQuery('mainPanel').setLoading(false)
+            if (callback) callback()
         }, 10);
     },
 
@@ -69,6 +70,11 @@ Ext.define('Main.view.MainController', {
     },
 
     botDealsClick: function (btn) {
-        this.mainToolBarClick(btn, 'botdealspanel')
+        this.mainToolBarClick(btn, 'botdealspanel', function () {
+            STORE_UPDATE_RUNNER.start({
+                run: STORE_UPDATE_FUNCTION,
+                interval: 5000
+            })
+        })
     }
 })

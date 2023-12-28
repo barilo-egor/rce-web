@@ -11,6 +11,11 @@ Ext.define('Main.view.deal.bot.BotDealsPanel', {
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+        beforedestroy: function (me) {
+            STORE_UPDATE_RUNNER.stop(STORE_UPDATE_RUNNER.tasks[0])
+        }
+    },
 
     items: [
         {
@@ -21,6 +26,9 @@ Ext.define('Main.view.deal.bot.BotDealsPanel', {
                 afterrender: function (me) {
                     me.getStore().load()
                 }
+            },
+            viewConfig  : {
+                loadMask: false
             },
             dockedItems: [
                 {
