@@ -56,7 +56,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                             labelStyle: 'font-weight:bold',
                             labelWidth: 180,
                             bind: {
-                                value: 'qwe'
+                                value: '{deal.requisite}'
                             }
                         },
                         {
@@ -111,7 +111,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     },
                     items: [
                         {
-                            flex: 0.9,
+                            flex: 0.8,
                             xtype: 'displayfield',
                             id: 'chatIdField',
                             labelStyle: 'font-weight:bold',
@@ -122,19 +122,85 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                             }
                         },
                         {
-                            flex: 0.1,
+                            flex: 0.2,
                             xtype: 'container',
                             margin: '5 0 0 5',
                             items: [
                                 {
                                     xtype: 'button',
                                     iconCls: 'fas fa-copy noColorBtn',
+                                    margin: '0 5 0 0',
                                     cls: 'noColorBtn',
                                     handler: function (btn) {
                                         ExtUtil.toClipboard(ExtUtil.idQuery('chatIdField').getValue())
                                         Ext.toast('Chat ID скопирован в буфер обмена.')
                                     }
                                 },
+                                {
+                                    xtype: 'button',
+                                    iconCls: 'fas fa-paper-plane noColorBtn',
+                                    cls: 'noColorBtn',
+                                    handler: function (btn) {
+                                        let chatId = btn.up('window').getViewModel().getData().deal.chatId
+                                        Ext.create('Ext.window.Window', {
+                                            viewModel: {
+                                                data: {
+                                                    chatId: chatId
+                                                }
+                                            },
+
+                                            autoShow: true,
+                                            draggable: false,
+                                            modal: true,
+                                            title: 'Отправка сообщения пользователю ' + chatId,
+                                            width: '90%',
+                                            layout: {
+                                                type: 'vbox',
+                                                align: 'stretch',
+                                                pack: 'center'
+                                            },
+                                            defaults: {
+                                                margin: '10 10 10 10'
+                                            },
+                                            items: [
+                                                {
+                                                    xtype: 'textareafield',
+                                                    reference: 'messageTextField',
+                                                    fieldLabel: 'Сообщение',
+                                                    labelWidth: 75
+                                                },
+                                                {
+                                                    xtype: 'container',
+                                                    layout: {
+                                                        type: 'vbox',
+                                                        align: 'center'
+                                                    },
+                                                    items: [
+                                                        {
+                                                            xtype: 'button',
+                                                            text: 'Отправить',
+                                                            cls: 'blueButton',
+                                                            maxWidth: 200,
+                                                            handler: function (btn) {
+                                                                let chatId = btn.up('window').getViewModel().getData().chatId
+                                                                ExtUtil.request({
+                                                                    url: '/web/deal/bot/sendMessage',
+                                                                    params: {
+                                                                        message: ExtUtil.referenceQuery('messageTextField').getValue(),
+                                                                        chatId: chatId
+                                                                    },
+                                                                    success: function (response) {
+                                                                        btn.up('window').close()
+                                                                    }
+                                                                })
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        })
+                                    }
+                                }
                             ]
                         },
                     ]

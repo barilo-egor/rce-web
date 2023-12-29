@@ -3,6 +3,10 @@ let ExtUtil = {
         return Ext.ComponentQuery.query('[id=' + id + ']')[0]
     },
 
+    referenceQuery: function (reference) {
+        return Ext.ComponentQuery.query('[reference=' + reference + ']')[0]
+    },
+
     request: function (config) {
         let requestObj = {}
         requestObj.url = config.url
