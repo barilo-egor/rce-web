@@ -43,8 +43,16 @@ Ext.define('Main.view.components.MainToolBar', {
                     }
                 },
                 {
+                    text: 'Управление веб-пользователями',
+                    iconCls: 'fas fa-users-cog menu-icon-color',
+                    handler: 'webUserControlClick',
+                    bind: {
+                        hidden: '{isNotAdmin}'
+                    }
+                },
+                {
                     text: 'Регистрация апи-пользователей',
-                    iconCls: 'fas fa-user-cog menu-icon-color',
+                    iconCls: 'fas fa-user-plus menu-icon-color',
                     handler: 'newApiUserClick',
                     bind: {
                         hidden: '{isNotAdmin}'
@@ -70,7 +78,7 @@ Ext.define('Main.view.components.MainToolBar', {
                 {
                     text: 'Типы оплат',
                     iconCls: 'fas fa-credit-card menu-icon-color',
-                    handler: 'paymentTypesClick',
+                    handler: 'paymentTypesClick'
                 }
             ]
         },

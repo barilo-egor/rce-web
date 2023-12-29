@@ -76,5 +76,9 @@ Ext.define('Main.view.MainController', {
                 interval: 5000
             })
         })
+    },
+
+    webUserControlClick: function (btn) {
+        this.mainToolBarClick(btn, 'webusercontrolpanel')
     }
 })

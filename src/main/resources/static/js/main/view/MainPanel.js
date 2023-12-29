@@ -34,6 +34,7 @@ Ext.define('Main.view.MainPanel', {
                         {
                             xtype: 'mainframepanel',
                             flex: 1,
+                            minHeight: 500,
                             dockedItems: [
                                 {
                                     xtype: 'maintoolbar',

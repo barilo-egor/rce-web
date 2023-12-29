@@ -22,4 +22,6 @@ public interface ControllerMapping {
     String ENUM = WEB + "/enum";
 
     String ROLES = WEB + "/role";
+
+    String WEB_USER = WEB + "/user";
 }
