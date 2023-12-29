@@ -127,5 +127,33 @@ Ext.define('Main.view.deal.bot.BotDealsController', {
         Ext.create('Main.view.components.ImageWindow', {
             items: items
         })
+    },
+
+    copyRequisites: function (btn) {
+        ExtUtil.toClipboard(ExtUtil.idQuery('userRequisitesField').getValue())
+        Ext.toast('Реквизиты скопированы в буфер обмена.')
+    },
+
+    copyChatId: function (btn) {
+        ExtUtil.toClipboard(ExtUtil.idQuery('chatIdField').getValue())
+        Ext.toast('Chat ID скопирован в буфер обмена.')
+    },
+
+    buildContact: function (me) {
+        let username = me.up('window').getViewModel().getData().deal.username
+        if (username && username !== 'Отсутствует') {
+            me.setValue('<a href="https://t.me/' + username + '">' + username + '</a>')
+        }
+    },
+
+    sendMessageWindow: function (btn) {
+        let chatId = btn.up('window').getViewModel().getData().deal.chatId
+        Ext.create('Main.view.deal.bot.SendMessageWindow', {
+            viewModel: {
+                data: {
+                    chatId: chatId
+                }
+            },
+        })
     }
 })

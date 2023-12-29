@@ -74,10 +74,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                                     xtype: 'button',
                                     iconCls: 'fas fa-copy noColorBtn',
                                     cls: 'noColorBtn',
-                                    handler: function (btn) {
-                                        ExtUtil.toClipboard(ExtUtil.idQuery('userRequisitesField').getValue())
-                                        Ext.toast('Реквизиты скопированы в буфер обмена.')
-                                    }
+                                    handler: 'copyRequisites'
                                 }
                             ]
                         }
@@ -86,12 +83,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                 {
                     fieldLabel: 'Контакт',
                     listeners: {
-                        afterrender: function (me) {
-                            let username = me.up('window').getViewModel().getData().deal.username
-                            if (username && username !== 'Отсутствует') {
-                                me.setValue('<a href="https://t.me/' + username + '">' + username + '</a>')
-                            }
-                        }
+                        afterrender: 'buildContact'
                     },
                     bind: {
                         value: '{deal.username}'
@@ -137,75 +129,13 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                                     iconCls: 'fas fa-copy noColorBtn',
                                     margin: '0 5 0 0',
                                     cls: 'noColorBtn',
-                                    handler: function (btn) {
-                                        ExtUtil.toClipboard(ExtUtil.idQuery('chatIdField').getValue())
-                                        Ext.toast('Chat ID скопирован в буфер обмена.')
-                                    }
+                                    handler: 'copyChatId'
                                 },
                                 {
                                     xtype: 'button',
                                     iconCls: 'fas fa-paper-plane noColorBtn',
                                     cls: 'noColorBtn',
-                                    handler: function (btn) {
-                                        let chatId = btn.up('window').getViewModel().getData().deal.chatId
-                                        Ext.create('Ext.window.Window', {
-                                            viewModel: {
-                                                data: {
-                                                    chatId: chatId
-                                                }
-                                            },
-
-                                            autoShow: true,
-                                            draggable: false,
-                                            modal: true,
-                                            title: 'Отправка сообщения пользователю ' + chatId,
-                                            width: '90%',
-                                            layout: {
-                                                type: 'vbox',
-                                                align: 'stretch',
-                                                pack: 'center'
-                                            },
-                                            defaults: {
-                                                margin: '10 10 10 10'
-                                            },
-                                            items: [
-                                                {
-                                                    xtype: 'textareafield',
-                                                    reference: 'messageTextField',
-                                                    fieldLabel: 'Сообщение',
-                                                    labelWidth: 75
-                                                },
-                                                {
-                                                    xtype: 'container',
-                                                    layout: {
-                                                        type: 'vbox',
-                                                        align: 'center'
-                                                    },
-                                                    items: [
-                                                        {
-                                                            xtype: 'button',
-                                                            text: 'Отправить',
-                                                            cls: 'blueButton',
-                                                            maxWidth: 200,
-                                                            handler: function (btn) {
-                                                                let chatId = btn.up('window').getViewModel().getData().chatId
-                                                                ExtUtil.request({
-                                                                    url: '/web/deal/bot/sendMessage',
-                                                                    params: {
-                                                                        message: ExtUtil.referenceQuery('messageTextField').getValue(),
-                                                                        chatId: chatId
-                                                                    },
-                                                                    success: function (response) {
-                                                                        btn.up('window').close()
-                                                                    }
-                                                                })
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        })
-                                    }
+                                    handler: 'sendMessageWindow'
                                 }
                             ]
                         },
