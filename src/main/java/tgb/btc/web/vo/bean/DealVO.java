@@ -3,10 +3,7 @@ package tgb.btc.web.vo.bean;
 import lombok.*;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealStatus;
-import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,4 +45,6 @@ public class DealVO {
     private String additionalVerificationImageId;
 
     private List<PaymentReceipt> paymentReceipts;
+
+    private DeliveryType deliveryType;
 }

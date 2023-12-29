@@ -42,6 +42,12 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                     }
                 },
                 {
+                    fieldLabel: 'Способ доставки',
+                    bind: {
+                        value: '{deal.deliveryType.displayName}'
+                    }
+                },
+                {
                     xtype: 'panel',
                     layout: {
                         type: 'hbox',

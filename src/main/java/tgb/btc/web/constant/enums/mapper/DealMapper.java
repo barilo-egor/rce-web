@@ -27,6 +27,9 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         ObjectNode dealStatus = JacksonUtil.getEmpty()
                 .put("name", deal.getDealStatus().name())
                 .put("displayName", deal.getDealStatus().getDisplayName());
+        ObjectNode deliveryType = JacksonUtil.getEmpty()
+                .put("name", Objects.nonNull(deal.getDeliveryType()) ? deal.getDeliveryType().name() : "отсутствует")
+                .put("displayName", Objects.nonNull(deal.getDeliveryType()) ? deal.getDeliveryType().getDisplayName() : "отсутствует");
         ArrayNode paymentReceipts = JacksonUtil.getEmptyArray().addAll(deal.getPaymentReceipts().stream()
                 .map(paymentReceipt -> JacksonUtil.getEmpty()
                         .put("format", paymentReceipt.getReceiptFormat().name())
@@ -49,6 +52,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         result.set("dealType", dealType);
         result.set("dealStatus", dealStatus);
         result.set("paymentReceipts", paymentReceipts);
+        result.set("deliveryType", deliveryType);
         return result;
     }
     );
