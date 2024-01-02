@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 //Все остальные страницы требуют аутентификации
-                .antMatchers()
+                .anyRequest()
                 .hasRole("ADMIN");
 
         // Доступ всех оставшихся юрлов
