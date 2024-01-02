@@ -51,9 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 //Все остальные страницы требуют аутентификации
-                .antMatchers(
-                        "/web/backUpDB"
-                )
+                .anyRequest()
                 .hasRole("ADMIN");
 
         // Доступ всех оставшихся юрлов
