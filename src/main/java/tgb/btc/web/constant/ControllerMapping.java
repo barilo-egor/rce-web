@@ -10,6 +10,8 @@ public interface ControllerMapping {
 
     String REGISTRATION = WEB + "/registration";
 
+    String BACKUP = WEB + "/backUpDB";
+
     String DEAL = WEB + "/deal";
     String BOT_DEAL =  DEAL + "/bot";
 
