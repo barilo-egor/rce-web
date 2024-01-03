@@ -52,6 +52,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //Все остальные страницы требуют аутентификации
                 .anyRequest()
+                .hasRole("ADMIN");
+
+        // Доступ всех оставшихся юрлов
+        httpSecurity
+                .authorizeRequests()
+                //Все остальные страницы требуют аутентификации
+                .anyRequest()
                 .hasAnyRole("ADMIN", "OPERATOR");
 
         // Конфигурация логина
