@@ -63,20 +63,7 @@ Ext.define('Main.view.registration.RegistrationPanel', {
                     valueField: 'name',
                     editable: false,
                     name: 'role',
-                    store: {
-                        fields: [
-                            'name', 'displayName'
-                        ],
-                        autoLoad: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: '/web/enum/roles',
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'body.data'
-                            }
-                        }
-                    },
+                    store: 'roleStore',
                     validator: ValidatorUtil.validateNotEmpty
                 },
                 {
