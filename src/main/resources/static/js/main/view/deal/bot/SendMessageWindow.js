@@ -3,7 +3,9 @@ Ext.define('Main.view.deal.bot.SendMessageWindow', {
     autoShow: true,
     draggable: false,
     modal: true,
-    title: 'Отправка сообщения пользователю ' + chatId,
+    bind: {
+        title: 'Отправка сообщения пользователю {chatId}',
+    },
     width: '90%',
     layout: {
         type: 'vbox',
@@ -18,7 +20,8 @@ Ext.define('Main.view.deal.bot.SendMessageWindow', {
             xtype: 'textareafield',
             reference: 'messageTextField',
             fieldLabel: 'Сообщение',
-            labelWidth: 75
+            labelWidth: 75,
+            validator: ValidatorUtil.validateNotEmpty
         },
         {
             xtype: 'container',
@@ -33,6 +36,7 @@ Ext.define('Main.view.deal.bot.SendMessageWindow', {
                     cls: 'blueButton',
                     maxWidth: 200,
                     handler: function (btn) {
+                        if (!ExtUtil.referenceQuery('messageTextField').isValid()) return
                         let chatId = btn.up('window').getViewModel().getData().chatId
                         ExtUtil.request({
                             url: '/web/deal/bot/sendMessage',
