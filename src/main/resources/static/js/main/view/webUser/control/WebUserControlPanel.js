@@ -22,7 +22,7 @@ Ext.define('Main.view.webUser.control.WebUserControlPanel', {
             padding: '10 10 0 10',
             store: {
                 storeId: 'webUserStore',
-                fields: [ 'username', 'role', 'isEnabled', 'chatId' ],
+                fields: [ 'pid', 'username', 'role', 'isEnabled', 'chatId' ],
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
@@ -35,6 +35,10 @@ Ext.define('Main.view.webUser.control.WebUserControlPanel', {
             },
             columns: [
                 {
+                    dataIndex: 'pid',
+                    hidden: true
+                },
+                {
                     dataIndex: 'username',
                     text: 'Логин',
                     flex: 0.5
@@ -42,12 +46,22 @@ Ext.define('Main.view.webUser.control.WebUserControlPanel', {
                 {
                     dataIndex: 'role',
                     text: 'Роль',
-                    flex: 0.5
+                    flex: 0.5,
+                    renderer: function (val) {
+                        return val.displayName
+                    }
                 },
                 {
                     dataIndex: 'isEnabled',
-                    text: 'Активность',
-                    width: 100
+                    text: 'Доступ',
+                    width: 100,
+                    renderer: function (val) {
+                        if (val) {
+                            return '<i class="fas fa-circle limeColor"></i>'
+                        } else {
+                            return '<i class="fas fa-circle redColor"></i>'
+                        }
+                    }
                 },
                 {
                     dataIndex: 'chatId',

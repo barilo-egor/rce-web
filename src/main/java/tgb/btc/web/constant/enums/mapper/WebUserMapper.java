@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public enum WebUserMapper implements ObjectNodeConvertable<WebUser> {
     FIND_ALL(webUser -> {
         ObjectNode result = JacksonUtil.getEmpty()
+                .put("pid", webUser.getPid())
                 .put("username", webUser.getUsername())
                 .put("isEnabled", webUser.isEnabled())
                 .put("chatId", webUser.getChatId());
@@ -24,7 +25,7 @@ public enum WebUserMapper implements ObjectNodeConvertable<WebUser> {
         if (roles.contains(RoleConstants.ROLE_ADMIN.name())) role = RoleConstants.ROLE_ADMIN;
         else if (roles.contains(RoleConstants.ROLE_OPERATOR.name())) role = RoleConstants.ROLE_OPERATOR;
         else role = RoleConstants.ROLE_USER;
-        result.put("role", role.getDisplayName());
+        result.set("role", role.mapFunction().apply(role));
         return result;
     });
 

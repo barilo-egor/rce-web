@@ -35,6 +35,11 @@ let ValidatorUtil = {
         return true
     },
 
+    validateChangeLogin: function (val) {
+        if (this.defaultValue === val) return true
+        return ValidatorUtil.validateLogin(val)
+    },
+
     validateLogin: function (val) {
         if (!val) return 'Введите значение'
         if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'

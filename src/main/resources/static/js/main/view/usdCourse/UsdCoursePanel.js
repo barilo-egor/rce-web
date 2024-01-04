@@ -109,8 +109,8 @@ Ext.define('Main.view.usdCourse.UsdCoursePanel', {
             buttons: [
                 {
                     text: 'Сохранить',
-                    iconCls: 'fas fa-save greenBtn',
-                    cls: 'greenBtn',
+                    iconCls: 'fas fa-save greenButton',
+                    cls: 'greenButton',
                     handler: 'onSaveClick'
                 },
                 {

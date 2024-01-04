@@ -17,6 +17,8 @@ public class FailureResponse extends WebResponse {
      */
     private final Class<?> exceptionClass;
 
+    private final boolean success = false;
+
 
     /**
      * Конструктор

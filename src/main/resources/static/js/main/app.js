@@ -20,6 +20,7 @@ Ext.application({
         'Main.store.enum.FiatCurrenciesStore',
         'Main.store.enum.DealTypesStore',
         'Main.store.api.ApiUsersStore',
-        'Main.store.deal.BotDealStore'
+        'Main.store.deal.BotDealStore',
+        'Main.store.enum.RoleStore'
     ]
 });

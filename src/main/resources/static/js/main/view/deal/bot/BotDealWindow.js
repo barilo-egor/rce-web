@@ -177,7 +177,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
                         {
                             text: 'Подтвердить',
                             handler: 'confirmDeal',
-                            cls: 'greenBtn'
+                            cls: 'greenButton'
                         },
                         {
                             text: 'Запросить верификацию',
