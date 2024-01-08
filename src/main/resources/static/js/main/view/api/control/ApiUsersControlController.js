@@ -76,7 +76,8 @@ Ext.define('Main.view.api.control.ApiUsersControlController', {
             ).show()
     },
 
-    hasAccessClick: function (me) {
-
+    copyToken: function (btn) {
+        ExtUtil.toClipboard(ExtUtil.referenceQuery('tokenField').getValue())
+        Ext.toast('Токен скопирован в буфер обмена.')
     }
 })

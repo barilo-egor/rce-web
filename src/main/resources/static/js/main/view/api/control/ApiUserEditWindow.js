@@ -62,7 +62,36 @@ Ext.define('Main.view.api.control.ApiUserEditWindow', {
                     validator: ValidatorUtil.validateId,
                     bind: {
                         value: '{apiUser.id}'
-                    }
+                    },
+                },
+                {
+                    xtype: 'container',
+                    padding: '0 0 5 0',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
+                    items: [
+                        {
+                            flex: 0.9,
+                            xtype: 'textfield',
+                            reference: 'tokenField',
+                            fieldLabel: 'Токен',
+                            labelWidth: 120,
+                            editable: false,
+                            bind: {
+                                value: '{apiUser.token}'
+                            }
+                        },
+                        {
+                            flex: 0.1,
+                            xtype: 'button',
+                            iconCls: 'fas fa-copy noColorBtn',
+                            cls: 'noColorBtn',
+                            margin: '0 0 0 5',
+                            handler: 'copyToken'
+                        }
+                    ]
                 },
                 {
                     xtype: 'textfield',
