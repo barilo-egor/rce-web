@@ -22,7 +22,8 @@ Ext.define('Main.view.paymentTypes.PaymentTypesPanel', {
                         Ext.create('Main.view.paymentTypes.PaymentTypeWindow', {
                             viewModel: {
                                 data: {
-                                    title: 'Создание типа оплаты'
+                                    title: 'Создание типа оплаты',
+                                    isCreate: true
                                 }
                             }
                         })

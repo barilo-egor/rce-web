@@ -25,9 +25,17 @@ Ext.define('Main.view.paymentTypes.PaymentTypeForm', {
             fieldLabel: 'Название',
             emptyText: 'Введите название',
             name: 'name',
-            validator: ValidatorUtil.validateNotEmpty,
+            validator: ValidatorUtil.validatePaymentTypeName,
+            msgTarget: 'side',
             bind: {
                 value: '{paymentType.name}'
+            },
+            listeners: {
+                afterrender: function (me) {
+                    let data = me.up('window').getViewModel().getData()
+                    if (!data.isCreate)
+                        me.defaultValue = data.paymentType.name
+                }
             }
         },
         {

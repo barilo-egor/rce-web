@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.PaymentRequisiteMapper;
 import tgb.btc.web.constant.enums.mapper.PaymentTypeMapper;
@@ -78,4 +79,12 @@ public class PaymentTypesController extends BaseController {
         paymentTypeService.remove(pid);
         return SuccessResponseUtil.toast("Тип оплаты успешно удален.");
     }
+
+    @GetMapping("/isNameFree")
+    @ResponseBody
+    public SuccessResponse<?> isUsernameFree(@RequestParam String name) {
+        return SuccessResponseUtil.getDataObjectNode(JacksonUtil.getEmpty()
+                .put("result", paymentTypeService.isNameFree(name)));
+    }
+
 }

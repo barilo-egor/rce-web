@@ -1,7 +1,7 @@
 Ext.define('Main.view.paymentTypes.requisites.CreateRequisiteWindow', {
     extend: 'Ext.window.Window',
     width: '85%',
-    height: '23%',
+    height: '30%',
     modal: true,
     autoShow: true,
     title: 'Создание реквизита',

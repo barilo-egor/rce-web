@@ -68,4 +68,27 @@ let ValidatorUtil = {
         if (passwordInput.value !== val) return 'Пароли не совпадают'
         return true
     },
+
+    validatePaymentTypeName: function (val) {
+        if (!val) return 'Введите значение'
+        let result = true
+        if (this.up('window').getViewModel().getData().isCreate || this.defaultValue !== val) {
+            Ext.Ajax.request({
+                url: '/web/paymentTypes/isNameFree',
+                method: 'GET',
+                params: {
+                    name: val
+                },
+                async: false,
+                success: function(rs) {
+                    let response = Ext.JSON.decode(rs.responseText)
+                    if (!response.body.data.result) result = 'Данное название уже занято'
+                },
+                failure: function () {
+                    Ext.Msg.alert('Ошибка', 'Ошибка при попытке проверки названия.')
+                }
+            })
+        }
+        return result
+    }
 }
