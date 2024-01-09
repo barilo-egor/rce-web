@@ -8,7 +8,7 @@ import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.exception.EntityUniqueFieldException;
 import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.web.vo.form.PaymentTypeVO;
 import tgb.btc.web.vo.form.RequisiteVO;
 
@@ -22,11 +22,11 @@ public class PaymentTypeProcessService {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
 
-    private PaymentTypeService paymentTypeService;
+    private PaymentRequisiteService paymentRequisiteService;
 
     @Autowired
-    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
-        this.paymentTypeService = paymentTypeService;
+    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
+        this.paymentRequisiteService = paymentRequisiteService;
     }
 
     @Autowired
@@ -80,7 +80,7 @@ public class PaymentTypeProcessService {
                 paymentRequisiteRepository.save(paymentRequisite);
             }
         }
-        paymentTypeService.remove(paymentType.getPid());
+        paymentRequisiteService.removeOrder(paymentType.getPid());
         return paymentType;
     }
 }
