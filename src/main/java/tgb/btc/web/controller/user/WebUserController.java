@@ -42,4 +42,11 @@ public class WebUserController extends BaseController {
         webUserProcessService.update(webUser);
         return SuccessResponseUtil.toast("Пользователь " + webUser.getUsername() + " обновлен.");
     }
+
+    @PostMapping("/remove")
+    @ResponseBody
+    public SuccessResponse<?> update(@RequestParam Long pid) {
+        webUserRepository.deleteById(pid);
+        return SuccessResponseUtil.toast("Пользователь удален.");
+    }
 }

@@ -13,5 +13,30 @@ Ext.define('Main.view.webUser.control.WebUserControlController', {
                 }
             }
         })
+    },
+
+    deleteUser: function (view, rowIndex, collIndex, item, e, record) {
+        Ext.Msg.show({
+            title: 'Удаление веб-пользователя',
+            message: 'Вы действительно хотите удалить веб-пользователя <b>' + record.getData().username + '</b>?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+                if (btn === 'yes') {
+                    ExtUtil.loadingByReference('webUserControlPanel')
+                    ExtUtil.request({
+                        url: '/web/user/remove',
+                        params: {
+                            pid: record.getData().pid
+                        },
+                        loadingComponent: ExtUtil.referenceQuery('webUserControlPanel'),
+                        success: function (response) {
+                            Ext.getStore('webUserStore').reload()
+                            ExtUtil.turnOffLoadingByReference('webUserControlPanel')
+                        }
+                    })
+                }
+            }
+        });
     }
 })

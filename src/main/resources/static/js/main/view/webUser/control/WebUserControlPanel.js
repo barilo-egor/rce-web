@@ -1,6 +1,7 @@
 Ext.define('Main.view.webUser.control.WebUserControlPanel', {
     xtype: 'webusercontrolpanel',
     extend: 'Main.view.components.FramePanel',
+    reference: 'webUserControlPanel',
     requires: [
         'Main.view.webUser.control.WebUserControlController'
     ],
@@ -75,6 +76,16 @@ Ext.define('Main.view.webUser.control.WebUserControlPanel', {
                     items: [
                         {
                             iconCls: 'far fa-arrow-alt-circle-right'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    handler: 'deleteUser',
+                    width: 30,
+                    items: [
+                        {
+                            iconCls: 'fas fa-minus redColor'
                         }
                     ]
                 }
