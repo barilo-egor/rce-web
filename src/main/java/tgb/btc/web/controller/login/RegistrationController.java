@@ -11,7 +11,7 @@ import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.vo.form.CredentialsVO;
+import tgb.btc.web.vo.form.RegisterWebUserForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -43,8 +43,8 @@ public class RegistrationController extends BaseController {
 
     @PostMapping("/registerUser")
     @ResponseBody
-    public ObjectNode registerUser(@RequestBody CredentialsVO credentialsVO, @RequestParam(required = false) RoleConstants role) {
-        webUserService.save(credentialsVO.getUsername(), credentialsVO.getPassword(), role);
+    public ObjectNode registerUser(@RequestBody RegisterWebUserForm registerWebUserForm, @RequestParam(required = false) RoleConstants role) {
+        webUserService.save(registerWebUserForm.getUsername(), registerWebUserForm.getPassword(), role, registerWebUserForm.getChatId());
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("success", true);
         return objectNode;
