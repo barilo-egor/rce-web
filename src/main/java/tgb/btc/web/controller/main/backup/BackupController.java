@@ -15,7 +15,7 @@ public class BackupController extends BaseController {
 
     private BackupService backupService;
 
-    @Autowired
+    @Autowired(required = false)
     public void setBackupService(BackupService backupService) {
         this.backupService = backupService;
     }
