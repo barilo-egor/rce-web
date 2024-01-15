@@ -13,7 +13,7 @@ public interface ControllerMapping {
     String BACKUP = WEB + "/backUpDB";
 
     String DEAL = WEB + "/deal";
-    String BOT_DEAL =  DEAL + "/bot";
+    String BOT_DEAL = DEAL + "/bot";
 
     String PAYMENT_TYPES = WEB + "/paymentTypes";
 
@@ -26,4 +26,6 @@ public interface ControllerMapping {
     String ROLES = WEB + "/role";
 
     String WEB_USER = WEB + "/user";
+
+    String PROPERTIES = WEB + "/properties";
 }

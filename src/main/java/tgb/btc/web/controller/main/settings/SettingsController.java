@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.CryptoCurrencyService;
@@ -115,12 +115,12 @@ public class SettingsController extends BaseController {
     @ResponseBody
     public ObjectNode saveUsdCourses(@RequestBody List<CourseVO> courses) {
         for (CourseVO courseVO : courses) {
-            CommonProperties.VARIABLE.setProperty(VariableType.USD_COURSE.getKey() + "."
+            PropertiesPath.VARIABLE_PROPERTIES.setProperty(VariableType.USD_COURSE.getKey() + "."
                     + courseVO.getFiatCurrency().getCode() + "."
                     + courseVO.getDealType().getKey() + "."
                     + courseVO.getCryptoCurrency().getShortName(), courseVO.getValue());
         }
-        CommonProperties.VARIABLE.reload();
+        PropertiesPath.VARIABLE_PROPERTIES.reload();
         return null;
     }
 }
