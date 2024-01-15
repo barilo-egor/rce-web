@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +12,8 @@ import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.CommonProperties;
+import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
-import tgb.btc.library.constants.enums.properties.WebProperties;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
@@ -74,12 +71,12 @@ public class ApiController extends BaseController {
     @PostMapping("/new")
     @ResponseBody
     public ObjectNode newDeal(@RequestParam(required = false) String token,
-                               @RequestParam(required = false) DealType dealType,
-                               @RequestParam(required = false) BigDecimal amount,
-                               @RequestParam(required = false) BigDecimal cryptoAmount,
-                               @RequestParam(required = false) CryptoCurrency cryptoCurrency,
-                               @RequestParam(required = false) String requisite,
-                               @RequestParam(required = false) FiatCurrency fiatCurrency) {
+                              @RequestParam(required = false) DealType dealType,
+                              @RequestParam(required = false) BigDecimal amount,
+                              @RequestParam(required = false) BigDecimal cryptoAmount,
+                              @RequestParam(required = false) CryptoCurrency cryptoCurrency,
+                              @RequestParam(required = false) String requisite,
+                              @RequestParam(required = false) FiatCurrency fiatCurrency) {
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) {
             return apiStatusCode.toJson();
@@ -100,7 +97,7 @@ public class ApiController extends BaseController {
         } else {
             ApiDeal apiDeal = apiDealRepository.getByPid(id);
             LocalDateTime now = LocalDateTime.now();
-            if (now.minusMinutes(CommonProperties.VARIABLE.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+            if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
                 return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
@@ -147,13 +144,13 @@ public class ApiController extends BaseController {
     public ObjectNode getUrl() {
         return JacksonUtil.getEmpty()
                 .put("success", true)
-                .put("data", WebProperties.SERVER.getString("main.url"));
+                .put("data", PropertiesPath.SERVER_PROPERTIES.getString("main.url"));
     }
 
     @GetMapping("/getFiat")
     @ResponseBody
     public String getFiat() {
-        return CommonProperties.CONFIG.getString("bot.fiat.currencies");
+        return PropertiesPath.CONFIG_PROPERTIES.getString("bot.fiat.currencies");
     }
 
     @GetMapping("/statusCodes/new")
