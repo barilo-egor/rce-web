@@ -1,6 +1,7 @@
 Ext.define('Main.view.paymentTypes.RequisiteGrid', {
     extend: 'Ext.grid.Panel',
     xtype: 'requisitegrid',
+    reference: 'requisiteGrid',
     padding: '20 20 20 20',
     title: 'Реквизиты',
     store: {

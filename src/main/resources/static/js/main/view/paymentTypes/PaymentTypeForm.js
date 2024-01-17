@@ -80,8 +80,26 @@ Ext.define('Main.view.paymentTypes.PaymentTypeForm', {
             listeners: {
                 afterrender: function (me) {
                     let viewModel = me.up('window').getViewModel().getData()
-                    if (!viewModel.paymentType) return
-                    me.setValue(me.getStore().findRecord('name', viewModel.paymentType.dealType))
+                    if (!viewModel.isCreate) {
+                        me.setValue(me.getStore().findRecord('name', viewModel.paymentType.dealType))
+                        me.setDisabled(true)
+                    } else ExtUtil.forceComboFirstValue(me)
+                },
+                change: function (me, newValue, oldValue) {
+                    if (newValue === 'SELL') {
+                        let isDynamicOnField = ExtUtil.referenceQuery('isDynamicOnField')
+                        isDynamicOnField.setValue(false)
+                        isDynamicOnField.hide()
+                        ExtUtil.referenceQuery('dynamicInfoPanel').hide()
+                        ExtUtil.referenceQuery('requisiteGrid').hide()
+                        Ext.getStore('createPaymentTypeRequisitesStore').removeAll()
+                    } else {
+                        let isDynamicOnField = ExtUtil.referenceQuery('isDynamicOnField')
+                        isDynamicOnField.setValue(true)
+                        isDynamicOnField.show()
+                        ExtUtil.referenceQuery('dynamicInfoPanel').show()
+                        ExtUtil.referenceQuery('requisiteGrid').show()
+                    }
                 }
             }
         },
@@ -101,6 +119,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypeForm', {
         {
             xtype: 'checkbox',
             id: 'isDynamicOnField',
+            reference: 'isDynamicOnField',
             fieldLabel: 'Динамические реквизиты',
             name: 'isDynamicOn',
             inputValue: true,
@@ -112,6 +131,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypeForm', {
         },
         {
             xtype: 'panel',
+            reference: 'dynamicInfoPanel',
             frame: true,
             padding: '5 5 5 5',
             style: {
