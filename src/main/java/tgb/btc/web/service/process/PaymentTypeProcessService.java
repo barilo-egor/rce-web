@@ -51,7 +51,7 @@ public class PaymentTypeProcessService {
         paymentType.setName(paymentTypeVO.getName());
         paymentType.setOn(paymentTypeVO.getIsOn());
         paymentType.setFiatCurrency(paymentTypeVO.getFiatCurrency());
-        paymentType.setDealType(paymentTypeVO.getDealType());
+        if (Objects.nonNull(paymentTypeVO.getDealType())) paymentType.setDealType(paymentTypeVO.getDealType());
         paymentType.setMinSum(paymentTypeVO.getMinSum());
         paymentType.setDynamicOn(paymentTypeVO.getIsDynamicOn());
         paymentType = paymentTypeRepository.save(paymentType);
