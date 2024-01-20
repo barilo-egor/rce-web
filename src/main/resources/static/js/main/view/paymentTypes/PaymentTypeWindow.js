@@ -7,10 +7,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypeWindow', {
     height: '95%',
     modal: true,
     autoShow: true,
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+    layout: 'fit',
     requires: [
         'Main.view.paymentTypes.CreatePaymentTypeController',
         'Main.view.paymentTypes.requisites.CreateRequisiteWindow',
@@ -33,10 +30,19 @@ Ext.define('Main.view.paymentTypes.PaymentTypeWindow', {
     ],
     items: [
         {
-            xtype: 'paymenttypeform'
-        },
-        {
-            xtype: 'requisitegrid'
+            xtype: 'container',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'paymenttypeform'
+                },
+                {
+                    xtype: 'requisitegrid'
+                }
+            ]
         }
     ]
 })

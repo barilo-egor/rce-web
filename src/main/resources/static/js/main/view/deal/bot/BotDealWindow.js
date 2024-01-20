@@ -18,6 +18,7 @@ Ext.define('Main.view.deal.bot.BotDealWindow', {
         {
             flex: 0.9,
             xtype: 'panel',
+            scrollable: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
