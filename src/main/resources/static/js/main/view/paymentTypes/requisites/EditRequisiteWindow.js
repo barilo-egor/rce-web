@@ -1,10 +1,9 @@
 Ext.define('Main.view.paymentTypes.requisites.EditRequisiteWindow', {
     extend: 'Ext.window.Window',
     width: '85%',
-    height: '23%',
     modal: true,
     autoShow: true,
-    title: 'Создание реквизита',
+    title: 'Редактирование реквизита',
     layout: 'fit',
     buttonAlign: 'center',
     requires: ['Main.view.paymentTypes.requisites.RequisiteForm'],

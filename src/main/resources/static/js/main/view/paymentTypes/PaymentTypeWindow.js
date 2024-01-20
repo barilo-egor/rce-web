@@ -35,6 +35,7 @@ Ext.define('Main.view.paymentTypes.PaymentTypeWindow', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            scrollable: true,
             items: [
                 {
                     xtype: 'paymenttypeform'

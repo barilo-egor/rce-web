@@ -3,6 +3,7 @@ Ext.define('Main.view.paymentTypes.requisites.RequisiteForm', {
     xtype: 'requisiteform',
     id: 'requisiteForm',
     padding: '20 20 20 20',
+    scrollable: true,
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -22,7 +23,7 @@ Ext.define('Main.view.paymentTypes.requisites.RequisiteForm', {
             xtype: 'textarea',
             fieldLabel: 'Резквизит',
             emptyText: 'То, что будет отображаться пользователю',
-            height: '80%',
+            height: 200,
             name: 'requisite',
             bind: {
                 value: '{requisite.requisite}'
