@@ -23,4 +23,9 @@ public class TokenTransmitter implements ITokenTransmitter {
         });
         thread.start();
     }
+
+    @Override
+    public void remove(Long aLong) {
+        MainWebController.AVAILABLE_TOKENS.remove(aLong);
+    }
 }
