@@ -8,11 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.service.bean.web.RoleService;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.vo.form.RegisterWebUserForm;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
@@ -25,6 +27,13 @@ public class RegistrationController extends BaseController {
 
     private WebUserRepository webUserRepository;
 
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
@@ -33,6 +42,11 @@ public class RegistrationController extends BaseController {
     @Autowired
     public void setWebUserService(WebUserService webUserService) {
         this.webUserService = webUserService;
+    }
+
+    @PostConstruct
+    public void postConstruct(){
+        roleService.initRoles();
     }
 
     @GetMapping
