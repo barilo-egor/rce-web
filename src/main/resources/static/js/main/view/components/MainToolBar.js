@@ -72,7 +72,7 @@ Ext.define('Main.view.components.MainToolBar', {
             xtype: 'button',
             iconCls: 'fas fa-shopping-cart menu-icon-color',
             bind: {
-                hidden: '{isNotAdmin}'
+                hidden: '{isNotAdmin && isNotOperator}'
             },
             menu: [
                 {

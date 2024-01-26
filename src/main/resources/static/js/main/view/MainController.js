@@ -10,7 +10,8 @@ Ext.define('Main.view.MainController', {
             success: function (response) {
                 me.setViewModel({
                     data: {
-                        isNotAdmin: response.body.data.filter(role => role.name === 'ROLE_ADMIN').length === 0
+                        isNotAdmin: response.body.data.filter(role => role.name === 'ROLE_ADMIN').length === 0,
+                        isNotOperator: response.body.data.filter(role => role.name === 'ROLE_OPERATOR').length === 0
                     }
                 })
             }
