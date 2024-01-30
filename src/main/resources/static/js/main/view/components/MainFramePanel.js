@@ -30,7 +30,8 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.bulkDiscount.BulkDiscountAddForm',
         'Main.view.paymentTypes.PaymentTypesPanel',
         'Main.view.deal.bot.BotDealsPanel',
-        'Main.view.webUser.control.WebUserControlPanel'
+        'Main.view.webUser.control.WebUserControlPanel',
+        'Main.view.games.slotreel.SlotReelPanel'
     ],
     layout: {
         type: 'fit'

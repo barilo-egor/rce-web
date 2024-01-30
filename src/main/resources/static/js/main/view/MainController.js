@@ -81,5 +81,9 @@ Ext.define('Main.view.MainController', {
 
     webUserControlClick: function (btn) {
         this.mainToolBarClick(btn, 'webusercontrolpanel')
+    },
+
+    slotReelClick: function (btn) {
+        this.mainToolBarClick(btn, 'slotreelpanel')
     }
 })

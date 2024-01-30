@@ -14,41 +14,4 @@ import java.util.Collections;
 @RequestMapping(ControllerMapping.SLOT_REEL)
 public class SlotReelController extends BaseController {
 
-    /**
-     * {
-     *     body: {
-     *         data: {
-     *             isOn: true,
-     *             trySum: 1,
-     *             prisesSums: {
-     *                 triple: {
-     *                     seven: 1,
-     *                     lemon: 1,
-     *                     cherry: 1
-     *                 },
-     *                 double: {
-     *                     seven: 1,
-     *                     lemon: 1,
-     *                     cherry: 1
-     *                 }
-     *             },
-     *             messages: {
-     *                 scroll: qwe,
-     *                 win: qwe,
-     *                 lose: qwe,
-     *                 start: qwe,
-     *                 balanceEmpty: qwe,
-     *                 tryCost: qwe
-     *             },
-     *             tryButtonText: qwe
-     *         }
-     *     }
-     *
-     * }
-     * @return
-     */
-    @GetMapping("/getValues")
-    public SuccessResponse<?> getValues() {
-        return SuccessResponseUtil.data(Collections.emptyList(), s -> null);
-    }
 }

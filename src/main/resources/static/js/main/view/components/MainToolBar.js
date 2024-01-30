@@ -92,7 +92,17 @@ Ext.define('Main.view.components.MainToolBar', {
                     handler: 'botDealsClick'
                 }
             ]
-
+        },
+        {
+            xtype: 'button',
+            iconCls: 'fas fa-gamepad menu-icon-color',
+            menu: [
+                {
+                    text: 'Барабан',
+                    iconCls: 'fas fa-drum menu-icon-color',
+                    handler: 'slotReelClick'
+                }
+            ]
         }
     ]
 })
