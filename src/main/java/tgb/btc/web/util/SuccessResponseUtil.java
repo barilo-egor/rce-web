@@ -22,10 +22,6 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects));
     }
 
-    public static <T> SuccessResponse<?> data(Collection<T> objects, Function<T, ObjectNode> mapper) {
-        return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
-    }
-
     public static <T> SuccessResponse<?> data(T[] objects, Function<T, ObjectNode> mapper) {
         return getDataObjectNode(JacksonUtil.toArrayNode(List.of(objects), mapper));
     }
