@@ -32,4 +32,6 @@ public interface ControllerMapping {
     String GAMES = WEB + "/games";
 
     String SLOT_REEL = GAMES + "/slotReel";
+
+    String TICKET = WEB + "/ticket";
 }
