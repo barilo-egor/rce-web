@@ -3,13 +3,13 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
     extend: 'Main.view.components.FramePanel',
     reference: 'slotReelPanel',
     requires: [
-        // 'Main.view.webUser.control.WebUserControlController'
+        'Main.view.games.slotreel.SlotReelController'
     ],
     title: {
         xtype: 'mainframetitle',
         text: 'Управление игрой "Барабан"'
     },
-    // controller: 'webUserControlController',
+    controller: 'slotReelController',
     region: 'center',
     scrollable: true,
     layout: {
@@ -18,55 +18,11 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
     },
 
     listeners: {
-        beforerender: function (me) {
-            ExtUtil.request({
-                async: false,
-                method: 'GET',
-                url: '/web/properties/getPropertiesValues',
-                params: {
-                    propertiesPath: 'SLOT_REEL_PROPERTIES',
-                    keys: [
-                        'try',
-                        'seven.triple', 'seven.double',
-                        'lemon.triple', 'lemon.double',
-                        'cherry.triple', 'cherry.double',
-                        'bar.triple', 'bar.double',
-                        'button.try.text', 'button.close.text'
-                    ]
-                },
-                success: function (response) {
-                    let data = response.body.data
-                    for (let entry of data) {
-                        let field = ExtUtil.referenceQuery(entry.key + '-field')
-                        field.setValue(entry.value)
-                        field.defaultValue = entry.value
-                    }
-                }
-            })
-            ExtUtil.request({
-                async: false,
-                method: 'GET',
-                url: '/web/properties/getPropertiesValues',
-                params: {
-                    propertiesPath: 'SLOT_REEL_MESSAGE',
-                    keys: [
-                        'scroll', 'win', 'lose', 'start', 'balance.empty', 'try.cost'
-                    ]
-                },
-                success: function (response) {
-                    let data = response.body.data
-                    for (let entry of data) {
-                        let field = ExtUtil.referenceQuery(entry.key + '-field')
-                        field.setValue(entry.value)
-                        field.defaultValue = entry.value
-                    }
-                }
-            })
-        }
+        beforerender: 'beforerender'
     },
 
     defaults: {
-        margin: '0 20 0 20'
+        margin: '10 20 0 20'
     },
     items: [
         {
@@ -75,7 +31,10 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
             fieldLabel: 'Сумма за попытку',
             hideTrigger: true,
             labelAlign: 'right',
-            labelWidth: 120
+            labelWidth: 120,
+            listeners: {
+                change: 'change'
+            }
         },
         {
             xtype: 'fieldset',
@@ -95,6 +54,9 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
                         labelAlign: 'right',
                         labelWidth: 40,
                         xtype: 'numberfield',
+                        listeners: {
+                            change: 'change'
+                        }
                     },
                     layout: {
                         type: 'vbox',
@@ -127,7 +89,10 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
                         hideTrigger: true,
                         labelAlign: 'right',
                         labelWidth: 40,
-                        xtype: 'numberfield'
+                        xtype: 'numberfield',
+                        listeners: {
+                            change: 'change'
+                        }
                     },
                     layout: {
                         type: 'vbox',
@@ -160,7 +125,10 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
             fieldLabel: 'Кнопка прокрута',
             labelAlign: 'right',
             labelWidth: 140,
-            margin: '10 0 0 0'
+            // margin: '10 0 0 0',
+            listeners: {
+                change: 'change'
+            }
         },
         {
             xtype: 'textfield',
@@ -168,7 +136,9 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
             fieldLabel: 'Кнопка закрытия',
             labelAlign: 'right',
             labelWidth: 140,
-            margin: '10 0 0 0'
+            listeners: {
+                change: 'change'
+            }
         },
         {
             xtype: 'fieldset',
@@ -179,6 +149,9 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
                 labelAlign: 'right',
                 labelWidth: 100,
                 xtype: 'textarea',
+                listeners: {
+                    change: 'change'
+                }
             },
             layout: {
                 type: 'vbox',
@@ -213,7 +186,20 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
         },
         {
             xtype: 'container',
-
+            layout: {
+                type: 'hbox',
+                align: 'center',
+                pack: 'middle'
+            },
+            items: [
+                {
+                    xtype: 'button',
+                    text: 'Сохранить',
+                    cls: 'blueButton',
+                    handler: 'saveButtonClick',
+                    margin: '0 0 20 0'
+                }
+            ]
         }
     ]
 })

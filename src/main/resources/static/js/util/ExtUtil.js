@@ -74,6 +74,8 @@ let ExtUtil = {
         requestObj.failure = function(response) {
             if (config.loadingComponent) {
                 config.loadingComponent.setLoading(false)
+            } else if (config.loadingComponentRef) {
+                ExtUtil.turnOffLoadingByReference(config.loadingComponentRef)
             }
             failure(response)
         }
@@ -110,8 +112,7 @@ let ExtUtil = {
             msg: 'Ошибка при выполнении запроса. Статус: ' + response.status + '.Описание: ' + response.statusText,
             buttons: Ext.Msg.OK,
             icon: Ext.Msg.ERROR,
-            width: 100,
-            maxWidth: 100,
+            width: 500,
             style: {
                 'white-space': 'normal'
             }
