@@ -1,6 +1,7 @@
 package tgb.btc.web.controller.main.operator;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
@@ -15,10 +16,12 @@ import tgb.btc.web.service.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
+import java.security.Principal;
 import java.util.Objects;
 
 @RestController
 @RequestMapping(ControllerMapping.BOT_DEAL)
+@Slf4j
 public class BotDealController extends BaseController {
 
     private WebDealService webDealService;
@@ -67,8 +70,9 @@ public class BotDealController extends BaseController {
     }
 
     @PostMapping("/delete")
-    public SuccessResponse<?> delete(Long pid, Boolean isBanUser) {
+    public SuccessResponse<?> delete(Principal principal, Long pid, Boolean isBanUser) {
         dealService.deleteDeal(pid, isBanUser);
+        log.info("Сделка " + pid + " удалена из веба юзером " + principal.getName());
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
 
