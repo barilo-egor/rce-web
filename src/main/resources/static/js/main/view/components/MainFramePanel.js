@@ -31,7 +31,8 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.paymentTypes.PaymentTypesPanel',
         'Main.view.deal.bot.BotDealsPanel',
         'Main.view.webUser.control.WebUserControlPanel',
-        'Main.view.games.slotreel.SlotReelPanel'
+        'Main.view.games.slotreel.SlotReelPanel',
+        'Main.view.games.rps.RPSPanel',
     ],
     layout: {
         type: 'fit'

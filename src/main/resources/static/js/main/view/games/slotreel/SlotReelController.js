@@ -22,7 +22,7 @@ Ext.define('Main.view.games.slotreel.SlotReelController', {
             params: {
                 propertiesPath: 'SLOT_REEL_PROPERTIES',
                 keys: [
-                    'try',
+                    'SLOT_REEL', 'try',
                     'seven.triple', 'seven.double',
                     'lemon.triple', 'lemon.double',
                     'cherry.triple', 'cherry.double',
@@ -64,7 +64,7 @@ Ext.define('Main.view.games.slotreel.SlotReelController', {
 
     saveButtonClick: function (me) {
         ExtUtil.loadingByReference('slotReelPanel')
-        let configKeys = ['try',
+        let configKeys = ['SLOT_REEL', 'try',
             'seven.triple', 'seven.double',
             'lemon.triple', 'lemon.double',
             'cherry.triple', 'cherry.double',

@@ -121,11 +121,20 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
         },
         {
             xtype: 'textfield',
+            reference: 'SLOT_REEL-field',
+            fieldLabel: 'Кнопка в меню',
+            labelAlign: 'right',
+            labelWidth: 140,
+            listeners: {
+                change: 'change'
+            }
+        },
+        {
+            xtype: 'textfield',
             reference: 'button.try.text-field',
             fieldLabel: 'Кнопка прокрута',
             labelAlign: 'right',
             labelWidth: 140,
-            // margin: '10 0 0 0',
             listeners: {
                 change: 'change'
             }

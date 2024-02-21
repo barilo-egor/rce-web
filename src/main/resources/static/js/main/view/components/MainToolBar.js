@@ -101,6 +101,11 @@ Ext.define('Main.view.components.MainToolBar', {
                     text: 'Барабан',
                     iconCls: 'fas fa-drum menu-icon-color',
                     handler: 'slotReelClick'
+                },
+                {
+                    text: 'КНБ',
+                    iconCls: 'fas fa-hand-rock menu-icon-color',
+                    handler: 'rpsClick'
                 }
             ]
         }

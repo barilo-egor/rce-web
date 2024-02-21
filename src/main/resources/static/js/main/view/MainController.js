@@ -85,5 +85,9 @@ Ext.define('Main.view.MainController', {
 
     slotReelClick: function (btn) {
         this.mainToolBarClick(btn, 'slotreelpanel')
+    },
+
+    rpsClick: function (btn) {
+        this.mainToolBarClick(btn, 'rpspanel')
     }
 })
