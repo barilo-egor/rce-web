@@ -37,13 +37,6 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             ]
         };
         for (let dealType of fiatCurrency.dealTypes) {
-            let store = Ext.create('Main.view.bulkDiscount.store.BulkDiscountStore');
-            for (let bulkDiscount of dealType.bulkDiscounts) {
-                bulkDiscount.fiatCurrency = fiatCurrency.name;
-                bulkDiscount.dealType = dealType.name;
-            }
-            store.getProxy().setData(dealType.bulkDiscounts);
-            store.load();
             let dealTypeTabPanel = {
                 title: dealType.displayName,
                 layout: {
@@ -51,13 +44,37 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                 },
                 items: [
                     {
-                        xtype: 'bulkdiscountgridpanel',
-                        store: store,
-                        fiatCurrency: fiatCurrency.name,
-                        dealType: dealType.name
+                        xtype: 'tabpanel',
+                        items: []
                     }
                 ]
             };
+            for (let cryptoCurrency of dealType.cryptoCurrencies) {
+                let store = Ext.create('Main.view.bulkDiscount.store.BulkDiscountStore');
+                for (let bulkDiscount of cryptoCurrency.bulkDiscounts) {
+                    bulkDiscount.fiatCurrency = fiatCurrency.name;
+                    bulkDiscount.dealType = dealType.name;
+                    bulkDiscount.cryptoCurrency = cryptoCurrency.name
+                }
+                store.getProxy().setData(cryptoCurrency.bulkDiscounts);
+                store.load();
+                let cryptoCurrencyTabPanel = {
+                    title: cryptoCurrency.name,
+                    layout: {
+                        type: 'fit'
+                    },
+                    items: [
+                        {
+                            xtype: 'bulkdiscountgridpanel',
+                            store: store,
+                            fiatCurrency: fiatCurrency.name,
+                            dealType: dealType.name,
+                            cryptoCurrency: cryptoCurrency.name
+                        }
+                    ]
+                };
+                dealTypeTabPanel.items[0].items.push(cryptoCurrencyTabPanel);
+            }
             fiatCurrencyTabPanel.items[0].items.push(dealTypeTabPanel);
         }
         return fiatCurrencyTabPanel;
@@ -70,7 +87,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             sum: ExtUtil.idQuery('sum').getValue(),
             percent: ExtUtil.idQuery('percent').getValue(),
             fiatCurrency: ExtUtil.idQuery('fiatCurrency').getValue(),
-            dealType: ExtUtil.idQuery('dealType').getValue()
+            dealType: ExtUtil.idQuery('dealType').getValue(),
+            cryptoCurrency: ExtUtil.idQuery('cryptoCurrency').getValue(),
         };
         me.saveDiscountRequest(bulkDiscount, oldSum);
         btn.up('window').close();
@@ -84,7 +102,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             jsonData: bulkDiscount,
             success: function () {
                 for (let grid of Ext.ComponentQuery.query('grid')) {
-                    if (grid.fiatCurrency === bulkDiscount.fiatCurrency && grid.dealType === bulkDiscount.dealType) {
+                    if (grid.fiatCurrency === bulkDiscount.fiatCurrency && grid.dealType === bulkDiscount.dealType
+                        && grid.cryptoCurrency === bulkDiscount.cryptoCurrency) {
                         let store = grid.getStore();
                         let recs = store.getData().getRange();
                         if (oldSum) {
@@ -104,6 +123,7 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                                 percent: bulkDiscount.percent,
                                 fiatCurrency: bulkDiscount.fiatCurrency,
                                 dealType: bulkDiscount.dealType,
+                                cryptoCurrency: bulkDiscount.cryptoCurrency
                             });
                             store.add(newRec);
                         }
@@ -134,7 +154,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
             viewModel: {
                 data: {
                     fiatCurrency: grid.fiatCurrency,
-                    dealType: grid.dealType
+                    dealType: grid.dealType,
+                    cryptoCurrency: grid.cryptoCurrency
                 }
             },
         }).show()
@@ -149,7 +170,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
                     sum: record.data.sum,
                     percent: record.data.percent,
                     fiatCurrency: grid.fiatCurrency,
-                    dealType: grid.dealType
+                    dealType: grid.dealType,
+                    cryptoCurrency: grid.cryptoCurrency
                 }
             },
         }).show()
@@ -159,7 +181,8 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountController', {
         let bulkDiscount = {
             sum: record.data.sum,
             fiatCurrency: record.data.fiatCurrency,
-            dealType: record.data.dealType
+            dealType: record.data.dealType,
+            cryptoCurrency: record.data.cryptoCurrency
         };
         Ext.Ajax.request({
             url: '/web/bulkDiscount/removeDiscount',

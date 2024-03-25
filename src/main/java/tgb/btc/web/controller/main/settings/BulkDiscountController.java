@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
@@ -39,17 +40,25 @@ public class BulkDiscountController extends BaseController {
                 ObjectNode dealType = objectMapper.createObjectNode();
                 dealType.put("name", dealTypeEnum.name());
                 dealType.put("displayName", StringUtils.capitalize(dealTypeEnum.getNominative()));
-                ArrayNode bulkDiscounts = objectMapper.createArrayNode();
-                for (BulkDiscount bulkDiscountVo : BULK_DISCOUNTS.stream()
-                        .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum))
-                        .filter(bulkDiscount -> bulkDiscount.getDealType().equals(dealTypeEnum))
-                        .collect(Collectors.toList())) {
-                    ObjectNode bulkDiscount = objectMapper.createObjectNode();
-                    bulkDiscount.put("sum", bulkDiscountVo.getSum());
-                    bulkDiscount.put("percent", bulkDiscountVo.getPercent());
-                    bulkDiscounts.add(bulkDiscount);
+                ArrayNode cryptoCurrencies = objectMapper.createArrayNode();
+                for (CryptoCurrency cryptoCurrencyEnum : CryptoCurrency.values()) {
+                    ObjectNode cryptoCurrency = objectMapper.createObjectNode();
+                    cryptoCurrency.put("name", cryptoCurrencyEnum.name());
+                    ArrayNode bulkDiscounts = objectMapper.createArrayNode();
+                    for (BulkDiscount bulkDiscountVo : BULK_DISCOUNTS.stream()
+                            .filter(bulkDiscount -> bulkDiscount.getFiatCurrency().equals(fiatCurrencyEnum)
+                                    && bulkDiscount.getDealType().equals(dealTypeEnum)
+                                    && bulkDiscount.getCryptoCurrency().equals(cryptoCurrencyEnum))
+                            .collect(Collectors.toList())) {
+                        ObjectNode bulkDiscount = objectMapper.createObjectNode();
+                        bulkDiscount.put("sum", bulkDiscountVo.getSum());
+                        bulkDiscount.put("percent", bulkDiscountVo.getPercent());
+                        bulkDiscounts.add(bulkDiscount);
+                    }
+                    cryptoCurrency.set("bulkDiscounts", bulkDiscounts);
+                    cryptoCurrencies.add(cryptoCurrency);
                 }
-                dealType.set("bulkDiscounts", bulkDiscounts);
+                dealType.set("cryptoCurrencies", cryptoCurrencies);
                 dealTypes.add(dealType);
             }
             fiatCurrency.set("dealTypes", dealTypes);
@@ -66,10 +75,12 @@ public class BulkDiscountController extends BaseController {
     public ObjectNode saveDiscount(
             @RequestBody BulkDiscount bulkDiscount, @RequestParam(required = false) Integer oldSum) {
         String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+                bulkDiscount.getDealType().getKey(), bulkDiscount.getCryptoCurrency().getShortName(),
+                String.valueOf(bulkDiscount.getSum())});
         if (Objects.nonNull(oldSum) && !oldSum.equals(bulkDiscount.getSum())) {
             String oldKey = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                    bulkDiscount.getDealType().getKey(), String.valueOf(oldSum)});
+                    bulkDiscount.getDealType().getKey(), bulkDiscount.getCryptoCurrency().getShortName(),
+                    String.valueOf(oldSum)});
             PropertiesPath.BULK_DISCOUNT_PROPERTIES.clearProperty(oldKey);
         }
         PropertiesPath.BULK_DISCOUNT_PROPERTIES.setProperty(key, String.valueOf(bulkDiscount.getPercent()));
@@ -85,7 +96,8 @@ public class BulkDiscountController extends BaseController {
     public ObjectNode removeDiscount(
             @RequestBody BulkDiscount bulkDiscount) {
         String key = String.join(".", new String[]{bulkDiscount.getFiatCurrency().getCode(),
-                bulkDiscount.getDealType().getKey(), String.valueOf(bulkDiscount.getSum())});
+                bulkDiscount.getDealType().getKey(), bulkDiscount.getCryptoCurrency().getShortName(),
+                String.valueOf(bulkDiscount.getSum())});
         PropertiesPath.BULK_DISCOUNT_PROPERTIES.clearProperty(key);
         reload();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -102,7 +114,7 @@ public class BulkDiscountController extends BaseController {
                 throw new PropertyValueNotFoundException("Не указано название для одного из ключей" + key + ".");
             }
             try {
-                sum = Integer.parseInt(key.split("\\.")[2]);
+                sum = Integer.parseInt(key.split("\\.")[3]);
             } catch (NumberFormatException e) {
                 throw new PropertyValueNotFoundException("Не корректное название для ключа " + key + ".");
             }
@@ -121,6 +133,7 @@ public class BulkDiscountController extends BaseController {
                     .sum(sum)
                     .fiatCurrency(FiatCurrency.getByCode(key.split("\\.")[0]))
                     .dealType(DealType.findByKey((key.split("\\.")[1])))
+                    .cryptoCurrency(CryptoCurrency.fromShortName(key.split("\\.")[2]))
                     .build());
         }
         BULK_DISCOUNTS.sort(Comparator.comparingInt(BulkDiscount::getSum));
