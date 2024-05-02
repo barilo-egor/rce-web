@@ -17,6 +17,14 @@ Ext.define('Main.view.games.rps.RPSPanel', {
         align: 'stretch'
     },
 
+    gameProperties: {
+        configPropertiesPath: 'RPS_PROPERTIES',
+        messagePropertiesPath: 'RPS_MESSAGE',
+        configKeys: ['button.text', 'sums'],
+        messageKeys: ['start', 'referral.balance', 'select.rate', 'win.sum', 'rock', 'paper', 'scissors',
+            'ask', 'win', 'lose', 'draw']
+    },
+
     listeners: {
         beforerender: 'beforerender'
     },

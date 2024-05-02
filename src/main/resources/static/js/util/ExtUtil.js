@@ -27,6 +27,7 @@ let ExtUtil = {
             }
         }
     },
+
     Msg: {
         error: function (config) {
             Ext.create('Ext.window.Window', {
@@ -49,6 +50,18 @@ let ExtUtil = {
                     }
                 ]
             })
+        }
+    },
+
+    changeDefaultValue: function (me) {
+        if (me.value !== me.defaultValue) {
+            me.setFieldStyle('color:#157fcc; font-weight: bold;')
+        } else {
+            me.setFieldStyle('color: #404040;\n' +
+                'padding: 5px 10px 4px;\n' +
+                'background-color: #fff;\n' +
+                'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                (me.xtype === 'textarea' ? 'min-height: 80px;' : 'min-height: 30px;'))
         }
     },
 
@@ -145,8 +158,16 @@ let ExtUtil = {
         ExtUtil.referenceQuery(reference).setLoading('Пожалуйста, ждите...')
     },
 
+    loadingByComponent: function (component) {
+        component.setLoading('Пожалуйста, ждите...')
+    },
+
     turnOffLoadingByReference: function (reference) {
         ExtUtil.referenceQuery(reference).setLoading(false)
+    },
+
+    turnOffLoadingByComponent: function (component) {
+        component.setLoading(false)
     },
 
     getJsonData: function (fieldsReferences) {

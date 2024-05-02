@@ -17,6 +17,18 @@ Ext.define('Main.view.games.slotreel.SlotReelPanel', {
         align: 'stretch'
     },
 
+    gameProperties: {
+        configPropertiesPath: 'SLOT_REEL_PROPERTIES',
+        messagePropertiesPath: 'SLOT_REEL_MESSAGE',
+        configKeys: ['SLOT_REEL', 'try',
+            'seven.triple', 'seven.double',
+            'lemon.triple', 'lemon.double',
+            'cherry.triple', 'cherry.double',
+            'bar.triple', 'bar.double',
+            'button.try.text', 'button.close.text'],
+        messageKeys: ['scroll', 'win', 'lose', 'start', 'balance.empty', 'try.cost']
+    },
+
     listeners: {
         beforerender: 'beforerender'
     },
