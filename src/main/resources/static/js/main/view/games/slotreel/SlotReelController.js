@@ -71,10 +71,15 @@ Ext.define('Main.view.games.slotreel.SlotReelController', {
             'bar.triple', 'bar.double',
             'button.try.text', 'button.close.text']
         let configPropertiesValues = []
-        configKeys.forEach(key => configPropertiesValues.push({
-            key: key,
-            value: ExtUtil.referenceQuery(key + '-field').getValue()
-        }))
+        let references = []
+        configKeys.forEach(key => {
+            let reference = key + '-field'
+            references.push(reference)
+            configPropertiesValues.push({
+                key: key,
+                value: ExtUtil.referenceQuery(reference).getValue()
+            })
+        })
         ExtUtil.request({
             url: '/web/properties/updateProperties',
             jsonData: configPropertiesValues,
@@ -84,16 +89,29 @@ Ext.define('Main.view.games.slotreel.SlotReelController', {
                 propertiesPath: 'SLOT_REEL_PROPERTIES'
             },
             success: function (response) {
-
+                references.forEach(reference => {
+                    let field = ExtUtil.referenceQuery(reference)
+                    field.setFieldStyle('color: #404040;\n' +
+                        'padding: 5px 10px 4px;\n' +
+                        'background-color: #fff;\n' +
+                        'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                        (me.xtype === 'textarea' ? 'min-height: 80px;' : 'min-height: 30px;'))
+                    field.defaultValue = field.getValue()
+                })
+                references = []
             }
         })
 
         let messageKeys = ['scroll', 'win', 'lose', 'start', 'balance.empty', 'try.cost']
         let messagePropertiesValues = []
-        messageKeys.forEach(key => messagePropertiesValues.push({
-            key: key,
-            value: ExtUtil.referenceQuery(key + '-field').getValue()
-        }))
+        messageKeys.forEach(key => {
+            let reference = key + '-field'
+            references.push(reference)
+            messagePropertiesValues.push({
+                key: key,
+                value: ExtUtil.referenceQuery(reference).getValue()
+            })
+        })
         ExtUtil.request({
             url: '/web/properties/updateProperties',
             jsonData: messagePropertiesValues,
@@ -103,6 +121,16 @@ Ext.define('Main.view.games.slotreel.SlotReelController', {
             },
             async: false,
             success: function (response) {
+                references.forEach(reference => {
+                    let field = ExtUtil.referenceQuery(reference)
+                    field.setFieldStyle('color: #404040;\n' +
+                        'padding: 5px 10px 4px;\n' +
+                        'background-color: #fff;\n' +
+                        'font: 300 13px/21px \'Open Sans\', \'Helvetica Neue\', helvetica, arial, verdana, sans-serif;\n' +
+                        (me.xtype === 'textarea' ? 'min-height: 80px;' : 'min-height: 30px;'))
+                    field.defaultValue = field.getValue()
+                })
+                references = []
                 Ext.Msg.alert('Внимание', 'Настройки обновлены.')
                 ExtUtil.turnOffLoadingByReference('slotReelPanel')
             }
