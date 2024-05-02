@@ -2,14 +2,14 @@ Ext.define('Main.view.games.rps.RPSPanel', {
     xtype: 'rpspanel',
     extend: 'Main.view.components.FramePanel',
     reference: 'rpsPanel',
-    // requires: [
-    //     'Main.view.games.rps.RPSController'
-    // ],
     title: {
         xtype: 'mainframetitle',
         text: 'Управление игрой "КНБ"'
     },
-    // controller: 'rpsController',
+    requires: [
+        'Main.view.games.rps.RPSController'
+    ],
+    controller: 'rpsController',
     region: 'center',
     scrollable: true,
     layout: {
@@ -22,7 +22,10 @@ Ext.define('Main.view.games.rps.RPSPanel', {
     },
 
     defaults: {
-        margin: '10 20 0 20'
+        margin: '10 20 0 20',
+        listeners: {
+            change: 'change'
+        }
     },
     items: [
         {
@@ -53,14 +56,23 @@ Ext.define('Main.view.games.rps.RPSPanel', {
         {
             xtype: 'fieldset',
             title: 'Сообщения',
+            collapsible: true,
+            collapsed: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
             defaults: {
-                xtype: 'textarea'
+                xtype: 'textarea',
+                listeners: {
+                    change: 'change'
+                }
             },
             items: [
+                {
+                    fieldLabel: 'Стартовое сообщение',
+                    reference: 'start-field'
+                },
                 {
                     fieldLabel: 'Текущий баланс',
                     reference: 'referral.balance-field'
@@ -89,6 +101,23 @@ Ext.define('Main.view.games.rps.RPSPanel', {
                     fieldLabel: 'Ничья',
                     reference: 'draw-field'
                 },
+            ]
+        },
+        {
+            xtype: 'container',
+            layout: {
+                type: 'hbox',
+                align: 'center',
+                pack: 'middle'
+            },
+            items: [
+                {
+                    xtype: 'button',
+                    text: 'Сохранить',
+                    cls: 'blueButton',
+                    handler: 'saveButtonClick',
+                    margin: '0 0 20 0'
+                }
             ]
         }
     ]
