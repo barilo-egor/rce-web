@@ -106,6 +106,11 @@ Ext.define('Main.view.components.MainToolBar', {
                     text: 'КНБ',
                     iconCls: 'fas fa-hand-rock menu-icon-color',
                     handler: 'rpsClick'
+                },
+                {
+                    text: 'Кости',
+                    iconCls: 'fas fa-dice menu-icon-color',
+                    handler: 'diceClick'
                 }
             ]
         }

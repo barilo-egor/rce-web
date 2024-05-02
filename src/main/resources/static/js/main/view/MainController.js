@@ -89,5 +89,9 @@ Ext.define('Main.view.MainController', {
 
     rpsClick: function (btn) {
         this.mainToolBarClick(btn, 'rpspanel')
+    },
+
+    diceClick: function (btn) {
+        this.mainToolBarClick(btn, 'dicepanel')
     }
 })

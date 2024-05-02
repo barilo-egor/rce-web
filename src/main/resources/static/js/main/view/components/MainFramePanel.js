@@ -33,6 +33,7 @@ Ext.define('Main.view.components.MainFramePanel', {
         'Main.view.webUser.control.WebUserControlPanel',
         'Main.view.games.slotreel.SlotReelPanel',
         'Main.view.games.rps.RPSPanel',
+        'Main.view.games.dice.DicePanel',
     ],
     layout: {
         type: 'fit'
