@@ -18,7 +18,7 @@ Ext.define('Registration.view.RegistrationController', {
             method: 'POST',
             jsonData: registrationVO,
             success: function (rs) {
-                Ext.Msg.alert('Информация', 'Пользователь зарегестрирован.')
+                Ext.Msg.alert('Информация', 'Регистрация прошла успешно.')
                 let formInputs = form.items.items
                 for (let input of formInputs) {
                     input.setValue('')
