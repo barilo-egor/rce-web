@@ -3,12 +3,32 @@ Ext.define('Login.view.Viewport', {
     requires: [
         'Login.view.LoginPanel'
     ],
-    alias: 'widget.loginViewport',
     layout: 'fit',
     viewModel: true,
-    items: [
-        {
-            xtype: 'loginpanel'
+    listeners: {
+        afterrender: function (me) {
+            Ext.create('Ext.window.Window', {
+                autoShow: true,
+                closable: false,
+                draggable: false,
+                modal: true,
+                items: [
+                    {
+                        xtype: 'panel',
+                        layout: {
+                            type: 'hbox',
+                            align: 'center',
+                            pack: 'center'
+                        },
+                        items: [
+                            {
+                                xtype: 'loginpanel',
+                                width: 500
+                            }
+                        ]
+                    }
+                ]
+            })
         }
-    ]
+    }
 });

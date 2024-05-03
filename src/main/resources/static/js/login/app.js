@@ -1,6 +1,3 @@
-Ext.Loader.setConfig({
-    disableCaching: false,
-});
 Ext.application({
     name: 'Login',
     extend: 'Ext.app.Application',
