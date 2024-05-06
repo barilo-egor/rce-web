@@ -9,7 +9,7 @@ Ext.define('Login.view.LoginTab',  {
     items: [
         {
             xtype: 'fieldset',
-            padding: '10 10 10 10',
+            padding: '10 10 0 10',
             width: '100%',
             layout: {
                 type: 'vbox',
@@ -43,8 +43,9 @@ Ext.define('Login.view.LoginTab',  {
         {
             xtype: 'button',
             text: 'Войти',
+            iconCls: 'fas fa-sign-in-alt',
             handler: 'registerUser',
-            width: 180
-        },
+            width: 100
+        }
     ]
 })

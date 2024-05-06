@@ -126,3 +126,11 @@
 .x-form-hide-trigger:before {
     content: '\f070';
 }
+
+.x-form-question-trigger {
+    font-size: 16px;
+    font-family: 'Material Icons', 'Font Awesome 5 Free';
+}
+.x-form-question-trigger:before {
+    content: "\f128";
+}

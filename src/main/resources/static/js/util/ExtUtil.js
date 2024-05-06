@@ -50,6 +50,28 @@ let ExtUtil = {
                     }
                 ]
             })
+        },
+        message: function (config) {
+            Ext.create('Ext.window.Window', {
+                autoShow: true,
+                modal: true,
+                width: 350,
+                title: config.title ? config.title : 'Справка',
+                buttonAlign: 'center',
+                buttons: [
+                    {
+                        text: 'OK',
+                        handler: ExtUtil.closeWindow
+                    }
+                ],
+                items: [
+                    {
+                        xtype: 'container',
+                        margin: '10 10 10 10',
+                        html: '<div style="text-align: center;">' + config.text + '</div>'
+                    }
+                ]
+            })
         }
     },
 

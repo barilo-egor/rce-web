@@ -11,6 +11,7 @@ Ext.define('Login.view.LoginPanel', {
     items: [
         {
             title: 'Вход',
+            iconCls: 'fas fa-sign-in-alt',
             items: [
                 {
                     xtype: 'logintab'
@@ -19,6 +20,7 @@ Ext.define('Login.view.LoginPanel', {
         },
         {
             title: 'Регистрация',
+            iconCls: 'fas fa-user-edit',
             items: [
                 {
                     xtype: 'registrationtab'
