@@ -23,7 +23,7 @@ Ext.define('Login.view.Viewport', {
                         items: [
                             {
                                 xtype: 'loginpanel',
-                                width: 500
+                                width: 400
                             }
                         ]
                     }

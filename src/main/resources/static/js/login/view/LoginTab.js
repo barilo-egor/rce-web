@@ -25,11 +25,12 @@ Ext.define('Login.view.LoginTab',  {
                     name: 'username',
                     emptyText: 'Введите логин',
                     minLength: 4,
-                    validator: ValidatorUtil.validateLogin,
+                    validator: ValidatorUtil.validateNotEmpty,
                     width: '100%',
                 },
                 {
                     xtype: 'textfield',
+                    reference: 'loginPasswordField',
                     labelWidth: 120,
                     labelAlign: 'right',
                     msgTarget: 'qtip',
@@ -38,8 +39,9 @@ Ext.define('Login.view.LoginTab',  {
                     emptyText: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
+                    validator: ValidatorUtil.validateNotEmpty,
                     width: '100%',
+                    triggers: CommonTrigger.password
                 }
             ]
         },

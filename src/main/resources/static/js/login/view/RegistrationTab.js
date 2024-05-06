@@ -40,6 +40,7 @@ Ext.define('Login.view.RegistrationTab',  {
                     minLength: 8,
                     validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
                     width: '100%',
+                    triggers: CommonTrigger.password
                 },
                 {
                     xtype: 'textfield',
@@ -51,7 +52,8 @@ Ext.define('Login.view.RegistrationTab',  {
                     inputType: 'password',
                     minLength: 8,
                     validator: ValidatorUtil.validatePasswordConfirm,
-                    width: '100%'
+                    width: '100%',
+                    triggers: CommonTrigger.password
                 },
                 {
                     xtype: 'container',

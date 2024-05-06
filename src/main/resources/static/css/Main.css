@@ -108,5 +108,21 @@
     border-width: 1px;
     color: #404040 !important;
     box-shadow: none;
-    background-image: none;
+    background-image: none !important;
+}
+
+.x-form-show-trigger {
+    font-size: 16px;
+    font-family: 'Material Icons', 'Font Awesome 5 Free';
+}
+.x-form-show-trigger:before {
+    content: '\f06e';
+}
+
+.x-form-hide-trigger {
+    font-size: 16px;
+    font-family: 'Material Icons', 'Font Awesome 5 Free';
+}
+.x-form-hide-trigger:before {
+    content: '\f070';
 }
