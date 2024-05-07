@@ -1,862 +1,407 @@
-Ext.define('Ext.theme.neptune.Component', {
-    override: 'Ext.Component',
-    initComponent: function() {
-        this.callParent();
-        if (this.dock && this.border === undefined) {
-            this.border = false;
-        }
-    },
-    privates: {
-        initStyles: function() {
-            var me = this,
-                hasOwnBorder = me.hasOwnProperty('border'),
-                border = me.border;
-            if (me.dock) {
-                // prevent the superclass method from setting the border style.  We want to
-                // allow dock layout to decide which borders to suppress.
-                me.border = null;
-            }
-            me.callParent(arguments);
-            if (hasOwnBorder) {
-                me.border = border;
-            } else {
-                delete me.border;
-            }
-        }
-    }
-}, function() {
-    Ext.namespace('Ext.theme.is').Neptune = true;
-    Ext.theme.name = 'Neptune';
-});
-
-Ext.define('Ext.theme.triton.Component', {
-    override: 'Ext.Component'
-}, function() {
-    Ext.namespace('Ext.theme.is').Triton = true;
-    Ext.theme.name = 'Triton';
-});
-
-Ext.define('Ext.theme.material.Component', {
-    override: 'Ext.Component',
-    config: {
-        /**
-         * @cfg {Boolean/Object/String} ripple
-         * Set to truthy, Color or Object value for the ripple.
-         * @cfg {String} ripple.color The background color of the ripple.
-         * @cfg {Array} ripple.position Position for the ripple to start at [x,y].
-         * Determines if a Ripple effect should happen whenever this element is pressed.
-         *
-         * For example:
-         *      {
-         *          ripple: true
-         *      }
-         *
-         * Or:
-         *
-         *      {
-         *          ripple: {
-         *              color: 'red'
-         *          }
-         *      }
-         *
-         * For complex components, individual elements can suppress ripples by adding the
-         * `x-no-ripple` class to disable rippling for a tree of elements.
-         *
-         * @since 7.0.0
-         */
-        ripple: null,
-        labelAlign: 'top'
-    },
-    initComponent: function() {
-        var me = this;
-        me.callParent();
-        if (me.ripple) {
-            me.on('afterrender', function() {
-                me.updateRipple(me.getRipple());
-            }, me);
-        }
-    },
-    updateRipple: function(ripple) {
-        var me = this,
-            el = me.el;
-        if (Ext.isIE9m) {
-            Ext.log({
-                level: 'warn'
-            }, 'Ripple effect is not supported in IE9 and below!');
-            return;
-        }
-        if (el) {
-            el.un('touchstart', 'onRippleStart', me);
-            el.un('touchend', 'onRippleStart', me);
-            el.destroyAllRipples();
-            el.on(ripple.release ? 'touchend' : 'touchstart', 'onRippleStart', me);
-        }
-    },
-    shouldRipple: function(e) {
-        var me = this,
-            disabled = me.getDisabled && me.getDisabled(),
-            el = me.el,
-            ripple = !disabled && me.getRipple(),
-            target;
-        if (ripple && e) {
-            target = e.getTarget(me.noRippleSelector);
-            if (target) {
-                if ((el.dom === target) || el.contains(target)) {
-                    ripple = null;
-                }
-            }
-        }
-        return ripple;
-    },
-    onRippleStart: function(e) {
-        var me = this,
-            ripple = this.shouldRipple(e);
-        if (e.button === 0 && ripple) {
-            me.el.ripple(e, ripple);
-        }
-    },
-    privates: {
-        noRippleSelector: '.' + Ext.baseCSSPrefix + 'no-ripple',
-        /**
-         * Queue a function to run when the component is visible & painted. If those conditions
-         * are met, the function will execute  immediately, otherwise it will wait until it is
-         * visible and painted.
-         *
-         * @param {String} fn The function to execute on this component.
-         * @param {Object[]} [args] The arguments to pass.
-         * @return {Boolean} `true` if the function was executed immediately.
-         *
-         * @private
-         */
-        whenVisible: function(fn, args) {
-            var me = this,
-                listener, pending, visible;
-            args = args || Ext.emptyArray;
-            listener = me.visibleListener;
-            pending = me.pendingVisible;
-            visible = me.isVisible(true);
-            if (!visible && !listener) {
-                me.visibleListener = Ext.on({
-                    scope: me,
-                    show: 'handleGlobalShow',
-                    destroyable: true
-                });
-            }
-            if (visible) {
-                // Due to animations, it's possible that we may get called
-                // and the show event hasn't fired. If that is the case
-                // then just run now
-                if (pending) {
-                    pending[fn] = args;
-                    me.runWhenVisible();
-                } else {
-                    me[fn].apply(me, args);
-                }
-            } else {
-                if (!pending) {
-                    me.pendingVisible = pending = {};
-                }
-                pending[fn] = args;
-            }
-            return visible;
-        },
-        clearWhenVisible: function(fn) {
-            var me = this,
-                pending = me.pendingVisible;
-            if (pending) {
-                delete pending[fn];
-                if (Ext.Object.isEmpty(pending)) {
-                    me.pendingVisible = null;
-                    me.visibleListener = Ext.destroy(me.visibleListener);
-                }
-            }
-        },
-        runWhenVisible: function() {
-            var me = this,
-                pending = me.pendingVisible,
-                key;
-            me.pendingVisible = null;
-            me.visibleListener = Ext.destroy(me.visibleListener);
-            for (key in pending) {
-                me[key].apply(me, pending[key]);
-            }
-        },
-        handleGlobalShow: function(c) {
-            var me = this;
-            if (me.isVisible(true) && (c === me || me.isDescendantOf(c))) {
-                me.runWhenVisible();
-            }
-        }
-    }
-}, function() {
-    Ext.namespace('Ext.theme.is').Material = true;
-    Ext.theme.name = 'Material';
-});
-
-Ext.define('Ext.theme.triton.list.TreeItem', {
-    override: 'Ext.list.TreeItem',
-    compatibility: Ext.isIE8,
-    setFloated: function(floated, wasFloated) {
-        this.callParent([
-            floated,
-            wasFloated
-        ]);
-        this.toolElement.syncRepaint();
-    }
-});
-
-Ext.define('Ext.theme.material.button.Button', {
-    override: 'Ext.button.Button',
-    ripple: {
-        color: 'default'
-    }
-});
-
-Ext.define('Ext.theme.material.button.Split', {
-    override: 'Ext.button.Split',
-    separateArrowStyling: true,
-    ripple: false
-});
-
-Ext.define('Ext.theme.neptune.resizer.Splitter', {
-    override: 'Ext.resizer.Splitter',
-    size: 8
-});
-
-Ext.define('Ext.theme.triton.resizer.Splitter', {
-    override: 'Ext.resizer.Splitter',
-    size: 10
-});
-
-Ext.define('Ext.theme.neptune.toolbar.Toolbar', {
-    override: 'Ext.toolbar.Toolbar',
-    usePlainButtons: false,
-    border: false
-});
-
-Ext.define('Ext.theme.neptune.layout.component.Dock', {
-    override: 'Ext.layout.component.Dock',
+/**
+ * @class Ext.dom.Element
+ * @override Ext.dom.Element
+ */
+Ext.define('Ext.overrides.dom.Element', {
+    override: 'Ext.dom.Element',
     /**
-     * This table contains the border removal classes indexed by the sum of the edges to
-     * remove. Each edge is assigned a value:
-     * 
-     *  * `left` = 1
-     *  * `bottom` = 2
-     *  * `right` = 4
-     *  * `top` = 8
-     * 
-     * @private
+     * @property  {Number/Boolean} rippleShowTimeout
+     * The amount of time take by ripple to completely shown.
+     * Settings this to `true` defaults to 300ms.
      */
-    noBorderClassTable: [
-        0,
-        // TRBL
-        Ext.baseCSSPrefix + 'noborder-l',
-        // 0001 = 1
-        Ext.baseCSSPrefix + 'noborder-b',
-        // 0010 = 2
-        Ext.baseCSSPrefix + 'noborder-bl',
-        // 0011 = 3
-        Ext.baseCSSPrefix + 'noborder-r',
-        // 0100 = 4
-        Ext.baseCSSPrefix + 'noborder-rl',
-        // 0101 = 5
-        Ext.baseCSSPrefix + 'noborder-rb',
-        // 0110 = 6
-        Ext.baseCSSPrefix + 'noborder-rbl',
-        // 0111 = 7
-        Ext.baseCSSPrefix + 'noborder-t',
-        // 1000 = 8
-        Ext.baseCSSPrefix + 'noborder-tl',
-        // 1001 = 9
-        Ext.baseCSSPrefix + 'noborder-tb',
-        // 1010 = 10
-        Ext.baseCSSPrefix + 'noborder-tbl',
-        // 1011 = 11
-        Ext.baseCSSPrefix + 'noborder-tr',
-        // 1100 = 12
-        Ext.baseCSSPrefix + 'noborder-trl',
-        // 1101 = 13
-        Ext.baseCSSPrefix + 'noborder-trb',
-        // 1110 = 14
-        Ext.baseCSSPrefix + 'noborder-trbl'
-    ],
-    // 1111 = 15
-    /**
-     * The numeric values assigned to each edge indexed by the `dock` config value.
-     * @private
-     */
-    edgeMasks: {
-        top: 8,
-        right: 4,
-        bottom: 2,
-        left: 1
-    },
-    handleItemBorders: function() {
-        var me = this,
-            edges = 0,
-            maskT = 8,
-            maskR = 4,
-            maskB = 2,
-            maskL = 1,
-            owner = me.owner,
-            bodyBorder = owner.bodyBorder,
-            ownerBorder = owner.border,
-            collapsed = me.collapsed,
-            edgeMasks = me.edgeMasks,
-            noBorderCls = me.noBorderClassTable,
-            dockedItemsGen = owner.dockedItems.generation,
-            b, borderCls, docked, edgesTouched, i, ln, item, dock, lastValue, mask, addCls, removeCls;
-        if (me.initializedBorders === dockedItemsGen) {
-            return;
-        }
-        addCls = [];
-        removeCls = [];
-        borderCls = me.getBorderCollapseTable();
-        noBorderCls = me.getBorderClassTable ? me.getBorderClassTable() : noBorderCls;
-        me.initializedBorders = dockedItemsGen;
-        // Borders have to be calculated using expanded docked item collection.
-        me.collapsed = false;
-        docked = me.getDockedItems('visual');
-        me.collapsed = collapsed;
-        for (i = 0 , ln = docked.length; i < ln; i++) {
-            item = docked[i];
-            if (item.ignoreBorderManagement) {
-                // headers in framed panels ignore border management, so we do not want
-                // to set "satisfied" on the edge in question
-                
-                continue;
-            }
-            dock = item.dock;
-            mask = edgesTouched = 0;
-            addCls.length = 0;
-            removeCls.length = 0;
-            if (dock !== 'bottom') {
-                if (edges & maskT) {
-                    // if (not touching the top edge)
-                    b = item.border;
-                } else {
-                    b = ownerBorder;
-                    if (b !== false) {
-                        edgesTouched += maskT;
-                    }
-                }
-                if (b === false) {
-                    mask += maskT;
-                }
-            }
-            if (dock !== 'left') {
-                if (edges & maskR) {
-                    // if (not touching the right edge)
-                    b = item.border;
-                } else {
-                    b = ownerBorder;
-                    if (b !== false) {
-                        edgesTouched += maskR;
-                    }
-                }
-                if (b === false) {
-                    mask += maskR;
-                }
-            }
-            if (dock !== 'top') {
-                if (edges & maskB) {
-                    // if (not touching the bottom edge)
-                    b = item.border;
-                } else {
-                    b = ownerBorder;
-                    if (b !== false) {
-                        edgesTouched += maskB;
-                    }
-                }
-                if (b === false) {
-                    mask += maskB;
-                }
-            }
-            if (dock !== 'right') {
-                if (edges & maskL) {
-                    // if (not touching the left edge)
-                    b = item.border;
-                } else {
-                    b = ownerBorder;
-                    if (b !== false) {
-                        edgesTouched += maskL;
-                    }
-                }
-                if (b === false) {
-                    mask += maskL;
-                }
-            }
-            if ((lastValue = item.lastBorderMask) !== mask) {
-                item.lastBorderMask = mask;
-                if (lastValue) {
-                    removeCls[0] = noBorderCls[lastValue];
-                }
-                if (mask) {
-                    addCls[0] = noBorderCls[mask];
-                }
-            }
-            if ((lastValue = item.lastBorderCollapse) !== edgesTouched) {
-                item.lastBorderCollapse = edgesTouched;
-                if (lastValue) {
-                    removeCls[removeCls.length] = borderCls[lastValue];
-                }
-                if (edgesTouched) {
-                    addCls[addCls.length] = borderCls[edgesTouched];
-                }
-            }
-            if (removeCls.length) {
-                item.removeCls(removeCls);
-            }
-            if (addCls.length) {
-                item.addCls(addCls);
-            }
-            // mask can use += but edges must use |= because there can be multiple items
-            // on an edge but the mask is reset per item
-            edges |= edgeMasks[dock];
-        }
-        // = T, R, B or L (8, 4, 2 or 1)
-        mask = edgesTouched = 0;
-        addCls.length = 0;
-        removeCls.length = 0;
-        if (edges & maskT) {
-            // if (not touching the top edge)
-            b = bodyBorder;
-        } else {
-            b = ownerBorder;
-            if (b !== false) {
-                edgesTouched += maskT;
-            }
-        }
-        if (b === false) {
-            mask += maskT;
-        }
-        if (edges & maskR) {
-            // if (not touching the right edge)
-            b = bodyBorder;
-        } else {
-            b = ownerBorder;
-            if (b !== false) {
-                edgesTouched += maskR;
-            }
-        }
-        if (b === false) {
-            mask += maskR;
-        }
-        if (edges & maskB) {
-            // if (not touching the bottom edge)
-            b = bodyBorder;
-        } else {
-            b = ownerBorder;
-            if (b !== false) {
-                edgesTouched += maskB;
-            }
-        }
-        if (b === false) {
-            mask += maskB;
-        }
-        if (edges & maskL) {
-            // if (not touching the left edge)
-            b = bodyBorder;
-        } else {
-            b = ownerBorder;
-            if (b !== false) {
-                edgesTouched += maskL;
-            }
-        }
-        if (b === false) {
-            mask += maskL;
-        }
-        if ((lastValue = me.lastBodyBorderMask) !== mask) {
-            me.lastBodyBorderMask = mask;
-            if (lastValue) {
-                removeCls[0] = noBorderCls[lastValue];
-            }
-            if (mask) {
-                addCls[0] = noBorderCls[mask];
-            }
-        }
-        if ((lastValue = me.lastBodyBorderCollapse) !== edgesTouched) {
-            me.lastBodyBorderCollapse = edgesTouched;
-            if (lastValue) {
-                removeCls[removeCls.length] = borderCls[lastValue];
-            }
-            if (edgesTouched) {
-                addCls[addCls.length] = borderCls[edgesTouched];
-            }
-        }
-        if (removeCls.length) {
-            owner.removeBodyCls(removeCls);
-        }
-        if (addCls.length) {
-            owner.addBodyCls(addCls);
-        }
-    },
-    onRemove: function(item) {
-        var me = this,
-            lastBorderMask = item.lastBorderMask,
-            lastBorderCollapse = item.lastBorderCollapse;
-        if (!item.destroyed && !item.ignoreBorderManagement) {
-            if (lastBorderMask) {
-                item.lastBorderMask = 0;
-                item.removeCls(me.noBorderClassTable[lastBorderMask]);
-            }
-            if (lastBorderCollapse) {
-                item.lastBorderCollapse = 0;
-                item.removeCls(me.getBorderCollapseTable()[lastBorderCollapse]);
-            }
-        }
-        me.callParent([
-            item
-        ]);
+    rippleShowTimeout: 300
+});
+
+Ext.define('Ext.theme.material.Widget', {
+    override: 'Ext.Widget',
+    statics: {
+        floatInset: 16 / (window.devicePixelRatio || 1)
     }
 });
 
-Ext.define('Ext.theme.neptune.panel.Panel', {
-    override: 'Ext.panel.Panel',
-    border: false,
-    bodyBorder: false,
-    initBorderProps: Ext.emptyFn,
-    initBodyBorder: function() {
-        // The superclass method converts a truthy bodyBorder into a number and sets
-        // an inline border-width style on the body element.  This prevents that from
-        // happening if borderBody === true so that the body will get its border-width
-        // the stylesheet.
-        if (this.bodyBorder !== true) {
-            this.callParent();
-        }
-    }
-});
-
-Ext.define('Ext.theme.neptune.container.ButtonGroup', {
-    override: 'Ext.container.ButtonGroup',
-    usePlainButtons: false
-});
-
-Ext.define('Ext.theme.material.form.field.Text', {
-    override: 'Ext.form.field.Text',
-    labelSeparator: '',
-    listeners: {
-        change: function(field, value) {
-            if (field.el) {
-                field.el.toggleCls('not-empty', value || field.emptyText);
-            }
-        },
-        render: function(ths, width, height, eOpts) {
-            if ((ths.getValue() || ths.emptyText) && ths.el) {
-                ths.el.addCls('not-empty');
-            }
-        }
-    }
-});
-
-Ext.define('Ext.theme.material.window.MessageBox', {
-    override: 'Ext.window.MessageBox',
-    buttonAlign: 'right'
-});
-
-Ext.define('Ext.theme.triton.form.field.Checkbox', {
-    override: 'Ext.form.field.Checkbox',
-    compatibility: Ext.isIE8,
-    initComponent: function() {
-        this.callParent();
-        Ext.on({
-            show: 'onGlobalShow',
-            scope: this
-        });
-    },
-    onFocus: function(e) {
-        var focusClsEl;
-        this.callParent([
-            e
-        ]);
-        focusClsEl = this.getFocusClsEl();
-        if (focusClsEl) {
-            focusClsEl.syncRepaint();
-        }
-    },
-    onBlur: function(e) {
-        var focusClsEl;
-        this.callParent([
-            e
-        ]);
-        focusClsEl = this.getFocusClsEl();
-        if (focusClsEl) {
-            focusClsEl.syncRepaint();
-        }
-    },
-    onGlobalShow: function(cmp) {
-        if (cmp.isAncestor(this)) {
-            this.getFocusClsEl().syncRepaint();
-        }
-    }
-});
-
-Ext.define('Ext.theme.material.form.field.Checkbox', {
-    override: 'Ext.form.field.Checkbox',
-    ripple: {
-        delegate: '.' + Ext.baseCSSPrefix + 'form-checkbox',
-        bound: false
-    }
-});
-
-Ext.define('Ext.theme.material.form.field.Radio', {
-    override: 'Ext.form.field.Radio',
-    ripple: {
-        delegate: '.' + Ext.baseCSSPrefix + 'form-radio',
-        bound: false
-    }
-});
-
-Ext.define('Ext.theme.neptune.toolbar.Paging', {
-    override: 'Ext.toolbar.Paging',
-    defaultButtonUI: 'plain-toolbar',
-    inputItemWidth: 40
-});
-
-Ext.define('Ext.theme.triton.toolbar.Paging', {
-    override: 'Ext.toolbar.Paging',
-    inputItemWidth: 50
-});
-
-Ext.define('Ext.theme.neptune.picker.Month', {
-    override: 'Ext.picker.Month',
-    // Monthpicker contains logic that reduces the margins of the month items if it detects
-    // that the text has wrapped.  This can happen in the classic theme  in certain
-    // locales such as zh_TW.  In order to work around this, Month picker measures
-    // the month items to see if the height is greater than "measureMaxHeight".
-    // In neptune the height of the items is larger, so we must increase this value.
-    // While the actual height of the month items in neptune is 24px, we will only 
-    // determine that the text has wrapped if the height of the item exceeds 36px.
-    // this allows theme developers some leeway to increase the month item size in
-    // a neptune-derived theme.
-    measureMaxHeight: 36
-});
-
-Ext.define('Ext.theme.triton.picker.Month', {
-    override: 'Ext.picker.Month',
-    footerButtonUI: 'default-toolbar',
-    calculateMonthMargin: Ext.emptyFn
-});
-
-Ext.define('Ext.theme.triton.picker.Date', {
-    override: 'Ext.picker.Date',
-    footerButtonUI: 'default-toolbar'
-});
-
-Ext.define('Ext.theme.neptune.form.field.HtmlEditor', {
-    override: 'Ext.form.field.HtmlEditor',
-    defaultButtonUI: 'plain-toolbar'
-});
-
-Ext.define('Ext.theme.material.form.field.Tag', {
-    override: 'Ext.form.field.Tag',
-    labelSeparator: '',
-    listeners: {
-        change: function(field, value) {
-            if (field.el) {
-                field.el.toggleCls('not-empty', value.length);
-            }
-        },
-        render: function(ths, width, height, eOpts) {
-            if (ths.getValue() && ths.el) {
-                ths.el.addCls('not-empty');
-            }
-        }
-    }
-});
-
-Ext.define('Ext.theme.neptune.panel.Table', {
-    override: 'Ext.panel.Table',
-    lockableBodyBorder: true,
-    initComponent: function() {
-        var me = this;
-        me.callParent();
-        if (!me.hasOwnProperty('bodyBorder') && !me.hideHeaders && (me.lockableBodyBorder || !me.lockable)) {
-            me.bodyBorder = true;
-        }
-    }
-});
-
-Ext.define('Ext.theme.material.view.Table', {
-    override: 'Ext.view.Table',
-    mixins: [
-        'Ext.mixin.ItemRippler'
-    ],
+Ext.define('Ext.theme.material.list.Tree', {
+    override: 'Ext.list.Tree',
     config: {
         itemRipple: {
+            release: true,
+            delegate: '.' + Ext.baseCSSPrefix + 'treelist-row',
             color: 'default'
         }
+    }
+});
+
+Ext.define('Ext.theme.material.Button', {
+    override: 'Ext.Button',
+    config: {
+        ripple: {
+            delegate: '.' + Ext.baseCSSPrefix + 'inner-el'
+        }
     },
-    processItemEvent: function(record, item, rowIndex, e) {
-        var me = this,
-            eventPosition, result, rowElement, cellElement, selModel;
-        result = me.callParent([
-            record,
-            item,
-            rowIndex,
-            e
-        ]);
-        if (e.type === 'mousedown') {
-            eventPosition = me.eventPosition;
-            rowElement = eventPosition && me.eventPosition.rowElement;
-            cellElement = eventPosition && me.eventPosition.cellElement;
-            selModel = me.getSelectionModel().type;
-            // for ripple on row click
-            if (rowElement && (selModel === 'rowmodel')) {
-                me.rippleItem(Ext.fly(rowElement), e);
+    materialIconRe: /^md-icon[-|_](.*)/,
+    applyIconCls: function(classList) {
+        var len, i, cls, materialMatch;
+        if (classList) {
+            classList = Ext.dom.Element.splitCls(classList);
+            len = classList.length;
+            for (i = 0; i < len; i++) {
+                cls = classList[i];
+                materialMatch = cls && cls.match(this.materialIconRe);
+                if (materialMatch && materialMatch.length > 1) {
+                    classList.unshift('md-icon');
+                    break;
+                }
             }
-            // for ripple on cell click
-            else if (cellElement && (selModel === 'cellmodel')) {
-                me.rippleItem(Ext.fly(cellElement), e);
-            }
+            return classList.join(' ');
         }
-        return result;
+        return classList;
     }
 });
 
-Ext.define('Ext.theme.neptune.grid.RowEditor', {
-    override: 'Ext.grid.RowEditor',
-    buttonUI: 'default-toolbar'
-});
-
-Ext.define('Ext.theme.triton.grid.column.Column', {
-    override: 'Ext.grid.column.Column',
-    compatibility: Ext.isIE8,
-    onTitleMouseOver: function() {
-        var triggerEl = this.triggerEl;
-        this.callParent(arguments);
-        if (triggerEl) {
-            triggerEl.syncRepaint();
+Ext.define('Ext.theme.material.Tool', {
+    override: 'Ext.Tool',
+    config: {
+        ripple: {
+            bound: false,
+            color: 'default',
+            centered: true
         }
     }
 });
 
-Ext.define('Ext.theme.triton.grid.column.Check', {
-    override: 'Ext.grid.column.Check',
-    compatibility: Ext.isIE8,
-    setRecordCheck: function(record, index, checked, cell) {
-        this.callParent(arguments);
-        Ext.fly(cell).syncRepaint();
+Ext.define('Ext.theme.material.Panel', {
+    override: 'Ext.Panel',
+    config: {
+        buttonAlign: 'right',
+        buttonToolbar: {
+            defaultButtonUI: null
+        }
     }
 });
 
-Ext.define('Ext.theme.neptune.grid.column.RowNumberer', {
-    override: 'Ext.grid.column.RowNumberer',
-    width: 25
-});
-
-Ext.define('Ext.theme.triton.grid.column.RowNumberer', {
-    override: 'Ext.grid.column.RowNumberer',
-    width: 32
-});
-
-Ext.define('Ext.theme.triton.menu.Item', {
+Ext.define('Ext.theme.material.menu.Item', {
     override: 'Ext.menu.Item',
-    compatibility: Ext.isIE8,
-    onFocus: function(e) {
-        this.callParent([
-            e
-        ]);
-        this.repaintIcons();
-    },
-    onFocusLeave: function(e) {
-        this.callParent([
-            e
-        ]);
-        this.repaintIcons();
-    },
-    privates: {
-        repaintIcons: function() {
-            var iconEl = this.iconEl,
-                arrowEl = this.arrowEl,
-                checkEl = this.checkEl;
-            if (iconEl) {
-                iconEl.syncRepaint();
-            }
-            if (arrowEl) {
-                arrowEl.syncRepaint();
-            }
-            if (checkEl) {
-                checkEl.syncRepaint();
-            }
+    config: {
+        ripple: {
+            delegate: '.' + Ext.baseCSSPrefix + 'body-el'
         }
-    }
-});
-
-Ext.define('Ext.theme.neptune.menu.Separator', {
-    override: 'Ext.menu.Separator',
-    border: true
-});
-
-Ext.define('Ext.theme.neptune.menu.Menu', {
-    override: 'Ext.menu.Menu',
-    showSeparator: false
-});
-
-Ext.define('Ext.theme.triton.menu.Menu', {
-    override: 'Ext.menu.Menu',
-    compatibility: Ext.isIE8,
-    afterShow: function() {
+    },
+    shouldRipple: function() {
         var me = this,
-            items, item, i, len;
-        me.callParent(arguments);
-        items = me.items.getRange();
-        for (i = 0 , len = items.length; i < len; i++) {
-            item = items[i];
-            // Just in case if it happens to be a non-menu Item 
-            if (item && item.repaintIcons) {
-                item.repaintIcons();
-            }
-        }
+            rippleDelay = me.el.rippleShowTimeout;
+        // To delay menu hide(closing of menu) after menu item is clicked. RippleDelayis used to
+        // show ripple effect on menu items. Max(clickHideDelay,rippleDelay) should be used
+        me.clickHideDelay = me.clickHideDelay > rippleDelay ? me.clickHideDelay : rippleDelay;
+        return this.getRipple();
     }
 });
 
 Ext.define('Ext.theme.material.menu.Menu', {
     override: 'Ext.menu.Menu',
-    ripple: {
-        color: 'default'
+    config: {
+        indented: false
     }
 });
 
-Ext.define('Ext.theme.triton.grid.plugin.RowExpander', {
-    override: 'Ext.grid.plugin.RowExpander',
-    headerWidth: 32
-});
-
-Ext.define('Ext.theme.triton.grid.selection.SpreadsheetModel', {
-    override: 'Ext.grid.selection.SpreadsheetModel',
-    checkboxHeaderWidth: 32
-});
-
-Ext.define('Ext.theme.triton.selection.CheckboxModel', {
-    override: 'Ext.selection.CheckboxModel',
-    headerWidth: 32,
-    onHeaderClick: function(headerCt, header, e) {
-        this.callParent([
-            headerCt,
-            header,
-            e
-        ]);
-        // Every checkbox needs repainting.
-        if (Ext.isIE8) {
-            header.getView().ownerGrid.el.syncRepaint();
+Ext.define('Ext.theme.material.SplitButton', {
+    override: 'Ext.SplitButton',
+    /**
+     * @private
+     * @cfg {Number/Boolean} menuShowDelay
+     * The amount of delay between the `tap` or `onClick` and the moment the
+     * split menu button shows the menu.
+     */
+    config: {
+        splitRipple: {
+            delegate: '.x-splitInner-el'
+        },
+        arrowRipple: {
+            delegate: '.x-splitArrow-el'
         }
+    },
+    menuShowDelay: 0,
+    doDestroy: function() {
+        var me = this;
+        if (me.hasOwnProperty('menuShowTimeout')) {
+            Ext.undefer(me.menuShowTimeout);
+        }
+        me.callParent();
+    }
+});
+
+Ext.define('Ext.theme.material.layout.overflow.Scroller', {
+    override: 'Ext.layout.overflow.Scroller',
+    config: {
+        backwardTool: {
+            ripple: {
+                centered: false,
+                bound: true,
+                diameterLimit: false
+            }
+        },
+        forwardTool: {
+            ripple: {
+                centered: false,
+                bound: true,
+                diameterLimit: false
+            }
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.field.Field', {
+    override: 'Ext.field.Field',
+    config: {
+        labelAlign: 'top'
+    }
+});
+
+Ext.define('Ext.theme.material.field.Text', {
+    override: 'Ext.field.Text',
+    config: {
+        labelAlign: 'placeholder',
+        animateUnderline: true
+    }
+});
+
+Ext.define('Ext.theme.neptune.Titlebar', {
+    override: 'Ext.TitleBar',
+    config: {
+        defaultButtonUI: 'alt'
+    }
+});
+
+Ext.define('Ext.theme.material.TitleBar', {
+    override: 'Ext.TitleBar',
+    config: {
+        titleAlign: 'left',
+        defaultButtonUI: 'alt'
+    }
+});
+
+Ext.define('Ext.theme.material.Toast', {
+    override: 'Ext.Toast',
+    config: {
+        alignment: 'b-b'
+    }
+});
+
+Ext.define('Ext.theme.material.dataview.Abstract', {
+    override: 'Ext.dataview.Abstract',
+    config: {
+        itemRipple: {
+            release: true,
+            color: 'default'
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.dataview.List', {
+    override: 'Ext.dataview.List',
+    config: {
+        rowLines: false
+    }
+});
+
+Ext.define('Ext.theme.material.dataview.IndexBar', {
+    override: 'Ext.dataview.IndexBar',
+    config: {
+        autoHide: true,
+        letters: [
+            '*',
+            '#',
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z'
+        ]
+    }
+});
+
+Ext.define('Ext.theme.material.dataview.NestedList', {
+    override: 'Ext.dataview.NestedList',
+    config: {
+        backText: '',
+        useTitleAsBackText: false,
+        backButton: {
+            iconCls: 'md-icon-arrow-back',
+            hidden: true
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.dataview.pullrefresh.PullRefresh', {
+    override: 'Ext.dataview.pullrefresh.PullRefresh',
+    config: {
+        overlay: true,
+        widget: {
+            xtype: 'pullrefreshspinner'
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.field.Checkbox', {
+    override: 'Ext.field.Checkbox',
+    config: {
+        labelAlign: 'left',
+        bodyAlign: 'end',
+        ripple: {
+            delegate: '.' + Ext.baseCSSPrefix + 'icon-el',
+            bound: false,
+            color: 'default'
+        }
+    }
+});
+
+Ext.define('Ext.theme.neptune.panel.Date', {
+    override: 'Ext.panel.Date',
+    border: true
+});
+
+Ext.define('Ext.theme.material.panel.Date', {
+    override: 'Ext.panel.Date',
+    config: {
+        headerFormat: 'D, M j',
+        hideCaptions: false,
+        hideOutside: true,
+        navigationPosition: 'caption',
+        selectOnNavigate: false,
+        showTodayButton: false,
+        splitTitle: true,
+        titleAnimation: false,
+        tools: {
+            previousYear: null,
+            nextYear: null
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.field.Date', {
+    override: 'Ext.field.Date',
+    config: {
+        floatedPicker: {
+            selectOnNavigate: true,
+            header: {
+                hidden: true
+            }
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.form.Borders', {
+    override: 'Ext.form.Borders',
+    config: {
+        fieldSeparators: false,
+        inputBorders: true
+    }
+});
+
+Ext.define('Ext.theme.material.field.Toggle', {
+    override: 'Ext.field.Toggle',
+    config: {
+        ripple: {
+            delegate: '.' + Ext.baseCSSPrefix + 'thumb',
+            bound: false,
+            fit: false,
+            color: 'default'
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.grid.cell.Check', {
+    override: 'Ext.grid.cell.Check',
+    config: {
+        ripple: {
+            delegate: '.' + Ext.baseCSSPrefix + 'checkbox-el',
+            bound: false,
+            color: 'default',
+            centered: true
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.grid.Grid', {
+    override: 'Ext.grid.Grid',
+    config: {
+        rowLines: true,
+        striped: false
+    }
+});
+
+Ext.define('Ext.theme.material.navigation.Bar', {
+    override: 'Ext.navigation.Bar',
+    config: {
+        defaultBackButtonText: '',
+        useTitleForBackButtonText: false,
+        backButton: {
+            align: 'left',
+            ui: 'back',
+            hidden: true,
+            iconCls: 'md-icon-arrow-back'
+        }
+    }
+});
+
+Ext.define('Ext.theme.material.panel.Header', {
+    override: 'Ext.panel.Header',
+    config: {
+        titleAlign: 'left'
     }
 });
 
 Ext.define('Ext.theme.material.tab.Tab', {
     override: 'Ext.tab.Tab',
-    ripple: {
-        color: 'default'
+    config: {
+        iconAlign: 'top',
+        flex: 1
+    },
+    platformConfig: {
+        desktop: {
+            maxWidth: 200
+        }
     }
 });
 
-Ext.define('Ext.theme.material.tree.View', {
-    override: 'Ext.tree.View',
+Ext.define('Ext.theme.material.tab.Bar', {
+    override: 'Ext.tab.Bar',
     config: {
-        color: 'default'
+        animateIndicator: true
+    },
+    platformConfig: {
+        desktop: {
+            layout: {
+                pack: 'center'
+            }
+        }
     }
 });
+
+Ext.namespace('Ext.theme.is').Neptune = true;
+Ext.theme.name = 'Neptune';
+Ext.theme.getDocCls = function() {
+    return Ext.platformTags.desktop ? '' : 'x-big';
+};
 
 Ext.define('Ext.theme.Material', {
     singleton: true,
@@ -1172,7 +717,9 @@ Ext.define('Ext.theme.Material', {
     },
     setDarkMode: function(value) {
         if (!this.hasFashion()) {
+            //<debug>
             Ext.Logger.warn('Fashion was not found and is required to set CSS Variables for Material Theme');
+            //</debug>
             return;
         }
         // eslint-disable-next-line no-undef
@@ -1194,7 +741,9 @@ Ext.define('Ext.theme.Material', {
         var obj = {},
             baseColor, accentColor;
         if (!this.hasFashion()) {
+            //<debug>
             Ext.Logger.warn('Fashion was not found and is required to set CSS Variables for Material Theme');
+            //</debug>
             return;
         }
         colorsConfig = Ext.merge({

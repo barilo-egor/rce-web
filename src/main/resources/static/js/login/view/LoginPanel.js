@@ -7,11 +7,14 @@ Ext.define('Login.view.LoginPanel', {
     ],
     region: 'center',
     scrollable: true,
+    fullscreen: true,
     border: false,
+
     items: [
         {
             title: 'Вход',
-            iconCls: 'fas fa-sign-in-alt',
+            iconCls: 'x-fa fa-sign-in-alt',
+            layout: 'fit',
             items: [
                 {
                     xtype: 'logintab'
@@ -20,7 +23,8 @@ Ext.define('Login.view.LoginPanel', {
         },
         {
             title: 'Регистрация',
-            iconCls: 'fas fa-user-edit',
+            iconCls: 'x-fa fa-user-edit',
+            layout: 'fit',
             items: [
                 {
                     xtype: 'registrationtab'

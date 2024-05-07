@@ -1,51 +1,62 @@
 Ext.define('Login.view.LoginTab',  {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.Container',
     xtype: 'logintab',
     padding: '10 10 10 10',
     layout: {
         type: 'vbox',
-        align: 'center'
+        align: 'center',
     },
+
     items: [
         {
             xtype: 'fieldset',
-            padding: '10 10 0 10',
             width: '100%',
+            flex: 0.8,
+            padding: '10 10 0 10',
             layout: {
                 type: 'vbox',
-                align: 'center'
+                align: 'stretch'
             },
             defaults: {
-                xtype: 'textfield',
                 labelWidth: 120,
-                labelAlign: 'right',
                 msgTarget: 'qtip',
-                width: '100%',
                 validator: ValidatorUtil.validateNotEmpty
             },
             items: [
                 {
-
-                    fieldLabel: 'Логин',
+                    xtype: 'textfield',
+                    label: 'Логин',
                     name: 'username',
-                    emptyText: 'Введите логин',
+                    requiredMessage: 'Введите логин',
                     minLength: 4
                 },
                 {
-                    fieldLabel: 'Пароль',
-                    emptyText: 'Введите пароль',
-                    inputType: 'password',
-                    minLength: 8,
-                    triggers: CommonTrigger.password
+                    xtype: 'passwordfield',
+                    label: 'Пароль',
+                    requiredMessage: 'Введите пароль',
+                    revealable: true,
+                    minLength: 8
                 }
             ]
         },
         {
-            xtype: 'button',
-            text: 'Войти',
-            iconCls: 'fas fa-sign-in-alt',
-            handler: 'registerUser',
-            width: 100
+            xtype: 'container',
+            width: '100%',
+            flex: 0.2,
+            layout: {
+                type: 'vbox',
+                align: 'center',
+                pack: 'end'
+            },
+            items: [
+                {
+                    xtype: 'button',
+                    text: 'Войти',
+                    iconCls: 'x-fa fa-sign-in-alt',
+                    handler: 'registerUser',
+                    margin: '10 0 0 0'
+                }
+            ]
         }
     ]
 })

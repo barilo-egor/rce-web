@@ -4,78 +4,62 @@ Ext.define('Login.view.RegistrationTab',  {
     padding: '10 10 10 10',
     layout: {
         type: 'vbox',
-        align: 'center'
+        align: 'center',
+        pack: 'center'
     },
     items: [
         {
             xtype: 'fieldset',
-            padding: '10 10 0 10',
             width: '100%',
+            padding: '10 10 0 10',
             layout: {
                 type: 'vbox',
-                align: 'center'
+                align: 'stretch'
             },
             defaults: {
-                width: '100%',
-                xtype: 'textfield',
                 labelWidth: 120,
-                labelAlign: 'right',
+                xtype: 'textfield',
+                labelAlign: 'left',
                 msgTarget: 'qtip',
             },
             items: [
                 {
-                    fieldLabel: 'Логин',
-                    emptyText: 'Введите логин',
+                    label: 'Логин',
+                    required: true,
+                    requiredMessage: 'Введите логин',
                     minLength: 4,
                     validator: ValidatorUtil.validateLogin,
                 },
                 {
-                    fieldLabel: 'Пароль',
-                    emptyText: 'Введите пароль',
+                    xtype: 'passwordfield',
+                    label: 'Пароль',
+                    required: true,
+                    requiredMessage: 'Введите пароль',
                     inputType: 'password',
                     minLength: 8,
-                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber,
-                    triggers: CommonTrigger.password
+                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber
                 },
                 {
-                    fieldLabel: 'Повторите пароль',
-                    emptyText: 'Введите пароль ещё раз',
-                    inputType: 'password',
+                    xtype: 'passwordfield',
+                    label: 'Повторите пароль',
+                    required: true,
+                    requiredMessage: 'Введите пароль ещё раз',
                     minLength: 8,
                     validator: ValidatorUtil.validatePasswordConfirm,
-                    triggers: CommonTrigger.password
                 },
                 {
-                    fieldLabel: 'Ваш chat id',
-                    emptyText: 'Введите chat id',
+                    label: 'Ваш chat id',
+                    required: true,
+                    requiredMessage: 'Введите chat id',
+                    tooltip: 'Чтобы узнать свой chat id, введите в боте команду /chatid',
                     minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm,
-                    triggers: {
-                        question: {
-                            cls: 'x-form-question-trigger',
-                            handler: function () {
-                                ExtUtil.Msg.message({
-                                    text: 'Чтобы узнать свой чат айди, введите команду /chatid в боте.'
-                                })
-                            }
-                        }
-                    }
+                    validator: ValidatorUtil.validatePasswordConfirm
                 },
                 {
-                    fieldLabel: 'Токен',
-                    emptyText: 'Введите токен',
+                    label: 'Токен',
+                    requiredMessage: 'Введите токен',
                     minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm,
-                    triggers: {
-                        question: {
-                            cls: 'x-form-question-trigger',
-                            handler: function () {
-                                ExtUtil.Msg.message({
-                                    text: 'Для API клиентов. Запросить можно через оператора.'
-                                })
-                            }
-                        }
-                    }
+                    validator: ValidatorUtil.validatePasswordConfirm
                 },
             ]
         },
@@ -83,7 +67,7 @@ Ext.define('Login.view.RegistrationTab',  {
             xtype: 'button',
             text: 'Зарегистрироваться',
             handler: 'registerUser',
-            width: 180
+            margin: '10 0 0 0'
         },
     ]
 })
