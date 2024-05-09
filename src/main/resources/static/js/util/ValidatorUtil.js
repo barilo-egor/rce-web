@@ -10,6 +10,10 @@ let ValidatorUtil = {
         return true
     },
 
+    boolValidateNotEmpty: function (val) {
+        return val;
+    },
+
     validateNotEmptyAndLettersAndNumber: function (val) {
         if (!val) return 'Введите значение'
         if (RegexUtil.onlyLettersAndNumbers(val)) return true;

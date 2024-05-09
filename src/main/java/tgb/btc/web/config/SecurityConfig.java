@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("/web/main")
+                .loginPage("/login")
                 //Перенарпавление на главную страницу после успешного входа
                 .defaultSuccessUrl("/loginSuccess", true)
                 .failureUrl("/loginError")
@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("/web/main");
+                .logoutSuccessUrl("/");
     }
 
     @Override

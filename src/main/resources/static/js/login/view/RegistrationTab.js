@@ -51,13 +51,18 @@ Ext.define('Login.view.RegistrationTab',  {
                     label: 'Ваш chat id',
                     required: true,
                     requiredMessage: 'Введите chat id',
-                    tooltip: 'Чтобы узнать свой chat id, введите в боте команду /chatid',
+                    tooltip: {
+                        html: 'Чтобы узнать свой chat id, введите в боте команду /chatid'
+                    },
                     minLength: 8,
                     validator: ValidatorUtil.validatePasswordConfirm
                 },
                 {
                     label: 'Токен',
                     requiredMessage: 'Введите токен',
+                    tooltip: {
+                        html: 'Для апи-клиентов. Выдается оператором.'
+                    },
                     minLength: 8,
                     validator: ValidatorUtil.validatePasswordConfirm
                 },

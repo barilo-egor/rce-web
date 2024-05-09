@@ -1,6 +1,11 @@
 Ext.define('Login.view.LoginTab',  {
     extend: 'Ext.Container',
     xtype: 'logintab',
+    requires: [
+        'Login.controller.LoginController'
+    ],
+    controller: 'loginController',
+
     padding: '10 10 10 10',
     layout: {
         type: 'vbox',
@@ -19,21 +24,30 @@ Ext.define('Login.view.LoginTab',  {
             },
             defaults: {
                 labelWidth: 120,
-                msgTarget: 'qtip',
-                validator: ValidatorUtil.validateNotEmpty
+                msgTarget: 'qtip'
             },
             items: [
                 {
                     xtype: 'textfield',
+                    reference: 'loginLoginField',
                     label: 'Логин',
                     name: 'username',
                     requiredMessage: 'Введите логин',
-                    minLength: 4
+                    required: true,
+                    minLength: 4,
+                    validators:
+                        {
+                            fn: function (val) {
+                                console.log('123')
+                            },
+                        }
                 },
                 {
                     xtype: 'passwordfield',
+                    reference: 'passwordLoginField',
                     label: 'Пароль',
                     requiredMessage: 'Введите пароль',
+                    required: true,
                     revealable: true,
                     minLength: 8
                 }
@@ -53,7 +67,7 @@ Ext.define('Login.view.LoginTab',  {
                     xtype: 'button',
                     text: 'Войти',
                     iconCls: 'x-fa fa-sign-in-alt',
-                    handler: 'registerUser',
+                    handler: 'login',
                     margin: '10 0 0 0'
                 }
             ]
