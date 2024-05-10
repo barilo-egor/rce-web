@@ -117,6 +117,9 @@ let ExtUtil = {
         requestObj.async = config.async !== false
         requestObj.success = function (rawResponse) {
             let response = Ext.JSON.decode(rawResponse.responseText)
+            if (response.loginSuccess === true || response.loginSuccess === false) {
+                config.success(response, rawResponse)
+            }
             if (!response.success) {
                 let addingText = response.description
                     ? ': ' + response.description

@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import tgb.btc.library.util.web.JacksonUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -60,8 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("/loginSuccess", true)
-                .failureUrl("/loginError")
+                .successHandler((request, response, exception) -> response.getWriter().write(
+                        JacksonUtil.getEmpty().put("loginSuccess", true)
+                                .toPrettyString()))
+                .failureHandler((request, response, exception) -> response.getWriter().write(
+                        JacksonUtil.getEmpty().put("loginSuccess", false)
+                                .toPrettyString())
+                )
                 .permitAll()
                 .and()
                 .logout()

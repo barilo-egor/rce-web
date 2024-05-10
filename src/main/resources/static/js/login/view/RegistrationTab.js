@@ -71,8 +71,10 @@ Ext.define('Login.view.RegistrationTab',  {
         {
             xtype: 'button',
             text: 'Зарегистрироваться',
+            iconCls: 'x-fa fa-user-plus',
             handler: 'registerUser',
-            margin: '10 0 0 0'
+            margin: '10 0 0 0',
+            width: 220
         },
     ]
 })

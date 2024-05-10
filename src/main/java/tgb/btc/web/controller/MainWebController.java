@@ -1,6 +1,5 @@
 package tgb.btc.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class MainWebController extends BaseController {
                 return "main";
             }
             return "login";
-        };
+        }
         return "main";
     }
 }

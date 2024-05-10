@@ -35,12 +35,9 @@ Ext.define('Login.view.LoginTab',  {
                     requiredMessage: 'Введите логин',
                     required: true,
                     minLength: 4,
-                    validators:
-                        {
-                            fn: function (val) {
-                                console.log('123')
-                            },
-                        }
+                    listeners: {
+                        keyup: 'enterKeyUp'
+                    }
                 },
                 {
                     xtype: 'passwordfield',
@@ -49,7 +46,10 @@ Ext.define('Login.view.LoginTab',  {
                     requiredMessage: 'Введите пароль',
                     required: true,
                     revealable: true,
-                    minLength: 8
+                    minLength: 8,
+                    listeners: {
+                        keyup: 'enterKeyUp'
+                    }
                 }
             ]
         },
