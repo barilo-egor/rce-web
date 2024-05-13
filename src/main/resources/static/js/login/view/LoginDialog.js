@@ -6,14 +6,9 @@ Ext.define('Login.view.LoginDialog', {
     closable: false,
     draggable: false,
 
-    width: 400,
-    height: 260,
-
-    platformConfig: {
-        desktop: {
-            quickTips: true
-        }
-    },
+    width: 350,
+    height: 325,
+    keyMapEnabled: false,
     layout: 'fit',
     items: [
         {

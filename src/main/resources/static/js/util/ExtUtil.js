@@ -130,7 +130,7 @@ let ExtUtil = {
                 if (config.loadingComponent) config.loadingComponent.setLoading(false)
             } else {
                 if (response.body && response.body.message) {
-                    Ext.alert('Информация', response.body.message)
+                    Ext.Msg.alert('Информация', response.body.message)
                 }
                 if (response.body && response.body.toast) {
                     Ext.toast(response.body.toast)
@@ -172,7 +172,7 @@ let ExtUtil = {
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
             } else {
                 if (response.body && response.body.message) {
-                    Ext.alert('Информация', response.body.message)
+                    Ext.Msg.alert('Информация', response.body.message)
                 }
                 if (response.body && response.body.toast) {
                     Ext.toast(response.body.toast)
@@ -184,16 +184,11 @@ let ExtUtil = {
     },
 
     failure: function (response) {
-        Ext.Msg.show({
+        Ext.create('Ext.Dialog', {
             title: 'Ошибка',
-            msg: 'Ошибка при выполнении запроса. Статус: ' + response.status + '.Описание: ' + response.statusText,
-            buttons: Ext.Msg.OK,
-            icon: Ext.Msg.ERROR,
-            width: 500,
-            style: {
-                'white-space': 'normal'
-            }
-        });
+            html: 'Ошибка при выполнении запроса. Статус: ' + response.status + '.Описание: ' + response.statusText,
+            closable: true
+        }).show()
     },
 
     closeWindow: function (btn) {

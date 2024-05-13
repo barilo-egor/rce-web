@@ -13,7 +13,6 @@ Ext.define('Login.controller.LoginController', {
         if (loginField === null || !loginFieldComponent.isValid()) {
             Ext.toast({
                 message: 'Введите chat id либо логин.',
-                docked: 'top',
                 alignment: 't-t'
             })
             return
@@ -42,11 +41,60 @@ Ext.define('Login.controller.LoginController', {
                         html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить" в чате с ботом для входа.'
                     }).show()
                 } else {
-                    Ext.toast('Пользователь не найден. Пройдите регистрацию.')
+                    Ext.toast({
+                        message: 'Пользователь не найден. Пройдите регистрацию.',
+                        alignment: 't-t'
+                    })
                 }
             }
         })
 
+    },
+
+    register: function (me) {
+        let registerLoginComponent = ExtUtil.referenceQuery('registerLoginField')
+        let login = registerLoginComponent.getValue()
+        if (login === null) {
+            Ext.toast({
+                message: 'Введите логин.',
+                alignment: 't-t'
+            })
+            return
+        }
+        if (!registerLoginComponent.isValid()) {
+            return
+        }
+        let registerChatIdComponent = ExtUtil.referenceQuery('registerChatIdField')
+        let chatId = registerChatIdComponent.getValue()
+        if (chatId === null) {
+            Ext.toast({
+                message: 'Введите chat id.',
+                alignment: 't-t'
+            })
+            return
+        }
+        if (!registerChatIdComponent.isValid()) {
+            return
+        }
+        let registerTokenComponent = ExtUtil.referenceQuery('registerTokenField')
+        ExtUtil.mask('loginPanel', 'Выполняется регистрация.')
+        let controller = this
+        ExtUtil.mRequest({
+            url: '/registration/register',
+            params: {
+                login: login,
+                chatId: chatId,
+                token: registerTokenComponent.getValue()
+            },
+            success: function (response) {
+                registerLoginComponent.setValue(null)
+                registerChatIdComponent.setValue(null)
+                registerTokenComponent.setValue(null)
+                ExtUtil.referenceQuery('loginField').setValue(chatId)
+                ExtUtil.referenceQuery('loginPanel').getTabBar().setActiveTab(0)
+                controller.login()
+            }
+        })
     },
 
     specialKeyPress: function (field, e) {

@@ -1,6 +1,7 @@
 Ext.define('Login.view.LoginPanel', {
     xtype: 'loginpanel',
     extend: 'Ext.tab.Panel',
+    reference: 'loginPanel',
     requires: [
         'Login.view.RegistrationTab',
         'Login.view.LoginTab'

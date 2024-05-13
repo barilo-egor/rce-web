@@ -1,61 +1,75 @@
 Ext.define('Login.view.RegistrationTab',  {
     extend: 'Ext.container.Container',
+    requires: [
+        'Login.controller.LoginController'
+    ],
+    controller: 'loginController',
     xtype: 'registrationtab',
+
     padding: '10 10 10 10',
+
     layout: {
         type: 'vbox',
-        align: 'center',
-        pack: 'center'
+        align: 'center'
     },
     items: [
         {
             xtype: 'fieldset',
+            flex: 0.8,
             width: '100%',
-            padding: '10 10 0 10',
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
             defaults: {
-                labelWidth: 120,
+                labelWidth: 80,
                 xtype: 'textfield',
                 labelAlign: 'left',
-                msgTarget: 'qtip',
+                errorTarget: 'side',
             },
             items: [
                 {
                     label: 'Логин',
+                    reference: 'registerLoginField',
                     required: true,
                     requiredMessage: 'Введите логин',
                     minLength: 4,
-                    validator: ValidatorUtil.validateLogin,
+                    validators: ValidatorUtil.validateLogin
+                },
+                {
+                    xtype: 'container',
+                    html: '<div style="text-align: right;">Придумайте логин для авторизации на сайте.</div>'
                 },
                 {
                     label: 'Ваш chat id',
+                    reference: 'registerChatIdField',
                     required: true,
                     requiredMessage: 'Введите chat id',
-                    tooltip: {
-                        html: 'Чтобы узнать свой chat id, введите в боте команду /chatid'
-                    },
                     minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm
+                    validators: ValidatorUtil.validateChatId
+                },
+                {
+                    xtype: 'container',
+                    html: '<div style="text-align: right;">Введите в боте команду /chatid</div>'
                 },
                 {
                     label: 'Токен',
                     requiredMessage: 'Введите токен',
-                    tooltip: {
-                        html: 'Для апи-клиентов. Выдается оператором.'
-                    },
-                    minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm
+                    reference: 'registerTokenField',
+                    minLength: 8
+                },
+                {
+                    xtype: 'container',
+                    html: '<div style="text-align: right;">Для апи-клиентов. Выдается оператором.</div>'
                 },
             ]
         },
         {
+            flex: 0.2,
             xtype: 'button',
             text: 'Зарегистрироваться',
             iconCls: 'x-fa fa-user-plus',
-            handler: 'registerUser',
+            handler: 'register',
             margin: '10 0 0 0',
             width: 220
         },

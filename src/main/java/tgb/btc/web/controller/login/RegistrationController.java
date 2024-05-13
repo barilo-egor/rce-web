@@ -3,20 +3,30 @@ package tgb.btc.web.controller.login;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.repository.bot.UserRepository;
+import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.RoleService;
 import tgb.btc.library.service.bean.web.WebUserService;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.RegisterWebUserForm;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Set;
 
 @Controller
 @RequestMapping(ControllerMapping.REGISTRATION)
@@ -25,18 +35,39 @@ public class RegistrationController extends BaseController {
 
     private WebUserService webUserService;
 
-    private WebUserRepository webUserRepository;
-
     private RoleService roleService;
 
+    private RoleRepository roleRepository;
+
+    private ApiUserRepository apiUserRepository;
+
+    private WebUserRepository webUserRepository;
+
+    private UserRepository userRepository;
+
     @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
+        this.apiUserRepository = apiUserRepository;
+    }
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
     }
 
     @Autowired
@@ -49,41 +80,37 @@ public class RegistrationController extends BaseController {
         roleService.initRoles();
     }
 
-    @GetMapping
-    public String init(HttpServletRequest request, @RequestParam(required = false) Long chatId) {
-        request.getSession().setAttribute("chatId", chatId);
-        return "registration";
-    }
-
-    @PostMapping("/registerUser")
+    @PostMapping("/register")
     @ResponseBody
-    public ObjectNode registerUser(@RequestBody RegisterWebUserForm registerWebUserForm, @RequestParam(required = false) RoleConstants role) {
-        webUserService.save(registerWebUserForm.getUsername(), registerWebUserForm.getPassword(), role, registerWebUserForm.getChatId());
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("success", true);
-        return objectNode;
+    public SuccessResponse<?> register(String login, Long chatId, @RequestParam(required = false) String token) {
+        WebUser webUser = new WebUser();
+        webUser.setChatId(chatId);
+        webUser.setUsername(login);
+        webUser.setPassword(RandomStringUtils.randomAlphanumeric(10));
+        webUser.setEnabled(true);
+        RoleConstants roleConstants;
+        if (StringUtils.isNotEmpty(token) && apiUserRepository.countByToken(token) == 1) {
+            roleConstants = RoleConstants.ROLE_API_CLIENT;
+        } else {
+            roleConstants = RoleConstants.ROLE_USER;
+        }
+        webUser.setRoles(roleRepository.getByName(roleConstants.name()));
+        webUserService.save(webUser);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("registered", true));
     }
 
     @GetMapping("/isUsernameFree")
     @ResponseBody
-    public ObjectNode isUsernameFree(@RequestParam String username) {
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("result", webUserRepository.countByUsername(username) == 0);
-        objectNode.put("success", true);
-        return objectNode;
+    public SuccessResponse<?> isUsernameFree(String username) {
+        return SuccessResponseUtil.data(webUserRepository.countByUsername(username) == 0,
+                data -> JacksonUtil.getEmpty().put("isFree", data));
     }
 
-    @PostMapping("/changePassword")
+    @GetMapping("/isChatIdValid")
     @ResponseBody
-    public ObjectNode changePassword(@RequestParam String password, Principal principal) {
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        try {
-            webUserService.changePassword(principal.getName(), password);
-            objectNode.put("success", true);
-        } catch (Exception e) {
-            objectNode.put("success", false);
-            log.error("Ошибка при обновлении пароля. ", e);
-        }
-        return objectNode;
+    public SuccessResponse<?> isChatIdValid(Long chatId) {
+        boolean isValid = userRepository.existsByChatId(chatId) && !webUserRepository.existsByChatId(chatId);
+        return SuccessResponseUtil.data(isValid,
+                data -> JacksonUtil.getEmpty().put("isValid", data));
     }
 }

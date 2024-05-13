@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/**",
                         "/registerLogin", "/telegramLogin",
                         "/css/**", "/web/main",
+                        "/registration/**",
                         "/api/**", "/documentation/**",
                         "/web/user/isExist"
                 )

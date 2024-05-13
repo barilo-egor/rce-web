@@ -45,19 +45,36 @@ let ValidatorUtil = {
     },
 
     validateLogin: function (val) {
-        if (!val) return 'Введите значение'
-        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и цифры.'
+        if (!val) return 'Введите логин'
+        if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Логин должен состоять из латинских букв или цифр. Длина от 4 до 20 символов.'
         let result = true
-        Ext.Ajax.request({
-            url: '/web/registration/isUsernameFree',
+        ExtUtil.mRequest({
+            url: '/registration/isUsernameFree',
             method: 'GET',
             params: {
                 username: val
             },
             async: false,
-            success: function(rs) {
-                let response = Ext.JSON.decode(rs.responseText)
-                if (!response.result) result = 'Данный логин уже занят'
+            success: function(response) {
+                if (response.body.data.isFree !== true) result = 'Данный логин уже занят'
+            }
+        })
+        return result
+    },
+
+    validateChatId: function (val) {
+        if (!val) return 'Введите chat id'
+        if (!RegexUtil.onlyNumbers(val)) return 'Chat id состоит из цифр.'
+        let result = true
+        ExtUtil.mRequest({
+            url: '/registration/isChatIdValid',
+            method: 'GET',
+            params: {
+                chatId: val
+            },
+            async: false,
+            success: function(response) {
+                if (response.body.data.isValid !== true) result = 'Пользователь бота с таким chat id не найден, либо уже зарегистрирован.'
             },
             failure: function () {
                 Ext.Msg.alert('Ошибка', 'Ошибка при попытке проверки логина.')
