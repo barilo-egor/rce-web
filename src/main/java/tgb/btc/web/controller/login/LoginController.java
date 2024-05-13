@@ -53,12 +53,19 @@ public class LoginController extends BaseController {
     }
 
     @GetMapping(path = "/registerLogin", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter registerLogin(HttpServletRequest request, Long chatId) {
+    public SseEmitter registerLogin(HttpServletRequest request, String loginField) {
+        Long chatId;
+        try {
+            chatId = Long.parseLong(loginField);
+        } catch (NumberFormatException e) {
+            chatId = webUserRepository.getByUsername(loginField).getChatId();
+        }
         SseEmitter emitter = new SseEmitter(30000L);
+        Long finalChatId = chatId;
         emitter.onCompletion(() ->
-                EMITTER_MAP.remove(chatId));
+                EMITTER_MAP.remove(finalChatId));
         emitter.onTimeout(() ->
-                EMITTER_MAP.remove(chatId));
+                EMITTER_MAP.remove(finalChatId));
         EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);
         return emitter;

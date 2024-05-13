@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
 import tgb.btc.web.controller.BaseController;
@@ -48,5 +49,18 @@ public class WebUserController extends BaseController {
     public SuccessResponse<?> update(@RequestParam Long pid) {
         webUserRepository.deleteById(pid);
         return SuccessResponseUtil.toast("Пользователь удален.");
+    }
+
+    @GetMapping("/isExist")
+    @ResponseBody
+    public SuccessResponse<?> isExist(String loginField) {
+        boolean isExist;
+        try {
+            Long chatId = Long.parseLong(loginField);
+            isExist = webUserRepository.existsByChatId(chatId);
+        } catch (NumberFormatException e) {
+            isExist = webUserRepository.existsByUsername(loginField);
+        }
+        return SuccessResponseUtil.data(isExist, data -> JacksonUtil.getEmpty().put("isExist", data));
     }
 }

@@ -8,31 +8,45 @@ Ext.define('Login.controller.LoginController', {
     },
 
     login: function () {
-        let chatIdComponent = ExtUtil.referenceQuery('chatIdLoginField')
-        let chatId = chatIdComponent.getValue()
-        if (chatId === null || !chatIdComponent.isValid()) {
+        let loginFieldComponent = ExtUtil.referenceQuery('loginField')
+        let loginField = loginFieldComponent.getValue()
+        if (loginField === null || !loginFieldComponent.isValid()) {
             Ext.toast({
-                message: 'Введите chat id.',
+                message: 'Введите chat id либо логин.',
                 docked: 'top',
                 alignment: 't-t'
             })
             return
         }
-        const eventSource = new EventSource("/registerLogin?chatId=" + chatId);
-        eventSource.onmessage = e => {
-            let response = Ext.JSON.decode(e.data);
-            if (response.success) {
-                location.reload()
-            } else {
-                Ext.Msg.alert('Внимание', 'Авторизация не удалась. Попробуйте ещё раз, либо обратитесь к оператору.');
+        ExtUtil.mRequest({
+            url: '/web/user/isExist',
+            params: {
+                loginField: loginField
+            },
+            method: 'GET',
+            success: function (response) {
+                if (response.body.data.isExist === true) {
+                    const eventSource = new EventSource("/registerLogin?loginField=" + loginField);
+                    eventSource.onmessage = e => {
+                        let response = Ext.JSON.decode(e.data);
+                        if (response.success) {
+                            location.reload()
+                        } else {
+                            Ext.Msg.alert('Внимание', 'Авторизация не удалась. Попробуйте ещё раз, либо обратитесь к оператору.');
+                        }
+                    }
+                    eventSource.onerror = () => console.log('Произошла ошибка.');
+                    Ext.create('Ext.Dialog', {
+                        title: 'Подтверждение',
+                        closable: false,
+                        html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить" в чате с ботом для входа.'
+                    }).show()
+                } else {
+                    Ext.toast('Пользователь не найден. Пройдите регистрацию.')
+                }
             }
-        }
-        eventSource.onerror = () => console.log('Произошла ошибка.');
-        Ext.create('Ext.Dialog', {
-            title: 'Подтверждение',
-            closable: false,
-            html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить" в чате с ботом для входа.'
-        }).show()
+        })
+
     },
 
     specialKeyPress: function (field, e) {

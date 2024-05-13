@@ -30,10 +30,9 @@ Ext.define('Login.view.LoginTab',  {
             items: [
                 {
                     xtype: 'textfield',
-                    reference: 'chatIdLoginField',
-                    name: 'chatId',
-                    label: 'Chat id',
-                    requiredMessage: 'Введите chat id',
+                    reference: 'loginField',
+                    label: 'Chat id либо логин',
+                    requiredMessage: 'Введите chat id либо логин',
                     required: true,
                     minLength: 4,
                     listeners: {
