@@ -6,7 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import tgb.btc.library.util.web.JacksonUtil;
 
 @Configuration
@@ -36,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/js/api/**",
                         "/js/common/**",
                         "/api/**",
-                        "/loginSuccess", "/loginError",
+                        "/registerLogin", "/telegramLogin",
                         "/css/**", "/web/main",
                         "/api/**", "/documentation/**"
                 )

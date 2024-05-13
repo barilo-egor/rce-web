@@ -8,40 +8,31 @@ Ext.define('Login.controller.LoginController', {
     },
 
     login: function () {
-        let login = ExtUtil.referenceQuery('loginLoginField').getValue()
-        if (login === null
-            || !ExtUtil.referenceQuery('loginLoginField').isValid()) {
+        let chatIdComponent = ExtUtil.referenceQuery('chatIdLoginField')
+        let chatId = chatIdComponent.getValue()
+        if (chatId === null || !chatIdComponent.isValid()) {
             Ext.toast({
-                message: 'Введите логин.',
+                message: 'Введите chat id.',
                 docked: 'top',
                 alignment: 't-t'
             })
             return
         }
-        let password = ExtUtil.referenceQuery('passwordLoginField').getValue()
-        if (password === null
-            || !ExtUtil.referenceQuery('passwordLoginField').isValid()) {
-            Ext.toast({
-                message: 'Введите пароль.',
-                docked: 'top',
-                alignment: 't-t'
-            })
-            return
-        }
-        ExtUtil.request({
-            url: '/login',
-            params: {
-                username: login,
-                password: password
-            },
-            success: function (response) {
-                if (response.loginSuccess) {
-                    location.reload()
-                } else {
-                    Ext.toast('Неправильный логин или пароль.')
-                }
+        const eventSource = new EventSource("/registerLogin?chatId=" + chatId);
+        eventSource.onmessage = e => {
+            let response = Ext.JSON.decode(e.data);
+            if (response.success) {
+                location.reload()
+            } else {
+                Ext.Msg.alert('Внимание', 'Авторизация не удалась. Попробуйте ещё раз, либо обратитесь к оператору.');
             }
-        })
+        }
+        eventSource.onerror = () => console.log('Произошла ошибка.');
+        Ext.create('Ext.Dialog', {
+            title: 'Подтверждение',
+            closable: false,
+            html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить" в чате с ботом для входа.'
+        }).show()
     },
 
     specialKeyPress: function (field, e) {

@@ -117,9 +117,6 @@ let ExtUtil = {
         requestObj.async = config.async !== false
         requestObj.success = function (rawResponse) {
             let response = Ext.JSON.decode(rawResponse.responseText)
-            if (response.loginSuccess === true || response.loginSuccess === false) {
-                config.success(response, rawResponse)
-            }
             if (!response.success) {
                 let addingText = response.description
                     ? ': ' + response.description
@@ -131,6 +128,48 @@ let ExtUtil = {
             } else if (response.body && response.body.warningString){
                 Ext.Msg.alert('Внимание', response.body.warningString)
                 if (config.loadingComponent) config.loadingComponent.setLoading(false)
+            } else {
+                if (response.body && response.body.message) {
+                    Ext.alert('Информация', response.body.message)
+                }
+                if (response.body && response.body.toast) {
+                    Ext.toast(response.body.toast)
+                }
+                config.success(response, rawResponse)
+            }
+        }
+        Ext.Ajax.request(requestObj)
+    },
+
+    mRequest: function (config) {
+        let requestObj = {}
+        requestObj.url = config.url
+        requestObj.method = config.method ? config.method : 'POST'
+        if (config.params) requestObj.params = config.params
+        if (config.jsonData) requestObj.jsonData = config.jsonData
+        let failure = this.failure
+        requestObj.failure = function(response) {
+            if (config.loadingComponent) {
+                config.loadingComponent.setMasked(false)
+            } else if (config.loadingComponentRef) {
+                ExtUtil.turnOffLoadingByReference(config.loadingComponentRef)
+            }
+            failure(response)
+        }
+        requestObj.async = config.async !== false
+        requestObj.success = function (rawResponse) {
+            let response = Ext.JSON.decode(rawResponse.responseText)
+            if (!response.success) {
+                let addingText = response.description
+                    ? ': ' + response.description
+                    : '. Информация отсутствует.'
+                ExtUtil.Msg.error({
+                    text: 'Ошибка сервера<p>' + addingText
+                })
+                if (config.loadingComponent) config.loadingComponent.setMasked(false)
+            } else if (response.body && response.body.warningString){
+                Ext.Msg.alert('Внимание', response.body.warningString)
+                if (config.loadingComponent) config.loadingComponent.setMasked(false)
             } else {
                 if (response.body && response.body.message) {
                     Ext.alert('Информация', response.body.message)
@@ -181,6 +220,14 @@ let ExtUtil = {
 
     loadingByReference: function (reference) {
         ExtUtil.referenceQuery(reference).setLoading('Пожалуйста, ждите...')
+    },
+
+    mask: function (reference, text) {
+        ExtUtil.referenceQuery(reference).setMasked(text ? text : 'Пожалуйста, ждите...')
+    },
+
+    maskOff: function (reference) {
+        ExtUtil.referenceQuery(reference).setMasked(false)
     },
 
     loadingByComponent: function (component) {

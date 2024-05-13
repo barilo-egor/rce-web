@@ -31,23 +31,6 @@ Ext.define('Login.view.RegistrationTab',  {
                     validator: ValidatorUtil.validateLogin,
                 },
                 {
-                    xtype: 'passwordfield',
-                    label: 'Пароль',
-                    required: true,
-                    requiredMessage: 'Введите пароль',
-                    inputType: 'password',
-                    minLength: 8,
-                    validator: ValidatorUtil.validateNotEmptyAndLettersAndNumber
-                },
-                {
-                    xtype: 'passwordfield',
-                    label: 'Повторите пароль',
-                    required: true,
-                    requiredMessage: 'Введите пароль ещё раз',
-                    minLength: 8,
-                    validator: ValidatorUtil.validatePasswordConfirm,
-                },
-                {
                     label: 'Ваш chat id',
                     required: true,
                     requiredMessage: 'Введите chat id',

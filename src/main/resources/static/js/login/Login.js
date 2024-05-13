@@ -1,13 +1,9 @@
 Ext.application({
     extend: 'Ext.app.Application',
     name: 'Login',
-
-    // quickTips: false,
-    // platformConfig: {
-    //     desktop: {
-    //         quickTips: true
-    //     }
-    // },
+    requires: [
+        'Login.view.LoginDialog'
+    ],
 
     appFolder: '/js/login',
 

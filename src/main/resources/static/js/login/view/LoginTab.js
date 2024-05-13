@@ -17,10 +17,11 @@ Ext.define('Login.view.LoginTab',  {
             xtype: 'fieldset',
             width: '100%',
             flex: 0.8,
-            padding: '10 10 0 10',
+            padding: '10 10 40 10',
             layout: {
                 type: 'vbox',
-                align: 'stretch'
+                align: 'stretch',
+                pack: 'center'
             },
             defaults: {
                 labelWidth: 120,
@@ -29,24 +30,12 @@ Ext.define('Login.view.LoginTab',  {
             items: [
                 {
                     xtype: 'textfield',
-                    reference: 'loginLoginField',
-                    label: 'Логин',
-                    name: 'username',
-                    requiredMessage: 'Введите логин',
+                    reference: 'chatIdLoginField',
+                    name: 'chatId',
+                    label: 'Chat id',
+                    requiredMessage: 'Введите chat id',
                     required: true,
                     minLength: 4,
-                    listeners: {
-                        keyup: 'enterKeyUp'
-                    }
-                },
-                {
-                    xtype: 'passwordfield',
-                    reference: 'passwordLoginField',
-                    label: 'Пароль',
-                    requiredMessage: 'Введите пароль',
-                    required: true,
-                    revealable: true,
-                    minLength: 8,
                     listeners: {
                         keyup: 'enterKeyUp'
                     }
