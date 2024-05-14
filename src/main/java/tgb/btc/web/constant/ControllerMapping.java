@@ -27,7 +27,7 @@ public interface ControllerMapping {
 
     String WEB_USER = WEB + "/user";
 
-    String PROPERTIES = WEB + "/properties";
+    String PROPERTIES = "/properties";
 
     String GAMES = WEB + "/games";
 
