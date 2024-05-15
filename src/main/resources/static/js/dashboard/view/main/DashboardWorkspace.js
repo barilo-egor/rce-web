@@ -2,15 +2,19 @@ Ext.define('Dashboard.view.main.DashboardWorkspace', {
     extend: 'Ext.Panel',
     xtype: 'dashboardworkspace',
     reference: 'dashboardworkspace',
+    requires: [
+        'Dashboard.view.deal.bot.BotDealsContainer'
+    ],
 
     shadow: true,
     margin: '10 10 10 10',
-    padding: '20 20 20 20',
 
+    layout: {
+        type: 'fit'
+    },
     items: [
         {
-            xtype: 'textfield',
-            label: 'Label'
+            xtype: 'botdealscontainer'
         }
     ]
 })

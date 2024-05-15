@@ -9,7 +9,6 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
     controller: 'dashboardController',
 
     title: 'Навигация',
-    titleAlign: 'right',
     margin: '10 10 10 10',
     shadow: true,
     scrollable: true,
@@ -29,7 +28,7 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
             ui: 'nav',
             listeners: {
                 painted: function (me) {
-                    me.setSelection('qweqweqwe')
+                    me.setSelection('botDealsMenuNode')
                 }
             },
 
@@ -47,7 +46,7 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     reference: 'botDealsMenu',
                                     text: 'Сделки из бота',
                                     cls: 'fontSizeTest',
-                                    id: 'qweqweqwe',
+                                    id: 'botDealsMenuNode',
                                     leaf: true,
                                     iconCls: 'x-fa fa-robot'
                                 }
