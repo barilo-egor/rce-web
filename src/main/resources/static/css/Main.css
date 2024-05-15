@@ -122,3 +122,7 @@
     font-size: 14px;
     line-height: 44px;
 }
+
+.backgroundMain {
+    background-color: lightgrey;
+}
