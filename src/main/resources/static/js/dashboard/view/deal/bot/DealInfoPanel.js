@@ -8,7 +8,9 @@ Ext.define('Dashboard.view.deal.bot.DealInfoPanel', {
         xtype: 'panel'
     },
     collapsible: {
-        direction: 'right'
+        direction: 'right',
+        expandToolText: 'Развернуть',
+        collapseToolText: 'Свернуть'
     },
     titleCollapse: false,
     openable: 3,
