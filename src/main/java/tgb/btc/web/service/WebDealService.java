@@ -10,6 +10,7 @@ import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.PaymentReceiptRepository;
+import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
@@ -26,6 +27,13 @@ public class WebDealService {
     private PagingDealRepository pagingDealRepository;
 
     private DealService dealService;
+
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public void setDealService(DealService dealService) {
@@ -54,11 +62,27 @@ public class WebDealService {
 
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
         return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW, PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
-                .map(deal -> DealVO.builder()
-                        .pid(deal.getPid())
-                        .dealStatus(deal.getDealStatus())
-                        .chatId(dealRepository.getUserChatIdByDealPid(deal.getPid()))
-                        .build())
+                .map(deal -> {
+                    Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
+                    return DealVO.builder()
+                            .pid(deal.getPid())
+                            .dateTime(deal.getDateTime())
+                            .paymentType(deal.getPaymentType())
+                            .requisite(deal.getWallet())
+                            .dealStatus(deal.getDealStatus())
+                            .dealsCount(dealRepository.getCountPassedByUserChatId(userChatId))
+                            .dealStatus(deal.getDealStatus())
+                            .fiatCurrency(deal.getFiatCurrency())
+                            .cryptoCurrency(deal.getCryptoCurrency())
+                            .amountCrypto(deal.getCryptoAmount())
+                            .amountFiat(deal.getAmount())
+                            .dealType(deal.getDealType())
+                            .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
+                            .paymentReceipts(dealService.getPaymentReceipts(deal.getPid()))
+                            .deliveryType(deal.getDeliveryType())
+                            .user(userRepository.findByChatId(userChatId))
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

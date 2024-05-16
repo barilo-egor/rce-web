@@ -13,5 +13,9 @@ Ext.application({
                 xtype: 'dashboardcontainer'
             }
         ]
-    }
+    },
+    //
+    // stores: [
+    //     'Dashboard.store.deal.bot.BotDealStore'
+    // ]
 })

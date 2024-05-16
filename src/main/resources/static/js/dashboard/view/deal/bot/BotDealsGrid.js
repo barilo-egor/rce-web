@@ -15,36 +15,46 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     items: [
         {
             xtype: 'grid',
+            store: Ext.create('Dashboard.store.deal.bot.BotDealStore'),
+            plugins: {
+                pagingtoolbar: true
+            },
             columns: [
                 {
-                    text: 'Статус'
+                    text: 'Статус',
+                    dataIndex: 'status.displayName'
                 },
                 {
-                    text: 'Тип оплаты'
+                    text: 'Тип оплаты',
+                    dataIndex: 'paymentType'
                 },
                 {
-                    text: 'Тип сделки'
+                    text: 'Тип сделки',
+                    dataIndex: 'dealType.displayName'
                 },
                 {
-                    text: 'Сумма в крипте'
+                    text: 'Сумма в крипте',
+                    dataIndex: 'cryptoAmount'
                 },
                 {
-                    text: 'Фиат сумма'
+                    text: 'Фиат сумма',
+                    dataIndex: 'amount'
                 },
                 {
-                    text: 'Доставка'
+                    text: 'Доставка',
+                    dataIndex: 'deliveryType'
                 },
                 {
-                    text: 'Дата'
+                    text: 'Дата и время',
+                    dataIndex: 'dateTime'
                 },
                 {
-                    text: 'Время'
+                    text: 'Реквизит',
+                    dataIndex: 'requisite'
                 },
                 {
-                    text: 'Реквизит'
-                },
-                {
-                    text: 'Chat id'
+                    text: 'Chat id',
+                    dataIndex: 'user.chatId'
                 }
             ]
         }

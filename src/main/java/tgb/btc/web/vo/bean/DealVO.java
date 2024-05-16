@@ -3,6 +3,7 @@ package tgb.btc.web.vo.bean;
 import lombok.*;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
+import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.constants.enums.bot.*;
 
 import java.math.BigDecimal;
@@ -47,4 +48,6 @@ public class DealVO {
     private List<PaymentReceipt> paymentReceipts;
 
     private DeliveryType deliveryType;
+
+    private User user;
 }
