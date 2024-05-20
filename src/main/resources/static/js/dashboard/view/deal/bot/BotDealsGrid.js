@@ -1,6 +1,14 @@
 Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     extend: 'Ext.Panel',
     xtype: 'botdealsgrid',
+    reference: 'botDealsGrid',
+
+    requires: [
+        'Dashboard.view.deal.bot.BotDealsController',
+        'Dashboard.view.deal.bot.GridMenu'
+    ],
+    controller: 'botDealsController',
+
     flex: 1,
     shadow: true,
     margin: '10 10 10 10',
@@ -15,26 +23,57 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     items: [
         {
             xtype: 'grid',
+            reference: 'botDealsGrid',
             store: Ext.create('Dashboard.store.deal.bot.BotDealStore'),
             plugins: {
                 pagingtoolbar: true
             },
+            listeners: {
+                childcontextmenu: function (grid, eObj) {
+                    grid.deselectAll();
+                    grid.setSelection(eObj.record);
+                    if (!grid.menu) {
+                        grid.menu = Ext.create('Dashboard.view.deal.bot.GridMenu')
+                    }
+                    grid.menu.setViewModel({
+                        data: {
+                            deal: eObj.record
+                        }
+                    })
+                    grid.menu.showAt(eObj.event.getX(), eObj.event.getY());
+                    eObj.event.stopEvent()
+                }
+            },
             columns: [
                 {
+                    text: '№',
+                    dataIndex: 'pid',
+                    width: 60
+                },
+                {
                     text: 'Статус',
-                    dataIndex: 'status.displayName'
+                    dataIndex: 'status',
+                    width: 140,
+                    renderer: function (val) {
+                        return val.displayName
+                    }
                 },
                 {
                     text: 'Тип оплаты',
-                    dataIndex: 'paymentType'
+                    dataIndex: 'paymentType',
+                    flex: 1
                 },
                 {
                     text: 'Тип сделки',
-                    dataIndex: 'dealType.displayName'
+                    dataIndex: 'dealType',
+                    renderer: function (val) {
+                        return val.displayName
+                    }
                 },
                 {
                     text: 'Сумма в крипте',
-                    dataIndex: 'cryptoAmount'
+                    dataIndex: 'cryptoAmount',
+                    width: 120
                 },
                 {
                     text: 'Фиат сумма',
@@ -46,15 +85,20 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 {
                     text: 'Дата и время',
-                    dataIndex: 'dateTime'
+                    dataIndex: 'dateTime',
+                    width: 150
                 },
                 {
                     text: 'Реквизит',
-                    dataIndex: 'requisite'
+                    dataIndex: 'requisite',
+                    flex: 1
                 },
                 {
                     text: 'Chat id',
-                    dataIndex: 'user.chatId'
+                    dataIndex: 'user',
+                    renderer: function (val) {
+                        return val.chatId
+                    }
                 }
             ]
         }

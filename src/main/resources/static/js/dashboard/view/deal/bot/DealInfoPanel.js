@@ -13,6 +13,7 @@ Ext.define('Dashboard.view.deal.bot.DealInfoPanel', {
         collapseToolText: 'Свернуть'
     },
     titleCollapse: false,
+    scrollable: 'y',
     openable: 3,
     items: [
         {

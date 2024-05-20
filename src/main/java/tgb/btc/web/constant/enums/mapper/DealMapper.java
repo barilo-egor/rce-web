@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public enum DealMapper implements ObjectNodeConvertable<DealVO> {
     FIND_ALL(deal -> {
         ObjectNode result = JacksonUtil.getEmpty();
+        result.put("pid", deal.getPid());
         ObjectNode status = JacksonUtil.getEmpty()
                 .put("name", deal.getDealStatus().name())
                 .put("displayName", deal.getDealStatus().getDisplayName());
@@ -30,12 +31,12 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
         result.set("dealType", dealType);
         result.put("cryptoAmount", BigDecimalUtil.roundToPlainString(deal.getAmountCrypto(), deal.getCryptoCurrency().getScale())
-                + deal.getCryptoCurrency().getShortName());
-        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()) + deal.getFiatCurrency().getGenitive());
+                + " " + deal.getCryptoCurrency().getShortName());
+        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()) + " " + deal.getFiatCurrency().getCode());
         result.put("deliveryType", Objects.nonNull(deal.getDeliveryType())
                 ? deal.getDeliveryType().getDisplayName()
                 : StringUtils.EMPTY);
-        result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:m:ss")));
+        result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("requisite", deal.getRequisite());
         result.put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
         User user = deal.getUser();
