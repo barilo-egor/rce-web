@@ -29,19 +29,75 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 pagingtoolbar: true
             },
             listeners: {
-                childcontextmenu: function (grid, eObj) {
-                    grid.deselectAll();
-                    grid.setSelection(eObj.record);
-                    if (!grid.menu) {
-                        grid.menu = Ext.create('Dashboard.view.deal.bot.GridMenu')
+                childcontextmenu: function (me, eObj) {
+                    me.deselectAll();
+                    me.setSelection(eObj.record);
+                    if (!me.menu) {
+                        me.menu = Ext.create('Dashboard.view.deal.bot.GridMenu')
                     }
-                    grid.menu.setViewModel({
+                    me.menu.setViewModel({
                         data: {
                             deal: eObj.record
                         }
                     })
-                    grid.menu.showAt(eObj.event.getX(), eObj.event.getY());
+                    me.menu.showAt(eObj.event.getX(), eObj.event.getY());
                     eObj.event.stopEvent()
+                },
+                select: function (me, selected) {
+                    // ExtUtil.mask('dealInfoPanel', 'Загрузка информации о сделке')
+                    let deal = selected[0].getData()
+                    let items = []
+                    for (let paymentReceipt of deal.paymentReceipts) {
+                        if (paymentReceipt.format === 'PDF') {
+                            items.push(
+                                {
+                                    modal: true,
+                                    closeAction: 'hide',
+                                    width: '100%',
+                                    height: '100%',
+                                    items: [
+                                        {
+                                            xtype: 'box',
+                                            scrollable: true,
+                                            autoEl: {
+                                                tag: 'iframe',
+                                                src: '/image/getPDF?fileId=' + paymentReceipt.fileId,
+                                                width: '100%',
+                                                height: '100%',
+                                            }
+                                        },
+                                    ]
+                                }
+                            )
+                        } else if (paymentReceipt.format === 'PICTURE') {
+                            items.push(
+                                // {
+                                //     xtype: 'container',
+                                //     html: '<img src="/image/get?imageId=' + paymentReceipt.fileId + '" style="width: 400px; height: auto;" />',
+                                //     listeners: {
+                                //         load: function (me) {
+                                //             ExtUtil.maskOff('dealInfoPanel')
+                                //         }
+                                //     }
+                                // }
+                                {
+                                    xtype: 'image',
+                                    flex: 1,
+                                    src: '/image/get?imageId=' + paymentReceipt.fileId,
+                                    listeners: {
+                                        painted: function (image) {
+                                            debugger
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                    let checkImageContainer = ExtUtil.referenceQuery('checkImageContainer')
+                    let checkImageContainerItems = checkImageContainer.getItems().items
+                    if (checkImageContainerItems.length > 0) checkImageContainerItems.forEach(item => item.destroy())
+                    checkImageContainer.setHtml(null)
+                    checkImageContainer.add(items)
                 }
             },
             columns: [

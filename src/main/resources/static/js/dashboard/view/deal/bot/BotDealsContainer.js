@@ -32,6 +32,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
         {
             xtype: 'dealinfopanel',
             shadow: true,
+            flex: 0.3,
             margin: '10 10 10 10'
         }
     ]
