@@ -7,20 +7,24 @@ Ext.define('Dashboard.view.main.DashboardContainer', {
         'Dashboard.view.main.DashboardWorkspace'
     ],
 
-    layout: 'hbox',
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
     cls: 'backgroundMain',
 
     items: [
         {
             xtype: 'dashboardtoolbar',
+            docked: 'top',
+            height: 48
         },
         {
             xtype: 'dashboardnavigation',
-
         },
         {
             xtype: 'dashboardworkspace',
-            flex: 1
+            flex: 1,
         }
     ]
 })

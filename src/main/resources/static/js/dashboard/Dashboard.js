@@ -8,14 +8,11 @@ Ext.application({
     appFolder: '/js/dashboard',
 
     viewport: {
+        layout: 'fit',
         items: [
             {
                 xtype: 'dashboardcontainer'
             }
         ]
-    },
-    //
-    // stores: [
-    //     'Dashboard.store.deal.bot.BotDealStore'
-    // ]
+    }
 })

@@ -15,37 +15,20 @@ Ext.define('Dashboard.view.deal.bot.DealInfoPanel', {
     },
     titleCollapse: false,
     scrollable: 'y',
-    openable: 3,
+    openable: 1,
     items: [
         {
             title: 'Информация о пользователе',
-            collapsible: {
-                direction: 'top',
-            }
         },
         {
             title: 'Чек',
-            collapsible: {
-                direction: 'top',
-            },
-            layout: {
-                type: 'vbox',
-                align: 'center',
-                pack: 'middle'
-            },
-            items: [
-                {
-                    xtype: 'container',
-                    reference: 'checkImageContainer',
-                    layout: 'fit'
-                },
-            ]
+            reference: 'checkImageContainer',
+            layout: 'hbox',
+            border: true,
+            html: 'Выберите сделку'
         },
         {
             title: 'Верификация',
-            collapsible: {
-                direction: 'top',
-            },
             items: [
                 {
                     xtype: 'container',

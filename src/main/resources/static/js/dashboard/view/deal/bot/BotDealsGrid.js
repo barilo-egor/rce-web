@@ -44,7 +44,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     eObj.event.stopEvent()
                 },
                 select: function (me, selected) {
-                    // ExtUtil.mask('dealInfoPanel', 'Загрузка информации о сделке')
+                    ExtUtil.mask('dealInfoPanel', 'Загрузка информации о сделке')
                     let deal = selected[0].getData()
                     let items = []
                     for (let paymentReceipt of deal.paymentReceipts) {
@@ -71,22 +71,16 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             )
                         } else if (paymentReceipt.format === 'PICTURE') {
                             items.push(
-                                // {
-                                //     xtype: 'container',
-                                //     html: '<img src="/image/get?imageId=' + paymentReceipt.fileId + '" style="width: 400px; height: auto;" />',
-                                //     listeners: {
-                                //         load: function (me) {
-                                //             ExtUtil.maskOff('dealInfoPanel')
-                                //         }
-                                //     }
-                                // }
                                 {
                                     xtype: 'image',
-                                    flex: 1,
-                                    src: '/image/get?imageId=' + paymentReceipt.fileId,
+                                    src: '/image/get?imageId=' + paymentReceipt.fileId, // путь к вашей картинке
+                                    width: '100%',
+                                    height: 'auto',
+                                    shadow: true,
+                                    mode: 'image',
                                     listeners: {
-                                        painted: function (image) {
-                                            debugger
+                                        load: function (me) {
+                                            ExtUtil.maskOff('dealInfoPanel')
                                         }
                                     }
                                 }

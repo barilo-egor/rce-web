@@ -4,8 +4,6 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
 
     margin: '10 10 10 10',
     shadow: true,
-    docked: 'top',
-    height: 48,
     tbar: [
         {
             iconCls: 'x-fa fa-link',
