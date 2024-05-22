@@ -10,6 +10,8 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                 .setDisabled(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setDisabled(!(status === 'PAID'))
+            ExtUtil.referenceQuery('showVerificationMenuButton')
+                .setDisabled(!(status === 'VERIFICATION_RECEIVED'))
         }
     },
 
@@ -23,7 +25,8 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
             }
         },
         {
-            text: 'Открыть чек',
+            text: 'Показать чек',
+            reference: 'showCheckMenuButton',
             iconCls: 'x-fa fa-receipt',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
@@ -80,6 +83,39 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                         ]
                     }).show()
                 }
+            }
+        },
+        {
+            text: 'Показать верификацию',
+            iconCls: 'x-fa fa-file-image',
+            reference: 'showVerificationMenuButton',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                Ext.create('Ext.Dialog', {
+                    title: 'Верификация по заявке ' + deal.pid,
+                    closable: true,
+                    layout: 'fit',
+                    maxHeight: '90%',
+                    maxWidth: '90%',
+                    scrollable: 'y',
+                    masked: 'Загрузка изображения верификации',
+                    items: [
+                        {
+                            xtype: 'image',
+                            src: '/image/get?imageId=' + deal.additionalVerificationImageId,
+                            width: '100%',
+                            height: '100%',
+                            shadow: true,
+                            mode: 'image',
+                            margin: '5 5 5 5',
+                            listeners: {
+                                load: function (me) {
+                                    me.up('dialog').setMasked(false)
+                                }
+                            }
+                        }
+                    ]
+                }).show()
             }
         },
         '-',
