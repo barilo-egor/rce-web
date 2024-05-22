@@ -22,6 +22,66 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                 ExtMessages.topToast('Реквизит скопирован в буфер обмена')
             }
         },
+        {
+            text: 'Открыть чек',
+            iconCls: 'x-fa fa-receipt',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let paymentReceipt = deal.paymentReceipts[0]
+                let pictureItem
+                if (paymentReceipt.format === 'PICTURE') {
+                    Ext.create('Ext.Dialog', {
+                        title: 'Чек по заявке ' + deal.pid,
+                        closable: true,
+                        layout: 'fit',
+                        maxHeight: '90%',
+                        maxWidth: '90%',
+                        scrollable: 'y',
+                        masked: 'Загрузка чека',
+                        items: [
+                            {
+                                xtype: 'image',
+                                src: '/image/get?imageId=' + paymentReceipt.fileId,
+                                width: '100%',
+                                height: '100%',
+                                shadow: true,
+                                mode: 'image',
+                                margin: '5 5 5 5',
+                                listeners: {
+                                    load: function (me) {
+                                        me.up('dialog').setMasked(false)
+                                    }
+                                }
+                            }
+                        ]
+                    }).show()
+                } else {
+                    Ext.create('Ext.Dialog', {
+                        title: 'Чек по заявке ' + deal.pid,
+                        closable: true,
+                        layout: 'fit',
+                        height: '90%',
+                        width: '90%',
+                        scrollable: 'y',
+                        masked: 'Загрузка чека',
+                        items: [
+                            {
+                                xtype: 'panel',
+                                shadow: true,
+                                scrollable: true,
+                                html: '<iframe src="/image/getPDF?fileId=' + paymentReceipt.fileId
+                                    + '" frameborder="0" style="display: block;overflow:visible;height:100vh;width:100vw"></iframe>',
+                                listeners: {
+                                    painted: function (me) {
+                                        me.up('dialog').setMasked(false)
+                                    }
+                                }
+                            }
+                        ]
+                    }).show()
+                }
+            }
+        },
         '-',
         {
             text: 'Подтвердить',

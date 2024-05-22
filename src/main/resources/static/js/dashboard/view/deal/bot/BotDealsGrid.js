@@ -42,56 +42,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     })
                     me.menu.showAt(eObj.event.getX(), eObj.event.getY());
                     eObj.event.stopEvent()
-                },
-                select: function (me, selected) {
-                    ExtUtil.mask('dealInfoPanel', 'Загрузка информации о сделке')
-                    let deal = selected[0].getData()
-                    let items = []
-                    for (let paymentReceipt of deal.paymentReceipts) {
-                        if (paymentReceipt.format === 'PDF') {
-                            items.push(
-                                {
-                                    modal: true,
-                                    closeAction: 'hide',
-                                    width: '100%',
-                                    height: '100%',
-                                    items: [
-                                        {
-                                            xtype: 'box',
-                                            scrollable: true,
-                                            autoEl: {
-                                                tag: 'iframe',
-                                                src: '/image/getPDF?fileId=' + paymentReceipt.fileId,
-                                                width: '100%',
-                                                height: '100%',
-                                            }
-                                        },
-                                    ]
-                                }
-                            )
-                        } else if (paymentReceipt.format === 'PICTURE') {
-                            items.push(
-                                {
-                                    xtype: 'image',
-                                    src: '/image/get?imageId=' + paymentReceipt.fileId, // путь к вашей картинке
-                                    width: '100%',
-                                    height: 'auto',
-                                    shadow: true,
-                                    mode: 'image',
-                                    listeners: {
-                                        load: function (me) {
-                                            ExtUtil.maskOff('dealInfoPanel')
-                                        }
-                                    }
-                                }
-                            )
-                        }
-                    }
-                    let checkImageContainer = ExtUtil.referenceQuery('checkImageContainer')
-                    let checkImageContainerItems = checkImageContainer.getItems().items
-                    if (checkImageContainerItems.length > 0) checkImageContainerItems.forEach(item => item.destroy())
-                    checkImageContainer.setHtml(null)
-                    checkImageContainer.add(items)
                 }
             },
             columns: [
