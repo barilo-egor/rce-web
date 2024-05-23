@@ -31,7 +31,6 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
                 let paymentReceipt = deal.paymentReceipts[0]
-                let pictureItem
                 if (paymentReceipt.format === 'PICTURE') {
                     Ext.create('Ext.Dialog', {
                         title: 'Чек по заявке ' + deal.pid,

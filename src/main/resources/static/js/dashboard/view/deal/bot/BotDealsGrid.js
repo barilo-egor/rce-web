@@ -42,6 +42,21 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     })
                     me.menu.showAt(eObj.event.getX(), eObj.event.getY());
                     eObj.event.stopEvent()
+                },
+                select: function (me, selected) {
+                    let user = selected[0].getData().user
+                    ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
+                    ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
+                    ExtUtil.referenceQuery('chatIdDisplayField').setValue(user.chatId)
+                    ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username)
+                    ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
+                    ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
+                    ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + ' р.')
+                    ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent)
+                    ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount)
+                    ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active)
+                    ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount)
+                    ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
                 }
             },
             columns: [

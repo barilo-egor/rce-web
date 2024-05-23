@@ -44,10 +44,11 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("chatId", user.getChatId())
                 .put("username", user.getUsername())
                 .put("banned", user.getBanned())
-                .put("referralBalance", user.getReferralBalance())
                 .put("fromChatId", user.getFromChatId())
-                .put("active", user.getActive())
+                .put("referralBalance", user.getReferralBalance())
                 .put("referralPercent", user.getReferralPercent())
+                .put("referralUsersCount", user.getReferralUsers().size())
+                .put("active", user.getActive())
                 .put("dealsCount", deal.getDealsCount())
                 .put("registrationDate", user.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         result.set("user", userNode);

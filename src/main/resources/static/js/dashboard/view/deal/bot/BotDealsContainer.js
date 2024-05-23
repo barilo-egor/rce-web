@@ -2,7 +2,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
     extend: 'Ext.Container',
     xtype: 'botdealscontainer',
     requires: [
-        'Dashboard.view.deal.bot.DealInfoPanel',
+        'Dashboard.view.deal.bot.UserInfoPanel',
         'Dashboard.view.deal.bot.FilterPanel',
         'Dashboard.view.deal.bot.BotDealsGrid'
     ],
@@ -30,9 +30,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
             ]
         },
         {
-            xtype: 'dealinfopanel',
+            xtype: 'userinfopanel',
             shadow: true,
-            flex: 0.3,
             margin: '10 10 10 10'
         }
     ]
