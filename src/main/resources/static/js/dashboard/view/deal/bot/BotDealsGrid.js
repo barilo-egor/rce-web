@@ -29,6 +29,16 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 pagingtoolbar: true
             },
             listeners: {
+                painted: function(me) {
+                    const eventSource = new EventSource("/deal/bot/listener/register");
+                    eventSource.onmessage = e => {
+                        let response = Ext.JSON.decode(e.data);
+                        if (response.body.data.reloadStore) {
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    }
+                    eventSource.onerror = () => console.log('Произошла ошибка.');
+                },
                 childcontextmenu: function (me, eObj) {
                     me.deselectAll();
                     me.setSelection(eObj.record);
