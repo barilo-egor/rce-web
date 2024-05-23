@@ -141,7 +141,22 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
         {
             text: 'Запросить верификацию',
             reference: 'additionalVerificationMenuButton',
-            iconCls: 'x-fa fa-user-check'
+            iconCls: 'x-fa fa-user-check',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let verificationFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/askVerification',
+                        params: {
+                            pid: deal.pid
+                        },
+                        success: function (response) {
+                        }
+                    })
+                }
+                ExtMessages.confirm('Дополнительная верификация', 'Вы действительно хотите запросить верификацию по сделке №' + deal.pid + '?',
+                    verificationFn)
+            }
         }
     ]
 })
