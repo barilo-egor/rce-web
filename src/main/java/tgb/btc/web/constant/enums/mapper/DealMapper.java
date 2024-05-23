@@ -21,7 +21,8 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         result.put("pid", deal.getPid());
         ObjectNode status = JacksonUtil.getEmpty()
                 .put("name", deal.getDealStatus().name())
-                .put("displayName", deal.getDealStatus().getDisplayName());
+                .put("displayName", deal.getDealStatus().getDisplayName())
+                .put("color", deal.getDealStatus().getColor());
         result.set("status", status);
         result.put("paymentType", Objects.nonNull(deal.getPaymentType())
                 ? deal.getPaymentType().getName()

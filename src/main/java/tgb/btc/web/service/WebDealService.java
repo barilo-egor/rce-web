@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.PaymentReceiptRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
-import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
 import tgb.btc.web.vo.bean.DealVO;
 
 import java.util.List;
@@ -70,7 +67,7 @@ public class WebDealService {
                             .paymentType(deal.getPaymentType())
                             .requisite(deal.getWallet())
                             .dealStatus(deal.getDealStatus())
-                            .dealsCount(dealRepository.getCountPassedByUserChatId(userChatId))
+                            .dealsCount(dealRepository.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
                             .dealStatus(deal.getDealStatus())
                             .fiatCurrency(deal.getFiatCurrency())
                             .cryptoCurrency(deal.getCryptoCurrency())

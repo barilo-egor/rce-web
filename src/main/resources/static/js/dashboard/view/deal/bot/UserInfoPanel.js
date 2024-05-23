@@ -11,7 +11,7 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
         collapseToolText: 'Свернуть'
     },
     titleCollapse: false,
-    scrollable: 'y',
+    collapsed: true,
     openable: 1,
     layout: 'fit',
     items: [
@@ -35,6 +35,8 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
             reference: 'userInfoFieldsContainer',
             hidden: true,
             padding: '15 15 15 15',
+            scrollable: true,
+
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -76,7 +78,7 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
                     reference: 'isActiveDisplayField'
                 },
                 {
-                    label: 'Количество сделок',
+                    label: 'Количество проведенных сделок',
                     reference: 'dealsCountDisplayField'
                 },
                 {

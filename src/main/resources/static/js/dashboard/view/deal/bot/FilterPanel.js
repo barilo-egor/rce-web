@@ -7,9 +7,10 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
         expandToolText: 'Развернуть',
         collapseToolText: 'Свернуть'
     },
+    collapsed: true,
     titleCollapse: false,
     shadow: true,
-    margin: '10 10 10 10',
+    margin: '10 5 5 10',
     padding: '5 5 5 5',
     layout: {
         type: 'vbox',

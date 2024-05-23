@@ -32,7 +32,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
         {
             xtype: 'userinfopanel',
             shadow: true,
-            margin: '10 10 10 10'
+            margin: '10 10 10 5'
         }
     ]
 })

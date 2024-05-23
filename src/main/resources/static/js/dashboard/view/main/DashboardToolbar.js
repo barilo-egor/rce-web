@@ -2,7 +2,7 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
     extend: 'Ext.Panel',
     xtype: 'dashboardtoolbar',
 
-    margin: '10 10 10 10',
+    margin: '10 10 5 10',
     shadow: true,
     tbar: [
         {

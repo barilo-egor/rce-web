@@ -7,7 +7,7 @@ Ext.define('Dashboard.view.main.DashboardWorkspace', {
     ],
 
     shadow: true,
-    margin: '10 10 10 10',
+    margin: '5 10 10 5',
 
     layout: {
         type: 'fit'

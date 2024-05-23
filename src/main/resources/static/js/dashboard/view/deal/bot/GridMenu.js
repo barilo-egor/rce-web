@@ -121,7 +121,22 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
         {
             text: 'Подтвердить',
             reference: 'confirmDealMenuButton',
-            iconCls: 'x-fa fa-check-circle'
+            iconCls: 'x-fa fa-check-circle',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let confirmFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/confirm',
+                        params: {
+                            pid: deal.pid
+                        },
+                        success: function (response) {
+                        }
+                    })
+                }
+                ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
+                    confirmFn)
+            }
         },
         {
             text: 'Запросить верификацию',

@@ -11,7 +11,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
 
     flex: 1,
     shadow: true,
-    margin: '10 10 10 10',
+    margin: '5 5 10 10',
     layout: 'fit',
     tbar: {
         items: [
@@ -44,6 +44,11 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     eObj.event.stopEvent()
                 },
                 select: function (me, selected) {
+                    ExtUtil.mask('userInfoPanel', 'Обновление данных')
+                    let userInfoPanel = ExtUtil.referenceQuery('userInfoPanel')
+                    if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
+                        userInfoPanel.expand()
+                    }
                     let user = selected[0].getData().user
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
                     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
@@ -51,12 +56,13 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username)
                     ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
                     ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
-                    ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + ' р.')
-                    ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent)
-                    ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount)
-                    ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active)
-                    ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount)
+                    ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + 'р.')
+                    ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent + "%")
+                    ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount + " рефералов")
+                    ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active === false ? 'Нет' : 'Да')
+                    ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
                     ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
+                    ExtUtil.maskOff('userInfoPanel')
                 }
             },
             columns: [
@@ -68,15 +74,18 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 {
                     text: 'Статус',
                     dataIndex: 'status',
-                    width: 140,
+                    width: 180,
+                    cell: {
+                        encodeHtml: false
+                    },
                     renderer: function (val) {
-                        return val.displayName
+                        return '<span class="' + val.color + '">' + val.displayName + '</span>'
                     }
                 },
                 {
                     text: 'Тип оплаты',
                     dataIndex: 'paymentType',
-                    flex: 1
+                    flex: 0.6
                 },
                 {
                     text: 'Тип сделки',
@@ -88,7 +97,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
-                    width: 120
+                    width: 150
                 },
                 {
                     text: 'Фиат сумма',
@@ -107,13 +116,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     text: 'Реквизит',
                     dataIndex: 'requisite',
                     flex: 1
-                },
-                {
-                    text: 'Chat id',
-                    dataIndex: 'user',
-                    renderer: function (val) {
-                        return val.chatId
-                    }
                 }
             ]
         }

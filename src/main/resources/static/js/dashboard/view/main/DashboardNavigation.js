@@ -9,7 +9,7 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
     controller: 'dashboardController',
 
     title: 'Навигация',
-    margin: '10 10 10 10',
+    margin: '5 5 10 10',
     shadow: true,
     scrollable: true,
 

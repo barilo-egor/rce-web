@@ -175,7 +175,10 @@ let ExtUtil = {
                     Ext.Msg.alert('Информация', response.body.message)
                 }
                 if (response.body && response.body.toast) {
-                    Ext.toast(response.body.toast)
+                    Ext.toast({
+                        message: response.body.toast,
+                        alignment: 't-t'
+                    })
                 }
                 config.success(response, rawResponse)
             }
