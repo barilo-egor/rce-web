@@ -2,11 +2,13 @@ package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
@@ -14,6 +16,7 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebDealService;
+import tgb.btc.web.service.deal.bot.BotDealsStoreEmitterService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -69,5 +72,12 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> askVerification(Long dealPid) {
         if (Objects.nonNull(additionalVerificationProcessor)) additionalVerificationProcessor.ask(dealPid);
         return SuccessResponseUtil.toast("Верификация по сделке " + dealPid + " запрошена.");
+    }
+
+    @RequestMapping(path = "/registerToListener", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter register() {
+        SseEmitter sseEmitter = new SseEmitter(-1L);
+        BotDealsStoreEmitterService.addListener(sseEmitter);
+        return sseEmitter;
     }
 }
