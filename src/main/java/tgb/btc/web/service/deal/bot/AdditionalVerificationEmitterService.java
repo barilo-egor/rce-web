@@ -13,7 +13,7 @@ public class AdditionalVerificationEmitterService extends BotDealsStoreEmitterSe
 
     @Override
     public void run() {
-        sendMessage("Поступила новая сделка");
+        sendMessage("Поступила верификация");
     }
 
 }

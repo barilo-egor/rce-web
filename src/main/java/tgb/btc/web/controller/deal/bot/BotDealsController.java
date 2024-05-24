@@ -69,9 +69,9 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/askVerification")
     @ResponseBody
-    public SuccessResponse<?> askVerification(Long dealPid) {
-        if (Objects.nonNull(additionalVerificationProcessor)) additionalVerificationProcessor.ask(dealPid);
-        return SuccessResponseUtil.toast("Верификация по сделке " + dealPid + " запрошена.");
+    public SuccessResponse<?> askVerification(Long pid) {
+        if (Objects.nonNull(additionalVerificationProcessor)) additionalVerificationProcessor.ask(pid);
+        return SuccessResponseUtil.toast("Верификация по сделке " + pid + " запрошена.");
     }
 
     @RequestMapping(path = "/registerToListener", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

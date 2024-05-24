@@ -131,6 +131,7 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                             pid: deal.pid
                         },
                         success: function (response) {
+                            Ext.getStore('botDealStore').reload()
                         }
                     })
                 }
@@ -151,6 +152,7 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                             pid: deal.pid
                         },
                         success: function (response) {
+                            Ext.getStore('botDealStore').reload()
                         }
                     })
                 }
