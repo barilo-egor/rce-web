@@ -62,7 +62,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
                     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
                     ExtUtil.referenceQuery('chatIdDisplayField').setValue(user.chatId)
-                    ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username)
+                    ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username ? user.username : 'Скрыт')
                     ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
                     ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
                     ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + 'р.')
