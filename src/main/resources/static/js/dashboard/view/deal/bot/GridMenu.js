@@ -7,11 +7,13 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
             let deal = me.getViewModel().getData().deal.getData()
             let status = deal.status.name
             ExtUtil.referenceQuery('confirmDealMenuButton')
-                .setDisabled(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
-                .setDisabled(!(status === 'PAID'))
+                .setHidden(!(status === 'PAID'))
             ExtUtil.referenceQuery('showVerificationMenuButton')
-                .setDisabled(!(status === 'VERIFICATION_RECEIVED'))
+                .setHidden(!(status === 'VERIFICATION_RECEIVED'))
+            ExtUtil.referenceQuery('deleteDealMenuButton')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
         }
     },
 
@@ -158,7 +160,12 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
                 }
                 ExtMessages.confirm('Дополнительная верификация', 'Вы действительно хотите запросить верификацию по сделке №' + deal.pid + '?',
                     verificationFn)
-            }
+            },
+        },
+        {
+            text: 'Удалить',
+            reference: 'deleteDealMenuButton',
+            iconCls: 'x-fa fa-trash-alt'
         }
     ]
 })
