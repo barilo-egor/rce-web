@@ -29,9 +29,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 pagingtoolbar: true
             },
             listeners: {
-                painted: function(me) {
-
-                },
                 childcontextmenu: function (me, eObj) {
                     me.deselectAll();
                     me.setSelection(eObj.record);
