@@ -30,13 +30,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
             },
             listeners: {
                 painted: function(me) {
-                    const eventSource = new EventSource("/deal/bot/registerToListener");
-                    eventSource.onmessage = e => {
-                        let response = Ext.JSON.decode(e.data);
-                        ExtMessages.topToast(response.message)
-                        Ext.getStore('botDealStore').reload()
-                    }
-                    eventSource.onerror = () => console.log('Произошла ошибка SSE обновления сделок.');
+
                 },
                 childcontextmenu: function (me, eObj) {
                     me.deselectAll();

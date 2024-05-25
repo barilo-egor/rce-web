@@ -10,8 +10,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
 
         if (value.length === 1 && !hasNav) {
             segmented.setValue(['nav', 'micro']);
-        }
-        else {
+        } else {
             treelist.setExpanderFirst(!hasNav);
             treelist.setMicro(hasMicro);
             treelist.setUi(hasNav ? 'nav' : null);
@@ -24,5 +23,38 @@ Ext.define('Dashboard.view.main.DashboardController', {
 
     measureWidth: function(treelist) {
         return treelist.toolsElement.getWidth();
+    },
+
+    painted: function (me) {
+        ExtUtil.mRequest({
+            url: '/properties/getPropertiesValues',
+            method: 'GET',
+            params: {
+                propertiesPath: 'BOT_PROPERTIES',
+                keys: ['bot.name', 'bot.link']
+            },
+            success: function (response) {
+                let value = response.body.data[0].value
+                me.setText(value ? value : 'Обменник')
+                me.setHandler(function () {
+                    window.open(response.body.data[1].value)
+                })
+            }
+        })
+        const eventSource = new EventSource("/notifications/listen");
+        eventSource.onmessage = e => {
+            let response = Ext.JSON.decode(e.data);
+            switch (response.type) {
+                case 'NEW_BOT_DEAL':
+                case 'ADDITIONAL_VERIFICATION_RECEIVE':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    let workspaceItem = ExtUtil.referenceQuery('dashboardworkspace').getItems().items[0]
+                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    break
+            }
+
+        }
+        eventSource.onerror = () => console.log('Произошла ошибка SSE.');
     }
 })
