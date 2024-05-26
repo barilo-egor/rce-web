@@ -43,7 +43,12 @@ public class NotificationsAPI implements INotificationsAPI {
     }
 
     @Override
-    public void additionalVerificationReceived(Long aLong) {
-        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступила верификация по заявке №" + aLong);
+    public void additionalVerificationReceived(Long dealPid) {
+        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступила верификация по заявке №" + dealPid);
+    }
+
+    @Override
+    public void declinedVerificationReceived(Long dealPid) {
+        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступил отказ верификации по заявке №" + dealPid);
     }
 }
