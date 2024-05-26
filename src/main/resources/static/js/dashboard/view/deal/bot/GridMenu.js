@@ -7,13 +7,13 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
             let deal = me.getViewModel().getData().deal.getData()
             let status = deal.status.name
             ExtUtil.referenceQuery('confirmDealMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
-                .setHidden(!(status === 'PAID'))
+                .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED'))
             ExtUtil.referenceQuery('showVerificationMenuButton')
                 .setHidden(!(status === 'VERIFICATION_RECEIVED'))
             ExtUtil.referenceQuery('deleteDealMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED'))
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED'))
         }
     },
 
@@ -165,7 +165,62 @@ Ext.define('Dashboard.view.deal.bot.GridMenu', {
         {
             text: 'Удалить',
             reference: 'deleteDealMenuButton',
-            iconCls: 'x-fa fa-trash-alt'
+            iconCls: 'x-fa fa-trash-alt',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let confirmFn = function (isBanUser) {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/delete',
+                        params: {
+                            pid: deal.pid,
+                            isBanUser: isBanUser
+                        },
+                        success: function (response) {
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    })
+                }
+                Ext.create('Ext.Dialog', {
+                    title: 'Удаление сделки',
+                    closable: true,
+                    buttonAlign: 'center',
+                    buttons: [
+                        {
+                            text: 'Да',
+                            handler: function (me) {
+                                confirmFn(ExtUtil.referenceQuery('isBanUserCheckbox').getChecked())
+                                me.up('dialog').close()
+                            }
+                        },
+                        {
+                            text: 'Нет',
+                            handler: function (me) {
+                                me.up('dialog').close()
+                            }
+                        }
+                    ],
+
+                    layout: {
+                        type: 'vbox',
+                        align: 'center',
+                        pack: 'middle'
+                    },
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Вы действительно хотите удалить сделку №' + deal.pid + '?'
+                        },
+                        {
+                            xtype: 'checkbox',
+                            reference: 'isBanUserCheckbox',
+                            label: 'Также забанить пользователя',
+                            labelWidth: 190,
+                            labelAlign: 'right'
+                        }
+                    ]
+
+                }).show()
+            }
         }
     ]
 })
