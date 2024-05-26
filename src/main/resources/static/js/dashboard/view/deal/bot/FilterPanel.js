@@ -7,7 +7,7 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
         expandToolText: 'Развернуть',
         collapseToolText: 'Свернуть'
     },
-    collapsed: true,
+    collapsed: false,
     titleCollapse: false,
     shadow: true,
     margin: '10 5 5 10',
@@ -29,19 +29,61 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                 xtype: 'container',
                 layout: {
                     type: 'vbox',
-                    align: 'center'
+                    align: 'stretch'
+                },
+                defaults: {
+                    margin: '0 20 0 20'
                 }
             },
             items: [
                 {
                     items: [
                         {
-                            xtype: 'textfield',
-                            label: 'Chat id'
+                            xtype: 'numberfield',
+                            label: 'Chat id',
+                            reference: 'chatIdFilterField'
                         },
                         {
-                            xtype: 'datefield',
-                            label: 'Дата сделки'
+                            xtype: 'textfield',
+                            label: 'Username',
+                            reference: 'usernameFilterField'
+                        },
+                        {
+                            xtype: 'daterange',
+                            margin: '0 20 15 20',
+                            viewModel: {
+                                data: {
+                                    label: 'Дата сделки'
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'textfield',
+                            label: 'Время сделки'
+                        }
+                    ]
+                },
+                {
+                    items: [
+                        {
+                            xtype: 'combobox',
+                            label: 'Фиат'
+                        },
+                        {
+                            xtype: 'numberfield',
+                            label: 'Фиат сумма'
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'Криптовалюта'
+                        },
+                        {
+                            xtype: 'numberfield',
+                            label: 'Сумма в крипте'
+                        },
+                        {
+                            xtype: 'textfield',
+                            label: 'Реквизит'
                         }
                     ]
                 },
@@ -53,8 +95,16 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                         },
                         {
                             xtype: 'combobox',
-                            label: 'Фиат'
-                        }
+                            label: 'Статус'
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'Тип оплаты'
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'Доставка'
+                        },
                     ]
                 }
             ]
