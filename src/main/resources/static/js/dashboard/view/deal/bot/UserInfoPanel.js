@@ -46,12 +46,33 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
             },
             items: [
                 {
+                    xtype: 'textfield',
+                    editable: false,
                     label: 'Chat id',
-                    reference: 'chatIdDisplayField'
+                    triggers: null,
+                    reference: 'chatIdDisplayField',
+                    listeners: {
+                        focus: function () {
+                            navigator.clipboard.writeText(this.getValue())
+                            ExtMessages.topToast('Chat id скопирован в буфер обмена')
+                        }
+                    }
                 },
                 {
+                    xtype: 'textfield',
                     label: 'Username',
-                    reference: 'usernameDisplayField'
+                    reference: 'usernameDisplayField',
+                    triggers: null,
+                    editable: false,
+                    listeners: {
+                        focus: function () {
+                            let value = this.getValue()
+                            if (value !== 'Скрыт') {
+                                navigator.clipboard.writeText(value)
+                                ExtMessages.topToast('Username скопирован в буфер обмена')
+                            }
+                        }
+                    }
                 },
                 {
                     label: 'Бан',
