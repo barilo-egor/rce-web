@@ -110,7 +110,6 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                         numberOfNotifications = 1
                         notificationsButton.setBadgeText('1')
                     }
-                    console.log('isHidden=' + document.hidden)
                     document.title = '(' + numberOfNotifications + ') ' + TITLE
                 }
             }
