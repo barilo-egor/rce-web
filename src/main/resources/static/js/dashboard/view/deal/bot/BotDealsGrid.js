@@ -16,7 +16,12 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     tbar: {
         items: [
             {
-                iconCls: 'x-fa fa-file-excel darkGreen'
+                iconCls: 'x-fa fa-file-excel darkGreen',
+                tooltip: 'Экспорт сделок в Excel',
+                handler: function (me) {
+                    // ExtUtil.referenceQuery('notificationsTooltip').addNotification('01:46:36 Поступила верификация по заявке №379')
+                    debugger
+                }
             }
         ]
     },

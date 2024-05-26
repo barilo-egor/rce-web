@@ -28,23 +28,22 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                 closable: true,
                 showOnTap: true,
                 maxHeight: 400,
+                maxWidth: 500,
                 minWidth: 300,
                 scrollable: 'y',
                 title: 'Уведомления',
-                html: 'Новых уведомлений нет',
 
                 layout: {
-                    type: 'vbox',
-                    align: 'left'
+                    type: 'fit'
                 },
 
                 buttons: [
                     {
                         text: 'Очистить',
                         handler: function (me) {
-                            let notificationsTooltip = ExtUtil.referenceQuery('notificationsTooltip')
-                            notificationsTooltip.removeAll()
-                            notificationsTooltip.setHtml('Новых уведомлений нет')
+                            Ext.getStore('notificationsStore').removeAll()
+                            ExtUtil.referenceQuery('emptyNotificationsContainer').show()
+                            ExtUtil.referenceQuery('notificationsList').hide()
                         }
                     }
                 ],
@@ -54,20 +53,38 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                         ExtUtil.referenceQuery('notificationsButton').setBadgeText(null)
                     },
                     hide: function (me) {
-                        let items = me.getItems().items
-                        items.forEach(item => {
-                            if (item.xtype !== 'toolbar') item.setHtml(item.message)
-                        })
+                        Ext.getStore('notificationsStore').each(rec => rec.set('isNew', null))
                     }
                 },
 
-                addNotification: function (message) {
-                    this.setHtml(null)
-                    message = Ext.Date.format(new Date(), "H:i:s") + ' ' + message
-                    this.insert(0, {
+                items: [
+                    {
                         xtype: 'container',
+                        reference: 'emptyNotificationsContainer',
+                        html: 'Нет новых уведомлений.'
+                    },
+                    {
+                        xtype: 'list',
+                        reference: 'notificationsList',
+                        hidden: true,
+                        itemTpl: '{isNew} {time} {message}',
+                        store: {
+                            storeId: 'notificationsStore',
+                            autLoad: false,
+                            fields: [
+                                'time', 'message', 'isNew'
+                            ]
+                        }
+                    }
+                ],
+
+                addNotification: function (message) {
+                    ExtUtil.referenceQuery('emptyNotificationsContainer').hide()
+                    ExtUtil.referenceQuery('notificationsList').show()
+                    Ext.getStore('notificationsStore').add({
+                        time: Ext.Date.format(new Date(), "H:i:s"),
                         message: message,
-                        html: '<div style="font-weight: bold">' + message + '</div>'
+                        isNew: '<div style="font-weight: bold">NEW</div>'
                     })
                     let notificationsButton = ExtUtil.referenceQuery('notificationsButton')
                     let badgeText = notificationsButton.getBadgeText()
