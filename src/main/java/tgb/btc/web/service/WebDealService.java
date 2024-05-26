@@ -8,6 +8,7 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
@@ -26,6 +27,13 @@ public class WebDealService {
     private DealService dealService;
 
     private UserRepository userRepository;
+
+    private UserDiscountRepository userDiscountRepository;
+
+    @Autowired
+    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
+        this.userDiscountRepository = userDiscountRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -78,6 +86,7 @@ public class WebDealService {
                             .paymentReceipts(dealService.getPaymentReceipts(deal.getPid()))
                             .deliveryType(deal.getDeliveryType())
                             .user(userRepository.findByChatId(userChatId))
+                            .userDiscount(userDiscountRepository.getByUserChatId(userChatId))
                             .build();
                 })
                 .collect(Collectors.toList());

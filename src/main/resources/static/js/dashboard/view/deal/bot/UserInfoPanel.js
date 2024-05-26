@@ -75,6 +75,10 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
                     }
                 },
                 {
+                    label: 'Количество проведенных сделок',
+                    reference: 'dealsCountDisplayField'
+                },
+                {
                     label: 'Бан',
                     reference: 'banDisplayField'
                 },
@@ -91,16 +95,24 @@ Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
                     reference: 'referralPercentDisplayField'
                 },
                 {
+                    label: 'Ранговая скидка',
+                    reference: 'isRankDiscountOnDisplayField'
+                },
+                {
+                    label: 'Персональная скидка покупки',
+                    reference: 'personalBuyDisplayField'
+                },
+                {
+                    label: 'Персональная скидка продажи',
+                    reference: 'personalSellDisplayField'
+                },
+                {
                     label: 'Количество приведенных рефералов',
                     reference: 'referralUsersCountDisplayField'
                 },
                 {
                     label: 'Активен',
                     reference: 'isActiveDisplayField'
-                },
-                {
-                    label: 'Количество проведенных сделок',
-                    reference: 'dealsCountDisplayField'
                 },
                 {
                     label: 'Дата регистрации',

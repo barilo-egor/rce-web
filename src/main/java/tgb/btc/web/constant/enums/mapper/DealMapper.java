@@ -2,8 +2,10 @@ package tgb.btc.web.constant.enums.mapper;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -52,6 +54,12 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("active", user.getActive())
                 .put("dealsCount", deal.getDealsCount())
                 .put("registrationDate", user.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        UserDiscount userDiscount = deal.getUserDiscount();
+        if (Objects.nonNull(userDiscount)) {
+            userNode.put("rankDiscountOn", BooleanUtils.isNotFalse(userDiscount.getRankDiscountOn()))
+                    .put("personalBuy", userDiscount.getPersonalBuy())
+                    .put("personalSell", userDiscount.getPersonalSell());
+        }
         result.set("user", userNode);
         ArrayNode paymentReceipts = JacksonUtil.getEmptyArray().addAll(deal.getPaymentReceipts().stream()
                 .map(paymentReceipt -> JacksonUtil.getEmpty()
