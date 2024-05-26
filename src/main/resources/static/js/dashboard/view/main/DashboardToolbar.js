@@ -36,20 +36,26 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                 layout: {
                     type: 'fit'
                 },
+                clearNotifications: function () {
+                    ExtUtil.referenceQuery('emptyNotificationsContainer').show()
+                    ExtUtil.referenceQuery('notificationsList').hide()
+                    ExtUtil.referenceQuery('notificationsButton').setBadgeText(null)
+                    document.title = TITLE
+                },
 
                 buttons: [
                     {
                         text: 'Очистить',
                         handler: function (me) {
                             Ext.getStore('notificationsStore').removeAll()
-                            ExtUtil.referenceQuery('emptyNotificationsContainer').show()
-                            ExtUtil.referenceQuery('notificationsList').hide()
+                            ExtUtil.referenceQuery('notificationsTooltip').clearNotifications()
                         }
                     }
                 ],
 
                 listeners: {
                     beforeshow: function (me) {
+                        document.title = TITLE
                         ExtUtil.referenceQuery('notificationsButton').setBadgeText(null)
                     },
                     hide: function (me) {
@@ -74,6 +80,14 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                             fields: [
                                 'time', 'message', 'isNew'
                             ]
+                        },
+                        listeners: {
+                            childdoubletap: function (me, location) {
+                                me.getStore().removeAt(location.recordIndex)
+                                if (me.getStore().getRange().length === 0) {
+                                    ExtUtil.referenceQuery('notificationsTooltip').clearNotifications()
+                                }
+                            }
                         }
                     }
                 ],
@@ -81,15 +95,23 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
                 addNotification: function (message) {
                     ExtUtil.referenceQuery('emptyNotificationsContainer').hide()
                     ExtUtil.referenceQuery('notificationsList').show()
-                    Ext.getStore('notificationsStore').add({
+                    Ext.getStore('notificationsStore').insert(0, {
                         time: Ext.Date.format(new Date(), "H:i:s"),
                         message: message,
                         isNew: '<div style="font-weight: bold">NEW</div>'
                     })
                     let notificationsButton = ExtUtil.referenceQuery('notificationsButton')
                     let badgeText = notificationsButton.getBadgeText()
-                    if (badgeText) notificationsButton.setBadgeText((parseInt(badgeText) + 1).toString())
-                    else notificationsButton.setBadgeText('1')
+                    let numberOfNotifications
+                    if (badgeText) {
+                        numberOfNotifications = parseInt(badgeText) + 1
+                        notificationsButton.setBadgeText((numberOfNotifications).toString())
+                    } else {
+                        numberOfNotifications = 1
+                        notificationsButton.setBadgeText('1')
+                    }
+                    console.log('isHidden=' + document.hidden)
+                    document.title = '(' + numberOfNotifications + ') ' + TITLE
                 }
             }
         },

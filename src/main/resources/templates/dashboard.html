@@ -16,5 +16,22 @@
     <script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
 </head>
 <body>
+<script type="text/javascript">
+    let TITLE
+    ExtUtil.mRequest({
+        url: '/properties/getPropertiesValues',
+        method: 'GET',
+        async: false,
+        params: {
+            propertiesPath: 'BOT_PROPERTIES',
+            keys: ['bot.name']
+        },
+        success: function (response) {
+            let value = response.body.data[0].value
+            TITLE = value ? value : 'Обменник'
+        }
+    })
+    document.title = TITLE
+</script>
 </body>
 </html>

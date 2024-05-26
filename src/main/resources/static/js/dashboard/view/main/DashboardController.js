@@ -31,13 +31,12 @@ Ext.define('Dashboard.view.main.DashboardController', {
             method: 'GET',
             params: {
                 propertiesPath: 'BOT_PROPERTIES',
-                keys: ['bot.name', 'bot.link']
+                keys: ['bot.link']
             },
             success: function (response) {
-                let value = response.body.data[0].value
-                me.setText(value ? value : 'Обменник')
+                me.setText(TITLE)
                 me.setHandler(function () {
-                    window.open(response.body.data[1].value)
+                    window.open(response.body.data[0].value)
                 })
             }
         })
