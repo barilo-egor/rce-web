@@ -1,4 +1,4 @@
-Ext.define('Common.picker.DateRange', {
+Ext.define('Common.range.DateRange', {
     extend: 'Ext.Container',
     xtype: 'daterange',
 

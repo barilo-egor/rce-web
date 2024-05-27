@@ -21,7 +21,7 @@ import javax.persistence.EntityNotFoundException;
 @RestController
 @RequestMapping(ControllerMapping.PAYMENT_TYPES)
 @Slf4j
-public class PaymentTypesController extends BaseController {
+public class OldPaymentTypesController extends BaseController {
 
     private PaymentTypeService paymentTypeService;
 

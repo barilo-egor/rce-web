@@ -50,36 +50,7 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                         },
                         {
                             xtype: 'daterange',
-                            margin: '0 20 15 20',
-                            viewModel: {
-                                data: {
-                                    label: 'Дата сделки'
-                                }
-                            }
-                        },
-                        {
-                            xtype: 'textfield',
-                            label: 'Время сделки'
-                        }
-                    ]
-                },
-                {
-                    items: [
-                        {
-                            xtype: 'combobox',
-                            label: 'Фиат'
-                        },
-                        {
-                            xtype: 'numberfield',
-                            label: 'Фиат сумма'
-                        },
-                        {
-                            xtype: 'combobox',
-                            label: 'Криптовалюта'
-                        },
-                        {
-                            xtype: 'numberfield',
-                            label: 'Сумма в крипте'
+                            margin: '0 20 15 20'
                         },
                         {
                             xtype: 'textfield',
@@ -91,19 +62,73 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                     items: [
                         {
                             xtype: 'combobox',
-                            label: 'Тип сделки'
+                            label: 'Фиатная валюта',
+                            displayField: 'code',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'name',
+                            store: {
+                                type: 'fiatCurrenciesStore'
+                            }
                         },
                         {
                             xtype: 'combobox',
-                            label: 'Статус'
+                            label: 'Криптовалюта',
+                            displayField: 'shortName',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'name',
+                            store: {
+                                type: 'cryptoCurrenciesStore'
+                            }
                         },
                         {
                             xtype: 'combobox',
-                            label: 'Тип оплаты'
+                            label: 'Тип сделки',
+                            displayField: 'nominative',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'name',
+                            store: {
+                                type: 'dealTypesStore'
+                            }
+                        },
+                    ]
+                },
+                {
+                    items: [
+                        {
+                            xtype: 'combobox',
+                            label: 'Статус',
+                            displayField: 'displayName',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'name',
+                            store: {
+                                type: 'dealStatusesStore'
+                            }
                         },
                         {
                             xtype: 'combobox',
-                            label: 'Доставка'
+                            label: 'Доставка',
+                            displayField: 'displayName',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'name',
+                            store: {
+                                type: 'deliveryTypesStore'
+                            }
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'Тип оплаты',
+                            displayField: 'name',
+                            editable: false,
+                            clearable: true,
+                            valueField: 'pid',
+                            store: {
+                                type: 'paymentTypesComboStore'
+                            }
                         },
                     ]
                 }
