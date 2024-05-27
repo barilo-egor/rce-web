@@ -3,13 +3,12 @@ package tgb.btc.web.controller.deal.bot;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -17,9 +16,11 @@ import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.DealsSearchForm;
 import tgb.btc.web.vo.SuccessResponse;
+import tgb.btc.web.vo.bean.DealVO;
 
-import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -61,10 +62,17 @@ public class BotDealsController extends BaseController {
         this.webDealService = webDealService;
     }
 
-    @GetMapping("/findAll")
+    @PostMapping("/findAll")
     @ResponseBody
-    public ObjectNode findAll(Integer page, Integer limit, Integer start) {
-        return JacksonUtil.pagingData(webDealService.findAll(page, limit, start), dealRepository.count(), DealMapper.FIND_ALL);
+    public ObjectNode findAll(@RequestBody DealsSearchForm dealsSearchForm) {
+        List<DealVO> dealVOList = webDealService.findAll(dealsSearchForm.getPage(),
+                dealsSearchForm.getLimit(),
+                null,
+                dealsSearchForm.getWhereStr(),
+                dealsSearchForm.getSortStr());
+        return JacksonUtil.pagingData(dealVOList,
+                webDealService.count(dealsSearchForm.getWhereStr()),
+                DealMapper.FIND_ALL);
     }
 
     @PostMapping("/confirm")
@@ -77,7 +85,8 @@ public class BotDealsController extends BaseController {
     @PostMapping("/askVerification")
     @ResponseBody
     public SuccessResponse<?> askVerification(Long pid) {
-        if (Objects.nonNull(additionalVerificationProcessor)) additionalVerificationProcessor.ask(pid);
+        if (Objects.nonNull(additionalVerificationProcessor))
+            additionalVerificationProcessor.ask(pid);
         return SuccessResponseUtil.toast("Верификация по сделке " + pid + " запрошена.");
     }
 

@@ -14,6 +14,8 @@ import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.web.vo.bean.DealVO;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,13 @@ public class WebDealService {
     private UserRepository userRepository;
 
     private UserDiscountRepository userDiscountRepository;
+
+    private EntityManager entityManager;
+
+    @Autowired
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Autowired
     public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
@@ -66,7 +75,8 @@ public class WebDealService {
     }
 
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
-        return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW, PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
+        return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW,
+                        PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
                 .map(deal -> {
                     Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
                     return DealVO.builder()
@@ -90,6 +100,51 @@ public class WebDealService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr) {
+        String hqlQuery = "from Deal d where dealStatus not like 'NEW'";
+        hqlQuery = hqlQuery.concat(whereStr);
+        hqlQuery = hqlQuery.concat(" order by pid desc");
+        hqlQuery = hqlQuery.concat(orderStr);
+        Query query = entityManager.createQuery(hqlQuery);
+        query.setFirstResult((page - 1) * limit);
+        query.setMaxResults(limit);
+        List<Deal> deals = query.getResultList();
+        return deals
+                .stream()
+                .map(this::fromDeal)
+                .collect(Collectors.toList());
+    }
+
+    public Long count(String whereStr) {
+        String hqlQuery = "select count(pid) from Deal d where dealStatus not like 'NEW'";
+        hqlQuery = hqlQuery.concat(whereStr);
+        Query query = entityManager.createQuery(hqlQuery);
+        return (Long) query.getSingleResult();
+    }
+
+    private DealVO fromDeal(Deal deal) {
+        Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
+        return DealVO.builder()
+                .pid(deal.getPid())
+                .dateTime(deal.getDateTime())
+                .paymentType(deal.getPaymentType())
+                .requisite(deal.getWallet())
+                .dealStatus(deal.getDealStatus())
+                .dealsCount(dealRepository.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
+                .dealStatus(deal.getDealStatus())
+                .fiatCurrency(deal.getFiatCurrency())
+                .cryptoCurrency(deal.getCryptoCurrency())
+                .amountCrypto(deal.getCryptoAmount())
+                .amountFiat(deal.getAmount())
+                .dealType(deal.getDealType())
+                .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
+                .paymentReceipts(dealService.getPaymentReceipts(deal.getPid()))
+                .deliveryType(deal.getDeliveryType())
+                .user(userRepository.findByChatId(userChatId))
+                .userDiscount(userDiscountRepository.getByUserChatId(userChatId))
+                .build();
     }
 
     public DealVO get(Long pid) {

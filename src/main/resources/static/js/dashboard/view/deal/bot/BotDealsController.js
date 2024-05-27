@@ -56,5 +56,11 @@ Ext.define('Dashboard.view.deal.bot.BotDealsController', {
 
     onMenu: function(grid, context) {
         this.updateMenu(context.record, context.tool.el, context.event, 'r-l?');
+    },
+
+    search: function (me) {
+        let store = Ext.getStore('botDealStore')
+        store.loadPage(1)
+
     }
 })

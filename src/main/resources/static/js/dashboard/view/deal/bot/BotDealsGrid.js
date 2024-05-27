@@ -71,6 +71,9 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
                     ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
                     ExtUtil.maskOff('userInfoPanel')
+                },
+                painted: function(me) {
+                    me.getStore().load()
                 }
             },
             columns: [
@@ -81,7 +84,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 {
                     text: 'Статус',
-                    dataIndex: 'status',
+                    dataIndex: 'dealStatus',
                     width: 180,
                     cell: {
                         encodeHtml: false
@@ -92,7 +95,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 {
                     text: 'Тип оплаты',
-                    dataIndex: 'paymentType',
+                    dataIndex: 'paymentType.name',
                     flex: 0.6
                 },
                 {
@@ -122,7 +125,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 {
                     text: 'Реквизит',
-                    dataIndex: 'requisite',
+                    dataIndex: 'wallet',
                     flex: 1
                 }
             ]

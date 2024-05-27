@@ -1,15 +1,41 @@
 Ext.define('Dashboard.store.deal.bot.BotDealStore', {
     extend: 'Ext.data.Store',
     storeId: 'botDealStore',
-    autoLoad: true,
+    autoLoad: false,
+    remoteSort: true,
     pageSize: 20,
-    fields: ['pid', 'dealStatus', 'chatId', 'paymentType'],
     proxy: {
-        type: 'ajax',
+        type: 'rest',
+        paramsAsJson: true,
+        actionMethods: {
+            read: 'POST'
+        },
         url: '/deal/bot/findAll',
         reader: {
             type: 'json',
             rootProperty: 'items'
         }
+    },
+
+    listeners: {
+        beforeload: function(me, operation) {
+            operation.setParams(me.getFiltersFromPanel())
+        }
+    },
+
+    getFiltersFromPanel: function() {
+        let fieldsReferences = [
+            'chatIdFilterField', 'usernameFilterField', 'dateFilterField', 'requisiteFilterField',
+            'fiatCurrencyFilterField', 'cryptoCurrencyFilterField', 'dealTypeFilterField',
+            'dealStatusFilterField', 'deliveryTypeFilterField', 'paymentTypeFilterField'
+        ]
+
+        let searchForm = {}
+        for (let fieldReference of fieldsReferences) {
+            let value = ExtUtil.referenceQuery(fieldReference).getValue()
+            if (value === null || (typeof value === 'string' && value.trim().length === 0)) continue
+            searchForm[fieldReference.substring(0, fieldReference.indexOf('FilterField'))] = value
+        }
+        return searchForm
     }
 })

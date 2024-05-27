@@ -1,6 +1,11 @@
 Ext.define('Dashboard.view.deal.bot.FilterPanel', {
     extend: 'Ext.Panel',
     xtype: 'filterpanel',
+    requires: [
+        'Dashboard.view.deal.bot.BotDealsController'
+    ],
+    controller: 'botDealsController',
+
     title: 'Фильтрация',
     collapsible: {
         direction: 'top',
@@ -50,11 +55,13 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                         },
                         {
                             xtype: 'daterange',
-                            margin: '0 20 15 20'
+                            margin: '0 20 15 20',
+                            reference: 'dateFilterField'
                         },
                         {
                             xtype: 'textfield',
-                            label: 'Реквизит'
+                            label: 'Реквизит',
+                            reference: 'requisiteFilterField'
                         }
                     ]
                 },
@@ -69,7 +76,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'name',
                             store: {
                                 type: 'fiatCurrenciesStore'
-                            }
+                            },
+                            reference: 'fiatCurrencyFilterField'
                         },
                         {
                             xtype: 'combobox',
@@ -80,7 +88,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'name',
                             store: {
                                 type: 'cryptoCurrenciesStore'
-                            }
+                            },
+                            reference: 'cryptoCurrencyFilterField'
                         },
                         {
                             xtype: 'combobox',
@@ -91,7 +100,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'name',
                             store: {
                                 type: 'dealTypesStore'
-                            }
+                            },
+                            reference: 'dealTypeFilterField'
                         },
                     ]
                 },
@@ -106,7 +116,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'name',
                             store: {
                                 type: 'dealStatusesStore'
-                            }
+                            },
+                            reference: 'dealStatusFilterField'
                         },
                         {
                             xtype: 'combobox',
@@ -117,7 +128,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'name',
                             store: {
                                 type: 'deliveryTypesStore'
-                            }
+                            },
+                            reference: 'deliveryTypeFilterField'
                         },
                         {
                             xtype: 'combobox',
@@ -128,7 +140,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
                             valueField: 'pid',
                             store: {
                                 type: 'paymentTypesComboStore'
-                            }
+                            },
+                            reference: 'paymentTypeFilterField'
                         },
                     ]
                 }
@@ -137,7 +150,8 @@ Ext.define('Dashboard.view.deal.bot.FilterPanel', {
         {
             xtype: 'button',
             margin: '20 0 0 0',
-            text: 'Искать'
+            text: 'Искать',
+            handler: 'search'
         }
     ]
 })

@@ -25,8 +25,8 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 .put("name", deal.getDealStatus().name())
                 .put("displayName", deal.getDealStatus().getDisplayName())
                 .put("color", deal.getDealStatus().getColor());
-        result.set("status", status);
-        result.put("paymentType", Objects.nonNull(deal.getPaymentType())
+        result.set("dealStatus", status);
+        result.put("paymentType.name", Objects.nonNull(deal.getPaymentType())
                 ? deal.getPaymentType().getName()
                 : StringUtils.EMPTY);
         ObjectNode dealType = JacksonUtil.getEmpty()
@@ -40,7 +40,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
                 ? deal.getDeliveryType().getDisplayName()
                 : StringUtils.EMPTY);
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-        result.put("requisite", deal.getRequisite());
+        result.put("wallet", deal.getRequisite());
         result.put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
         User user = deal.getUser();
         ObjectNode userNode = JacksonUtil.getEmpty()

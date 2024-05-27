@@ -12,11 +12,12 @@ Ext.define('Common.range.DateRange', {
         let endDateField = items[1]
         let rangeField = items[2]
         let result = {}
-        result.startDate = startDateField.getValue()
+        result.startDate = Ext.Date.format(startDateField.getValue(), "Y-m-d")
         if (rangeField.getValue()) {
             result.isRange = true
-            result.endDate = endDateField.getValue()
+            result.endDate = Ext.Date.format(endDateField.getValue(), "Y-m-d")
         } else result.isRange = false
+        return result
     },
 
     items: [
