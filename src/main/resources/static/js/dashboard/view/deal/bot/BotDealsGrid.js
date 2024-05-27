@@ -16,6 +16,10 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     tbar: {
         items: [
             {
+                iconCls: 'x-fa fa-plus forestgreenColor',
+                tooltip: 'Добавление ручных сделок',
+            },
+            {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: function (me) {
