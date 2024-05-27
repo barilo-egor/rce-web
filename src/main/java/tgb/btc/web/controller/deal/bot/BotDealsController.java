@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
-import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
@@ -28,8 +27,6 @@ import java.util.Objects;
 public class BotDealsController extends BaseController {
 
     private WebDealService webDealService;
-
-    private DealRepository dealRepository;
 
     private AdditionalVerificationProcessor additionalVerificationProcessor;
 
@@ -50,11 +47,6 @@ public class BotDealsController extends BaseController {
     @Autowired
     public void setDealService(DealService dealService) {
         this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
     }
 
     @Autowired
