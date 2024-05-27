@@ -19,8 +19,17 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: function (me) {
-                    // ExtUtil.referenceQuery('notificationsTooltip').addNotification('01:46:36 Поступила верификация по заявке №379')
-                    debugger
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/beforeExport',
+                        jsonData: Ext.getStore('botDealStore').getFiltersFromPanel(),
+                        success: function (response) {
+                            if (response.body.data.success) {
+                                window.open('/deal/bot/export')
+                            } else {
+                                ExtMessages.topToast('Ошибка при экспорте сделок.')
+                            }
+                        }
+                    })
                 }
             }
         ]

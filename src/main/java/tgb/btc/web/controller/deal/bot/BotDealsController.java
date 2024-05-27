@@ -2,14 +2,16 @@ package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
+import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
@@ -19,6 +21,7 @@ import tgb.btc.web.vo.DealsSearchForm;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.DealVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,20 @@ public class BotDealsController extends BaseController {
     private DealService dealService;
 
     private INotifier notifier;
+
+    private DealReportService dealReportService;
+
+    private DealRepository dealRepository;
+
+    @Autowired
+    public void setDealRepository(DealRepository dealRepository) {
+        this.dealRepository = dealRepository;
+    }
+
+    @Autowired
+    public void setDealReportService(DealReportService dealReportService) {
+        this.dealReportService = dealReportService;
+    }
 
     @Autowired(required = false)
     public void setNotifier(INotifier notifier) {
@@ -93,4 +110,21 @@ public class BotDealsController extends BaseController {
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
 
+    @PostMapping("/beforeExport")
+    @ResponseBody
+    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody DealsSearchForm form) {
+        Map<String, Object> parameters = new HashMap<>();
+        List<Long> pids = webDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
+        request.getSession().setAttribute("dealsPids", pids);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty()
+                .put("success", true));
+    }
+
+    @GetMapping(value =  "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @ResponseBody
+    public byte[] export(HttpServletRequest request) {
+        byte[] result = dealReportService.loadReport(dealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        request.getSession().removeAttribute("dealsPids");
+        return result;
+    }
 }

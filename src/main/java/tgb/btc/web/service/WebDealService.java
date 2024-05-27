@@ -110,6 +110,16 @@ public class WebDealService {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
+        String hqlQuery = "select pid from Deal d where dealStatus not like 'NEW'";
+        hqlQuery = hqlQuery.concat(whereStr);
+        hqlQuery = hqlQuery.concat(" order by pid desc");
+        hqlQuery = hqlQuery.concat(orderStr);
+        Query query = entityManager.createQuery(hqlQuery, Long.class);
+        parameters.forEach(query::setParameter);
+        return query.getResultList();
+    }
+
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
