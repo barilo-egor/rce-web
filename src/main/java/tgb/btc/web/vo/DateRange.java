@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -15,10 +16,12 @@ public class DateRange {
 
     private Boolean isRange;
 
-    public String getHqlCondition() {
+    public String getHqlCondition(Map<String, Object> parameters) {
         if (Objects.isNull(startDate) && Objects.isNull(endDate)) return null;
+        parameters.put("startDate", startDate);
         if (isRange) {
-            return "date(date_time) between " + startDate + " and " + endDate;
-        } else return "date(date_time) like " + startDate;
+            parameters.put("endDate", endDate);
+            return "date(date_time) between date(:startDate) and date(:endDate)";
+        } else return "date(date_time)=:startDate";
     }
 }

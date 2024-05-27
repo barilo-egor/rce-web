@@ -19,7 +19,9 @@ import tgb.btc.web.vo.DealsSearchForm;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.DealVO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
@@ -57,13 +59,14 @@ public class BotDealsController extends BaseController {
     @PostMapping("/findAll")
     @ResponseBody
     public ObjectNode findAll(@RequestBody DealsSearchForm dealsSearchForm) {
+        Map<String, Object> parameters = new HashMap<>();
         List<DealVO> dealVOList = webDealService.findAll(dealsSearchForm.getPage(),
                 dealsSearchForm.getLimit(),
                 null,
-                dealsSearchForm.getWhereStr(),
-                dealsSearchForm.getSortStr());
+                dealsSearchForm.getWhereStr(parameters),
+                dealsSearchForm.getSortStr(parameters), parameters);
         return JacksonUtil.pagingData(dealVOList,
-                webDealService.count(dealsSearchForm.getWhereStr()),
+                webDealService.count(dealsSearchForm.getWhereStr(parameters), parameters),
                 DealMapper.FIND_ALL);
     }
 

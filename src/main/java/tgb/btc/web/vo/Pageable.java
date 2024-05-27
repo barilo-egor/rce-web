@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс для java-представлений фронтовых ExtJS форм, которые содержат пагинацию.
@@ -62,11 +63,14 @@ public class Pageable {
         this.sort = extSort;
     }
 
-    public String getSortStr() {
+    public String getSortStr(Map<String, Object> parameters) {
         if (CollectionUtils.isEmpty(getExtSort())) return "";
         StringBuilder result = new StringBuilder(" order by");
+        int i = 0;
         for (ExtSort extSort: getExtSort()) {
-            result.append(" ").append(extSort.getProperty()).append(" ").append(extSort.getDirection());
+            result.append(" :sortProperty").append(i).append(" :direction").append(i);
+            parameters.put("sortProperty" + i, extSort.getProperty());
+            parameters.put("direction" + i, extSort.getDirection());
         }
         return result.toString();
     }

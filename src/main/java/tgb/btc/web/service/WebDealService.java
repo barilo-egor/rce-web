@@ -17,6 +17,7 @@ import tgb.btc.web.vo.bean.DealVO;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,16 +65,6 @@ public class WebDealService {
         this.pagingDealRepository = pagingDealRepository;
     }
 
-    public List<DealVO> findAll() {
-        return dealRepository.findAll().stream()
-                .map(deal -> DealVO.builder()
-                        .pid(deal.getPid())
-                        .dealStatus(deal.getDealStatus())
-                        .chatId(dealRepository.getUserChatIdByDealPid(deal.getPid()))
-                        .build())
-                .collect(Collectors.toList());
-    }
-
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
         return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW,
                         PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
@@ -102,14 +93,16 @@ public class WebDealService {
                 .collect(Collectors.toList());
     }
 
-    public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr) {
+    public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
+                                Map<String, Object> parameters) {
         String hqlQuery = "from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
         hqlQuery = hqlQuery.concat(" order by pid desc");
         hqlQuery = hqlQuery.concat(orderStr);
-        Query query = entityManager.createQuery(hqlQuery);
+        Query query = entityManager.createQuery(hqlQuery, Deal.class);
         query.setFirstResult((page - 1) * limit);
         query.setMaxResults(limit);
+        parameters.forEach(query::setParameter);
         List<Deal> deals = query.getResultList();
         return deals
                 .stream()
@@ -117,10 +110,11 @@ public class WebDealService {
                 .collect(Collectors.toList());
     }
 
-    public Long count(String whereStr) {
+    public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
         Query query = entityManager.createQuery(hqlQuery);
+        parameters.forEach(query::setParameter);
         return (Long) query.getSingleResult();
     }
 

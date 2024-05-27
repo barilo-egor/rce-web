@@ -26,14 +26,16 @@ Ext.define('Common.range.DateRange', {
             xtype: 'datefield',
             dateFormat: 'd.m.Y',
             label: 'Дата',
-            margin: '0 15 0 0'
+            margin: '0 15 0 0',
+            clearable: true
         },
         {
             flex: 1,
             xtype: 'datefield',
             dateFormat: 'd.m.Y',
             label: 'Дата до',
-            margin: '0 15 0 0'
+            margin: '0 15 0 0',
+            clearable: true
         },
         {
             flex: 0.2,

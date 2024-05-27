@@ -5,6 +5,7 @@ import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.library.constants.enums.bot.*;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -30,23 +31,50 @@ public class DealsSearchForm extends Pageable {
 
     private DeliveryType deliveryType;
 
-    private Long paymentTypePid;
+    private Long paymentType;
 
-    public String getWhereStr() {
+    public String getWhereStr(Map<String, Object> parameters) {
         StringBuilder result = new StringBuilder();
-        if (Objects.nonNull(chatId)) result.append(" and user.chatId=").append(chatId);
-        if (Objects.nonNull(username)) result.append(" and user.username like '").append(username).append("'");
+        if (Objects.nonNull(chatId)) {
+            result.append(" and user.chatId=:chatId");
+            parameters.put("chatId", chatId);
+        }
+        if (Objects.nonNull(username)) {
+            result.append(" and user.username like :username");
+            parameters.put("username", username);
+        }
         if (Objects.nonNull(date)) {
-            String hqlCondition = date.getHqlCondition();
+            String hqlCondition = date.getHqlCondition(parameters);
             if (Objects.nonNull(hqlCondition)) result.append(" and ").append(hqlCondition);
         }
-        if (StringUtils.isNotBlank(requisite)) result.append(" and wallet like '").append(requisite).append("'");
-        if (Objects.nonNull(fiatCurrency)) result.append(" and fiatCurrency like '").append(fiatCurrency.name()).append("'");
-        if (Objects.nonNull(cryptoCurrency)) result.append(" and cryptoCurrency like '").append(cryptoCurrency.name()).append("'");
-        if (Objects.nonNull(dealType)) result.append(" and dealType like '").append(dealType.name()).append("'");
-        if (Objects.nonNull(dealStatus)) result.append(" and dealStatus like '").append(dealStatus.name()).append("'");
-        if (Objects.nonNull(deliveryType)) result.append(" and deliveryType like '").append(deliveryType.name()).append("'");
-        if (Objects.nonNull(paymentTypePid)) result.append(" and paymentType.pid=").append(paymentTypePid);
+        if (StringUtils.isNotBlank(requisite)) {
+            result.append(" and wallet like :requisite");
+            parameters.put("requisite", requisite);
+        }
+        if (Objects.nonNull(fiatCurrency)) {
+            result.append(" and fiatCurrency like :fiatCurrency");
+            parameters.put("fiatCurrency", fiatCurrency);
+        }
+        if (Objects.nonNull(cryptoCurrency)) {
+            result.append(" and cryptoCurrency like :cryptoCurrency");
+            parameters.put("cryptoCurrency", cryptoCurrency);
+        }
+        if (Objects.nonNull(dealType)) {
+            result.append(" and dealType like :dealType");
+            parameters.put("dealType", dealType);
+        }
+        if (Objects.nonNull(dealStatus)) {
+            result.append(" and dealStatus like :dealStatus");
+            parameters.put("dealStatus", dealStatus);
+        }
+        if (Objects.nonNull(deliveryType)) {
+            result.append(" and deliveryType like :deliveryType");
+            parameters.put("deliveryType", deliveryType);
+        }
+        if (Objects.nonNull(paymentType)) {
+            result.append(" and paymentType.pid=:paymentType");
+            parameters.put("paymentType", paymentType);
+        }
         return result.toString();
     }
 }
