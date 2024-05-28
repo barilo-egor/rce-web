@@ -39,16 +39,16 @@ public class NotificationsAPI implements INotificationsAPI {
 
     @Override
     public void newBotDeal(Long dealPid) {
-        send(NotificationType.NEW_BOT_DEAL, "Поступила новая заявка №" + dealPid);
+        send(NotificationType.NEW_BOT_DEAL, "Поступила новая заявка из бота №" + dealPid);
     }
 
     @Override
     public void additionalVerificationReceived(Long dealPid) {
-        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступила верификация по заявке №" + dealPid);
+        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступила верификация по заявке в боте №" + dealPid);
     }
 
     @Override
     public void declinedVerificationReceived(Long dealPid) {
-        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступил отказ верификации по заявке №" + dealPid);
+        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступил отказ верификации по заявке в боте №" + dealPid);
     }
 }
