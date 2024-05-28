@@ -5,7 +5,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
     listeners: {
         beforeshow: function (me) {
             let deal = me.getViewModel().getData().deal.getData()
-            let status = deal.status.name
+            let status = deal.dealStatus.name
             ExtUtil.referenceQuery('confirmDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
