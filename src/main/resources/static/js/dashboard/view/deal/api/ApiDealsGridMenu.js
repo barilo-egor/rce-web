@@ -16,7 +16,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
     items: [
         {
             text: 'Скопировать реквизит',
-            iconCls: 'x-fa fa-copy',
+            iconCls: 'x-fa fa-copy blackColor',
             handler: function (me) {
                 navigator.clipboard.writeText(ExtUtil.referenceQuery('apiDealsGrid').getSelection().get('requisite'))
                 ExtMessages.topToast('Реквизит скопирован в буфер обмена')

@@ -29,7 +29,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         {
             text: 'Показать чек',
             reference: 'showCheckMenuButton',
-            iconCls: 'x-fa fa-receipt',
+            iconCls: 'x-fa fa-receipt lightBlue',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
                 let paymentReceipt = deal.paymentReceipts[0]
@@ -88,7 +88,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         },
         {
             text: 'Показать верификацию',
-            iconCls: 'x-fa fa-file-image',
+            iconCls: 'x-fa fa-file-image violetColor',
             reference: 'showVerificationMenuButton',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
@@ -123,7 +123,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         {
             text: 'Подтвердить',
             reference: 'confirmDealMenuButton',
-            iconCls: 'x-fa fa-check-circle',
+            iconCls: 'x-fa fa-check-circle darkGreen',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
                 let confirmFn = function () {
@@ -144,7 +144,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         {
             text: 'Запросить верификацию',
             reference: 'additionalVerificationMenuButton',
-            iconCls: 'x-fa fa-user-check',
+            iconCls: 'x-fa fa-user-check violetColor',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
                 let verificationFn = function () {
@@ -165,7 +165,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         {
             text: 'Удалить',
             reference: 'deleteDealMenuButton',
-            iconCls: 'x-fa fa-trash-alt',
+            iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
                 let confirmFn = function (isBanUser) {
