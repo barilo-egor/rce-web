@@ -6,7 +6,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
         beforeshow: function (me) {
             let deal = me.getViewModel().getData().deal.getData()
             let status = deal.dealStatus.name
-            ExtUtil.referenceQuery('confirmDealMenuButton')
+            ExtUtil.referenceQuery('acceptDealMenuButton')
                 .setHidden(!(status === 'PAID'))
             ExtUtil.referenceQuery('declineDealMenuButton')
                 .setHidden(!(status === 'PAID'))
@@ -25,7 +25,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
         '-',
         {
             text: 'Подтвердить',
-            reference: 'confirmDealMenuButton',
+            reference: 'acceptDealMenuButton',
             iconCls: 'x-fa fa-check-circle darkGreen',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
