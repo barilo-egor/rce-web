@@ -16,10 +16,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
     tbar: {
         items: [
             {
-                iconCls: 'x-fa fa-plus forestgreenColor',
-                tooltip: 'Добавление ручных сделок',
-            },
-            {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: function (me) {
@@ -47,20 +43,20 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 pagingtoolbar: true
             },
             listeners: {
-                // childcontextmenu: function (me, eObj) {
-                //     me.deselectAll();
-                //     me.setSelection(eObj.record);
-                //     if (!me.menu) {
-                //         me.menu = Ext.create('Dashboard.view.deal.bot.ApiDealsGridMenu')
-                //     }
-                //     me.menu.setViewModel({
-                //         data: {
-                //             deal: eObj.record
-                //         }
-                //     })
-                //     me.menu.showAt(eObj.event.getX(), eObj.event.getY());
-                //     eObj.event.stopEvent()
-                // },
+                childcontextmenu: function (me, eObj) {
+                    me.deselectAll();
+                    me.setSelection(eObj.record);
+                    if (!me.menu) {
+                        me.menu = Ext.create('Dashboard.view.deal.api.ApiDealsGridMenu')
+                    }
+                    me.menu.setViewModel({
+                        data: {
+                            deal: eObj.record
+                        }
+                    })
+                    me.menu.showAt(eObj.event.getX(), eObj.event.getY());
+                    eObj.event.stopEvent()
+                },
                 // select: function (me, selected) {
                 //     ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
                 //     let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
