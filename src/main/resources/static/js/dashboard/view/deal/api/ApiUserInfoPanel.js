@@ -33,7 +33,7 @@ Ext.define('Dashboard.view.deal.api.ApiUserInfoPanel', {
         {
             xtype: 'container',
             reference: 'userInfoFieldsContainer',
-            hidden: true,
+            hidden: false,
             padding: '15 15 15 15',
             scrollable: true,
 
@@ -48,29 +48,13 @@ Ext.define('Dashboard.view.deal.api.ApiUserInfoPanel', {
                 {
                     xtype: 'textfield',
                     editable: false,
-                    label: 'Chat id',
+                    label: 'ID',
                     triggers: null,
-                    reference: 'chatIdDisplayField',
+                    reference: 'idDisplayField',
                     listeners: {
                         focus: function () {
                             navigator.clipboard.writeText(this.getValue())
-                            ExtMessages.topToast('Chat id скопирован в буфер обмена')
-                        }
-                    }
-                },
-                {
-                    xtype: 'textfield',
-                    label: 'Username',
-                    reference: 'usernameDisplayField',
-                    triggers: null,
-                    editable: false,
-                    listeners: {
-                        focus: function () {
-                            let value = this.getValue()
-                            if (value !== 'Скрыт') {
-                                navigator.clipboard.writeText(value)
-                                ExtMessages.topToast('Username скопирован в буфер обмена')
-                            }
+                            ExtMessages.topToast('ID скопирован в буфер обмена')
                         }
                     }
                 },
@@ -80,44 +64,32 @@ Ext.define('Dashboard.view.deal.api.ApiUserInfoPanel', {
                 },
                 {
                     label: 'Бан',
-                    reference: 'banDisplayField'
+                    reference: 'isBannedDisplayField'
                 },
                 {
-                    label: 'Чей реферал, chat id',
-                    reference: 'fromChatIdDisplayField'
+                    label: 'Персональная скидка',
+                    reference: 'personalDiscountDisplayField'
                 },
                 {
-                    label: 'Реферальный баланс',
-                    reference: 'referralBalanceDisplayField'
+                    label: 'Реквизит покупки',
+                    reference: 'buyRequisiteDisplayField'
                 },
                 {
-                    label: 'Процент реферальный отчислений',
-                    reference: 'referralPercentDisplayField'
+                    label: 'Реквизит продажи',
+                    reference: 'sellRequisiteDisplayField'
                 },
                 {
-                    label: 'Ранговая скидка',
-                    reference: 'isRankDiscountOnDisplayField'
+                    label: 'Курс доллара BYN',
+                    reference: 'bynUsdCourseDisplayField'
                 },
                 {
-                    label: 'Персональная скидка покупки',
-                    reference: 'personalBuyDisplayField'
-                },
-                {
-                    label: 'Персональная скидка продажи',
-                    reference: 'personalSellDisplayField'
-                },
-                {
-                    label: 'Количество приведенных рефералов',
-                    reference: 'referralUsersCountDisplayField'
-                },
-                {
-                    label: 'Активен',
-                    reference: 'isActiveDisplayField'
+                    label: 'Курс доллара RUB',
+                    reference: 'rubUsdCourseDisplayField'
                 },
                 {
                     label: 'Дата регистрации',
                     reference: 'registrationDateDisplayField'
-                },
+                }
             ]
         }
     ]

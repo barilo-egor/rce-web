@@ -3,6 +3,8 @@ package tgb.btc.web.service.deal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.web.vo.bean.ApiDealVO;
@@ -21,6 +23,13 @@ public class WebApiDealService {
     private ApiDealService apiDealService;
 
     private ApiUserRepository apiUserRepository;
+
+    private ApiDealRepository apiDealRepository;
+
+    @Autowired
+    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
+        this.apiDealRepository = apiDealRepository;
+    }
 
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
@@ -55,6 +64,7 @@ public class WebApiDealService {
     }
 
     private ApiDealVO fromDeal(ApiDeal deal) {
+        long dealsCounts = apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
         return ApiDealVO.builder()
                 .pid(deal.getPid())
                 .dealStatus(deal.getApiDealStatus())
@@ -66,6 +76,7 @@ public class WebApiDealService {
                 .dateTime(deal.getDateTime())
                 .requisite(deal.getRequisite())
                 .apiUser(deal.getApiUser())
+                .dealsCount(dealsCounts)
                 .build();
     }
 

@@ -40,16 +40,14 @@ public enum ApiDealMapper implements ObjectNodeConvertable<ApiDealVO> {
         UsdApiUserCourse rubUsdCourse = apiUser.getCourse(FiatCurrency.RUB);
         ObjectNode user = JacksonUtil.getEmpty()
                 .put("id", apiUser.getId())
-                .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .put("personalDiscount", BigDecimalUtil.roundToPlainString(apiUser.getPersonalDiscount()))
+                .put("dealsCount", deal.getDealsCount())
                 .put("isBanned", BooleanUtils.isTrue(apiUser.getIsBanned()))
-                .put("token", apiUser.getToken())
+                .put("personalDiscount", BigDecimalUtil.roundToPlainString(apiUser.getPersonalDiscount()))
                 .put("buyRequisite", apiUser.getBuyRequisite())
                 .put("sellRequisite", apiUser.getSellRequisite())
                 .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? BigDecimalUtil.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
                 .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? BigDecimalUtil.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
-                .set("fiatCurrency", apiUser.getFiatCurrency().mapFunction().apply(apiUser.getFiatCurrency()))
-                ;
+                .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         result.set("user", user);
         return result;
     });

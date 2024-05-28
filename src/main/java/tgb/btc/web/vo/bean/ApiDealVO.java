@@ -33,4 +33,6 @@ public class ApiDealVO {
     private String requisite;
 
     private ApiUser apiUser;
+
+    private Long dealsCount;
 }

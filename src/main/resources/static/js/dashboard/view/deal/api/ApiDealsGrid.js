@@ -57,30 +57,26 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     me.menu.showAt(eObj.event.getX(), eObj.event.getY());
                     eObj.event.stopEvent()
                 },
-                // select: function (me, selected) {
-                //     ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
-                //     let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
-                //     if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
-                //         userInfoPanel.expand()
-                //     }
-                //     let user = selected[0].getData().user
-                //     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
-                //     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
-                //     ExtUtil.referenceQuery('chatIdDisplayField').setValue(user.chatId)
-                //     ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username ? user.username : 'Скрыт')
-                //     ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
-                //     ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
-                //     ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + 'р.')
-                //     ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent + "%")
-                //     ExtUtil.referenceQuery('isRankDiscountOnDisplayField').setValue(user.rankDiscountOn ? "Включена" : "Выключена")
-                //     ExtUtil.referenceQuery('personalBuyDisplayField').setValue((user.personalBuy ? user.personalBuy : "0") + "%")
-                //     ExtUtil.referenceQuery('personalSellDisplayField').setValue((user.personalSell ? user.personalSell : "0") + "%")
-                //     ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount + " рефералов")
-                //     ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active === false ? 'Нет' : 'Да')
-                //     ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
-                //     ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
-                //     ExtUtil.maskOff('apiUserInfoPanel')
-                // },
+                select: function (me, selected) {
+                    ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
+                    let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
+                    if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
+                        userInfoPanel.expand()
+                    }
+                    let user = selected[0].getData().user
+                    ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
+                    ExtUtil.referenceQuery('apiUserInfoPanel').setHidden(false)
+                    ExtUtil.referenceQuery('idDisplayField').setValue(user.id)
+                    ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount)
+                    ExtUtil.referenceQuery('isBannedDisplayField').setValue(user.isBanned ? 'Да' : 'Нет')
+                    ExtUtil.referenceQuery('personalDiscountDisplayField').setValue((user.personalDiscount ? user.personalDiscount : '0') + '%')
+                    ExtUtil.referenceQuery('buyRequisiteDisplayField').setValue(user.buyRequisite ? user.buyRequisite : 'Отсутствует')
+                    ExtUtil.referenceQuery('sellRequisiteDisplayField').setValue(user.sellRequisite ? user.sellRequisite : 'Отсутствует')
+                    ExtUtil.referenceQuery('bynUsdCourseDisplayField').setValue(user.bynUsdCourse ? user.bynUsdCourse : 'Отсутствует')
+                    ExtUtil.referenceQuery('rubUsdCourseDisplayField').setValue(user.rubUsdCourse ? user.rubUsdCourse : 'Отсутствует')
+                    ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
+                    ExtUtil.maskOff('apiUserInfoPanel')
+                },
                 painted: function(me) {
                     me.getStore().load()
                 }
