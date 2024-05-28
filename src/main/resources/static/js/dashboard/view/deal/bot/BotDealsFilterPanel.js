@@ -12,7 +12,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsFilterPanel', {
         expandToolText: 'Развернуть',
         collapseToolText: 'Свернуть'
     },
-    collapsed: false,
+    collapsed: true,
     titleCollapse: false,
     shadow: true,
     margin: '10 5 5 10',

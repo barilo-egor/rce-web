@@ -33,7 +33,7 @@ Ext.define('Dashboard.view.deal.api.ApiUserInfoPanel', {
         {
             xtype: 'container',
             reference: 'userInfoFieldsContainer',
-            hidden: false,
+            hidden: true,
             padding: '15 15 15 15',
             scrollable: true,
 
