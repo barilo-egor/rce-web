@@ -1,4 +1,4 @@
-package tgb.btc.web.service;
+package tgb.btc.web.service.deal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

@@ -44,29 +44,25 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                 {
                     items: [
                         {
-                            xtype: 'numberfield',
-                            label: 'Chat id',
-                            reference: 'chatIdFilterField'
+                            xtype: 'textfield',
+                            label: 'Номер заявки',
+                            reference: 'pidFilterField'
                         },
                         {
                             xtype: 'textfield',
-                            label: 'Username',
-                            reference: 'usernameFilterField'
+                            label: 'ID клиента',
+                            reference: 'apiUserIdFilterField'
                         },
                         {
                             xtype: 'daterange',
                             margin: '0 20 15 20',
                             reference: 'dateFilterField'
-                        },
-                        {
-                            xtype: 'textfield',
-                            label: 'Реквизит',
-                            reference: 'requisiteFilterField'
                         }
                     ]
                 },
                 {
                     items: [
+
                         {
                             xtype: 'combobox',
                             label: 'Фиатная валюта',
@@ -120,29 +116,10 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                             reference: 'dealStatusFilterField'
                         },
                         {
-                            xtype: 'combobox',
-                            label: 'Доставка',
-                            displayField: 'displayName',
-                            editable: false,
-                            clearable: true,
-                            valueField: 'name',
-                            store: {
-                                type: 'deliveryTypesStore'
-                            },
-                            reference: 'deliveryTypeFilterField'
-                        },
-                        {
-                            xtype: 'combobox',
-                            label: 'Тип оплаты',
-                            displayField: 'name',
-                            editable: false,
-                            clearable: true,
-                            valueField: 'pid',
-                            store: {
-                                type: 'paymentTypesComboStore'
-                            },
-                            reference: 'paymentTypeFilterField'
-                        },
+                            xtype: 'textfield',
+                            label: 'Реквизит',
+                            reference: 'requisiteFilterField'
+                        }
                     ]
                 }
             ]

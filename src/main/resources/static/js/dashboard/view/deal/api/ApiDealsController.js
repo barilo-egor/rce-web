@@ -59,7 +59,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
     },
 
     search: function (me) {
-        let store = Ext.getStore('botDealStore')
+        let store = Ext.getStore('apiDealStore')
         store.loadPage(1)
 
     }

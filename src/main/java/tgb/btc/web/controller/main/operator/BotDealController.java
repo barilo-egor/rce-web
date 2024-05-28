@@ -12,7 +12,7 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.WebDealService;
+import tgb.btc.web.service.deal.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 

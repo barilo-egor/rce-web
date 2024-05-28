@@ -42,49 +42,49 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
         {
             xtype: 'grid',
             reference: 'apiDealsGrid',
-            store: Ext.create('Dashboard.store.deal.bot.BotDealStore'),
+            store: Ext.create('Dashboard.store.deal.api.ApiDealStore'),
             plugins: {
                 pagingtoolbar: true
             },
             listeners: {
-                childcontextmenu: function (me, eObj) {
-                    me.deselectAll();
-                    me.setSelection(eObj.record);
-                    if (!me.menu) {
-                        me.menu = Ext.create('Dashboard.view.deal.bot.ApiDealsGridMenu')
-                    }
-                    me.menu.setViewModel({
-                        data: {
-                            deal: eObj.record
-                        }
-                    })
-                    me.menu.showAt(eObj.event.getX(), eObj.event.getY());
-                    eObj.event.stopEvent()
-                },
-                select: function (me, selected) {
-                    ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
-                    let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
-                    if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
-                        userInfoPanel.expand()
-                    }
-                    let user = selected[0].getData().user
-                    ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
-                    ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
-                    ExtUtil.referenceQuery('chatIdDisplayField').setValue(user.chatId)
-                    ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username ? user.username : 'Скрыт')
-                    ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
-                    ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
-                    ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + 'р.')
-                    ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent + "%")
-                    ExtUtil.referenceQuery('isRankDiscountOnDisplayField').setValue(user.rankDiscountOn ? "Включена" : "Выключена")
-                    ExtUtil.referenceQuery('personalBuyDisplayField').setValue((user.personalBuy ? user.personalBuy : "0") + "%")
-                    ExtUtil.referenceQuery('personalSellDisplayField').setValue((user.personalSell ? user.personalSell : "0") + "%")
-                    ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount + " рефералов")
-                    ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active === false ? 'Нет' : 'Да')
-                    ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
-                    ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
-                    ExtUtil.maskOff('apiUserInfoPanel')
-                },
+                // childcontextmenu: function (me, eObj) {
+                //     me.deselectAll();
+                //     me.setSelection(eObj.record);
+                //     if (!me.menu) {
+                //         me.menu = Ext.create('Dashboard.view.deal.bot.ApiDealsGridMenu')
+                //     }
+                //     me.menu.setViewModel({
+                //         data: {
+                //             deal: eObj.record
+                //         }
+                //     })
+                //     me.menu.showAt(eObj.event.getX(), eObj.event.getY());
+                //     eObj.event.stopEvent()
+                // },
+                // select: function (me, selected) {
+                //     ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
+                //     let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
+                //     if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
+                //         userInfoPanel.expand()
+                //     }
+                //     let user = selected[0].getData().user
+                //     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
+                //     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
+                //     ExtUtil.referenceQuery('chatIdDisplayField').setValue(user.chatId)
+                //     ExtUtil.referenceQuery('usernameDisplayField').setValue(user.username ? user.username : 'Скрыт')
+                //     ExtUtil.referenceQuery('banDisplayField').setValue(user.banned ? 'Да' : 'Нет')
+                //     ExtUtil.referenceQuery('fromChatIdDisplayField').setValue(user.fromChatId ? user.FromChatId : 'Отсутствует')
+                //     ExtUtil.referenceQuery('referralBalanceDisplayField').setValue((user.referralBanalnce ? user.referralBanalnce : '0') + 'р.')
+                //     ExtUtil.referenceQuery('referralPercentDisplayField').setValue(user.referralPercent + "%")
+                //     ExtUtil.referenceQuery('isRankDiscountOnDisplayField').setValue(user.rankDiscountOn ? "Включена" : "Выключена")
+                //     ExtUtil.referenceQuery('personalBuyDisplayField').setValue((user.personalBuy ? user.personalBuy : "0") + "%")
+                //     ExtUtil.referenceQuery('personalSellDisplayField').setValue((user.personalSell ? user.personalSell : "0") + "%")
+                //     ExtUtil.referenceQuery('referralUsersCountDisplayField').setValue(user.referralUsersCount + " рефералов")
+                //     ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active === false ? 'Нет' : 'Да')
+                //     ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
+                //     ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
+                //     ExtUtil.maskOff('apiUserInfoPanel')
+                // },
                 painted: function(me) {
                     me.getStore().load()
                 }
@@ -93,43 +93,36 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 {
                     text: '№',
                     dataIndex: 'pid',
-                    width: 60
+                    width: 80
                 },
                 {
                     text: 'Статус',
                     dataIndex: 'dealStatus',
-                    width: 180,
+                    flex: 0.5,
                     cell: {
                         encodeHtml: false
                     },
                     renderer: function (val) {
-                        return '<span class="' + val.color + '">' + val.displayName + '</span>'
+                        return '<span class="' + val.color + '">' + val.description + '</span>'
                     }
-                },
-                {
-                    text: 'Тип оплаты',
-                    dataIndex: 'paymentType.name',
-                    flex: 0.6
                 },
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
                     renderer: function (val) {
                         return val.displayName
-                    }
+                    },
+                    flex: 0.5
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
-                    width: 150
+                    flex: 0.5
                 },
                 {
                     text: 'Фиат сумма',
-                    dataIndex: 'amount'
-                },
-                {
-                    text: 'Доставка',
-                    dataIndex: 'deliveryType'
+                    dataIndex: 'amount',
+                    flex: 0.5
                 },
                 {
                     text: 'Дата и время',
@@ -138,7 +131,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 },
                 {
                     text: 'Реквизит',
-                    dataIndex: 'wallet',
+                    dataIndex: 'requisite',
                     flex: 1
                 }
             ]

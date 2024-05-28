@@ -2,9 +2,6 @@ package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
@@ -15,11 +12,11 @@ import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.WebDealService;
+import tgb.btc.web.service.deal.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
-import tgb.btc.web.vo.DealsSearchForm;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.DealVO;
+import tgb.btc.web.vo.form.BotDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -75,15 +72,15 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/findAll")
     @ResponseBody
-    public ObjectNode findAll(@RequestBody DealsSearchForm dealsSearchForm) {
+    public ObjectNode findAll(@RequestBody BotDealsSearchForm botDealsSearchForm) {
         Map<String, Object> parameters = new HashMap<>();
-        List<DealVO> dealVOList = webDealService.findAll(dealsSearchForm.getPage(),
-                dealsSearchForm.getLimit(),
+        List<DealVO> dealVOList = webDealService.findAll(botDealsSearchForm.getPage(),
+                botDealsSearchForm.getLimit(),
                 null,
-                dealsSearchForm.getWhereStr(parameters),
-                dealsSearchForm.getSortStr(parameters), parameters);
+                botDealsSearchForm.getWhereStr(parameters),
+                botDealsSearchForm.getSortStr(parameters), parameters);
         return JacksonUtil.pagingData(dealVOList,
-                webDealService.count(dealsSearchForm.getWhereStr(parameters), parameters),
+                webDealService.count(botDealsSearchForm.getWhereStr(parameters), parameters),
                 DealMapper.FIND_ALL);
     }
 
@@ -112,7 +109,7 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/beforeExport")
     @ResponseBody
-    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody DealsSearchForm form) {
+    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody BotDealsSearchForm form) {
         Map<String, Object> parameters = new HashMap<>();
         List<Long> pids = webDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
         request.getSession().setAttribute("dealsPids", pids);

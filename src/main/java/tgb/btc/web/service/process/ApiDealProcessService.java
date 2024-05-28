@@ -68,17 +68,18 @@ public class ApiDealProcessService {
 
         ApiUser apiUser = apiUserRepository.getByToken(token);
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
+        fiatCurrency = Objects.nonNull(apiDealVO.getFiatCurrency())
+                ? apiDealVO.getFiatCurrency()
+                : apiUser.getFiatCurrency();
         builder.dealType(apiDealVO.getDealType())
-                .fiatCurrency(Objects.nonNull(apiDealVO.getFiatCurrency())
-                        ? apiDealVO.getFiatCurrency()
-                        : apiUser.getFiatCurrency())
+                .fiatCurrency(fiatCurrency)
                 .usdCourse(apiUser.getCourse(apiUser.getFiatCurrency()).getCourse())
                 .cryptoCourse(cryptoCurrencyService.getCurrency(apiDealVO.getCryptoCurrency()))
                 .personalDiscount(apiUser.getPersonalDiscount())
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
         else builder.cryptoAmount(apiDealVO.getCryptoAmount());
-        ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
+        ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()), fiatCurrency);
         BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
@@ -88,7 +89,7 @@ public class ApiDealProcessService {
                 dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
     }
 
-    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount) {
+    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount, FiatCurrency fiatCurrency) {
         ApiDeal apiDeal = new ApiDeal();
         apiDeal.setApiUser(apiUser);
         apiDeal.setDateTime(LocalDateTime.now());
@@ -98,6 +99,7 @@ public class ApiDealProcessService {
         apiDeal.setApiDealStatus(ApiDealStatus.CREATED);
         apiDeal.setCryptoCurrency(apiDealVO.getCryptoCurrency());
         apiDeal.setRequisite(apiDealVO.getRequisite());
+        apiDeal.setFiatCurrency(apiDealVO.getFiatCurrency());
         return apiDealRepository.save(apiDeal);
     }
 

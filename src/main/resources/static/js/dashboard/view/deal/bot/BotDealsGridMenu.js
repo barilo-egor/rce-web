@@ -22,7 +22,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             text: 'Скопировать реквизит',
             iconCls: 'x-fa fa-copy',
             handler: function (me) {
-                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('requisite'))
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('wallet'))
                 ExtMessages.topToast('Реквизит скопирован в буфер обмена')
             }
         },

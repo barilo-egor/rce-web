@@ -1,16 +1,18 @@
-package tgb.btc.web.vo;
+package tgb.btc.web.vo.form;
 
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.library.constants.enums.bot.*;
+import tgb.btc.web.vo.DateRange;
+import tgb.btc.web.vo.Pageable;
 
 import java.util.Map;
 import java.util.Objects;
 
 @Data
 @Builder
-public class DealsSearchForm extends Pageable {
+public class BotDealsSearchForm extends Pageable {
     private static final String WHERE_CLAUSE = " where";
 
     private Long chatId;
@@ -77,4 +79,26 @@ public class DealsSearchForm extends Pageable {
         }
         return result.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BotDealsSearchForm that = (BotDealsSearchForm) o;
+        return Objects.equals(chatId, that.chatId) && Objects.equals(username, that.username)
+                && Objects.equals(date, that.date) && Objects.equals(requisite, that.requisite)
+                && fiatCurrency == that.fiatCurrency && cryptoCurrency == that.cryptoCurrency
+                && dealType == that.dealType
+                && dealStatus == that.dealStatus && deliveryType == that.deliveryType && Objects.equals(
+                paymentType, that.paymentType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chatId, username, date, requisite, fiatCurrency, cryptoCurrency, dealType, dealStatus,
+                deliveryType, paymentType);
+    }
+
 }
