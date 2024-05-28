@@ -36,19 +36,21 @@ public enum ApiDealMapper implements ObjectNodeConvertable<ApiDealVO> {
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("requisite", deal.getRequisite());
         ApiUser apiUser = deal.getApiUser();
-        UsdApiUserCourse bynUsdCourse = apiUser.getCourse(FiatCurrency.BYN);
-        UsdApiUserCourse rubUsdCourse = apiUser.getCourse(FiatCurrency.RUB);
-        ObjectNode user = JacksonUtil.getEmpty()
-                .put("id", apiUser.getId())
-                .put("dealsCount", deal.getDealsCount())
-                .put("isBanned", BooleanUtils.isTrue(apiUser.getIsBanned()))
-                .put("personalDiscount", BigDecimalUtil.roundToPlainString(apiUser.getPersonalDiscount()))
-                .put("buyRequisite", apiUser.getBuyRequisite())
-                .put("sellRequisite", apiUser.getSellRequisite())
-                .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? BigDecimalUtil.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
-                .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? BigDecimalUtil.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
-                .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        result.set("user", user);
+        if (Objects.nonNull(apiUser)) {
+            UsdApiUserCourse bynUsdCourse = apiUser.getCourse(FiatCurrency.BYN);
+            UsdApiUserCourse rubUsdCourse = apiUser.getCourse(FiatCurrency.RUB);
+            ObjectNode user = JacksonUtil.getEmpty()
+                    .put("id", apiUser.getId())
+                    .put("dealsCount", deal.getDealsCount())
+                    .put("isBanned", BooleanUtils.isTrue(apiUser.getIsBanned()))
+                    .put("personalDiscount", BigDecimalUtil.roundToPlainString(apiUser.getPersonalDiscount()))
+                    .put("buyRequisite", apiUser.getBuyRequisite())
+                    .put("sellRequisite", apiUser.getSellRequisite())
+                    .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? BigDecimalUtil.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
+                    .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? BigDecimalUtil.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
+                    .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            result.set("user", user);
+        }
         return result;
     });
 
