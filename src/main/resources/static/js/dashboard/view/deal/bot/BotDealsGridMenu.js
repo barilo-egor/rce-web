@@ -1,4 +1,4 @@
-Ext.define('Dashboard.view.deal.bot.GridMenu', {
+Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
     extend: 'Ext.menu.Menu',
     xtype: 'botdealsgridmenu',
 

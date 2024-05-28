@@ -1,9 +1,10 @@
 Ext.define('Dashboard.view.main.DashboardWorkspace', {
     extend: 'Ext.Panel',
     xtype: 'dashboardworkspace',
-    reference: 'dashboardworkspace',
+    reference: 'dashboardWorkspace',
     requires: [
         'Dashboard.view.deal.bot.BotDealsContainer'
+        // 'Dashboard.view.deal.api.ApiDealsContainer'
     ],
 
     shadow: true,

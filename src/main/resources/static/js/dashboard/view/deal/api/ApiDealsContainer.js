@@ -1,10 +1,10 @@
-Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
+Ext.define('Dashboard.view.deal.api.ApiDealsContainer', {
     extend: 'Ext.Container',
-    xtype: 'botdealscontainer',
+    xtype: 'apidealscontainer',
     requires: [
-        'Dashboard.view.deal.bot.BotUserInfoPanel',
-        'Dashboard.view.deal.bot.BotDealsFilterPanel',
-        'Dashboard.view.deal.bot.BotDealsGrid'
+        'Dashboard.view.deal.api.ApiDealsFilterPanel',
+        'Dashboard.view.deal.api.ApiUserInfoPanel',
+        'Dashboard.view.deal.api.ApiDealsGrid'
     ],
 
     layout: {
@@ -21,16 +21,17 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
             },
             items: [
                 {
-                    xtype: 'botdealsfilterpanel',
+                    xtype: 'apidealsfilterpanel',
+                    title: 'Фильтрация'
                 },
                 {
-                    xtype: 'botdealsgrid',
+                    xtype: 'apidealsgrid',
                     flex: 1
                 }
             ]
         },
         {
-            xtype: 'botuserinfopanel',
+            xtype: 'apiuserinfopanel',
             shadow: true,
             margin: '10 10 10 5'
         }

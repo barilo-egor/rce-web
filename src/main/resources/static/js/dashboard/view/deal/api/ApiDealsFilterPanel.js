@@ -1,10 +1,10 @@
-Ext.define('Dashboard.view.deal.bot.FilterPanel', {
+Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
     extend: 'Ext.Panel',
-    xtype: 'filterpanel',
+    xtype: 'apidealsfilterpanel',
     requires: [
-        'Dashboard.view.deal.bot.BotDealsController'
+        'Dashboard.view.deal.api.ApiDealsController'
     ],
-    controller: 'botDealsController',
+    controller: 'apiDealsController',
 
     title: 'Фильтрация',
     collapsible: {

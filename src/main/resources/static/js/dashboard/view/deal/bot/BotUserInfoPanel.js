@@ -1,7 +1,7 @@
-Ext.define('Dashboard.view.deal.bot.UserInfoPanel', {
+Ext.define('Dashboard.view.deal.bot.BotUserInfoPanel', {
     extend: 'Ext.Panel',
-    xtype: 'userinfopanel',
-    reference: 'userInfoPanel',
+    xtype: 'botuserinfopanel',
+    reference: 'botUserInfoPanel',
 
     title: 'Пользователь',
 

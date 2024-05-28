@@ -1,13 +1,13 @@
-Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
+Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
     extend: 'Ext.Panel',
-    xtype: 'botdealsgrid',
-    reference: 'botDealsGrid',
+    xtype: 'apidealsgrid',
+    reference: 'apiDealsGrid',
 
     requires: [
-        'Dashboard.view.deal.bot.BotDealsController',
-        'Dashboard.view.deal.bot.BotDealsGridMenu'
+        'Dashboard.view.deal.api.ApiDealsController',
+        'Dashboard.view.deal.api.ApiDealsGridMenu'
     ],
-    controller: 'botDealsController',
+    controller: 'apiDealsController',
 
     flex: 1,
     shadow: true,
@@ -41,7 +41,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     items: [
         {
             xtype: 'grid',
-            reference: 'botDealsGrid',
+            reference: 'apiDealsGrid',
             store: Ext.create('Dashboard.store.deal.bot.BotDealStore'),
             plugins: {
                 pagingtoolbar: true
@@ -51,7 +51,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     me.deselectAll();
                     me.setSelection(eObj.record);
                     if (!me.menu) {
-                        me.menu = Ext.create('Dashboard.view.deal.bot.BotDealsGridMenu')
+                        me.menu = Ext.create('Dashboard.view.deal.bot.ApiDealsGridMenu')
                     }
                     me.menu.setViewModel({
                         data: {
@@ -62,8 +62,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     eObj.event.stopEvent()
                 },
                 select: function (me, selected) {
-                    ExtUtil.mask('botUserInfoPanel', 'Обновление данных')
-                    let userInfoPanel = ExtUtil.referenceQuery('botUserInfoPanel')
+                    ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
+                    let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
                     if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
                         userInfoPanel.expand()
                     }
@@ -83,7 +83,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     ExtUtil.referenceQuery('isActiveDisplayField').setValue(user.active === false ? 'Нет' : 'Да')
                     ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount + " сделок")
                     ExtUtil.referenceQuery('registrationDateDisplayField').setValue(user.registrationDate)
-                    ExtUtil.maskOff('botUserInfoPanel')
+                    ExtUtil.maskOff('apiUserInfoPanel')
                 },
                 painted: function(me) {
                     me.getStore().load()
