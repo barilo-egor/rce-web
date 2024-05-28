@@ -106,12 +106,12 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                         {
                             xtype: 'combobox',
                             label: 'Статус',
-                            displayField: 'displayName',
+                            displayField: 'description',
                             editable: false,
                             clearable: true,
                             valueField: 'name',
                             store: {
-                                type: 'dealStatusesStore'
+                                type: 'apiDealStatusesStore'
                             },
                             reference: 'dealStatusFilterField'
                         },

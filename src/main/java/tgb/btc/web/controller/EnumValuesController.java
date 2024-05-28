@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.bot.*;
+import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -50,5 +51,11 @@ public class EnumValuesController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> deliveryTypes() {
         return SuccessResponseUtil.data(Arrays.asList(DeliveryType.values()));
+    }
+
+    @GetMapping("/apiDealStatuses")
+    @ResponseBody
+    public SuccessResponse<?> apiDealStatuses() {
+        return SuccessResponseUtil.data(Arrays.asList(ApiDealStatus.values()));
     }
 }

@@ -4,9 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.web.vo.DateRange;
 import tgb.btc.web.vo.Pageable;
 
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class ApiDealsSearchForm extends Pageable {
     private Long pid;
 
-    private Long apiUserId;
+    private String apiUserId;
 
     private DateRange date;
 
@@ -28,7 +28,7 @@ public class ApiDealsSearchForm extends Pageable {
 
     private DealType dealType;
 
-    private DealStatus dealStatus;
+    private ApiDealStatus dealStatus;
 
     private String requisite;
 
