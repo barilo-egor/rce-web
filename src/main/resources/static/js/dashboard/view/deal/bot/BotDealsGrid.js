@@ -5,7 +5,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
 
     requires: [
         'Dashboard.view.deal.bot.BotDealsController',
-        'Dashboard.view.deal.bot.BotDealsGridMenu'
+        'Dashboard.view.deal.bot.BotDealsGridMenu',
+        'Dashboard.view.deal.bot.add.AddDialog'
     ],
     controller: 'botDealsController',
 
@@ -18,6 +19,9 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
             {
                 iconCls: 'x-fa fa-plus forestgreenColor',
                 tooltip: 'Добавление ручных сделок',
+                handler: function (me) {
+                    Ext.create('Dashboard.view.deal.bot.add.AddDialog').show()
+                }
             },
             {
                 iconCls: 'x-fa fa-file-excel darkGreen',

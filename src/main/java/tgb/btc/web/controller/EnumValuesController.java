@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -20,7 +21,7 @@ public class EnumValuesController extends BaseController {
     @GetMapping("/fiatCurrencies")
     @ResponseBody
     public SuccessResponse<?> fiatCurrencies() {
-        return SuccessResponseUtil.data(List.of(FiatCurrency.values()));
+        return SuccessResponseUtil.data(FiatCurrencyUtil.getFiatCurrencies());
     }
 
     @GetMapping("/roles")

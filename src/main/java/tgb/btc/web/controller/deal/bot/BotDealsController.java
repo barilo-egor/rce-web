@@ -1,15 +1,22 @@
 package tgb.btc.web.controller.deal.bot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.library.vo.calculate.CalculateDataForm;
+import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebDealService;
@@ -19,6 +26,8 @@ import tgb.btc.web.vo.bean.DealVO;
 import tgb.btc.web.vo.form.BotDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +48,13 @@ public class BotDealsController extends BaseController {
     private DealReportService dealReportService;
 
     private DealRepository dealRepository;
+
+    private CalculateService calculateService;
+
+    @Autowired
+    public void setCalculateService(CalculateService calculateService) {
+        this.calculateService = calculateService;
+    }
 
     @Autowired
     public void setDealRepository(DealRepository dealRepository) {
@@ -123,5 +139,15 @@ public class BotDealsController extends BaseController {
         byte[] result = dealReportService.loadReport(dealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
         request.getSession().removeAttribute("dealsPids");
         return result;
+    }
+
+    @GetMapping(value = "/calculate")
+    @ResponseBody
+    public ObjectNode calculate(@RequestParam(required = false) BigDecimal cryptoAmount,
+                                @RequestParam(required = false) BigDecimal amount,
+                                FiatCurrency fiatCurrency, CryptoCurrency cryptoCurrency, DealType dealType,
+                                @RequestParam(required = false) BigDecimal personalDiscount) {
+
+        return null;
     }
 }
