@@ -16,7 +16,7 @@ import static tgb.btc.web.controller.common.NotificationsController.LISTENERS;
 @Service
 public class NotificationsAPI implements INotificationsAPI {
 
-    private void send(NotificationType notificationType, String message) {
+    public void send(NotificationType notificationType, String message) {
         Map<SseEmitter, Throwable> emittersToRemove = new HashMap<>();
         synchronized (LISTENERS) {
             LISTENERS.forEach(listener -> {

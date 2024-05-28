@@ -20,7 +20,9 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.service.process.ApiDealProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -42,6 +44,13 @@ public class ApiController extends BaseController {
     private ApiDealProcessService apiDealProcessService;
 
     private INotifier notifier;
+
+    private NotificationsAPI notificationsAPI;
+
+    @Autowired
+    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     @Autowired(required = false)
     public void setNotifier(INotifier notifier) {
@@ -102,6 +111,7 @@ public class ApiController extends BaseController {
             }
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
             if (Objects.nonNull(notifier)) notifier.notifyNewApiDeal(id);
+            notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
@@ -118,6 +128,9 @@ public class ApiController extends BaseController {
             ApiDealStatus status = apiDealRepository.getApiDealStatusByPid(id);
             if (ApiDealStatus.CREATED.equals(status) || ApiDealStatus.PAID.equals(status)) {
                 apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, id);
+                if (ApiDealStatus.PAID.equals(status)) {
+                    notificationsAPI.send(NotificationType.API_DEAL_CANCELED, "API сделка №" + id + " была отменена клиентом");
+                }
                 return ApiStatusCode.DEAL_DELETED.toJson();
             } else return ApiStatusCode.DEAL_CONFIRMED.toJson();
         }

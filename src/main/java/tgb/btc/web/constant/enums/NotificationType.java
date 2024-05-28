@@ -2,5 +2,7 @@ package tgb.btc.web.constant.enums;
 
 public enum NotificationType {
     NEW_BOT_DEAL,
-    ADDITIONAL_VERIFICATION_RECEIVE
+    ADDITIONAL_VERIFICATION_RECEIVE,
+    NEW_API_DEAL,
+    API_DEAL_CANCELED
 }

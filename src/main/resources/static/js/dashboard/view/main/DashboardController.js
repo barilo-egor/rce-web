@@ -43,14 +43,19 @@ Ext.define('Dashboard.view.main.DashboardController', {
         const eventSource = new EventSource("/notifications/listen");
         eventSource.onmessage = e => {
             let response = Ext.JSON.decode(e.data);
+            let workspaceItem = ExtUtil.referenceQuery('dashboardworkspace').getItems().items[0]
             switch (response.type) {
                 case 'NEW_BOT_DEAL':
                 case 'ADDITIONAL_VERIFICATION_RECEIVE':
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
-                    let workspaceItem = ExtUtil.referenceQuery('dashboardworkspace').getItems().items[0]
                     if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
                     break
+                case 'NEW_API_DEAL':
+                case 'API_DEAL_CANCELED':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
             }
 
         }
