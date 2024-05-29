@@ -53,8 +53,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange'
-                    },
-                    validators: ValidatorUtil.validateNotEmpty
+                    }
                 },
                 {
                     xtype: 'combobox',
@@ -70,8 +69,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange',
-                    },
-                    validators: ValidatorUtil.validateNotEmpty
+                    }
                 },
                 {
                     xtype: 'container',
@@ -92,8 +90,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                                     iconCls: 'x-fa fa-arrow-right',
                                     handler: 'calculateFiatAmount'
                                 }
-                            },
-                            validators: ValidatorUtil.validateNotEmpty
+                            }
                         },
                     ]
                 },
@@ -125,8 +122,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     reference: 'fiatCurrencyAddField',
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
-                    },
-                    validators: ValidatorUtil.validateNotEmpty
+                    }
                 },
                 {
                     xtype: 'numberfield',
@@ -158,7 +154,14 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                                     handler: 'calculateCryptoAmount'
                                 }
                             },
-                            validators: ValidatorUtil.validateNotEmpty
+                            listeners: {
+                                focus: function () {
+                                    let value = ExtUtil.referenceQuery('fiatAmountField').getValue()
+                                    if (!value) return
+                                    navigator.clipboard.writeText(value)
+                                    ExtMessages.topToast('Фиатная сумма скопирована в буфер обмена')
+                                }
+                            }
                         },
                     ]
                 },

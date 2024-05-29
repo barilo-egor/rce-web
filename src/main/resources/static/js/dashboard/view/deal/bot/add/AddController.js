@@ -14,8 +14,26 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
         if (!newValue) return
         let cryptoEnter = me.getReference() === 'enterInCryptoCheckbox'
         if (cryptoEnter) {
+            ExtUtil.referenceQuery('fiatAmountField').setListeners({
+                focus: function () {
+                    let value = ExtUtil.referenceQuery('fiatAmountField').getValue()
+                    if (!value) return
+                    navigator.clipboard.writeText(value)
+                    ExtMessages.topToast('Фиатная сумма скопирована в буфер обмена')
+                }
+            })
+            ExtUtil.referenceQuery('cryptoAmountField').setListeners({})
             ExtUtil.referenceQuery('enterInFiatCheckbox').setChecked(false)
         } else {
+            ExtUtil.referenceQuery('cryptoAmountField').setListeners({
+                focus: function () {
+                    let value = ExtUtil.referenceQuery('cryptoAmountField').getValue()
+                    if (!value) return
+                    navigator.clipboard.writeText(value)
+                    ExtMessages.topToast('Сумма в крипте скопирована в буфер обмена')
+                }
+            })
+            ExtUtil.referenceQuery('fiatAmountField').setListeners({})
             ExtUtil.referenceQuery('enterInCryptoCheckbox').setChecked(false)
         }
         ExtUtil.referenceQuery('fiatAmountField').setValue(null)
