@@ -93,16 +93,17 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
             amount: fiatAmountField.getValue(),
         }
 
-        // ExtUtil.mask('addDialog', 'Расчет')
-        // setTimeout(function () {
-        //     ExtUtil.mRequest({
-        //         url: '/deal/bot/saveDeal',
-        //         async: false,
-        //         params: params,
-        //         success: function (response) {
-        //             ExtUtil.maskOff('addDialog')
-        //         }
-        //     })
-        // }, 10);
+        ExtUtil.mask('addDialog', 'Расчет')
+        setTimeout(function () {
+            ExtUtil.mRequest({
+                url: '/deal/bot/saveDeal',
+                async: false,
+                params: params,
+                success: function (response) {
+                    Ext.getStore('botDealStore').reload()
+                    ExtUtil.maskOff('addDialog')
+                }
+            })
+        }, 10);
     }
 })
