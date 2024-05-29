@@ -88,7 +88,7 @@ let ExtUtil = {
     },
 
     forceComboFirstValue: function (me) {
-        me.setValue(me.getStore().getData().items[0])
+        me.setValue(me.getStore().getAt(0))
     },
 
     idQuery: function (id) {

@@ -4,6 +4,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
         'Dashboard.view.deal.bot.add.AddController'
     ],
     controller: 'addController',
+    reference: 'addDialog',
 
     width: 600,
     padding: '0 20 40 20',
@@ -15,7 +16,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
     buttonAlign: 'center',
     buttons: [
         {
-            text: 'Добавить'
+            text: 'Добавить',
+            handler: 'saveDeal'
         }
     ],
 
@@ -48,14 +50,9 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     },
                     reference: 'dealTypeAddField',
                     listeners: {
-                        painted: function (me) {
-                            me.setValue(me.getStore().getAt(0))
-                        }
+                        painted: ExtUtil.forceComboFirstValue,
+                        change: 'comboChange'
                     }
-                },
-                {
-                    xtype: 'textfield',
-                    label: 'Реквизит'
                 },
                 {
                     xtype: 'combobox',
@@ -68,36 +65,30 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     },
                     reference: 'cryptoCurrencyAddField',
                     listeners: {
-                        painted: function (me) {
-                            me.setValue(me.getStore().getAt(0))
-                        }
+                        painted: ExtUtil.forceComboFirstValue,
+                        change: 'comboChange',
                     }
                 },
                 {
-                    xtype: 'numberfield',
-                    reference: 'cryptoAmountField',
-                    decimals: 8,
-                    label: 'Сумма в крипте',
-                    listeners: {
-                        change: function (me, newValue) {
-                            if (newValue === 0) return
-                            ExtUtil.mRequest({
-                                url: '/deal/bot/calculate',
-                                method: 'GET',
-                                async: false,
-                                params: {
-                                    cryptoAmount: newValue,
-                                    fiatCurrency: ExtUtil.referenceQuery('fiatCurrencyAddField').getValue(),
-                                    cryptoCurrency: ExtUtil.referenceQuery('cryptoCurrencyAddField').getValue(),
-                                    dealType: ExtUtil.referenceQuery('dealTypeAddField').getValue(),
-                                    personalDiscount: ExtUtil.referenceQuery('personalDiscountAddField').getValue()
-                                },
-                                success: function (response) {
-                                    me.setValue(response.body.data)
+                    xtype: 'container',
+                    reference: 'cryptoAmountFieldContainer',
+                    layout: 'fit',
+                    items: [
+                        {
+                            xtype: 'numberfield',
+                            reference: 'cryptoAmountField',
+                            decimals: 8,
+                            label: 'Сумма в крипте',
+                            clearable: false,
+                            triggers: {
+                                calculate: {
+                                    xtype: 'trigger',
+                                    iconCls: 'x-fa fa-arrow-right',
+                                    handler: 'calculateFiatAmount'
                                 }
-                            })
-                        }
-                    }
+                            }
+                        },
+                    ]
                 },
                 {
                     margin: '20 15 0 15',
@@ -106,14 +97,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     checked: true,
                     reference: 'enterInCryptoCheckbox',
                     listeners: {
-                        change: function (me, newValue) {
-                            if (newValue) {
-                                ExtUtil.referenceQuery('enterInAmountCheckbox').setChecked(false)
-                                ExtUtil.referenceQuery('fiatAmountField').setValue(null)
-                                ExtUtil.referenceQuery('cryptoAmountField').setEditable(false)
-                                ExtUtil.referenceQuery('fiatAmountField').setEditable(true)
-                            }
-                        }
+                        change: 'checkBoxChange'
                     }
                 }
             ]
@@ -123,18 +107,15 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
             items: [
                 {
                     xtype: 'combobox',
-                    label: 'Доставка',
-                    displayField: 'displayName',
-                    editable: false,
+                    label: 'Фиатная валюта',
+                    displayField: 'code',
                     valueField: 'name',
                     store: {
-                        type: 'deliveryTypesStore'
+                        type: 'fiatCurrenciesStore'
                     },
-                    reference: 'deliveryTypeFilterField',
+                    reference: 'fiatCurrencyAddField',
                     listeners: {
-                        painted: function (me) {
-                            me.setValue(me.getStore().getAt(1))
-                        }
+                        painted: ExtUtil.forceComboFirstValue,
                     }
                 },
                 {
@@ -144,41 +125,34 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     reference: 'personalDiscountAddField'
                 },
                 {
-                    xtype: 'combobox',
-                    label: 'Фиатная валюта',
-                    displayField: 'code',
-                    editable: false,
-                    valueField: 'name',
-                    store: {
-                        type: 'fiatCurrenciesStore'
-                    },
-                    reference: 'fiatCurrencyAddField',
-                    listeners: {
-                        painted: function (me) {
-                            me.setValue(me.getStore().getAt(0))
-                        }
-                    }
-                },
-                {
-                    xtype: 'numberfield',
-                    reference: 'fiatAmountField',
-                    label: 'Фиат сумма',
-                    editable: false
+                    xtype: 'container',
+                    reference: 'fiatAmountFieldContainer',
+                    layout: 'fit',
+                    items: [
+                        {
+                            xtype: 'numberfield',
+                            reference: 'fiatAmountField',
+                            label: 'Фиат сумма',
+                            editable: false,
+                            clearable: false,
+                            triggers: {
+                                calculate: {
+                                    xtype: 'trigger',
+                                    hidden: true,
+                                    iconCls: 'x-fa fa-arrow-left',
+                                    handler: 'calculateCryptoAmount'
+                                }
+                            }
+                        },
+                    ]
                 },
                 {
                     margin: '20 15 0 15',
                     xtype: 'checkbox',
-                    reference: 'enterInAmountCheckbox',
+                    reference: 'enterInFiatCheckbox',
                     label: 'Ввод в фиате',
                     listeners: {
-                        change: function (me, newValue) {
-                            if (newValue) {
-                                ExtUtil.referenceQuery('enterInCryptoCheckbox').setChecked(false)
-                                ExtUtil.referenceQuery('cryptoAmountField').setValue(null)
-                                ExtUtil.referenceQuery('fiatAmountField').setEditable(false)
-                                ExtUtil.referenceQuery('cryptoAmountField').setEditable(true)
-                            }
-                        }
+                        change: 'checkBoxChange'
                     }
                 }
             ]
