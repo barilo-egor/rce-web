@@ -75,13 +75,34 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
     },
 
     saveDeal: function (me) {
+        let dealTypeAddField = ExtUtil.referenceQuery('dealTypeAddField')
+        if (!dealTypeAddField.isValid()) return
+        let cryptoCurrencyAddField = ExtUtil.referenceQuery('cryptoCurrencyAddField')
+        if (!cryptoCurrencyAddField.isValid()) return
+        let cryptoAmountField = ExtUtil.referenceQuery('cryptoAmountField')
+        if (!cryptoAmountField.validate()) return
+        let fiatCurrencyAddField = ExtUtil.referenceQuery('fiatCurrencyAddField')
+        if (!fiatCurrencyAddField.isValid()) return
+        let fiatAmountField = ExtUtil.referenceQuery('fiatAmountField')
+        if (!fiatAmountField.isValid()) return
         let params = {
-            dealType: ExtUtil.referenceQuery('dealTypeAddField').getValue(),
-            cryptoCurrency: ExtUtil.referenceQuery('cryptoCurrencyAddField').getValue(),
-            cryptoAmount: ExtUtil.referenceQuery('cryptoAmountField').getValue(),
-            fiatCurrency: ExtUtil.referenceQuery('fiatCurrencyAddField').getValue(),
-            amount: ExtUtil.referenceQuery('fiatAmountField').getValue(),
+            dealType: dealTypeAddField.getValue(),
+            cryptoCurrency: cryptoCurrencyAddField.getValue(),
+            cryptoAmount: cryptoAmountField.getValue(),
+            fiatCurrency: fiatCurrencyAddField.getValue(),
+            amount: fiatAmountField.getValue(),
         }
 
+        // ExtUtil.mask('addDialog', 'Расчет')
+        // setTimeout(function () {
+        //     ExtUtil.mRequest({
+        //         url: '/deal/bot/saveDeal',
+        //         async: false,
+        //         params: params,
+        //         success: function (response) {
+        //             ExtUtil.maskOff('addDialog')
+        //         }
+        //     })
+        // }, 10);
     }
 })

@@ -44,6 +44,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     label: 'Тип сделки',
                     displayField: 'nominative',
                     editable: false,
+                    required: true,
                     valueField: 'name',
                     store: {
                         type: 'dealTypesStore'
@@ -52,13 +53,15 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange'
-                    }
+                    },
+                    validators: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'combobox',
                     label: 'Криптовалюта',
                     displayField: 'shortName',
                     editable: false,
+                    required: true,
                     valueField: 'name',
                     store: {
                         type: 'cryptoCurrenciesStore'
@@ -67,7 +70,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange',
-                    }
+                    },
+                    validators: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'container',
@@ -77,8 +81,10 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                         {
                             xtype: 'numberfield',
                             reference: 'cryptoAmountField',
+                            required: true,
                             decimals: 8,
                             label: 'Сумма в крипте',
+                            requiredMessage: 'Введите сумму',
                             clearable: false,
                             triggers: {
                                 calculate: {
@@ -86,7 +92,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                                     iconCls: 'x-fa fa-arrow-right',
                                     handler: 'calculateFiatAmount'
                                 }
-                            }
+                            },
+                            validators: ValidatorUtil.validateNotEmpty
                         },
                     ]
                 },
@@ -98,7 +105,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     reference: 'enterInCryptoCheckbox',
                     listeners: {
                         change: 'checkBoxChange'
-                    }
+                    },
                 }
             ]
         },
@@ -108,6 +115,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                 {
                     xtype: 'combobox',
                     label: 'Фиатная валюта',
+                    editable: false,
+                    required: true,
                     displayField: 'code',
                     valueField: 'name',
                     store: {
@@ -116,13 +125,17 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     reference: 'fiatCurrencyAddField',
                     listeners: {
                         painted: ExtUtil.forceComboFirstValue,
-                    }
+                    },
+                    validators: ValidatorUtil.validateNotEmpty
                 },
                 {
                     xtype: 'numberfield',
                     label: 'Процент корректировки',
                     tooltip: 'Положительное значение для скидки, отрицательное для надбавки.',
-                    reference: 'personalDiscountAddField'
+                    reference: 'personalDiscountAddField',
+                    listeners: {
+                        change: 'comboChange'
+                    }
                 },
                 {
                     xtype: 'container',
@@ -133,6 +146,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                             xtype: 'numberfield',
                             reference: 'fiatAmountField',
                             label: 'Фиат сумма',
+                            required: true,
+                            requiredMessage: 'Введите сумму',
                             editable: false,
                             clearable: false,
                             triggers: {
@@ -142,7 +157,8 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                                     iconCls: 'x-fa fa-arrow-left',
                                     handler: 'calculateCryptoAmount'
                                 }
-                            }
+                            },
+                            validators: ValidatorUtil.validateNotEmpty
                         },
                     ]
                 },
