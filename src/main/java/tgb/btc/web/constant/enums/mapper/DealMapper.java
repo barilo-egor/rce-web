@@ -42,6 +42,7 @@ public enum DealMapper implements ObjectNodeConvertable<DealVO> {
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("wallet", deal.getRequisite());
         result.put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
+        result.set("createType", deal.getCreateType().mapFunction().apply(deal.getCreateType()));
         User user = deal.getUser();
         ObjectNode userNode = JacksonUtil.getEmpty()
                 .put("chatId", user.getChatId())

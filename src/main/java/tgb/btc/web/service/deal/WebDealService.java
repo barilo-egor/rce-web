@@ -148,6 +148,7 @@ public class WebDealService {
                 .deliveryType(deal.getDeliveryType())
                 .user(userRepository.findByChatId(userChatId))
                 .userDiscount(userDiscountRepository.getByUserChatId(userChatId))
+                .createType(deal.getCreateType())
                 .build();
     }
 

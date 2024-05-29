@@ -135,7 +135,7 @@ public class BotDealsController extends BaseController {
     @PostMapping("/delete")
     @ResponseBody
     public SuccessResponse<?> delete(Long pid, Boolean isBanUser) {
-        notifier.notifyDealDeletedByAdmin(pid);
+        if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
         dealService.deleteDeal(pid, isBanUser);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }

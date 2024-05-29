@@ -5,6 +5,7 @@ import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
+import tgb.btc.library.constants.enums.CreateType;
 import tgb.btc.library.constants.enums.bot.*;
 
 import java.math.BigDecimal;
@@ -53,4 +54,6 @@ public class DealVO {
     private User user;
 
     private UserDiscount userDiscount;
+
+    private CreateType createType;
 }

@@ -6,20 +6,26 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
         beforeshow: function (me) {
             let deal = me.getViewModel().getData().deal.getData()
             let status = deal.dealStatus.name
+            let createType = deal.createType.name
+            ExtUtil.referenceQuery('copyRequisiteMenuButton')
+                .setHidden(createType === 'MANUAL')
+            ExtUtil.referenceQuery('showCheckMenuButton')
+                .setHidden(createType === 'MANUAL')
             ExtUtil.referenceQuery('confirmDealMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED'))
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED'))
+                .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')
-                .setHidden(!(status === 'VERIFICATION_RECEIVED'))
+                .setHidden(!(status === 'VERIFICATION_RECEIVED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('deleteDealMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED'))
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED' || createType === 'MANUAL'))
         }
     },
 
     items: [
         {
             text: 'Скопировать реквизит',
+            reference: 'copyRequisiteMenuButton',
             iconCls: 'x-fa fa-copy',
             handler: function (me) {
                 navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('wallet'))
