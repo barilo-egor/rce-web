@@ -3,12 +3,10 @@ package tgb.btc.web.controller.deal.api;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
+import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
@@ -17,7 +15,9 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.ApiDealVO;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
+import tgb.btc.web.vo.form.BotDealsSearchForm;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,13 @@ public class ApiDealsController extends BaseController {
     private WebApiDealService webApiDealService;
 
     private ApiDealRepository apiDealRepository;
+
+    private ApiDealReportService apiDealReportService;
+
+    @Autowired
+    public void setApiDealReportService(ApiDealReportService apiDealReportService) {
+        this.apiDealReportService = apiDealReportService;
+    }
 
     @Autowired
     public void setApiDealRepository(ApiDealRepository apiDealRepository) {
@@ -67,4 +74,21 @@ public class ApiDealsController extends BaseController {
         return SuccessResponseUtil.toast("Сделка отклонена.");
     }
 
+    @PostMapping("/beforeExport")
+    @ResponseBody
+    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody BotDealsSearchForm form) {
+        Map<String, Object> parameters = new HashMap<>();
+        List<Long> pids = webApiDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
+        request.getSession().setAttribute("dealsPids", pids);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty()
+                .put("success", true));
+    }
+
+    @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @ResponseBody
+    public byte[] export(HttpServletRequest request) {
+        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        request.getSession().removeAttribute("dealsPids");
+        return result;
+    }
 }

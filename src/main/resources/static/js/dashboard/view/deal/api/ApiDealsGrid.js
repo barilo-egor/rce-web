@@ -20,11 +20,11 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 tooltip: 'Экспорт сделок в Excel',
                 handler: function (me) {
                     ExtUtil.mRequest({
-                        url: '/deal/bot/beforeExport',
-                        jsonData: Ext.getStore('botDealStore').getFiltersFromPanel(),
+                        url: '/deal/api/beforeExport',
+                        jsonData: Ext.getStore('apiDealStore').getFiltersFromPanel(),
                         success: function (response) {
                             if (response.body.data.success) {
-                                window.open('/deal/bot/export')
+                                window.open('/deal/api/export')
                             } else {
                                 ExtMessages.topToast('Ошибка при экспорте сделок.')
                             }

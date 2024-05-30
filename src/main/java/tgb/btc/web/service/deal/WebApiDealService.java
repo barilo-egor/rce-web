@@ -63,6 +63,16 @@ public class WebApiDealService {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
+        String hqlQuery = "select pid from ApiDeal d where apiDealStatus not like 'CREATED'";
+        hqlQuery = hqlQuery.concat(whereStr);
+        hqlQuery = hqlQuery.concat(" order by pid desc");
+        hqlQuery = hqlQuery.concat(orderStr);
+        Query query = entityManager.createQuery(hqlQuery, Long.class);
+        parameters.forEach(query::setParameter);
+        return query.getResultList();
+    }
+
     private ApiDealVO fromDeal(ApiDeal deal) {
         long dealsCounts = apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
         return ApiDealVO.builder()
