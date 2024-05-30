@@ -28,7 +28,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
             reference: 'acceptDealMenuButton',
             iconCls: 'x-fa fa-check-circle darkGreen',
             handler: function (me) {
-                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
                 let confirmFn = function () {
                     ExtUtil.mRequest({
                         url: '/deal/api/accept',
@@ -49,7 +49,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
             reference: 'declineDealMenuButton',
             iconCls: 'x-fa fa-times-circle redColor',
             handler: function (me) {
-                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
                 let confirmFn = function () {
                     ExtUtil.mRequest({
                         url: '/deal/api/decline',
