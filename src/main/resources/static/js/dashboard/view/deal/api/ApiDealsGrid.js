@@ -65,7 +65,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     }
                     let user = selected[0].getData().user
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
-                    ExtUtil.referenceQuery('apiUserInfoPanel').setHidden(false)
+                    ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
                     ExtUtil.referenceQuery('idDisplayField').setValue(user.id)
                     ExtUtil.referenceQuery('dealsCountDisplayField').setValue(user.dealsCount)
                     ExtUtil.referenceQuery('isBannedDisplayField').setValue(user.isBanned ? 'Да' : 'Нет')
