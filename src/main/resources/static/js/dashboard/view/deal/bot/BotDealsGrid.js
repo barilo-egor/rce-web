@@ -67,10 +67,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 select: function (me, selected) {
                     ExtUtil.mask('botUserInfoPanel', 'Обновление данных')
-                    let userInfoPanel = ExtUtil.referenceQuery('botUserInfoPanel')
-                    if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
-                        userInfoPanel.expand()
-                    }
                     let user = selected[0].getData().user
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
                     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)

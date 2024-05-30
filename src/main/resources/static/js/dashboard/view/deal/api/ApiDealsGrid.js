@@ -59,10 +59,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 },
                 select: function (me, selected) {
                     ExtUtil.mask('apiUserInfoPanel', 'Обновление данных')
-                    let userInfoPanel = ExtUtil.referenceQuery('apiUserInfoPanel')
-                    if (!ExtUtil.referenceQuery('chooseDealContainer').getHidden() && userInfoPanel.getCollapsed()) {
-                        userInfoPanel.expand()
-                    }
                     let user = selected[0].getData().user
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
                     ExtUtil.referenceQuery('userInfoFieldsContainer').setHidden(false)
