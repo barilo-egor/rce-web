@@ -148,10 +148,25 @@ Ext.define('Dashboard.view.deal.bot.BotDealsFilterPanel', {
             ]
         },
         {
-            xtype: 'button',
-            margin: '20 0 0 0',
-            text: 'Искать',
-            handler: 'search'
+            xtype: 'container',
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'button',
+                    margin: '20 0 0 0',
+                    text: 'Искать',
+                    handler: 'search'
+                },
+                {
+                    xtype: 'button',
+                    margin: '20 0 0 0',
+                    text: 'Очистить форму поиска',
+                    handler: 'clearFilterForm'
+                }
+            ]
         }
     ]
 })

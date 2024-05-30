@@ -20,6 +20,13 @@ Ext.define('Common.range.DateRange', {
         return result
     },
 
+    clearValue() {
+        let items = this.getItems().items
+        items[0].clearValue()
+        items[1].clearValue()
+        items[2].setValue(items[2].getStore().getAt(0))
+    },
+
     items: [
         {
             flex: 1,

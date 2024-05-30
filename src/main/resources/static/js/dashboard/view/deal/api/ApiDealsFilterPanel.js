@@ -46,7 +46,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                         {
                             xtype: 'textfield',
                             label: 'Номер заявки',
-                            reference: 'pidFilterField'
+                            reference: 'pidFilterField',
                         },
                         {
                             xtype: 'textfield',
@@ -73,7 +73,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                             store: {
                                 type: 'fiatCurrenciesStore'
                             },
-                            reference: 'fiatCurrencyFilterField'
+                            reference: 'fiatCurrencyFilterField',
                         },
                         {
                             xtype: 'combobox',
@@ -125,10 +125,25 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
             ]
         },
         {
-            xtype: 'button',
-            margin: '20 0 0 0',
-            text: 'Искать',
-            handler: 'search'
+            xtype: 'container',
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'button',
+                    margin: '20 0 0 0',
+                    text: 'Искать',
+                    handler: 'search'
+                },
+                {
+                    xtype: 'button',
+                    margin: '20 0 0 0',
+                    text: 'Очистить форму поиска',
+                    handler: 'clearFilterForm'
+                }
+            ]
         }
     ]
 })

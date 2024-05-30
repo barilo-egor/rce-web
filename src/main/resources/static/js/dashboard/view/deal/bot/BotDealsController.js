@@ -62,5 +62,9 @@ Ext.define('Dashboard.view.deal.bot.BotDealsController', {
         let store = Ext.getStore('botDealStore')
         store.loadPage(1)
 
+    },
+
+    clearFilterForm: function(me) {
+        Ext.getStore('botDealStore').fieldsReferences.forEach(field => ExtUtil.referenceQuery(field).clearValue())
     }
 })

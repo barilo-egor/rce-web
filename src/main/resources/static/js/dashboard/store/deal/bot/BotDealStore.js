@@ -23,15 +23,15 @@ Ext.define('Dashboard.store.deal.bot.BotDealStore', {
         }
     },
 
-    getFiltersFromPanel: function() {
-        let fieldsReferences = [
-            'chatIdFilterField', 'usernameFilterField', 'dateFilterField', 'requisiteFilterField',
-            'fiatCurrencyFilterField', 'cryptoCurrencyFilterField', 'dealTypeFilterField',
-            'dealStatusFilterField', 'deliveryTypeFilterField', 'paymentTypeFilterField'
-        ]
+    fieldsReferences: [
+        'chatIdFilterField', 'usernameFilterField', 'dateFilterField', 'requisiteFilterField',
+        'fiatCurrencyFilterField', 'cryptoCurrencyFilterField', 'dealTypeFilterField',
+        'dealStatusFilterField', 'deliveryTypeFilterField', 'paymentTypeFilterField'
+    ],
 
+    getFiltersFromPanel: function() {
         let searchForm = {}
-        for (let fieldReference of fieldsReferences) {
+        for (let fieldReference of this.fieldsReferences) {
             let value = ExtUtil.referenceQuery(fieldReference).getValue()
             if (value === null || (typeof value === 'string' && value.trim().length === 0)) continue
             searchForm[fieldReference.substring(0, fieldReference.indexOf('FilterField'))] = value

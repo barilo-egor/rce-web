@@ -61,6 +61,9 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
     search: function (me) {
         let store = Ext.getStore('apiDealStore')
         store.loadPage(1)
+    },
 
+    clearFilterForm: function(me) {
+        Ext.getStore('apiDealStore').fieldsReferences.forEach(field => ExtUtil.referenceQuery(field).clearValue())
     }
 })
