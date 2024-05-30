@@ -1,6 +1,8 @@
 const MENU_ITEMS = {
     BOT_DEALS: 'Сделки из бота',
-    API_DEALS: 'API сделки'
+    API_DEALS: 'API сделки',
+    WEB_USERS: 'WEB пользователи',
+    API_USERS: 'API клиенты'
 }
 
 Ext.define('Dashboard.view.main.DashboardNavigation', {
@@ -11,7 +13,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Dashboard.view.main.DashboardController',
         'Ext.list.Tree',
         'Dashboard.view.deal.bot.BotDealsContainer',
-        'Dashboard.view.deal.api.ApiDealsContainer'
+        'Dashboard.view.deal.api.ApiDealsContainer',
+        'Dashboard.view.users.web.WebUsersContainer'
     ],
     controller: 'dashboardController',
 
@@ -52,6 +55,11 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                 xtype: 'apidealscontainer'
                             })
                             break
+                        case MENU_ITEMS.WEB_USERS:
+                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
+                            ExtUtil.referenceQuery('dashboardWorkspace').add({
+                                xtype: 'webuserscontainer'
+                            })
                     }
                 }
             },
@@ -75,6 +83,24 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     text: MENU_ITEMS.API_DEALS,
                                     iconCls: 'x-fa fa-laptop-code',
                                     id: 'apiDealsMenuNode',
+                                    leaf: true
+                                }
+                            ]
+                        },
+                        {
+                            text: 'Пользователи',
+                            iconCls: 'x-fa fa-users',
+                            children: [
+                                {
+                                    text: MENU_ITEMS.WEB_USERS,
+                                    iconCls: 'x-fa fa-user-tie',
+                                    id: 'webUsersMenuNode',
+                                    leaf: true
+                                },
+                                {
+                                    text: MENU_ITEMS.API_USERS,
+                                    iconCls: 'x-fa fa-laptop-code',
+                                    id: 'apiUsersMenuNode',
                                     leaf: true
                                 }
                             ]
