@@ -104,17 +104,25 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     renderer: function (val) {
                         return val.displayName
                     },
-                    flex: 0.5
+                    flex: 0.3
+                },
+                {
+                    text: 'ID',
+                    dataIndex: 'user',
+                    renderer: function (val) {
+                        return val.id
+                    },
+                    flex: 0.3
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
-                    flex: 0.5
+                    flex: 0.3
                 },
                 {
                     text: 'Фиат сумма',
                     dataIndex: 'amount',
-                    flex: 0.5
+                    flex: 0.3
                 },
                 {
                     text: 'Дата и время',

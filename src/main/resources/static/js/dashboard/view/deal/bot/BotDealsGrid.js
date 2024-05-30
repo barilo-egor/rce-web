@@ -116,6 +116,14 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     flex: 0.6
                 },
                 {
+                    text: 'Username',
+                    width: 150,
+                    dataIndex: 'user',
+                    renderer: function (val) {
+                        return val.username
+                    }
+                },
+                {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
                     renderer: function (val) {
