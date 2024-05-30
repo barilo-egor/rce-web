@@ -6,19 +6,29 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
         type: 'vbox',
         align: 'stretch'
     },
-    padding: '10 10 10 10',
+
+    // me.up().up().setMasked('Загрузка')
+    // Ext.defer(function() {
+    //     let webUserPid = ExtUtil.referenceQuery('webUsersGrid').getSelection().get('pid')
+    //     let roleName = Ext.getStore('webUserStore').getRange()
+    //         .filter(user => user.get('pid') === webUserPid)[0].get('role').name
+    //     me.setValue(me.getStore().getRange().filter(role => role.get('name') === roleName)[0]);  // Устанавливаем значение по умолчанию (Alaska)
+    //     me.up().up().setMasked(false)
+    // }, 1000);
 
     items: [
         {
             flex: 1,
             xtype: 'grid',
             reference: 'webUsersGrid',
+            scrollable: true,
             shadow: true,
+            margin: '10 10 10 5',
             store: Ext.create('Dashboard.store.users.web.WebUserStore'),
 
-            plugins: {
-                gridcellediting: {
-                    selectOnEdit: true
+            listeners: {
+                childdoubletap: function () {
+                    ExtUtil.referenceQuery('webUserInfoPanel').expand()
                 }
             },
 
@@ -26,27 +36,7 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                 {
                     text: 'Логин',
                     dataIndex: 'username',
-                    editable: true,
-                    flex: 0.25,
-                    editor: {
-                        clearable: false,
-                        validators: ValidatorUtil.validateLogin,
-                        listeners: {
-                            keydown: function (field, e) {
-                                if (e.keyCode === Ext.event.Event.ENTER) {
-                                    if (field.validate()) {
-                                        ExtUtil.mRequest({
-                                            url: '/users/web/updateUsername',
-                                            params: {
-                                                pid: ExtUtil.referenceQuery('webUsersGrid').getSelection().get('pid'),
-                                                username: field.getValue()
-                                            }
-                                        })
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    flex: 0.25
                 },
                 {
                     text: 'Роль',
@@ -55,16 +45,13 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                     editable: true,
                     renderer: function (val) {
                         return val.displayName
-                    },
-                    editor: {
-                        xtype: 'combobox',
-                        data: ['qwe','asd']
                     }
                 },
                 {
                     text: 'В бане',
                     dataIndex: 'isEnabled',
                     flex: 0.25,
+                    editable: true,
                     renderer: function (val) {
                         return val ? 'Нет' : 'Да'
                     }
@@ -73,6 +60,61 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                     text: 'Chat id',
                     flex: 0.25,
                     dataIndex: 'chatId'
+                }
+            ]
+        },
+        {
+            xtype: 'panel',
+            reference: 'webUserInfoPanel',
+            margin: '10 10 10 5',
+            docked: 'right',
+            collapsed: true,
+            title: 'Пользователь',
+            shadow: true,
+            collapsible: {
+                direction: 'right'
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    reference: 'chooseDealContainer',
+                    layout: {
+                        type: 'vbox',
+                        align: 'center',
+                        pack: 'middle'
+                    },
+                    items: [
+                        {
+                            xtype: 'component',
+                            html: 'Выберите сделку'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'container',
+                    hidden: true,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            label: 'Username'
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'Роль'
+                        },
+                        {
+                            xtype: 'combobox',
+                            label: 'В бане'
+                        },
+                        {
+                            xtype: 'numberfield',
+                            label: 'Chat id'
+                        }
+                    ]
                 }
             ]
         }

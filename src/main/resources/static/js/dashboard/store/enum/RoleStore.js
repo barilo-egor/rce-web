@@ -1,6 +1,7 @@
 Ext.define('Dashboard.store.enum.RoleStore', {
     extend: 'Ext.data.Store',
     storeId: 'roleStore',
+    alias: 'store.roleStore',
     fields: [
         'name', 'displayName'
     ],
