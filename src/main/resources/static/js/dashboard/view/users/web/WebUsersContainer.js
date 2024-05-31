@@ -27,8 +27,18 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
             store: Ext.create('Dashboard.store.users.web.WebUserStore'),
 
             listeners: {
-                childdoubletap: function () {
-                    ExtUtil.referenceQuery('webUserInfoPanel').expand()
+                select: function (me, selected) {
+                    me.setMasked('Загрузка')
+                    ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
+                    ExtUtil.referenceQuery('userFieldsContainer').setHidden(false)
+                    let user = selected[0].getData()
+                    ExtUtil.referenceQuery('usernameField').setValue(user.username)
+                    let roleField = ExtUtil.referenceQuery('roleField')
+                    roleField.setValue(roleField.getStore().getRange().filter(role => role.get('name') === user.role)[0])
+                    let isBannedField = ExtUtil.referenceQuery('isBannedField')
+                    isBannedField.setValue(isBannedField.getStore().getRange().filter(isBanned => isBanned.value !== user.isEnabled)[0])
+                    let chatId = ExtUtil.referenceQuery('chatId')
+                    me.setMasked(false)
                 }
             },
 
@@ -74,6 +84,11 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
             collapsible: {
                 direction: 'right'
             },
+            listeners: {
+                expand: function (me) {
+                    me.setModal(true)
+                }
+            },
             items: [
                 {
                     xtype: 'container',
@@ -92,27 +107,51 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                 },
                 {
                     xtype: 'container',
+                    reference: 'userFieldsContainer',
                     hidden: true,
                     layout: {
                         type: 'vbox',
                         align: 'stretch'
                     },
+                    defaults: {
+                        width: 200,
+                        margin: '0 20 0 20'
+                    },
                     items: [
                         {
                             xtype: 'textfield',
-                            label: 'Username'
+                            label: 'Username',
+                            reference: 'usernameField'
                         },
                         {
                             xtype: 'combobox',
-                            label: 'Роль'
+                            label: 'Роль',
+                            reference: 'roleField',
+                            store: {
+                                type: 'roleStore'
+                            }
                         },
                         {
                             xtype: 'combobox',
-                            label: 'В бане'
+                            label: 'В бане',
+                            reference: 'isBannedField',
+                            store: {
+                                data: [
+                                    {
+                                        text: 'Да',
+                                        value: true
+                                    },
+                                    {
+                                        text: 'Нет',
+                                        value: false
+                                    }
+                                ]
+                            }
                         },
                         {
                             xtype: 'numberfield',
-                            label: 'Chat id'
+                            label: 'Chat id',
+                            reference: 'chatIdField'
                         }
                     ]
                 }
