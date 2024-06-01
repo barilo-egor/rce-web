@@ -3,16 +3,14 @@ package tgb.btc.web.controller.users.web;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
+import tgb.btc.web.service.users.WebWebUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -26,6 +24,13 @@ public class WebUsersController {
 
     private RoleRepository roleRepository;
 
+    private WebWebUsersService webWebUsersService;
+
+    @Autowired
+    public void setWebWebUsersService(WebWebUsersService webWebUsersService) {
+        this.webWebUsersService = webWebUsersService;
+    }
+
     @Autowired
     public void setRoleRepository(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
@@ -38,8 +43,10 @@ public class WebUsersController {
 
     @RequestMapping("/findAll")
     @ResponseBody
-    public SuccessResponse<?> findAll() {
-        return SuccessResponseUtil.data(webUserRepository.findAll(), WebUserMapper.FIND_ALL);
+    public SuccessResponse<?> findAll(@RequestParam(required = false) String username,
+                                      @RequestParam(required = false) RoleConstants role,
+                                      @RequestParam(required = false) Long chatId) {
+        return SuccessResponseUtil.data(webWebUsersService.findAll(username, role, chatId), WebUserMapper.FIND_ALL);
     }
 
     @PostMapping("/update")

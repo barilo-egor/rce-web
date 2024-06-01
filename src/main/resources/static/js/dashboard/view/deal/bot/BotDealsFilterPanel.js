@@ -46,7 +46,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsFilterPanel', {
                         {
                             xtype: 'numberfield',
                             label: 'Chat id',
-                            reference: 'chatIdFilterField'
+                            reference: 'chatIdFilterField',
+                            decimals: 0
                         },
                         {
                             xtype: 'textfield',

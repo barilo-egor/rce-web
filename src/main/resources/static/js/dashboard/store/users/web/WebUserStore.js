@@ -9,5 +9,7 @@ Ext.define('Dashboard.store.users.web.WebUserStore', {
             type: 'json',
             rootProperty: 'body.data'
         }
-    }
+    },
+
+    fieldsReferences: ['usernameField', 'roleField', 'chatIdField']
 })
