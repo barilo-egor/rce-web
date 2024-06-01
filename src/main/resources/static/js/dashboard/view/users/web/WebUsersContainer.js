@@ -1,20 +1,12 @@
 Ext.define('Dashboard.view.users.web.WebUsersContainer', {
     extend: 'Ext.Container',
     xtype: 'webuserscontainer',
+    reference: 'webUsersContainer',
 
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
-
-    // me.up().up().setMasked('Загрузка')
-    // Ext.defer(function() {
-    //     let webUserPid = ExtUtil.referenceQuery('webUsersGrid').getSelection().get('pid')
-    //     let roleName = Ext.getStore('webUserStore').getRange()
-    //         .filter(user => user.get('pid') === webUserPid)[0].get('role').name
-    //     me.setValue(me.getStore().getRange().filter(role => role.get('name') === roleName)[0]);  // Устанавливаем значение по умолчанию (Alaska)
-    //     me.up().up().setMasked(false)
-    // }, 1000);
 
     items: [
         {
@@ -23,22 +15,36 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
             reference: 'webUsersGrid',
             scrollable: true,
             shadow: true,
-            margin: '10 10 10 5',
+            margin: '10 5 10 10',
             store: Ext.create('Dashboard.store.users.web.WebUserStore'),
 
             listeners: {
                 select: function (me, selected) {
                     me.setMasked('Загрузка')
+                    ExtUtil.referenceQuery('webUserInfoPanel').expand()
                     ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
                     ExtUtil.referenceQuery('userFieldsContainer').setHidden(false)
                     let user = selected[0].getData()
-                    ExtUtil.referenceQuery('usernameField').setValue(user.username)
+
+                    let usernameField = ExtUtil.referenceQuery('usernameField')
+                    usernameField.defaultValue = user.username
+                    usernameField.setValue(user.username)
                     let roleField = ExtUtil.referenceQuery('roleField')
-                    roleField.setValue(roleField.getStore().getRange().filter(role => role.get('name') === user.role)[0])
+                    let role = roleField.getStore().getRange().filter(role => role.get('name') === user.role.name)[0]
+                    roleField.defaultValue = role.get('name')
+                    roleField.setValue(role)
                     let isBannedField = ExtUtil.referenceQuery('isBannedField')
-                    isBannedField.setValue(isBannedField.getStore().getRange().filter(isBanned => isBanned.value !== user.isEnabled)[0])
-                    let chatId = ExtUtil.referenceQuery('chatId')
+                    isBannedField.defaultValue = !user.isEnabled
+                    isBannedField.setValue(!user.isEnabled)
+                    let chatIdField = ExtUtil.referenceQuery('chatIdField')
+                    chatIdField.defaultValue = user.chatId
+                    chatIdField.setValue(user.chatId)
+
                     me.setMasked(false)
+                },
+                deselect: function () {
+                    ExtUtil.referenceQuery('userFieldsContainer').setHidden(true)
+                    ExtUtil.referenceQuery('chooseDealContainer').setHidden(false)
                 }
             },
 
@@ -101,7 +107,7 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                     items: [
                         {
                             xtype: 'component',
-                            html: 'Выберите сделку'
+                            html: 'Выберите пользователя'
                         }
                     ]
                 },
@@ -121,37 +127,107 @@ Ext.define('Dashboard.view.users.web.WebUsersContainer', {
                         {
                             xtype: 'textfield',
                             label: 'Username',
-                            reference: 'usernameField'
+                            reference: 'usernameField',
+                            clearable: false,
+                            validators: function (val) {
+                                if (val === this.defaultValue) return true
+                                return ValidatorUtil.validateLogin(val)
+                            },
+                            listeners: {
+                                change: function (me, newValue) {
+                                    ExtUtil.referenceQuery('updateButton').updateDisable()
+                                }
+                            }
                         },
                         {
                             xtype: 'combobox',
                             label: 'Роль',
                             reference: 'roleField',
+                            displayField: 'displayName',
+                            valueField: 'name',
+                            editable: false,
                             store: {
                                 type: 'roleStore'
+                            },
+                            queryMode: 'local',
+                            listeners: {
+                                change: function (me, newValue) {
+                                    ExtUtil.referenceQuery('updateButton').updateDisable()
+                                }
                             }
                         },
                         {
-                            xtype: 'combobox',
+                            xtype: 'togglefield',
                             label: 'В бане',
                             reference: 'isBannedField',
-                            store: {
-                                data: [
-                                    {
-                                        text: 'Да',
-                                        value: true
-                                    },
-                                    {
-                                        text: 'Нет',
-                                        value: false
-                                    }
-                                ]
+                            listeners: {
+                                change: function (me, newValue) {
+                                    ExtUtil.referenceQuery('updateButton').updateDisable()
+                                }
                             }
                         },
                         {
                             xtype: 'numberfield',
                             label: 'Chat id',
-                            reference: 'chatIdField'
+                            reference: 'chatIdField',
+                            clearable: false,
+                            validators: function (val) {
+                                if (val === this.defaultValue) return true
+                                return ValidatorUtil.validateChatId(val)
+                            },
+                            listeners: {
+                                change: function (me, newValue) {
+                                    ExtUtil.referenceQuery('updateButton').updateDisable()
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Обновить',
+                            reference: 'updateButton',
+                            disabled: true,
+                            margin: '30 20 0 20',
+                            updateDisable: function () {
+                                let usernameField = ExtUtil.referenceQuery('usernameField')
+                                let roleField = ExtUtil.referenceQuery('roleField')
+                                let isBannedField = ExtUtil.referenceQuery('isBannedField')
+                                let chatIdField = ExtUtil.referenceQuery('chatIdField')
+                                if (!(usernameField.defaultValue && roleField.defaultValue
+                                    && typeof isBannedField.defaultValue !== 'undefined' && chatIdField.defaultValue)) return
+                                if ((usernameField.getValue() === usernameField.defaultValue
+                                    && roleField.getValue() === roleField.defaultValue
+                                    && isBannedField.getValue() === isBannedField.defaultValue
+                                    && chatIdField.getValue() === chatIdField.defaultValue)
+                                    || !(usernameField.validate() && roleField.validate()
+                                        && isBannedField.validate() && chatIdField.validate())) this.setDisabled(true)
+                                else this.setDisabled(false)
+                            },
+                            handler: function (me) {
+                                ExtUtil.mask('webUsersContainer', 'Обновление пользователя')
+                                let params = {}
+                                params.pid = ExtUtil.referenceQuery('webUsersGrid').getSelection().get('pid')
+                                let usernameField = ExtUtil.referenceQuery('usernameField')
+                                let roleField = ExtUtil.referenceQuery('roleField')
+                                let isBannedField = ExtUtil.referenceQuery('isBannedField')
+                                let chatIdField = ExtUtil.referenceQuery('chatIdField')
+                                if (usernameField.getValue() !== usernameField.defaultValue) params.username = usernameField.getValue()
+                                if (roleField.getValue() !== roleField.defaultValue) params.role = roleField.getValue()
+                                if (isBannedField.getValue() !== isBannedField.defaultValue) params.isBanned = isBannedField.getValue()
+                                if (chatIdField.getValue() !== chatIdField.defaultValue) params.chatId = chatIdField.getValue()
+                                ExtUtil.mRequest({
+                                    url: '/users/web/update',
+                                    params: params,
+                                    success: function (response) {
+                                        if (params.username) usernameField.defaultValue = params.username
+                                        if (params.role) roleField.defaultValue = params.role
+                                        if (params.isBanned) isBannedField.defaultValue = params.isBanned
+                                        if (params.chatId) chatIdField.defaultValue = params.chatId
+                                        me.updateDisable()
+                                        Ext.getStore('webUserStore').reload()
+                                        ExtUtil.maskOff('webUsersContainer')
+                                    }
+                                })
+                            }
                         }
                     ]
                 }

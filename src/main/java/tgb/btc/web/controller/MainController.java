@@ -27,6 +27,7 @@ public class MainController extends BaseController {
                 .anyMatch(role -> role.getName().equals(roleConstants.name()));
         if (Objects.isNull(principal)) return "login";
         else if (hasAccess.apply(RoleConstants.ROLE_ADMIN)) return "dashboard";
+        else if (hasAccess.apply(RoleConstants.ROLE_OPERATOR)) return "dashboard";
         else if (hasAccess.apply(RoleConstants.ROLE_API_CLIENT)) return "apiDashboard";
         else return "empty";
     }
