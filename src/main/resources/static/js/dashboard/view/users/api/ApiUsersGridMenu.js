@@ -4,11 +4,27 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
 
     items: [
         {
+            text: 'Скопировать ID',
+            iconCls: 'x-fa fa-copy',
+            handler: function (me) {
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('id'))
+                ExtMessages.topToast('ID скопирован в буфер обмена')
+            }
+        },
+        {
             text: 'Скопировать токен',
             iconCls: 'x-fa fa-copy',
             handler: function (me) {
                 navigator.clipboard.writeText(ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('token'))
                 ExtMessages.topToast('Токен скопирован в буфер обмена')
+            }
+        },
+        '-',
+        {
+            text: 'Удалить',
+            iconCls: 'x-fa fa-trash-alt redColor',
+            handler: function (me) {
+                Ext.create('Dashboard.view.users.api.ApiUserDeleteDialog').show()
             }
         }
     ]

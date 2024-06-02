@@ -25,6 +25,13 @@ public class ApiUsersController extends BaseController {
 
     private ApiUserProcessService apiUserProcessService;
 
+    private ApiUserService apiUserService;
+
+    @Autowired
+    public void setApiUserService(ApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
+
     @Autowired
     public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
@@ -63,5 +70,19 @@ public class ApiUsersController extends BaseController {
     public SuccessResponse<?> update(@RequestBody ApiUserVO apiUser) {
         apiUserProcessService.save(apiUser);
         return SuccessResponseUtil.toast("Клиент сохранен.");
+    }
+
+    @GetMapping("/isExistById")
+    @ResponseBody
+    public SuccessResponse<?> isExistById(String id) {
+        return SuccessResponseUtil.data(apiUserRepository.countById(id) > 0,
+                data -> JacksonUtil.getEmpty().put("exist", data));
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public SuccessResponse<?> delete(String deleteUserId, @RequestParam(required = false) String newUserId) {
+        apiUserService.delete(deleteUserId, newUserId);
+        return SuccessResponseUtil.toast("Клиент удален.");
     }
 }

@@ -2,6 +2,7 @@ Ext.define('Dashboard.view.users.api.ApiUserCreateDialog', {
     extend: 'Ext.Dialog',
     reference: 'createDialog',
 
+    closable: true,
     title: 'Создание API клиента',
 
     buttons: [

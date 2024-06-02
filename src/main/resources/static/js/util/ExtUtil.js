@@ -152,7 +152,7 @@ let ExtUtil = {
             if (config.loadingComponent) {
                 config.loadingComponent.setMasked(false)
             } else if (config.loadingComponentRef) {
-                ExtUtil.turnOffLoadingByReference(config.loadingComponentRef)
+                ExtUtil.maskOff(config.loadingComponentRef)
             }
             failure(response)
         }
@@ -163,13 +163,13 @@ let ExtUtil = {
                 let addingText = response.description
                     ? ': ' + response.description
                     : '. Информация отсутствует.'
-                ExtUtil.Msg.error({
-                    text: 'Ошибка сервера<p>' + addingText
-                })
+                ExtMessages.error('Ошибка', addingText)
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
+                else if (config.loadingComponentRef) ExtUtil.maskOff(config.loadingComponentRef)
             } else if (response.body && response.body.warningString){
                 Ext.Msg.alert('Внимание', response.body.warningString)
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
+                else if (config.loadingComponentRef) ExtUtil.maskOff(config.loadingComponentRef)
             } else {
                 if (response.body && response.body.message) {
                     Ext.Msg.alert('Информация', response.body.message)
