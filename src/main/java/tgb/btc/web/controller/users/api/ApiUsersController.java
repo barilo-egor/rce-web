@@ -4,6 +4,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
@@ -49,10 +50,12 @@ public class ApiUsersController extends BaseController {
 
     @GetMapping("/findAll")
     @ResponseBody
-    public SuccessResponse<?> findAll(@RequestParam(required = false) String username,
-                                      @RequestParam(required = false) RoleConstants role,
-                                      @RequestParam(required = false) Long chatId) {
-        return SuccessResponseUtil.data(webApiUsersService.findAll(username, role, chatId));
+    public SuccessResponse<?> findAll(@RequestParam(required = false) String id,
+                                      @RequestParam(required = false) FiatCurrency fiatCurrency,
+                                      @RequestParam(required = false) String token,
+                                      @RequestParam(required = false) String buyRequisite,
+                                      @RequestParam(required = false) String sellRequisite) {
+        return SuccessResponseUtil.data(webApiUsersService.findAll(id, fiatCurrency, token, buyRequisite, sellRequisite));
     }
 
     @GetMapping("/generateToken")

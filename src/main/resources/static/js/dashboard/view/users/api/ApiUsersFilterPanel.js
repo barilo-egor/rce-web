@@ -50,6 +50,11 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
                             label: 'ID',
                             reference: 'idFilterField',
                         },
+                        {
+                            xtype: 'textfield',
+                            label: 'Реквизит покупки',
+                            reference: 'buyRequisiteFilterField'
+                        }
                     ]
                 },
                 {
@@ -67,6 +72,11 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
                             displayField: 'code',
                             valueField: 'name'
                         },
+                        {
+                            xtype: 'textfield',
+                            label: 'Реквизит продажи',
+                            reference: 'sellRequisiteFilterField'
+                        }
                     ]
                 },
                 {

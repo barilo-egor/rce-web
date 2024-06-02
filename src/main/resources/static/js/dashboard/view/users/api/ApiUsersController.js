@@ -74,11 +74,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
     },
 
     search: function () {
-        let params = {
-            username: ExtUtil.referenceQuery('usernameField').getValue(),
-            role: ExtUtil.referenceQuery('roleField').getValue(),
-            chatId: ExtUtil.referenceQuery('chatIdField').getValue()
-        }
+        let params = ExtUtil.getJsonData(Ext.getStore('apiUserStore').fieldsReferences, 'FilterField')
         Ext.getStore('apiUserStore').load({
             params: params
         })
