@@ -43,7 +43,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
         const eventSource = new EventSource("/notifications/listen");
         eventSource.onmessage = e => {
             let response = Ext.JSON.decode(e.data);
-            let workspaceItem = ExtUtil.referenceQuery('dashboardworkspace').getItems().items[0]
+            let workspaceItem = ExtUtil.referenceQuery('dashboardWorkspace').getItems().items[0]
             switch (response.type) {
                 case 'NEW_BOT_DEAL':
                 case 'ADDITIONAL_VERIFICATION_RECEIVE':
@@ -57,7 +57,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
             }
-
+            NOTIFICATION_SOUND.play().catch(error => console.log(' ', error))
         }
         eventSource.onerror = () => console.log('Произошла ошибка SSE.');
     }

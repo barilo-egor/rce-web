@@ -19,6 +19,7 @@
 </head>
 <body>
 <script type="text/javascript">
+    const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
     let TITLE
     ExtUtil.mRequest({
         url: '/properties/getPropertiesValues',
