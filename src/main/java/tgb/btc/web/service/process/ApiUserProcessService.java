@@ -37,6 +37,7 @@ public class ApiUserProcessService {
         if (Objects.nonNull(apiUserVO.getPid())) {
             apiUser = apiUserRepository.getById(apiUserVO.getPid());
             apiUser.setIsBanned(apiUserVO.getIsBanned());
+            apiUser.setToken(apiUserVO.getToken());
         } else {
             apiUser = new ApiUser();
             apiUser.setRegistrationDate(LocalDate.now());
@@ -92,7 +93,6 @@ public class ApiUserProcessService {
         apiUser.setBuyRequisite(apiUserVO.getBuyRequisite());
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
-        apiUser.setToken(apiUserVO.getToken());
         return apiUserRepository.save(apiUser);
     }
 }

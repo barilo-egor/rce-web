@@ -59,7 +59,8 @@ Ext.define('Dashboard.view.users.api.ApiUserCreateDialog', {
                     xtype: 'textfield',
                     label: 'ID',
                     reference: 'idCreateField',
-                    required: true
+                    required: true,
+                    validators: ValidatorUtil.validateIdWithExists
                 },
                 {
                     xtype: 'numberfield',

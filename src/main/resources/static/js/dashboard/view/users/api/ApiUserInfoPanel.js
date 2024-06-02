@@ -51,7 +51,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     clearable: false,
                     validators: function (val) {
                         if (val === this.defaultValue) return true
-                        return ValidatorUtil.validateLogin(val)
+                        return ValidatorUtil.validateIdWithExists(val)
                     },
                     listeners: {
                         change: 'change'

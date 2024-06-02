@@ -41,7 +41,20 @@ let ValidatorUtil = {
     validateIdWithExists: function (val) {
         if (!val || val === '') return  'Введите значение'
         if (!RegexUtil.onlyLettersAndNumbers(val)) return 'Только латинские буквы и символы'
-        return true
+        let result
+        ExtUtil.mRequest({
+            url: '/users/api/isExistById',
+            method: 'GET',
+            params: {
+                id: val
+            },
+            async: false,
+            success: function (response) {
+                if (response.body.data.exist) result = 'Такой ID занят'
+                else result = true
+            }
+        })
+        return result
     },
 
     validateChangeLogin: function (val) {
