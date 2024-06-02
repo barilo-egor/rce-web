@@ -76,7 +76,7 @@ public class ApiDealsController extends BaseController {
 
     @PostMapping("/beforeExport")
     @ResponseBody
-    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody BotDealsSearchForm form) {
+    public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody ApiDealsSearchForm form) {
         Map<String, Object> parameters = new HashMap<>();
         List<Long> pids = webApiDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
         request.getSession().setAttribute("dealsPids", pids);
