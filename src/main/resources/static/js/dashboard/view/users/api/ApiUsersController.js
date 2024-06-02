@@ -15,7 +15,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
         let params = ExtUtil.getJsonDataNullable(fieldsReferences)
         params.pid = ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid')
         ExtUtil.mRequest({
-            url: '/users/api/update',
+            url: '/users/api/save',
             jsonData: params,
             success: function (response) {
                 ExtUtil.updateDefaultValues(fieldsReferences)

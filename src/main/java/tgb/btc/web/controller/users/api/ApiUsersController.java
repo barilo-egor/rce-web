@@ -58,10 +58,10 @@ public class ApiUsersController extends BaseController {
         return SuccessResponseUtil.data(token, data -> JacksonUtil.getEmpty().put("token", data));
     }
 
-    @PostMapping("/update")
+    @PostMapping("/save")
     @ResponseBody
     public SuccessResponse<?> update(@RequestBody ApiUserVO apiUser) {
         apiUserProcessService.save(apiUser);
-        return SuccessResponseUtil.toast("Клиент обновлен.");
+        return SuccessResponseUtil.toast("Клиент сохранен.");
     }
 }

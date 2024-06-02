@@ -47,8 +47,8 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
                     items: [
                         {
                             xtype: 'textfield',
-                            label: 'Логин',
-                            reference: 'usernameField',
+                            label: 'ID',
+                            reference: 'idFilterField',
                         },
                     ]
                 },
@@ -57,14 +57,14 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
                     items: [
                         {
                             xtype: 'combobox',
-                            label: 'Роль',
+                            label: 'Фиат',
                             editable: false,
                             store: {
-                                type: 'roleStore'
+                                type: 'fiatCurrenciesStore'
                             },
                             clearable: true,
-                            reference: 'roleField',
-                            displayField: 'displayName',
+                            reference: 'fiatCurrencyFilterField',
+                            displayField: 'code',
                             valueField: 'name'
                         },
                     ]
@@ -73,10 +73,9 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
                     xtype: 'container',
                     items: [
                         {
-                            xtype: 'numberfield',
-                            label: 'Chat id',
-                            decimals: 0,
-                            reference: 'chatIdField'
+                            xtype: 'textfield',
+                            label: 'Токен',
+                            reference: 'tokenFilterField'
                         },
                     ]
                 }

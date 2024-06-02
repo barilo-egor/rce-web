@@ -240,7 +240,7 @@ let ExtUtil = {
         component.setLoading(false)
     },
 
-    getJsonData: function (fieldsReferences) {
+    getJsonData: function (fieldsReferences, subfield) {
         let jsonData = {}
         for (let fieldReference of fieldsReferences) {
             let field = ExtUtil.referenceQuery(fieldReference)
@@ -249,20 +249,20 @@ let ExtUtil = {
             }
             let value = field.getValue()
             if (value) {
-                jsonData[fieldReference.substring(0, fieldReference.indexOf('Field'))] = value
+                jsonData[fieldReference.substring(0, fieldReference.indexOf(subfield ? subfield : 'Field'))] = value
             }
         }
         return jsonData
     },
 
-    getJsonDataNullable: function (fieldsReferences) {
+    getJsonDataNullable: function (fieldsReferences, subfield) {
         let jsonData = {}
         for (let fieldReference of fieldsReferences) {
             let field = ExtUtil.referenceQuery(fieldReference)
             if (!field) {
                 throw new Error('Не найден компонент по reference=' + fieldReference)
             }
-            jsonData[fieldReference.substring(0, fieldReference.indexOf('Field'))] = field.getValue()
+            jsonData[fieldReference.substring(0, fieldReference.indexOf(subfield ? subfield : 'Field'))] = field.getValue()
         }
         return jsonData
     },
