@@ -45,4 +45,8 @@ public class ApiUserVO {
     @Getter
     @Setter
     private Boolean isBanned;
+
+    @Getter
+    @Setter
+    private String token;
 }

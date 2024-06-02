@@ -14,7 +14,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Ext.list.Tree',
         'Dashboard.view.deal.bot.BotDealsContainer',
         'Dashboard.view.deal.api.ApiDealsContainer',
-        'Dashboard.view.users.web.WebUsersContainer'
+        'Dashboard.view.users.web.WebUsersContainer',
+        'Dashboard.view.users.api.ApiUsersContainer'
     ],
     controller: 'dashboardController',
 
@@ -60,6 +61,13 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                             ExtUtil.referenceQuery('dashboardWorkspace').add({
                                 xtype: 'webuserscontainer'
                             })
+                            break
+                        case MENU_ITEMS.API_USERS:
+                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
+                            ExtUtil.referenceQuery('dashboardWorkspace').add({
+                                xtype: 'apiuserscontainer'
+                            })
+                            break
                     }
                 }
             },

@@ -253,5 +253,24 @@ let ExtUtil = {
             }
         }
         return jsonData
+    },
+
+    getJsonDataNullable: function (fieldsReferences) {
+        let jsonData = {}
+        for (let fieldReference of fieldsReferences) {
+            let field = ExtUtil.referenceQuery(fieldReference)
+            if (!field) {
+                throw new Error('Не найден компонент по reference=' + fieldReference)
+            }
+            jsonData[fieldReference.substring(0, fieldReference.indexOf('Field'))] = field.getValue()
+        }
+        return jsonData
+    },
+
+    updateDefaultValues: function (fieldsReferences) {
+        fieldsReferences.forEach(reference => {
+            let field = ExtUtil.referenceQuery(reference)
+            field.defaultValue = field.getValue()
+        })
     }
 }

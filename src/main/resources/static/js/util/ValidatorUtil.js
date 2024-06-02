@@ -10,6 +10,11 @@ let ValidatorUtil = {
         return true
     },
 
+    numberValidateNotEmpty: function (val) {
+        if (typeof val === 'undefined') return 'Требуется значение'
+        return true
+    },
+
     boolValidateNotEmpty: function (val) {
         return val;
     },

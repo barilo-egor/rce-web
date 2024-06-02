@@ -92,6 +92,7 @@ public class ApiUserProcessService {
         apiUser.setBuyRequisite(apiUserVO.getBuyRequisite());
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
+        apiUser.setToken(apiUserVO.getToken());
         return apiUserRepository.save(apiUser);
     }
 }
