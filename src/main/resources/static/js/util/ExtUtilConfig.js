@@ -24,7 +24,6 @@ const ExtUtilConfig = {
         }
     },
     getCollapsible(direction) {
-        debugger
         switch (direction) {
             case 'top': return this.SUPPORT.COLLAPSIBLE_OBJECTS.TOP
             case 'right': return this.SUPPORT.COLLAPSIBLE_OBJECTS.RIGHT
