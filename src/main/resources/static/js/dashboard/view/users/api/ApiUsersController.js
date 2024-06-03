@@ -31,37 +31,11 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
         me.setMasked('Загрузка')
         ExtUtil.referenceQuery('apiUserInfoPanel').expand()
         ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
-        ExtUtil.referenceQuery('userFieldsContainer').setHidden(false)
         let user = selected[0].getData()
-
-        let usernameField = ExtUtil.referenceQuery('idField')
-        usernameField.defaultValue = user.id
-        usernameField.setValue(user.id)
-        let personalDiscountField = ExtUtil.referenceQuery('personalDiscountField')
-        personalDiscountField.defaultValue = user.personalDiscount
-        personalDiscountField.setValue(user.personalDiscount)
-        let isBannedField = ExtUtil.referenceQuery('isBannedField')
-        isBannedField.defaultValue = user.isBanned
-        isBannedField.setValue(user.isBanned)
-        let tokenField = ExtUtil.referenceQuery('tokenField')
-        tokenField.defaultValue = user.token
-        tokenField.setValue(user.token)
-        let buyRequisiteField = ExtUtil.referenceQuery('buyRequisiteField')
-        buyRequisiteField.defaultValue = user.buyRequisite
-        buyRequisiteField.setValue(user.buyRequisite)
-        let sellRequisiteField = ExtUtil.referenceQuery('sellRequisiteField')
-        sellRequisiteField.defaultValue = user.sellRequisite
-        sellRequisiteField.setValue(user.sellRequisite)
-        let fiatCurrencyField = ExtUtil.referenceQuery('fiatCurrencyField')
-        let fiatCurrency = fiatCurrencyField.getStore().getRange().filter(role => role.get('name') === user.fiatCurrency.name)[0]
-        fiatCurrencyField.defaultValue = fiatCurrency.get('name')
-        fiatCurrencyField.setValue(fiatCurrency)
-        let usdCourseRUBField = ExtUtil.referenceQuery('usdCourseRUBField')
-        usdCourseRUBField.defaultValue = user.usdCourseRUB
-        usdCourseRUBField.setValue(user.usdCourseRUB)
-        let usdCourseBYNField = ExtUtil.referenceQuery('usdCourseBYNField')
-        usdCourseBYNField.defaultValue = user.usdCourseBYN
-        usdCourseBYNField.setValue(user.usdCourseBYN)
+        ExtUtil.referenceQuery('userFieldsContainer').getFieldsReferences()
+            .forEach(reference => ExtUtil.referenceQuery(reference).setUserValue(user))
+        ExtUtil.referenceQuery('userFieldsContainer').setHidden(false)
+        ExtUtil.referenceQuery('updateButton').setHidden(false)
         me.setMasked(false)
     },
 

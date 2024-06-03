@@ -12,6 +12,11 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
     title: 'Пользователь',
     shadow: true,
     collapsible: ExtUtilConfig.getCollapsible('right'),
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
     items: [
         {
             xtype: 'container',
@@ -32,6 +37,14 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
             xtype: 'container',
             reference: 'userFieldsContainer',
             hidden: true,
+
+            getFieldsReferences: function () {
+                if (!this.fieldsReferences) {
+                    ExtUtil.setFieldsReferences(this)
+                }
+                return this.fieldsReferences
+            },
+
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -53,6 +66,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     },
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.id
+                        this.setValue(user.id)
                     }
                 },
                 {
@@ -67,6 +84,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         if (val === this.defaultValue) return true
                         return ValidatorUtil.numberValidateNotEmpty(val)
                     },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.personalDiscount
+                        this.setValue(user.personalDiscount)
+                    }
                 },
                 {
                     xtype: 'togglefield',
@@ -74,6 +95,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     reference: 'isBannedField',
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.isBanned
+                        this.setValue(user.isBanned)
                     }
                 },
                 {
@@ -91,6 +116,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                             tooltip: 'Сгенерировать новый',
                             handler: 'generateToken'
                         }
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.token
+                        this.setValue(user.token)
                     }
                 },
                 {
@@ -99,6 +128,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     reference: 'buyRequisiteField',
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.buyRequisite
+                        this.setValue(user.buyRequisite)
                     }
                 },
                 {
@@ -107,6 +140,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     reference: 'sellRequisiteField',
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.sellRequisite
+                        this.setValue(user.sellRequisite)
                     }
                 },
                 {
@@ -122,6 +159,11 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     queryMode: 'local',
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        let fiatCurrency = this.getStore().getRange().filter(role => role.get('name') === user.fiatCurrency.name)[0]
+                        this.defaultValue = fiatCurrency.get('name')
+                        this.setValue(fiatCurrency)
                     }
                 },
                 {
@@ -132,6 +174,10 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     clearable: false,
                     listeners: {
                         change: 'change'
+                    },
+                    setUserValue: function (user) {
+                        this.defaultValue = user.usdCourseRUB
+                        this.setValue(user.usdCourseRUB)
                     }
                 },
                 {
@@ -142,35 +188,36 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     clearable: false,
                     listeners: {
                         change: 'change'
-                    }
-                },
-                {
-                    xtype: 'button',
-                    text: 'Обновить',
-                    reference: 'updateButton',
-                    disabled: true,
-                    margin: '30 20 0 20',
-                    updateDisable: function () {
-                        let fieldsReferences = [
-                            'idField', 'personalDiscountField', 'isBannedField', 'tokenField', 'buyRequisiteField',
-                            'sellRequisiteField',
-                            'fiatCurrencyField', 'usdCourseRUBField', 'usdCourseBYNField'
-                        ]
-                        let withDefaultValuesCounter = 0
-                        for (let reference of fieldsReferences) {
-                            let field = ExtUtil.referenceQuery(reference)
-                            if (!field.validate()) {
-                                this.setDisabled(true)
-                                return
-                            }
-                            if (field.defaultValue === field.getValue()) withDefaultValuesCounter++
-                        }
-                        if (withDefaultValuesCounter === fieldsReferences.length) this.setDisabled(true)
-                        else this.setDisabled(false)
                     },
-                    handler: 'updateUser'
+                    setUserValue: function (user) {
+                        this.defaultValue = user.usdCourseBYN
+                        this.setValue(user.usdCourseBYN)
+                    }
                 }
             ]
+        },
+        {
+            xtype: 'button',
+            text: 'Обновить',
+            reference: 'updateButton',
+            disabled: true,
+            hidden: true,
+            margin: '30 20 0 20',
+            updateDisable: function () {
+                let fieldsReferences = ExtUtil.referenceQuery('userFieldsContainer').getFieldsReferences()
+                let withDefaultValuesCounter = 0
+                for (let reference of fieldsReferences) {
+                    let field = ExtUtil.referenceQuery(reference)
+                    if (!field.validate()) {
+                        this.setDisabled(true)
+                        return
+                    }
+                    if (field.defaultValue === field.getValue()) withDefaultValuesCounter++
+                }
+                if (withDefaultValuesCounter === fieldsReferences.length) this.setDisabled(true)
+                else this.setDisabled(false)
+            },
+            handler: 'updateUser'
         }
     ]
 })
