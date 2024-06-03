@@ -1,7 +1,6 @@
 Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
     extend: 'Ext.Panel',
     xtype: 'apiusersfilterpanel',
-
     requires: [
         'Dashboard.view.users.api.ApiUsersController'
     ],
@@ -14,6 +13,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
     shadow: true,
     margin: '10 5 5 10',
     padding: '5 5 5 5',
+
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -90,20 +90,21 @@ Ext.define('Dashboard.view.users.api.ApiUsersFilterPanel', {
         {
             xtype: 'container',
             width: '100%',
+
             layout: {
                 type: 'hbox',
                 pack: 'middle'
             },
+            defaults: {
+                xtype: 'button',
+                margin: '20 0 0 0',
+            },
             items: [
                 {
-                    xtype: 'button',
-                    margin: '20 0 0 0',
                     text: 'Искать',
                     handler: 'search'
                 },
                 {
-                    xtype: 'button',
-                    margin: '20 0 0 0',
                     text: 'Очистить форму поиска',
                     handler: 'clearFilterForm'
                 }
