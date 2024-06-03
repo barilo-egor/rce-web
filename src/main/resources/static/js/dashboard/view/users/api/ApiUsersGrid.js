@@ -14,9 +14,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
         {
             iconCls: 'x-fa fa-plus forestgreenColor',
             tooltip: 'Создать клиента',
-            handler: function (me) {
-                Ext.create('Dashboard.view.users.api.dialog.ApiUserCreateDialog').show()
-            }
+            handler: 'createUser'
         }
     ],
     layout: 'fit',
@@ -31,15 +29,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                 select: 'select',
                 deselect: 'deselect',
                 painted: 'reloadStore',
-                childcontextmenu: function (me, eObj) {
-                    me.deselectAll();
-                    me.setSelection(eObj.record);
-                    if (!me.menu) {
-                        me.menu = Ext.create('Dashboard.view.users.api.ApiUsersGridMenu')
-                    }
-                    me.menu.showAt(eObj.event.getX(), eObj.event.getY());
-                    eObj.event.stopEvent()
-                },
+                childcontextmenu: 'gridMenu',
             },
             scrollable: true,
             columns: [

@@ -83,5 +83,19 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
 
     reloadStore: function (me) {
         me.getStore().reload()
+    },
+
+    createUser: function (me) {
+        Ext.create('Dashboard.view.users.api.dialog.ApiUserCreateDialog').show()
+    },
+
+    gridMenu: function (me, eObj) {
+        me.deselectAll();
+        me.setSelection(eObj.record);
+        if (!me.menu) {
+            me.menu = Ext.create('Dashboard.view.users.api.ApiUsersGridMenu')
+        }
+        me.menu.showAt(eObj.event.getX(), eObj.event.getY());
+        eObj.event.stopEvent()
     }
 })
