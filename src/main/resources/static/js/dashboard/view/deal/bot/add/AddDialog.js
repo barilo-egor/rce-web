@@ -45,13 +45,18 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     displayField: 'nominative',
                     editable: false,
                     required: true,
+                    queryMode: 'local',
                     valueField: 'name',
                     store: {
-                        type: 'dealTypesStore'
+                        type: 'dealTypesStore',
+                        listeners: {
+                            load: function (me, records) {
+                                ExtUtil.referenceQuery('dealTypeAddField').setValue(me.getAt(0))
+                            }
+                        }
                     },
                     reference: 'dealTypeAddField',
                     listeners: {
-                        painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange'
                     }
                 },
@@ -62,12 +67,17 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     editable: false,
                     required: true,
                     valueField: 'name',
+                    queryMode: 'local',
                     store: {
-                        type: 'cryptoCurrenciesStore'
+                        type: 'cryptoCurrenciesStore',
+                        listeners: {
+                            load: function (me, records) {
+                                ExtUtil.referenceQuery('cryptoCurrencyAddField').setValue(me.getAt(0))
+                            }
+                        }
                     },
                     reference: 'cryptoCurrencyAddField',
                     listeners: {
-                        painted: ExtUtil.forceComboFirstValue,
                         change: 'comboChange',
                     }
                 },
@@ -116,12 +126,18 @@ Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
                     required: true,
                     displayField: 'code',
                     valueField: 'name',
+                    queryMode: 'local',
                     store: {
-                        type: 'fiatCurrenciesStore'
+                        type: 'fiatCurrenciesStore',
+                        listeners: {
+                            load: function (me, records) {
+                                ExtUtil.referenceQuery('fiatCurrencyAddField').setValue(me.getAt(0))
+                            }
+                        }
                     },
                     reference: 'fiatCurrencyAddField',
                     listeners: {
-                        painted: ExtUtil.forceComboFirstValue,
+                        change: 'comboChange',
                     }
                 },
                 {
