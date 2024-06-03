@@ -15,7 +15,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
             iconCls: 'x-fa fa-plus forestgreenColor',
             tooltip: 'Создать клиента',
             handler: function (me) {
-                Ext.create('Dashboard.view.users.api.ApiUserCreateDialog').show()
+                Ext.create('Dashboard.view.users.api.dialog.ApiUserCreateDialog').show()
             }
         }
     ],

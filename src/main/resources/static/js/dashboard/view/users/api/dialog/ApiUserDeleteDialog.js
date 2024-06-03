@@ -1,4 +1,4 @@
-Ext.define('Dashboard.view.users.api.ApiUserDeleteDialog', {
+Ext.define('Dashboard.view.users.api.dialog.ApiUserDeleteDialog', {
     extend: 'Ext.Dialog',
     reference: 'deleteDialog',
 

@@ -1,4 +1,4 @@
-Ext.define('Dashboard.view.users.api.ApiUserCreateDialog', {
+Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
     extend: 'Ext.Dialog',
     reference: 'createDialog',
 

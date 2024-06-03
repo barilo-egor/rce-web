@@ -24,7 +24,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
             text: 'Удалить',
             iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
-                Ext.create('Dashboard.view.users.api.ApiUserDeleteDialog').show()
+                Ext.create('Dashboard.view.users.api.dialog.ApiUserDeleteDialog').show()
             }
         }
     ]
