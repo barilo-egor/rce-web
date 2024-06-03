@@ -97,5 +97,15 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
         }
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
+    },
+
+    generateToken: function (me) {
+        ExtUtil.mRequest({
+            method: 'GET',
+            url: '/users/api/generateToken',
+            success: function (response) {
+                ExtUtil.referenceQuery('tokenField').setValue(response.body.data.token)
+            }
+        })
     }
 })

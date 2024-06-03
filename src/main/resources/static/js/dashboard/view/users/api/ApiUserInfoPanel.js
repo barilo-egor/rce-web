@@ -89,15 +89,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         generateNew: {
                             iconCls: 'x-fa fa-sync-alt',
                             tooltip: 'Сгенерировать новый',
-                            handler: function (me) {
-                                ExtUtil.mRequest({
-                                    method: 'GET',
-                                    url: '/users/api/generateToken',
-                                    success: function (response) {
-                                        ExtUtil.referenceQuery('tokenField').setValue(response.body.data.token)
-                                    }
-                                })
-                            }
+                            handler: 'generateToken'
                         }
                     }
                 },
