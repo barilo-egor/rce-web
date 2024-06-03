@@ -52,6 +52,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
             ExtUtil.mRequest({
                 url: '/deal/bot/calculate',
                 method: 'GET',
+                loadingComponentRef: 'cryptoAmountFieldContainer',
                 async: false,
                 params: {
                     amount: newValue,
@@ -77,6 +78,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
                 url: '/deal/bot/calculate',
                 method: 'GET',
                 async: false,
+                loadingComponentRef: 'fiatAmountFieldContainer',
                 params: {
                     cryptoAmount: newValue,
                     fiatCurrency: ExtUtil.referenceQuery('fiatCurrencyAddField').getValue(),
@@ -117,6 +119,7 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
                 url: '/deal/bot/saveDeal',
                 async: false,
                 params: params,
+                loadingComponentRef: 'addDialog',
                 success: function (response) {
                     Ext.getStore('botDealStore').reload()
                     ExtUtil.maskOff('addDialog')

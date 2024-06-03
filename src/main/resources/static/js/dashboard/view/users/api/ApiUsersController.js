@@ -17,6 +17,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
         ExtUtil.mRequest({
             url: '/users/api/save',
             jsonData: params,
+            loadingComponentRef: 'apiUsersContainer',
             success: function (response) {
                 ExtUtil.updateDefaultValues(fieldsReferences)
                 me.updateDisable()

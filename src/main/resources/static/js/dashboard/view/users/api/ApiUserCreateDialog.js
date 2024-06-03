@@ -26,6 +26,7 @@ Ext.define('Dashboard.view.users.api.ApiUserCreateDialog', {
                 ExtUtil.mRequest({
                     url: '/users/api/save',
                     jsonData: ExtUtil.getJsonDataNullable(fieldReference, 'CreateField'),
+                    loadingComponentRef: 'createDialog',
                     success: function (response) {
                         Ext.getStore('apiUserStore').reload()
                         ExtUtil.maskOff('createDialog')

@@ -21,6 +21,7 @@ Ext.define('Dashboard.view.users.web.WebUsersController', {
         ExtUtil.mRequest({
             url: '/users/web/update',
             params: params,
+            loadingComponentRef: 'webUsersContainer',
             success: function (response) {
                 if (params.username) usernameField.defaultValue = params.username
                 if (params.role) roleField.defaultValue = params.role
