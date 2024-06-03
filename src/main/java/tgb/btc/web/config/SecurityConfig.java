@@ -6,10 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import tgb.btc.library.util.web.JacksonUtil;
 
 @Configuration
@@ -44,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/web/main",
                         "/registration/**",
                         "/api/**", "/documentation/**",
-                        "/web/user/isExist"
+                        "/users/web/exist"
                 )
                 .permitAll();
         // Доступ для юзеров

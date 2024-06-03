@@ -1,6 +1,5 @@
 package tgb.btc.web.controller.users.web;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +8,7 @@ import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
 import tgb.btc.web.service.users.WebWebUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -73,5 +73,18 @@ public class WebUsersController {
         }
         webUserRepository.save(webUser);
         return SuccessResponseUtil.toast("Пользователь обновлен");
+    }
+
+    @GetMapping("/exist")
+    @ResponseBody
+    public SuccessResponse<?> isExist(String loginField) {
+        boolean isExist;
+        try {
+            Long chatId = Long.parseLong(loginField);
+            isExist = webUserRepository.existsByChatId(chatId);
+        } catch (NumberFormatException e) {
+            isExist = webUserRepository.existsByUsername(loginField);
+        }
+        return SuccessResponseUtil.data(isExist, data -> JacksonUtil.getEmpty().put("isExist", data));
     }
 }
