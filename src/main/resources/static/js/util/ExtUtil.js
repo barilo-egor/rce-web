@@ -272,5 +272,11 @@ let ExtUtil = {
             let field = ExtUtil.referenceQuery(reference)
             field.defaultValue = field.getValue()
         })
+    },
+
+    setFieldsReferences: function (component) {
+        let references = []
+        component.getItems().items.forEach(item => references.push(item.getReference()))
+        component.fieldsReferences = references
     }
 }

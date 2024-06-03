@@ -3,7 +3,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsContainer', {
     xtype: 'apidealscontainer',
     requires: [
         'Dashboard.view.deal.api.ApiDealsFilterPanel',
-        'Dashboard.view.deal.api.ApiUserInfoPanel',
+        'Dashboard.view.deal.api.ApiDealsUserInfoPanel',
         'Dashboard.view.deal.api.ApiDealsGrid'
     ],
 
@@ -31,7 +31,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsContainer', {
             ]
         },
         {
-            xtype: 'apiuserinfopanel',
+            xtype: 'apidealsuserinfopanel',
             shadow: true,
             margin: '10 10 10 5'
         }
