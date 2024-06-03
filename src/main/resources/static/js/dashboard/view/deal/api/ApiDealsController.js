@@ -2,59 +2,49 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.apiDealsController',
 
-    init: function(grid) {
-        if (Ext.os.is.Desktop) {
-            grid.el.on({
-                scope: this,
-                contextmenu: this.onContextMenu
-            });
-        }
+    init: function (grid) {
+        if (Ext.os.is.Desktop) grid.el.on({
+            scope: this,
+            contextmenu: this.onContextMenu
+        });
     },
 
-    destroy: function() {
+    destroy: function () {
         this.toolMenu = Ext.destroy(this.toolMenu);
-
         this.callParent();
     },
 
-    getMenu: function() {
-        var menu = this.toolMenu,
-            view = this.getView();
-
+    getMenu: function () {
+        let menu = this.toolMenu
         if (!menu) {
             this.toolMenu = menu = Ext.create(Ext.apply({
                 ownerCmp: ExtUtil.referenceQuery('apiDealsGrid')
             }, ExtUtil.referenceQuery('apiDealsGrid').toolContextMenu));
         }
-
         return menu;
     },
 
-    updateMenu: function(record, el, e, align) {
-        var menu = this.getMenu();
+    updateMenu: function (record, el, e, align) {
+        let menu = this.getMenu();
 
         ExtUtil.referenceQuery('apiDealsMenu').getViewModel().set('record', record.getData());
         menu.autoFocus = !e.pointerType;
         menu.showBy(el, align);
     },
 
-    onContextMenu: function(e) {
-        var grid = ExtUtil.referenceQuery('apiDealsGrid'),
+    onContextMenu: function (e) {
+        let grid = ExtUtil.referenceQuery('apiDealsGrid'),
             target = e.getTarget(grid.itemSelector),
             item;
 
         if (target) {
             e.stopEvent();
-
             item = Ext.getCmp(target.id);
-
-            if (item) {
-                this.updateMenu(item.getRecord(), item.el, e, 't-b?');
-            }
+            if (item) this.updateMenu(item.getRecord(), item.el, e, 't-b?');
         }
     },
 
-    onMenu: function(grid, context) {
+    onMenu: function (grid, context) {
         this.updateMenu(context.record, context.tool.el, context.event, 'r-l?');
     },
 
@@ -63,7 +53,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         store.loadPage(1)
     },
 
-    clearFilterForm: function(me) {
+    clearFilterForm: function (me) {
         Ext.getStore('apiDealStore').fieldsReferences.forEach(field => ExtUtil.referenceQuery(field).clearValue())
     },
 
@@ -106,7 +96,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         ExtUtil.maskOff('apiDealsUserInfoPanel')
     },
 
-    loadStore: function(me) {
+    loadStore: function (me) {
         me.getStore().load()
     },
 
