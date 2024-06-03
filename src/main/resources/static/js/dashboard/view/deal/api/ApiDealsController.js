@@ -95,6 +95,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
     },
+
     selectDeal: function (me, selected) {
         ExtUtil.mask('apiDealsUserInfoPanel', 'Обновление данных')
         ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
@@ -107,5 +108,53 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
 
     loadStore: function(me) {
         me.getStore().load()
+    },
+
+    updateMenuButtons: function (me) {
+        let deal = me.getViewModel().getData().deal.getData()
+        let status = deal.dealStatus.name
+        ExtUtil.referenceQuery('acceptDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+        ExtUtil.referenceQuery('declineDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+    },
+
+    copyRequisite: function (me) {
+        navigator.clipboard.writeText(ExtUtil.referenceQuery('apiDealsGrid').getSelection().get('requisite'))
+        ExtMessages.topToast('Реквизит скопирован в буфер обмена')
+    },
+
+    confirmDeal: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let confirmFn = function () {
+            ExtUtil.mRequest({
+                url: '/deal/api/accept',
+                params: {
+                    pid: deal.pid
+                },
+                success: function (response) {
+                    Ext.getStore('apiDealStore').reload()
+                }
+            })
+        }
+        ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
+            confirmFn)
+    },
+
+    declineDeal: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let confirmFn = function () {
+            ExtUtil.mRequest({
+                url: '/deal/api/decline',
+                params: {
+                    pid: deal.pid
+                },
+                success: function (response) {
+                    Ext.getStore('apiDealStore').reload()
+                }
+            })
+        }
+        ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите отклонить сделку №' + deal.pid + '?',
+            confirmFn)
     }
 })
