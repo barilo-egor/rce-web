@@ -7,11 +7,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
     controller: 'apiDealsController',
 
     title: 'Фильтрация',
-    collapsible: {
-        direction: 'top',
-        expandToolText: 'Развернуть',
-        collapseToolText: 'Свернуть'
-    },
+    collapsible: ExtUtilConfig.getCollapsible('top'),
     collapsed: true,
     titleCollapse: false,
     shadow: true,

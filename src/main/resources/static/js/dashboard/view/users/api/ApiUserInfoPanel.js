@@ -11,9 +11,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
     collapsed: true,
     title: 'Пользователь',
     shadow: true,
-    collapsible: {
-        direction: 'right'
-    },
+    collapsible: ExtUtilConfig.getCollapsible('right'),
     items: [
         {
             xtype: 'container',

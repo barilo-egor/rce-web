@@ -8,11 +8,7 @@ Ext.define('Dashboard.view.users.web.WebUsersFilterPanel', {
     controller: 'webUsersController',
 
     title: 'Фильтрация',
-    collapsible: {
-        direction: 'top',
-        expandToolText: 'Развернуть',
-        collapseToolText: 'Свернуть'
-    },
+    collapsible: ExtUtilConfig.getCollapsible('top'),
     collapsed: false,
     titleCollapse: false,
     shadow: true,

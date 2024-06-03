@@ -24,11 +24,7 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
     shadow: true,
     scrollable: true,
 
-    collapsible: {
-        direction: 'left',
-        expandToolText: 'Раскрыть навигацию',
-        collapseToolText: 'Скрыть навигацию'
-    },
+    collapsible: ExtUtilConfig.getCollapsible('left'),
 
     items: [
         {

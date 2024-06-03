@@ -5,11 +5,7 @@ Ext.define('Dashboard.view.deal.api.ApiUserInfoPanel', {
 
     title: 'Пользователь',
 
-    collapsible: {
-        direction: 'right',
-        expandToolText: 'Развернуть',
-        collapseToolText: 'Свернуть'
-    },
+    collapsible: ExtUtilConfig.getCollapsible('right'),
     titleCollapse: false,
     collapsed: true,
     openable: 1,
