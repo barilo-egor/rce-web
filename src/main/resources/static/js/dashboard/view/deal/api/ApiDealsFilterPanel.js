@@ -13,18 +13,21 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
     shadow: true,
     margin: '10 5 5 10',
     padding: '5 5 5 5',
+
     layout: {
         type: 'vbox',
         align: 'center'
     },
+    defaults: {
+        xtype: 'container',
+        layout: {
+            type: 'hbox',
+            align: 'stretch'
+        },
+    },
     items: [
         {
-            xtype: 'container',
             width: '100%',
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
             defaults: {
                 flex: 1,
                 xtype: 'container',
@@ -57,39 +60,32 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
                     ]
                 },
                 {
+                    defaults: {
+                        xtype: 'combobox',
+                        editable: false,
+                        clearable: true,
+                        valueField: 'name',
+                    },
                     items: [
-
                         {
-                            xtype: 'combobox',
                             label: 'Фиатная валюта',
                             displayField: 'code',
-                            editable: false,
-                            clearable: true,
-                            valueField: 'name',
                             store: {
                                 type: 'fiatCurrenciesStore'
                             },
                             reference: 'fiatCurrencyFilterField',
                         },
                         {
-                            xtype: 'combobox',
                             label: 'Криптовалюта',
                             displayField: 'shortName',
-                            editable: false,
-                            clearable: true,
-                            valueField: 'name',
                             store: {
                                 type: 'cryptoCurrenciesStore'
                             },
                             reference: 'cryptoCurrencyFilterField'
                         },
                         {
-                            xtype: 'combobox',
                             label: 'Тип сделки',
                             displayField: 'nominative',
-                            editable: false,
-                            clearable: true,
-                            valueField: 'name',
                             store: {
                                 type: 'dealTypesStore'
                             },
@@ -121,21 +117,16 @@ Ext.define('Dashboard.view.deal.api.ApiDealsFilterPanel', {
             ]
         },
         {
-            xtype: 'container',
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
+            defaults: {
+                xtype: 'button',
+                margin: '20 0 0 0',
             },
             items: [
                 {
-                    xtype: 'button',
-                    margin: '20 0 0 0',
                     text: 'Искать',
                     handler: 'search'
                 },
                 {
-                    xtype: 'button',
-                    margin: '20 0 0 0',
                     text: 'Очистить форму поиска',
                     handler: 'clearFilterForm'
                 }
