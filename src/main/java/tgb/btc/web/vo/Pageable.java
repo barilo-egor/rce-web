@@ -55,22 +55,22 @@ public class Pageable {
         this.limit = limit;
     }
 
-    public List<ExtSort> getExtSort() {
+    public List<ExtSort> getSort() {
         return sort;
     }
 
-    public void setExtSort(List<ExtSort> extSort) {
-        this.sort = extSort;
+    public void setSort(List<ExtSort> sort) {
+        this.sort = sort;
     }
 
-    public String getSortStr(Map<String, Object> parameters) {
-        if (CollectionUtils.isEmpty(getExtSort())) return "";
+    public String getSortStr() {
+        if (CollectionUtils.isEmpty(getSort())) return "";
         StringBuilder result = new StringBuilder(" order by");
         int i = 0;
-        for (ExtSort extSort: getExtSort()) {
-            result.append(" :sortProperty").append(i).append(" :direction").append(i);
-            parameters.put("sortProperty" + i, extSort.getProperty());
-            parameters.put("direction" + i, extSort.getDirection());
+        int lastElementIndex = getSort().size() - 1;
+        for (ExtSort extSort: getSort()) {
+            result.append(" ").append(extSort.getProperty()).append(" ").append(extSort.getDirection());
+            if (i != lastElementIndex) result.append(", ");
         }
         return result.toString();
     }

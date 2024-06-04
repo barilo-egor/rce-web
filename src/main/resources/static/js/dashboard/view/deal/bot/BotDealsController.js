@@ -59,9 +59,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsController', {
     },
 
     search: function (me) {
-        let store = Ext.getStore('botDealStore')
-        store.loadPage(1)
-
+        Ext.getStore('botDealStore').loadPage(1)
     },
 
     clearFilterForm: function(me) {

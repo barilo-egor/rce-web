@@ -1,5 +1,6 @@
 package tgb.btc.web.service.deal;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -95,15 +96,18 @@ public class WebDealService {
 
     public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
                                 Map<String, Object> parameters) {
-        String hqlQuery = "from Deal d where dealStatus not like 'NEW'";
+        String hqlQuery = "from Deal d where d.dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
-        hqlQuery = hqlQuery.concat(" order by pid desc");
-        hqlQuery = hqlQuery.concat(orderStr);
+        if (StringUtils.isBlank(orderStr)) hqlQuery = hqlQuery.concat(" order by pid desc");
+        else {
+            hqlQuery = hqlQuery.concat(orderStr);
+        }
         Query query = entityManager.createQuery(hqlQuery, Deal.class);
         query.setFirstResult((page - 1) * limit);
         query.setMaxResults(limit);
         parameters.forEach(query::setParameter);
         List<Deal> deals = query.getResultList();
+        // entityManager.createQuery("from Deal d where d.dealStatus not like 'NEW' order by d.dateTime DESC", Deal.class).setMaxResults(20).setFirstResult(0).getResultList()
         return deals
                 .stream()
                 .map(this::fromDeal)
