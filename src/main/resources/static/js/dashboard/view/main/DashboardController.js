@@ -51,13 +51,20 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
                     break
+                case 'ADD_MANUAL_DEAL':
+                case 'CONFIRM_BOT_DEAL':
+                case 'DELETE_BOT_DEAL':
+                case 'ADDITIONAL_VERIFICATION_REQUEST':
+                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    break
                 case 'NEW_API_DEAL':
                 case 'API_DEAL_CANCELED':
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
+                    break
             }
-            NOTIFICATION_SOUND.play().catch(error => console.log(' ', error))
+            NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }
         eventSource.onerror = () => console.log('Произошла ошибка SSE.');
     }

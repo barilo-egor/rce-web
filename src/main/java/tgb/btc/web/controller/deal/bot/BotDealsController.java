@@ -18,8 +18,10 @@ import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
+import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.service.deal.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -48,6 +50,8 @@ public class BotDealsController extends BaseController {
 
     private INotifier notifier;
 
+    private NotificationsAPI notificationsAPI;
+
     private DealReportService dealReportService;
 
     private DealRepository dealRepository;
@@ -57,6 +61,11 @@ public class BotDealsController extends BaseController {
     private WebUserRepository webUserRepository;
 
     private UserRepository userRepository;
+
+    @Autowired
+    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -121,6 +130,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> confirm(Long pid) {
         dealService.confirm(pid);
+        notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
@@ -129,6 +139,7 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> askVerification(Long pid) {
         if (Objects.nonNull(additionalVerificationProcessor))
             additionalVerificationProcessor.ask(pid);
+        notificationsAPI.send(NotificationType.ADDITIONAL_VERIFICATION_REQUEST);
         return SuccessResponseUtil.toast("Верификация по сделке " + pid + " запрошена.");
     }
 
@@ -137,6 +148,7 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> delete(Long pid, Boolean isBanUser) {
         if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
         dealService.deleteDeal(pid, isBanUser);
+        notificationsAPI.send(NotificationType.DELETE_BOT_DEAL);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
 
@@ -190,6 +202,7 @@ public class BotDealsController extends BaseController {
                 .deliveryType(DeliveryType.STANDARD)
                 .createType(CreateType.MANUAL)
                 .build());
+        notificationsAPI.send(NotificationType.ADD_MANUAL_DEAL);
         return SuccessResponseUtil.toast("Сделка №" + deal.getPid() + " создана");
     }
 }

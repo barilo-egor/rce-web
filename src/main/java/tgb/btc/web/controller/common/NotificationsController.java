@@ -5,21 +5,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.security.Principal;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("notifications")
 public class NotificationsController {
 
-    public static final List<SseEmitter> LISTENERS = new ArrayList<>();
+    public static final Map<String, SseEmitter> LISTENERS = new ConcurrentHashMap<>();
 
     @RequestMapping(path = "/listen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter listen() {
+    public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
-        synchronized (LISTENERS) {
-            LISTENERS.add(sseEmitter);
-        }
+        LISTENERS.put(principal.getName(), sseEmitter);
         return sseEmitter;
     }
 

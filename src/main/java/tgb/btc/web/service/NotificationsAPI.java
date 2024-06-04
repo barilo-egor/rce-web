@@ -1,13 +1,12 @@
 package tgb.btc.web.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.vo.Notification;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,12 +15,20 @@ import static tgb.btc.web.controller.common.NotificationsController.LISTENERS;
 @Service
 public class NotificationsAPI implements INotificationsAPI {
 
+    public void send(NotificationType notificationType) {
+        send(notificationType, null);
+    }
+
     public void send(NotificationType notificationType, String message) {
-        Map<SseEmitter, Throwable> emittersToRemove = new HashMap<>();
+        send(notificationType, message, null);
+    }
+
+    public void send(NotificationType notificationType, String message, Principal ignorePrincipal) {
+        Map<String, Throwable> emittersToRemove = new HashMap<>();
         synchronized (LISTENERS) {
-            LISTENERS.forEach(listener -> {
+            LISTENERS.forEach((key, value) -> {
                 try {
-                    listener.send(
+                    value.send(
                             Notification.builder()
                                     .type(notificationType)
                                     .message(message)
@@ -29,10 +36,10 @@ public class NotificationsAPI implements INotificationsAPI {
                                     .map()
                     );
                 } catch (IOException | IllegalArgumentException e) {
-                    emittersToRemove.put(listener, e);
+                    emittersToRemove.put(key, e);
                 }
             });
-            emittersToRemove.forEach(ResponseBodyEmitter::completeWithError);
+            emittersToRemove.forEach((key, value) -> LISTENERS.get(key).completeWithError(value));
             emittersToRemove.keySet().forEach(LISTENERS::remove);
         }
     }
