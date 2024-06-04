@@ -19,6 +19,7 @@ import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.EmitterVO;
 import tgb.btc.web.vo.SuccessResponse;
@@ -49,11 +50,6 @@ public class LoginController extends BaseController {
         this.notifier = notifier;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     @GetMapping(path = "/registerLogin", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter registerLogin(HttpServletRequest request, String loginField) {
         Long chatId;
@@ -70,6 +66,7 @@ public class LoginController extends BaseController {
                 EMITTER_MAP.remove(finalChatId));
         EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);
+        log.debug("Попытка входа по значению={}, chatId={}, IP={}", loginField, chatId, RequestUtil.getIp(request));
         return emitter;
     }
 

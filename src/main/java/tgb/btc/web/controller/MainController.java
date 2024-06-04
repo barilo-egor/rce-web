@@ -1,5 +1,6 @@
 package tgb.btc.web.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @Controller
+@Slf4j
 public class MainController extends BaseController {
 
     private WebUserRepository webUserRepository;
@@ -26,9 +28,10 @@ public class MainController extends BaseController {
                 principal.getName()).getRoles().stream()
                 .anyMatch(role -> role.getName().equals(roleConstants.name()));
         if (Objects.isNull(principal)) return "login";
-        else if (hasAccess.apply(RoleConstants.ROLE_ADMIN)) return "dashboard";
-        else if (hasAccess.apply(RoleConstants.ROLE_OPERATOR)) return "dashboard";
-        else if (hasAccess.apply(RoleConstants.ROLE_API_CLIENT)) return "apiDashboard";
+        log.debug("Пользователь username={} выполнил вход на сайт.", principal.getName());
+        if (hasAccess.apply(RoleConstants.ROLE_ADMIN)) return "dashboard";
+        if (hasAccess.apply(RoleConstants.ROLE_OPERATOR)) return "dashboard";
+        if (hasAccess.apply(RoleConstants.ROLE_API_CLIENT)) return "apiDashboard";
         else return "empty";
     }
 }
