@@ -62,9 +62,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 {
                     text: 'ID',
                     dataIndex: 'apiUser.id',
-                    // renderer: function (val) {
-                    //     return val.id
-                    // },
                     flex: 0.3
                 },
                 {
