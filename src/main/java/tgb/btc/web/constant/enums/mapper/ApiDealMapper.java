@@ -23,7 +23,7 @@ public enum ApiDealMapper implements ObjectNodeConvertable<ApiDealVO> {
                 .put("name", deal.getDealStatus().name())
                 .put("description", deal.getDealStatus().getDescription())
                 .put("color", deal.getDealStatus().getColor());
-        result.set("dealStatus", status);
+        result.set("apiDealStatus", status);
         ObjectNode dealType = JacksonUtil.getEmpty()
                 .put("name", deal.getDealType().name())
                 .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
@@ -49,7 +49,8 @@ public enum ApiDealMapper implements ObjectNodeConvertable<ApiDealVO> {
                     .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? BigDecimalUtil.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
                     .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? BigDecimalUtil.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
                     .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-            result.set("user", user);
+            result.set("apiUser", user);
+            result.put("apiUser.id", apiUser.getId());
         }
         return result;
     });

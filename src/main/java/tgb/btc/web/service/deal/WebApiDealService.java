@@ -1,5 +1,6 @@
 package tgb.btc.web.service.deal;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.api.ApiDeal;
@@ -50,8 +51,10 @@ public class WebApiDealService {
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
-        hqlQuery = hqlQuery.concat(" order by pid desc");
-        hqlQuery = hqlQuery.concat(orderStr);
+        if (StringUtils.isBlank(orderStr)) hqlQuery = hqlQuery.concat(" order by pid desc");
+        else {
+            hqlQuery = hqlQuery.concat(orderStr);
+        }
         Query query = entityManager.createQuery(hqlQuery, ApiDeal.class);
         query.setFirstResult((page - 1) * limit);
         query.setMaxResults(limit);
