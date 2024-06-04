@@ -17,9 +17,12 @@ Ext.define('Login.controller.LoginController', {
             })
             return
         }
-        if (loginField === 'barilo') {
+        if (loginField === 'barilo' || loginField === 'operator') {
             ExtUtil.mRequest({
                 url: '/loginInstant',
+                params: {
+                    login: loginField
+                },
                 success: function (response) {
                     location.reload()
                 }

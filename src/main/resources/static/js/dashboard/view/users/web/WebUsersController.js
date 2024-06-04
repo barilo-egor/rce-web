@@ -38,28 +38,16 @@ Ext.define('Dashboard.view.users.web.WebUsersController', {
         me.setMasked('Загрузка')
         ExtUtil.referenceQuery('webUserInfoPanel').expand()
         ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
-        ExtUtil.referenceQuery('userFieldsContainer').setHidden(false)
+        ExtUtil.referenceQuery('webUserFieldsContainer').setHidden(false)
+        ExtUtil.referenceQuery('updateButton').setHidden(false)
         let user = selected[0].getData()
-
-        let usernameField = ExtUtil.referenceQuery('usernameField')
-        usernameField.defaultValue = user.username
-        usernameField.setValue(user.username)
-        let roleField = ExtUtil.referenceQuery('roleField')
-        let role = roleField.getStore().getRange().filter(role => role.get('name') === user.role.name)[0]
-        roleField.defaultValue = role.get('name')
-        roleField.setValue(role)
-        let isBannedField = ExtUtil.referenceQuery('isBannedField')
-        isBannedField.defaultValue = !user.isEnabled
-        isBannedField.setValue(!user.isEnabled)
-        let chatIdField = ExtUtil.referenceQuery('chatIdField')
-        chatIdField.defaultValue = user.chatId
-        chatIdField.setValue(user.chatId)
-
+        ExtUtil.referenceQuery('webUserFieldsContainer').getFieldsReferences()
+            .forEach(reference => ExtUtil.referenceQuery(reference).setUserValue(user))
         me.setMasked(false)
     },
 
     deselect: function () {
-        ExtUtil.referenceQuery('userFieldsContainer').setHidden(true)
+        ExtUtil.referenceQuery('webUserFieldsContainer').setHidden(true)
         ExtUtil.referenceQuery('chooseDealContainer').setHidden(false)
     },
 

@@ -72,8 +72,8 @@ public class LoginController extends BaseController {
 
     @PostMapping("/loginInstant")
     @ResponseBody
-    public SuccessResponse<?> loginInstant(HttpServletRequest request) {
-        WebUser webUser = webUserRepository.getByUsername("barilo");
+    public SuccessResponse<?> loginInstant(HttpServletRequest request, String login) {
+        WebUser webUser = webUserRepository.getByUsername(login);
         String[] roles = new String[webUser.getRoles().size()];
         int i = 0;
         for (Role role : webUser.getRoles()) {

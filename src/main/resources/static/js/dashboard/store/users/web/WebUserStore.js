@@ -11,5 +11,5 @@ Ext.define('Dashboard.store.users.web.WebUserStore', {
         }
     },
 
-    fieldsReferences: ['usernameField', 'roleField', 'chatIdField']
+    fieldsReferences: ['usernameFilterField', 'roleFilterField', 'chatIdFilterField']
 })

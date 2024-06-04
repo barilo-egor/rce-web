@@ -1,21 +1,42 @@
 package tgb.btc.web.service.users;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.repository.web.RoleRepository;
+import tgb.btc.library.repository.web.WebUserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
 
 @Service
+@Slf4j
 public class WebWebUsersService {
 
     public static final String FIND_ALL_QUERY = "select u from WebUser u";
 
     private EntityManager entityManager;
+
+    private WebUserRepository webUserRepository;
+
+    private RoleRepository roleRepository;
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    public void setWebUserRepository(WebUserRepository webUserRepository) {
+        this.webUserRepository = webUserRepository;
+    }
 
     @Autowired
     public void setEntityManager(EntityManager entityManager) {
@@ -48,5 +69,35 @@ public class WebWebUsersService {
         Query query = entityManager.createQuery(hqlQuery.toString(), WebUser.class);
         params.forEach(query::setParameter);
         return query.getResultList();
+    }
+
+    public boolean hasAccess(RoleConstants roleConstants, String username) {
+        List<Role> roles = webUserRepository.getRolesByUsername(username);
+        return RoleConstants.getAvailable(RoleConstants.valueOf(roles.get(0).getName())).contains(roleConstants);
+    }
+
+    @Transactional
+    public WebUser update(Long pid, String username, RoleConstants role, Boolean isBanned, Long chatId) {
+        WebUser webUser = webUserRepository.getById(pid);
+        String webUserBeforeUpdate = webUser.toString();
+        if (Objects.nonNull(username)) {
+            webUser.setUsername(username);
+        }
+        if (Objects.nonNull(role)) {
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.getByName(role.name()).stream()
+                    .findFirst()
+                    .orElseThrow(() -> new BaseException("Роль " + role.name() + " не найдена.")));
+            webUser.setRoles(roles);
+        }
+        if (Objects.nonNull(isBanned)) {
+            webUser.setEnabled(!isBanned);
+        }
+        if (Objects.nonNull(chatId)) {
+            webUser.setChatId(chatId);
+        }
+        webUser = webUserRepository.save(webUser);
+        log.debug("Пользователь {} обновлен в {}", webUserBeforeUpdate, webUser);
+        return webUser;
     }
 }

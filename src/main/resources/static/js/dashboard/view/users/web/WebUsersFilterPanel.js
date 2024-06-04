@@ -44,7 +44,7 @@ Ext.define('Dashboard.view.users.web.WebUsersFilterPanel', {
                         {
                             xtype: 'textfield',
                             label: 'Логин',
-                            reference: 'usernameField'
+                            reference: 'usernameFilterField'
                         },
                     ]
                 },
@@ -59,7 +59,7 @@ Ext.define('Dashboard.view.users.web.WebUsersFilterPanel', {
                                 type: 'roleStore'
                             },
                             clearable: true,
-                            reference: 'roleField',
+                            reference: 'roleFilterField',
                             displayField: 'displayName',
                             valueField: 'name'
                         },
@@ -72,7 +72,7 @@ Ext.define('Dashboard.view.users.web.WebUsersFilterPanel', {
                             xtype: 'numberfield',
                             label: 'Chat id',
                             decimals: 0,
-                            reference: 'chatIdField'
+                            reference: 'chatIdFilterField'
                         },
                     ]
                 }

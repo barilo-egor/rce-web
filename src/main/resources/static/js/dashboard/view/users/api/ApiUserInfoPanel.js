@@ -15,10 +15,11 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
 
     layout: {
         type: 'vbox',
-        align: 'stretch'
+        align: 'center'
     },
     items: [
         {
+            flex: 1,
             xtype: 'container',
             reference: 'chooseDealContainer',
             layout: {
