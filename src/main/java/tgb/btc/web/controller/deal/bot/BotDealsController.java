@@ -111,7 +111,7 @@ public class BotDealsController extends BaseController {
                 botDealsSearchForm.getLimit(),
                 null,
                 botDealsSearchForm.getWhereStr(parameters),
-                botDealsSearchForm.getSortStr(parameters), parameters);
+                botDealsSearchForm.getSortStr(), parameters);
         return JacksonUtil.pagingData(dealVOList,
                 webDealService.count(botDealsSearchForm.getWhereStr(parameters), parameters),
                 DealMapper.FIND_ALL);
@@ -144,7 +144,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody BotDealsSearchForm form) {
         Map<String, Object> parameters = new HashMap<>();
-        List<Long> pids = webDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
+        List<Long> pids = webDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(), parameters);
         request.getSession().setAttribute("dealsPids", pids);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty()
                 .put("success", true));

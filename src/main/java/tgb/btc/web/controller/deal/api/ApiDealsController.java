@@ -15,7 +15,6 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.ApiDealVO;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
-import tgb.btc.web.vo.form.BotDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -54,7 +53,7 @@ public class ApiDealsController extends BaseController {
         List<ApiDealVO> dealVOList = webApiDealService.findAll(apiDealsSearchForm.getPage(),
                 apiDealsSearchForm.getLimit(),
                 apiDealsSearchForm.getWhereStr(parameters),
-                apiDealsSearchForm.getSortStr(parameters), parameters);
+                apiDealsSearchForm.getSortStr(), parameters);
         return JacksonUtil.pagingData(dealVOList,
                 webApiDealService.count(apiDealsSearchForm.getWhereStr(parameters), parameters),
                 ApiDealMapper.FIND_ALL);
@@ -78,7 +77,7 @@ public class ApiDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> beforeExport(HttpServletRequest request, @RequestBody ApiDealsSearchForm form) {
         Map<String, Object> parameters = new HashMap<>();
-        List<Long> pids = webApiDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(parameters), parameters);
+        List<Long> pids = webApiDealService.findAllPids(form.getWhereStr(parameters), form.getSortStr(), parameters);
         request.getSession().setAttribute("dealsPids", pids);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty()
                 .put("success", true));
