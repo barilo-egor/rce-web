@@ -27,7 +27,7 @@ Ext.define('Login.controller.LoginController', {
             return
         }
         ExtUtil.mRequest({
-            url: '/users/web/isExist',
+            url: '/users/web/exist',
             params: {
                 loginField: loginField
             },
