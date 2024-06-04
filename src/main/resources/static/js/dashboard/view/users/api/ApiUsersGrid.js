@@ -44,9 +44,11 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     width: 70
                 },
                 {
+                    xtype: 'datecolumn',
                     text: 'Дата регистрации',
                     dataIndex: 'registrationDate',
-                    width: 140
+                    width: 140,
+                    format: 'd.m.Y'
                 },
                 {
                     text: 'В бане',
@@ -78,17 +80,40 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     renderer: function (val) {
                         return val ? val.code : 'Отсутствует'
                     },
+                    sorter: {
+                        sorterFn: function (val1, val2) {
+                            return val1.get('fiatCurrency').code.compareTo(val2.get('fiatCurrency').code)
+                        }
+                    },
                     width: 60
                 },
                 {
                     text: 'Курс RUB',
                     dataIndex: 'usdCourseRUB',
-                    width: 85
+                    width: 85,
+                    sorter: {
+                        sorterFn: function (val1, val2) {
+                            let course1 = val1.get('usdCourseRUB')
+                            let course2 = val2.get('usdCourseRUB')
+                            if (typeof course1 === 'undefined') return -1
+                            if (typeof course2 === 'undefined') return 1
+                            return course1 - course2
+                        }
+                    },
                 },
                 {
                     text: 'Курс BYN',
                     dataIndex: 'usdCourseBYN',
-                    width: 85
+                    width: 85,
+                    sorter: {
+                        sorterFn: function (val1, val2) {
+                            let course1 = val1.get('usdCourseBYN')
+                            let course2 = val2.get('usdCourseBYN')
+                            if (typeof course1 === 'undefined') return -1
+                            if (typeof course2 === 'undefined') return 1
+                            return course1 - course2
+                        }
+                    },
                 }
             ]
         }
