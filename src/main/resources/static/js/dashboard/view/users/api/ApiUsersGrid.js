@@ -82,7 +82,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     },
                     sorter: {
                         sorterFn: function (val1, val2) {
-                            return val1.get('fiatCurrency').code.compareTo(val2.get('fiatCurrency').code)
+                            return val1.get('fiatCurrency').code.localeCompare(val2.get('fiatCurrency').code)
                         }
                     },
                     width: 60

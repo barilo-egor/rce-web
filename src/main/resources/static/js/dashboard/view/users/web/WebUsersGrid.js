@@ -31,6 +31,11 @@ Ext.define('Dashboard.view.users.web.WebUsersGrid', {
             editable: true,
             renderer: function (val) {
                 return val.displayName
+            },
+            sorter: {
+                sorterFn: function (val1, val2) {
+                    return val1.get('role').displayName.localeCompare(val2.get('role').displayName)
+                }
             }
         },
         {
