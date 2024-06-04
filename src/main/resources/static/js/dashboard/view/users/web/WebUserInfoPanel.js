@@ -62,7 +62,19 @@ Ext.define('Dashboard.view.users.web.WebUserInfoPanel', {
                     valueField: 'name',
                     editable: false,
                     store: {
-                        type: 'roleStore'
+                        storeId: 'roleStore',
+                        fields: [
+                            'name', 'displayName'
+                        ],
+                        autoLoad: true,
+                        proxy: {
+                            type: 'ajax',
+                            url: '/enum/roles?byAccess=true',
+                            reader: {
+                                type: 'json',
+                                rootProperty: 'body.data'
+                            }
+                        },
                     },
                     queryMode: 'local',
                     listeners: {
