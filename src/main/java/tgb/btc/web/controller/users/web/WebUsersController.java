@@ -17,6 +17,7 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Objects;
 
 @Controller
@@ -55,7 +56,7 @@ public class WebUsersController {
 
     @PostMapping("/update")
     @ResponseBody
-    public SuccessResponse<?> update(Long pid, @RequestParam(required = false) String username,
+    public SuccessResponse<?> update(Principal principal, Long pid, @RequestParam(required = false) String username,
                                      @RequestParam(required = false) RoleConstants role,
                                      @RequestParam(required = false) Boolean isBanned,
                                      @RequestParam(required = false) Long chatId) {
@@ -76,6 +77,7 @@ public class WebUsersController {
             webUser.setChatId(chatId);
         }
         webUserRepository.save(webUser);
+        log.debug("Пользователь {} обновил веб пользователя={}", principal.getName(), webUser);
         return SuccessResponseUtil.toast("Пользователь обновлен");
     }
 

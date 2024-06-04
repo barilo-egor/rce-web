@@ -1,7 +1,5 @@
 package tgb.btc.web.controller.login;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,12 +19,8 @@ import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
-import tgb.btc.web.vo.form.RegisterWebUserForm;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Set;
 
 @Controller
 @RequestMapping(ControllerMapping.REGISTRATION)
@@ -96,6 +90,7 @@ public class RegistrationController extends BaseController {
         }
         webUser.setRoles(roleRepository.getByName(roleConstants.name()));
         webUserService.save(webUser);
+        log.debug("Зарегистрирован новый веб пользователь={}", webUser);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("registered", true));
     }
 

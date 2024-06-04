@@ -1,11 +1,11 @@
 package tgb.btc.web.controller.users.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -16,8 +16,12 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.ApiUserVO;
 
+import java.security.Principal;
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/users/api")
+@Slf4j
 public class ApiUsersController extends BaseController {
 
     private WebApiUsersService webApiUsersService;
@@ -70,8 +74,10 @@ public class ApiUsersController extends BaseController {
 
     @PostMapping("/save")
     @ResponseBody
-    public SuccessResponse<?> update(@RequestBody ApiUserVO apiUser) {
+    public SuccessResponse<?> update(Principal principal, @RequestBody ApiUserVO apiUser) {
+        boolean isUpdate = Objects.nonNull(apiUser.getPid());
         apiUserProcessService.save(apiUser);
+        log.debug("Пользователь {} {} API клиента={}", principal.getName(), isUpdate ? "обновил" : "создал", apiUser);
         return SuccessResponseUtil.toast("Клиент сохранен.");
     }
 
@@ -84,8 +90,10 @@ public class ApiUsersController extends BaseController {
 
     @PostMapping("/delete")
     @ResponseBody
-    public SuccessResponse<?> delete(String deleteUserId, @RequestParam(required = false) String newUserId) {
+    public SuccessResponse<?> delete(Principal principal, String deleteUserId,
+            @RequestParam(required = false) String newUserId) {
         apiUserService.delete(deleteUserId, newUserId);
+        log.debug("Пользователь {} удалил АПИ клиента с id={}", principal.getName(), deleteUserId);
         return SuccessResponseUtil.toast("Клиент удален.");
     }
 }

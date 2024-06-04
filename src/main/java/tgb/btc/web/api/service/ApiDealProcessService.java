@@ -1,6 +1,7 @@
-package tgb.btc.web.service.process;
+package tgb.btc.web.api.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.api.ApiDeal;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class ApiDealProcessService {
 
     private ApiUserRepository apiUserRepository;
@@ -62,9 +64,10 @@ public class ApiDealProcessService {
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
         ApiStatusCode code = apiDealVO.verify();
-        if (Objects.nonNull(code)) return ApiResponseUtil.build(code);
-
-        if (apiUserRepository.countByToken(token) == 0) ApiResponseUtil.build(ApiStatusCode.USER_NOT_FOUND);
+        if (Objects.nonNull(code)) {
+            log.debug("Отказ по валидности={} в создании АПИ сделки={}", code.name(), apiDealVO);
+            return ApiResponseUtil.build(code);
+        }
 
         ApiUser apiUser = apiUserRepository.getByToken(token);
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
@@ -79,17 +82,19 @@ public class ApiDealProcessService {
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
         else builder.cryptoAmount(apiDealVO.getCryptoAmount());
-        ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()), fiatCurrency);
+        ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
         BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
-        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0)
+        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0) {
+            log.debug("Отказ в создании АПИ сделки с суммой меньше минимальной клиенту {}", apiUser.getId());
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
                     JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
-
+        }
+        log.debug("АПИ клиент {} создал новую АПИ сделку {}.", apiUser.getId(), apiDeal.getPid());
         return ApiResponseUtil.build(ApiStatusCode.CREATED_DEAL,
                 dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
     }
 
-    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount, FiatCurrency fiatCurrency) {
+    public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount) {
         ApiDeal apiDeal = new ApiDeal();
         apiDeal.setApiUser(apiUser);
         apiDeal.setDateTime(LocalDateTime.now());

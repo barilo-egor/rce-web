@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ApiUserVO {
 
     @Getter

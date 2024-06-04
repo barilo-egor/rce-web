@@ -21,6 +21,8 @@ public class SessionEventListener extends HttpSessionEventPublisher {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-        HTTP_SESSIONS.remove((Long) event.getSession().getAttribute("chatId"));
+        Long chatId = (Long) event.getSession().getAttribute("chatId");
+        HTTP_SESSIONS.remove(chatId);
+        log.debug("Удалена сессия по chatId={}.", chatId);
     }
 }

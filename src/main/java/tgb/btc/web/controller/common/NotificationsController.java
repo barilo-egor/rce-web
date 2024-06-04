@@ -1,5 +1,6 @@
 package tgb.btc.web.controller.common;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("notifications")
+@Slf4j
 public class NotificationsController {
 
     public static final Map<String, SseEmitter> LISTENERS = new ConcurrentHashMap<>();
@@ -19,6 +21,7 @@ public class NotificationsController {
     public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
         LISTENERS.put(principal.getName(), sseEmitter);
+        log.debug("Пользователь {} стал SSE слушателем.", principal.getName());
         return sseEmitter;
     }
 

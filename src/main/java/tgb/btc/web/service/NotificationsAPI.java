@@ -1,5 +1,6 @@
 package tgb.btc.web.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.web.constant.enums.NotificationType;
@@ -13,6 +14,7 @@ import java.util.Map;
 import static tgb.btc.web.controller.common.NotificationsController.LISTENERS;
 
 @Service
+@Slf4j
 public class NotificationsAPI implements INotificationsAPI {
 
     public void send(NotificationType notificationType) {
@@ -24,24 +26,26 @@ public class NotificationsAPI implements INotificationsAPI {
     }
 
     public void send(NotificationType notificationType, String message, Principal ignorePrincipal) {
+        log.debug("Отправка SSE уведомления {}.", notificationType.name());
         Map<String, Throwable> emittersToRemove = new HashMap<>();
-        synchronized (LISTENERS) {
-            LISTENERS.forEach((key, value) -> {
-                try {
-                    value.send(
-                            Notification.builder()
-                                    .type(notificationType)
-                                    .message(message)
-                                    .build()
-                                    .map()
-                    );
-                } catch (IOException | IllegalArgumentException e) {
-                    emittersToRemove.put(key, e);
-                }
-            });
-            emittersToRemove.forEach((key, value) -> LISTENERS.get(key).completeWithError(value));
-            emittersToRemove.keySet().forEach(LISTENERS::remove);
-        }
+        LISTENERS.forEach((key, value) -> {
+            try {
+                value.send(
+                        Notification.builder()
+                                .type(notificationType)
+                                .message(message)
+                                .build()
+                                .map()
+                );
+            } catch (IOException | IllegalArgumentException e) {
+                emittersToRemove.put(key, e);
+            }
+        });
+        emittersToRemove.forEach((key, value) -> {
+            log.debug("Удаление и завершение с ошибкой SSE уведомлений пользователя {}.", key);
+            LISTENERS.get(key).completeWithError(value);
+        });
+        emittersToRemove.keySet().forEach(LISTENERS::remove);
     }
 
     @Override
@@ -56,6 +60,8 @@ public class NotificationsAPI implements INotificationsAPI {
 
     @Override
     public void declinedVerificationReceived(Long dealPid) {
-        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE, "Поступил отказ верификации по заявке в боте №" + dealPid);
+        send(NotificationType.ADDITIONAL_VERIFICATION_RECEIVE,
+                "Поступил отказ верификации по заявке в боте №" + dealPid);
     }
+
 }

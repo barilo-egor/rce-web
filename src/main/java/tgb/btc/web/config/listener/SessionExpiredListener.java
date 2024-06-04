@@ -20,6 +20,7 @@ public class SessionExpiredListener implements ApplicationListener<SessionDestro
             WebUser user = (WebUser) authentication.getPrincipal();
             NotificationsController.LISTENERS.get(user.getUsername()).complete();
             NotificationsController.LISTENERS.remove(user.getUsername());
+            log.debug("Удален SSEEmitter пользователя={} после уничтожения сессии.", user.getUsername());
         }
     }
 

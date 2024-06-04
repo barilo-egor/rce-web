@@ -1,6 +1,7 @@
 package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ import java.util.Objects;
 
 @Controller
 @RequestMapping("/deal/bot")
+@Slf4j
 public class BotDealsController extends BaseController {
 
     private WebDealService webDealService;
@@ -128,27 +130,30 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/confirm")
     @ResponseBody
-    public SuccessResponse<?> confirm(Long pid) {
+    public SuccessResponse<?> confirm(Principal principal, Long pid) {
         dealService.confirm(pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
+        log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
     @PostMapping("/askVerification")
     @ResponseBody
-    public SuccessResponse<?> askVerification(Long pid) {
+    public SuccessResponse<?> askVerification(Principal principal, Long pid) {
         if (Objects.nonNull(additionalVerificationProcessor))
             additionalVerificationProcessor.ask(pid);
         notificationsAPI.send(NotificationType.ADDITIONAL_VERIFICATION_REQUEST);
+        log.debug("Пользователь {} запросил верификацию по сделке из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Верификация по сделке " + pid + " запрошена.");
     }
 
     @PostMapping("/delete")
     @ResponseBody
-    public SuccessResponse<?> delete(Long pid, Boolean isBanUser) {
+    public SuccessResponse<?> delete(Principal principal, Long pid, Boolean isBanUser) {
         if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
         dealService.deleteDeal(pid, isBanUser);
         notificationsAPI.send(NotificationType.DELETE_BOT_DEAL);
+        log.debug("Пользователь {} удалил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
     }
 
@@ -164,8 +169,9 @@ public class BotDealsController extends BaseController {
 
     @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @ResponseBody
-    public byte[] export(HttpServletRequest request) {
+    public byte[] export(HttpServletRequest request, Principal principal) {
         byte[] result = dealReportService.loadReport(dealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        log.debug("Пользователь {} экспортировал сделки из бота.", principal.getName());
         request.getSession().removeAttribute("dealsPids");
         return result;
     }
@@ -203,6 +209,7 @@ public class BotDealsController extends BaseController {
                 .createType(CreateType.MANUAL)
                 .build());
         notificationsAPI.send(NotificationType.ADD_MANUAL_DEAL);
+        log.debug("Пользователь {} создал ручную сделку={}", principal.getName(), deal.manualToString());
         return SuccessResponseUtil.toast("Сделка №" + deal.getPid() + " создана");
     }
 }

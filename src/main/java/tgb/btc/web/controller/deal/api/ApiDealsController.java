@@ -1,6 +1,7 @@
 package tgb.btc.web.controller.deal.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,14 @@ import tgb.btc.web.vo.bean.ApiDealVO;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/deal/api")
+@Slf4j
 public class ApiDealsController extends BaseController {
 
     private WebApiDealService webApiDealService;
@@ -61,15 +64,17 @@ public class ApiDealsController extends BaseController {
 
     @PostMapping("/accept")
     @ResponseBody
-    public SuccessResponse<?> accept(Long pid) {
+    public SuccessResponse<?> accept(Principal principal, Long pid) {
         apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
+        log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
     @PostMapping("/decline")
     @ResponseBody
-    public SuccessResponse<?> decline(Long pid) {
+    public SuccessResponse<?> decline(Principal principal, Long pid) {
         apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
+        log.debug("Пользователь {} отклонил АПИ сделку {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка отклонена.");
     }
 
@@ -85,8 +90,9 @@ public class ApiDealsController extends BaseController {
 
     @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @ResponseBody
-    public byte[] export(HttpServletRequest request) {
+    public byte[] export(HttpServletRequest request, Principal principal) {
         byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        log.debug("Пользователь {} выгрузил отчет по API сделкам", principal.getName());
         request.getSession().removeAttribute("dealsPids");
         return result;
     }
