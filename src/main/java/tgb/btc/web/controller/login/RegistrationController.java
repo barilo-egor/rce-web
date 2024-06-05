@@ -43,7 +43,7 @@ public class RegistrationController extends BaseController {
 
     private INotifier notifier;
 
-    @Autowired
+    @Autowired(required = false)
     public void setNotifier(INotifier notifier) {
         this.notifier = notifier;
     }
