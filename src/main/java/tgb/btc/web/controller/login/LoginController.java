@@ -38,7 +38,7 @@ public class LoginController extends BaseController {
 
     private INotifier notifier;
 
-    public static Map<Long, EmitterVO> EMITTER_MAP = new HashMap<>();
+    public static Map<Long, EmitterVO> LOGIN_EMITTER_MAP = new HashMap<>();
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -61,10 +61,14 @@ public class LoginController extends BaseController {
         SseEmitter emitter = new SseEmitter(30000L);
         Long finalChatId = chatId;
         emitter.onCompletion(() ->
-                EMITTER_MAP.remove(finalChatId));
+                LOGIN_EMITTER_MAP.remove(finalChatId));
         emitter.onTimeout(() ->
-                EMITTER_MAP.remove(finalChatId));
-        EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
+                LOGIN_EMITTER_MAP.remove(finalChatId));
+        emitter.onError((e) -> {
+            log.error("Ошибка SSE Emitter авторизации.", e);
+            LOGIN_EMITTER_MAP.remove(finalChatId);
+        });
+        LOGIN_EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);
         log.debug("Попытка входа по значению={}, chatId={}, IP={}", loginField, chatId, RequestUtil.getIp(request));
         return emitter;

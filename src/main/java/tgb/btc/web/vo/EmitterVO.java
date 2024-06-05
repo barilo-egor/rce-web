@@ -12,4 +12,16 @@ public class EmitterVO {
     private SseEmitter emitter;
 
     private HttpServletRequest request;
+
+    private RegistrationData registrationData;
+
+    @Data
+    @Builder
+    public static class RegistrationData {
+        private String username;
+
+        private Long chatId;
+
+        private String token;
+    }
 }

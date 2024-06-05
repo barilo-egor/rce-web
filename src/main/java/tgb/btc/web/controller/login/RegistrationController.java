@@ -1,16 +1,16 @@
 package tgb.btc.web.controller.login;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.constants.enums.web.RoleConstants;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import tgb.btc.api.web.INotifier;
 import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.RoleService;
 import tgb.btc.library.service.bean.web.WebUserService;
@@ -18,26 +18,35 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.EmitterVO;
 import tgb.btc.web.vo.SuccessResponse;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(ControllerMapping.REGISTRATION)
 @Slf4j
 public class RegistrationController extends BaseController {
 
+    public static Map<Long, EmitterVO> REGISTER_EMITTER_MAP = new HashMap<>();
+
     private WebUserService webUserService;
 
     private RoleService roleService;
 
-    private RoleRepository roleRepository;
-
-    private ApiUserRepository apiUserRepository;
-
     private WebUserRepository webUserRepository;
 
     private UserRepository userRepository;
+
+    private INotifier notifier;
+
+    @Autowired
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -47,16 +56,6 @@ public class RegistrationController extends BaseController {
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
-    }
-
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
     }
 
     @Autowired
@@ -70,28 +69,34 @@ public class RegistrationController extends BaseController {
     }
 
     @PostConstruct
-    public void postConstruct(){
+    public void postConstruct() {
         roleService.initRoles();
     }
 
-    @PostMapping("/register")
+    @GetMapping(path = "/register", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ResponseBody
-    public SuccessResponse<?> register(String login, Long chatId, @RequestParam(required = false) String token) {
-        WebUser webUser = new WebUser();
-        webUser.setChatId(chatId);
-        webUser.setUsername(login);
-        webUser.setPassword(RandomStringUtils.randomAlphanumeric(10));
-        webUser.setEnabled(true);
-        RoleConstants roleConstants;
-        if (StringUtils.isNotEmpty(token) && apiUserRepository.countByToken(token) == 1) {
-            roleConstants = RoleConstants.ROLE_API_CLIENT;
-        } else {
-            roleConstants = RoleConstants.ROLE_USER;
-        }
-        webUser.setRoles(roleRepository.getByName(roleConstants.name()));
-        webUserService.save(webUser);
-        log.debug("Зарегистрирован новый веб пользователь={}", webUser);
-        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("registered", true));
+    public SseEmitter register(HttpServletRequest request, String login, Long chatId,
+            @RequestParam(required = false) String token) {
+        SseEmitter emitter = new SseEmitter(30000L);
+        emitter.onCompletion(() ->
+                REGISTER_EMITTER_MAP.remove(chatId));
+        emitter.onTimeout(() ->
+                REGISTER_EMITTER_MAP.remove(chatId));
+        emitter.onError((e) -> {
+            log.error("Ошибка SSE Emitter подтверждения chatId для регистрации.", e);
+            REGISTER_EMITTER_MAP.remove(chatId);
+        });
+        REGISTER_EMITTER_MAP.put(chatId, EmitterVO.builder()
+                .emitter(emitter)
+                .request(request)
+                .registrationData(EmitterVO.RegistrationData.builder()
+                        .username(login)
+                        .chatId(chatId)
+                        .token(token)
+                        .build())
+                .build());
+        notifier.sendChatIdConfirmRequest(chatId);
+        return emitter;
     }
 
     @GetMapping("/isUsernameFree")
@@ -108,4 +113,5 @@ public class RegistrationController extends BaseController {
         return SuccessResponseUtil.data(isValid,
                 data -> JacksonUtil.getEmpty().put("isValid", data));
     }
+
 }

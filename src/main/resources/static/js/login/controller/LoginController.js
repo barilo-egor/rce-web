@@ -17,18 +17,18 @@ Ext.define('Login.controller.LoginController', {
             })
             return
         }
-        if (loginField === 'barilo' || loginField === 'operator') {
-            ExtUtil.mRequest({
-                url: '/loginInstant',
-                params: {
-                    login: loginField
-                },
-                success: function (response) {
-                    location.reload()
-                }
-            })
-            return
-        }
+        // if (loginField === 'barilo' || loginField === 'operator') {
+        //     ExtUtil.mRequest({
+        //         url: '/loginInstant',
+        //         params: {
+        //             login: loginField
+        //         },
+        //         success: function (response) {
+        //             location.reload()
+        //         }
+        //     })
+        //     return
+        // }
         ExtUtil.mRequest({
             url: '/users/web/exist',
             params: {
@@ -50,7 +50,7 @@ Ext.define('Login.controller.LoginController', {
                     Ext.create('Ext.Dialog', {
                         title: 'Подтверждение',
                         closable: false,
-                        html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить" в чате с ботом для входа.'
+                        html: 'Наш бот отправил вам сообщение для подтверждения авторизации. Нажмите "Подтвердить вход" в чате с ботом для входа.'
                     }).show()
                 } else {
                     Ext.toast({
@@ -90,23 +90,22 @@ Ext.define('Login.controller.LoginController', {
         }
         let registerTokenComponent = ExtUtil.referenceQuery('registerTokenField')
         ExtUtil.mask('loginPanel', 'Выполняется регистрация.')
-        let controller = this
-        ExtUtil.mRequest({
-            url: '/registration/register',
-            params: {
-                login: login,
-                chatId: chatId,
-                token: registerTokenComponent.getValue()
-            },
-            success: function (response) {
-                registerLoginComponent.setValue(null)
-                registerChatIdComponent.setValue(null)
-                registerTokenComponent.setValue(null)
-                ExtUtil.referenceQuery('loginField').setValue(chatId)
-                ExtUtil.referenceQuery('loginPanel').getTabBar().setActiveTab(0)
-                controller.login()
+        let token = registerTokenComponent.getValue()
+        const eventSource = new EventSource("/registration/register?login=" + login + "&chatId=" + chatId + (token ? "&token=" + token : ""));
+        eventSource.onmessage = e => {
+            let response = Ext.JSON.decode(e.data);
+            if (response.success) {
+                location.reload()
+            } else {
+                Ext.Msg.alert('Внимание', 'Регистрация не удалась. Попробуйте ещё раз, либо обратитесь к оператору.');
             }
-        })
+        }
+        eventSource.onerror = () => console.log('Произошла ошибка.');
+        Ext.create('Ext.Dialog', {
+            title: 'Подтверждение',
+            closable: false,
+            html: 'Наш бот отправил вам сообщение для подтверждения регистрации. Нажмите "Подтвердить регистрацию" в чате с ботом для входа.'
+        }).show()
     },
 
     specialKeyPress: function (field, e) {
