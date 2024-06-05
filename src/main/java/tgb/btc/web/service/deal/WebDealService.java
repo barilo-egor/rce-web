@@ -7,16 +7,23 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
-import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.constants.enums.CreateType;
+import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
+import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.vo.bean.DealVO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,6 +42,20 @@ public class WebDealService {
     private UserDiscountRepository userDiscountRepository;
 
     private EntityManager entityManager;
+
+    private NotificationsAPI notificationsAPI;
+
+    private WebUserRepository webUserRepository;
+
+    @Autowired
+    public void setWebUserRepository(WebUserRepository webUserRepository) {
+        this.webUserRepository = webUserRepository;
+    }
+
+    @Autowired
+    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     @Autowired
     public void setEntityManager(EntityManager entityManager) {
@@ -177,5 +198,25 @@ public class WebDealService {
                 .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
                 .paymentReceipts(paymentReceipts)
                 .build();
+    }
+
+    public Deal createManual(String username, BigDecimal cryptoAmount, BigDecimal amount, CryptoCurrency cryptoCurrency,
+            DealType dealType, FiatCurrency fiatCurrency) {
+        Deal deal = dealService.save(Deal.builder()
+                .user(userRepository.getByChatId(webUserRepository.getByUsername(username).getChatId()))
+                .dateTime(LocalDateTime.now())
+                .date(LocalDate.now())
+                .cryptoAmount(cryptoAmount)
+                .amount(amount)
+                .wallet("operator_deal")
+                .cryptoCurrency(cryptoCurrency)
+                .dealType(dealType)
+                .fiatCurrency(fiatCurrency)
+                .dealStatus(DealStatus.CONFIRMED)
+                .deliveryType(DeliveryType.STANDARD)
+                .createType(CreateType.MANUAL)
+                .build());
+        notificationsAPI.send(NotificationType.ADD_MANUAL_DEAL);
+        return deal;
     }
 }

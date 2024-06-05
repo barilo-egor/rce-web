@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.constants.enums.CreateType;
-import tgb.btc.library.constants.enums.bot.*;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
@@ -32,8 +31,6 @@ import tgb.btc.web.vo.form.BotDealsSearchForm;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,24 +56,9 @@ public class BotDealsController extends BaseController {
     private DealRepository dealRepository;
 
     private CalculateService calculateService;
-
-    private WebUserRepository webUserRepository;
-
-    private UserRepository userRepository;
-
     @Autowired
     public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
         this.notificationsAPI = notificationsAPI;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
     }
 
     @Autowired
@@ -194,21 +176,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> saveDeal(Principal principal, DealType dealType, CryptoCurrency cryptoCurrency, BigDecimal cryptoAmount,
                                        FiatCurrency fiatCurrency, BigDecimal amount) {
-        Deal deal = dealService.save(Deal.builder()
-                .user(userRepository.getByChatId(webUserRepository.getByUsername(principal.getName()).getChatId()))
-                .dateTime(LocalDateTime.now())
-                .date(LocalDate.now())
-                .cryptoAmount(cryptoAmount)
-                .amount(amount)
-                .wallet("operator_deal")
-                .cryptoCurrency(cryptoCurrency)
-                .dealType(dealType)
-                .fiatCurrency(fiatCurrency)
-                .dealStatus(DealStatus.CONFIRMED)
-                .deliveryType(DeliveryType.STANDARD)
-                .createType(CreateType.MANUAL)
-                .build());
-        notificationsAPI.send(NotificationType.ADD_MANUAL_DEAL);
+        Deal deal = webDealService.createManual(principal.getName(), cryptoAmount, amount, cryptoCurrency, dealType, fiatCurrency);
         log.debug("Пользователь {} создал ручную сделку={}", principal.getName(), deal.manualToString());
         return SuccessResponseUtil.toast("Сделка №" + deal.getPid() + " создана");
     }
