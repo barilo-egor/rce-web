@@ -21,6 +21,14 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
         },
         '-',
         {
+            text: 'Расчет',
+            iconCls: 'x-fa fa-calculator lightBlue',
+            reference: 'calculationGridButton',
+            handler: function(me) {
+                Ext.create('Dashboard.view.users.api.calculate.CalculationDialog').show()
+            }
+        },
+        {
             text: 'Удалить',
             iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
