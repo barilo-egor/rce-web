@@ -1,19 +1,30 @@
 package tgb.btc.web.service.deal;
 
 import org.apache.commons.lang.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiDealService;
+import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.web.vo.api.TotalSum;
 import tgb.btc.web.vo.bean.ApiDealVO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,7 +78,7 @@ public class WebApiDealService {
     }
 
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
-        String hqlQuery = "select pid from ApiDeal d where apiDealStatus not like 'CREATED'";
+        String hqlQuery = "select d.pid from ApiDeal d where d.apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
         hqlQuery = hqlQuery.concat(" order by pid desc");
         hqlQuery = hqlQuery.concat(orderStr);
@@ -99,5 +110,42 @@ public class WebApiDealService {
         Query query = entityManager.createQuery(hqlQuery);
         parameters.forEach(query::setParameter);
         return (Long) query.getSingleResult();
+    }
+
+    public List<TotalSum> getCalculating(Long currentDealPid, Long userPid) {
+        Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
+        if (Objects.isNull(lastPaidDealPid)) {
+            lastPaidDealPid = apiDealRepository.getFirstDealPid(userPid);
+        }
+        LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
+        LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(currentDealPid);
+        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetween(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
+        List<TotalSum> totalSums = new ArrayList<>();
+        for (DealType dealType: DealType.values()) {
+            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+                for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
+                    List<ApiDeal> matchDeals = apiDeals.stream()
+                            .filter(deal -> deal.getDealType().equals(dealType)
+                                    && deal.getFiatCurrency().equals(fiatCurrency)
+                                    && deal.getCryptoCurrency().equals(cryptoCurrency))
+                            .collect(Collectors.toList());
+                    if (matchDeals.size() > 0) {
+                        totalSums.add(TotalSum.builder()
+                                .dealType(dealType)
+                                .fiatCurrency(fiatCurrency)
+                                .cryptoCurrency(cryptoCurrency)
+                                .totalCryptoSum(matchDeals.stream()
+                                        .map(ApiDeal::getCryptoAmount)
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add))
+                                .totalFiatSum(matchDeals.stream()
+                                        .map(ApiDeal::getAmount)
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add))
+                                .build());
+                    }
+                }
+            }
+        }
+        return totalSums;
     }
 }

@@ -10,6 +10,7 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.service.process.ApiUserProcessService;
 import tgb.btc.web.service.users.WebApiUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -31,6 +32,13 @@ public class ApiUsersController extends BaseController {
     private ApiUserProcessService apiUserProcessService;
 
     private ApiUserService apiUserService;
+
+    private WebApiDealService webApiDealService;
+
+    @Autowired
+    public void setWebApiDealService(WebApiDealService webApiDealService) {
+        this.webApiDealService = webApiDealService;
+    }
 
     @Autowired
     public void setApiUserService(ApiUserService apiUserService) {
@@ -95,5 +103,11 @@ public class ApiUsersController extends BaseController {
         apiUserService.delete(deleteUserId, newUserId);
         log.debug("Пользователь {} удалил АПИ клиента с id={}", principal.getName(), deleteUserId);
         return SuccessResponseUtil.toast("Клиент удален.");
+    }
+
+    @GetMapping("/calculation")
+    @ResponseBody
+    public SuccessResponse<?> calculation(Long currentDealPid, Long userPid) {
+        return new SuccessResponse<>(webApiDealService.getCalculating(currentDealPid, userPid));
     }
 }

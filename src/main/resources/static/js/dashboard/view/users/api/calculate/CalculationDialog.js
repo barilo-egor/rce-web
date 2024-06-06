@@ -13,6 +13,12 @@ Ext.define('Dashboard.view.users.api.calculate.CalculationDialog', {
     ],
     buttonAlign: 'center',
 
+    listeners: {
+        painted: function (me) {
+
+        }
+    },
+
     layout: {
         type: 'vbox',
         align: 'stretch'
