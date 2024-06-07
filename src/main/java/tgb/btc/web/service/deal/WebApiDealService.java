@@ -1,7 +1,6 @@
 package tgb.btc.web.service.deal;
 
 import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -119,7 +118,7 @@ public class WebApiDealService {
         }
         LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
         LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(currentDealPid);
-        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetween(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeEnd(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
         if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
         List<TotalSum> totalSums = new ArrayList<>();
         for (DealType dealType: DealType.values()) {
@@ -127,14 +126,15 @@ public class WebApiDealService {
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     List<ApiDeal> matchDeals = apiDeals.stream()
                             .filter(deal -> deal.getDealType().equals(dealType)
-                                    && deal.getFiatCurrency().equals(fiatCurrency)
+                                    && (Objects.nonNull(deal.getFiatCurrency()) ? deal.getFiatCurrency()
+                                    : deal.getApiUser().getFiatCurrency()).equals(fiatCurrency)
                                     && deal.getCryptoCurrency().equals(cryptoCurrency))
                             .collect(Collectors.toList());
                     if (matchDeals.size() > 0) {
                         totalSums.add(TotalSum.builder()
-                                .dealType(dealType)
-                                .fiatCurrency(fiatCurrency)
-                                .cryptoCurrency(cryptoCurrency)
+                                .dealType(dealType.getNominativeFirstLetterToUpper())
+                                .fiatCurrency(fiatCurrency.getCode())
+                                .cryptoCurrency(cryptoCurrency.getShortName())
                                 .totalCryptoSum(matchDeals.stream()
                                         .map(ApiDeal::getCryptoAmount)
                                         .reduce(BigDecimal.ZERO, BigDecimal::add))

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -34,6 +35,13 @@ public class ApiUsersController extends BaseController {
     private ApiUserService apiUserService;
 
     private WebApiDealService webApiDealService;
+
+    private ApiDealRepository apiDealRepository;
+
+    @Autowired
+    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
+        this.apiDealRepository = apiDealRepository;
+    }
 
     @Autowired
     public void setWebApiDealService(WebApiDealService webApiDealService) {
@@ -109,5 +117,12 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> calculation(Long currentDealPid, Long userPid) {
         return new SuccessResponse<>(webApiDealService.getCalculating(currentDealPid, userPid));
+    }
+
+    @PostMapping("/updateLastPaidDeal")
+    @ResponseBody
+    public SuccessResponse<?> updateLastPaidDeal(Long userPid, Long lastPaidDealPid) {
+        apiUserRepository.updateLastPidDeal(userPid, apiDealRepository.getByPid(lastPaidDealPid));
+            return SuccessResponseUtil.toast("Расчёт произведен.");
     }
 }

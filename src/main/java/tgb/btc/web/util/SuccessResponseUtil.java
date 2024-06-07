@@ -68,4 +68,6 @@ public class SuccessResponseUtil {
     public static SuccessResponse<?> getObjectNode(JsonNode jsonNode, String fieldName) {
         return new SuccessResponse<>(JacksonUtil.DEFAULT_OBJECT_MAPPER.createObjectNode().set(fieldName,jsonNode));
     }
+
+
 }

@@ -2,9 +2,6 @@ package tgb.btc.web.vo.api;
 
 import lombok.Builder;
 import lombok.Data;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
 import java.math.BigDecimal;
 
@@ -12,11 +9,11 @@ import java.math.BigDecimal;
 @Builder
 public class TotalSum {
 
-    private DealType dealType;
+    private String dealType;
 
-    private FiatCurrency fiatCurrency;
+    private String fiatCurrency;
 
-    private CryptoCurrency cryptoCurrency;
+    private String cryptoCurrency;
 
     private BigDecimal totalFiatSum;
 
