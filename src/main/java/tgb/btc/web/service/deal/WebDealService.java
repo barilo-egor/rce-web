@@ -205,7 +205,6 @@ public class WebDealService {
         Deal deal = dealService.save(Deal.builder()
                 .user(userRepository.getByChatId(webUserRepository.getByUsername(username).getChatId()))
                 .dateTime(LocalDateTime.now())
-                .date(LocalDate.now())
                 .cryptoAmount(cryptoAmount)
                 .amount(amount)
                 .wallet("operator_deal")
