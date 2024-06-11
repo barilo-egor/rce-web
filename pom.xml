@@ -67,7 +67,7 @@
                         <version>1.8</version>
                         <executions>
                             <execution>
-                                <id>pre-clean-install-windows</id>
+                                <id>pre-clean-install-unix</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>run</goal>
