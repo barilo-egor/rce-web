@@ -39,8 +39,6 @@
                                 <configuration>
                                     <tasks>
                                         <exec executable="mvn.cmd">
-                                            <arg value="/c"/>
-                                            <arg value="mvn.cmd"/>
                                             <arg value="clean"/>
                                             <arg value="install"/>
                                             <arg value="-f"/>
@@ -55,7 +53,7 @@
             </build>
         </profile>
         <profile>
-            <id>windows</id>
+            <id>unix</id>
             <activation>
                 <os>
                     <family>unix</family>
@@ -76,9 +74,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <exec executable="cmd">
-                                            <arg value="/c"/>
-                                            <arg value="mvn.cmd"/>
+                                        <exec executable="mvn">
                                             <arg value="clean"/>
                                             <arg value="install"/>
                                             <arg value="-f"/>
