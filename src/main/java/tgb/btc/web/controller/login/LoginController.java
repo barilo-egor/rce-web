@@ -44,7 +44,7 @@ public class LoginController extends BaseController {
         } catch (NumberFormatException e) {
             chatId = webUserRepository.getByUsername(loginField).getChatId();
         }
-        SseEmitter emitter = new SseEmitter(30000L);
+        SseEmitter emitter = new SseEmitter(60000L);
         Long finalChatId = chatId;
         emitter.onCompletion(() ->
                 LOGIN_EMITTER_MAP.remove(finalChatId));
