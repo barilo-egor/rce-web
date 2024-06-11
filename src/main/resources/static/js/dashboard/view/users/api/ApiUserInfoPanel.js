@@ -170,7 +170,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                 {
                     xtype: 'numberfield',
                     label: 'Курс RUB',
-                    decimals: 0,
+                    decimals: 2,
                     reference: 'usdCourseRUBField',
                     clearable: false,
                     listeners: {
@@ -184,7 +184,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                 {
                     xtype: 'numberfield',
                     label: 'Курс BYN',
-                    decimals: 0,
+                    decimals: 3,
                     reference: 'usdCourseBYNField',
                     clearable: false,
                     listeners: {
