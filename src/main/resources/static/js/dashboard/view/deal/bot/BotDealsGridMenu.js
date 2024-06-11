@@ -59,6 +59,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                                 margin: '5 5 5 5',
                                 listeners: {
                                     load: function (me) {
+                                        me.up('dialog').center()
                                         me.up('dialog').setMasked(false)
                                     }
                                 }
@@ -83,6 +84,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                                     + '" frameborder="0" style="display: block;overflow:visible;height:100vh;width:100vw"></iframe>',
                                 listeners: {
                                     painted: function (me) {
+                                        me.up('dialog').center()
                                         me.up('dialog').setMasked(false)
                                     }
                                 }
@@ -117,6 +119,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                             margin: '5 5 5 5',
                             listeners: {
                                 load: function (me) {
+                                    me.up('dialog').center()
                                     me.up('dialog').setMasked(false)
                                 }
                             }
