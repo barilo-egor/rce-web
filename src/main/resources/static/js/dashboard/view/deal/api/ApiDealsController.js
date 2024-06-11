@@ -91,7 +91,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         ExtUtil.referenceQuery('chooseDealContainer').setHidden(true)
         let apiUserInfoFieldsContainer = ExtUtil.referenceQuery('apiUserInfoFieldsContainer')
         apiUserInfoFieldsContainer.getFieldsReferences()
-            .forEach(reference => ExtUtil.referenceQuery(reference).setUserValue(selected[0].getData().user))
+            .forEach(reference => ExtUtil.referenceQuery(reference).setUserValue(selected[0].getData().apiUser))
         apiUserInfoFieldsContainer.setHidden(false)
         ExtUtil.maskOff('apiDealsUserInfoPanel')
     },
