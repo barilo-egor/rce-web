@@ -36,7 +36,7 @@ public class DealPaymentController extends BaseController {
 
     @PostMapping("/new")
     @ResponseBody
-    public ResponseEntity<?> newPayment(String token, String title, String message, String app) {
+    public ResponseEntity<?> newPayment(String token, String title, String message, String app, String phone) {
         if (Objects.isNull(TOKEN)) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -47,6 +47,7 @@ public class DealPaymentController extends BaseController {
                 .title(title)
                 .message(message)
                 .app(app)
+                .phone(phone)
                 .build());
         return new ResponseEntity<>(HttpStatus.OK);
     }
