@@ -4,7 +4,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
     requires: [
         'Dashboard.view.deal.bot.BotUserInfoPanel',
         'Dashboard.view.deal.bot.BotDealsFilterPanel',
-        'Dashboard.view.deal.bot.BotDealsGrid'
+        'Dashboard.view.deal.bot.BotDealsGrid',
+        'Dashboard.view.deal.bot.BotDealsPaymentPanel'
     ],
 
     layout: {
@@ -32,7 +33,15 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
         {
             xtype: 'botuserinfopanel',
             shadow: true,
-            margin: '10 10 10 5'
+            margin: '10 10 10 5',
+            docked: 'right'
+        },
+        {
+            xtype: 'botdealspaymentpanel',
+            shadow: true,
+            margin: '0 10 10 10',
+            hidden: !IS_DEV,
+            docked: 'bottom'
         }
     ]
 })
