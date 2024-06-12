@@ -45,7 +45,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 {
                     text: '№',
                     dataIndex: 'pid',
-                    width: 60
+                    width: 150
                 },
                 {
                     text: 'Статус',
