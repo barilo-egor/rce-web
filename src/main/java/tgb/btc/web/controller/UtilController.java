@@ -9,13 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tgb.btc.library.util.SystemUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.security.Principal;
 
 @Controller
@@ -37,5 +37,11 @@ public class UtilController extends BaseController {
                 .contentType(MediaType.parseMediaType("audio/mpeg"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=notification.mp3")
                 .body(resource);
+    }
+
+    @GetMapping(value = "/isDev")
+    @ResponseBody
+    public SuccessResponse<?> isDev() {
+        return SuccessResponseUtil.data(SystemUtil.isDev(), data -> JacksonUtil.getEmpty().put("isDev", data));
     }
 }

@@ -8,34 +8,43 @@
     <script type="text/javascript" th:src="@{/extJS/locale/locale-ru.js}"></script>
     <script type="text/javascript" th:src="@{/extJS/theme-material/theme-material.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/Main.css}"/>
+	<script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtilConfig.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/DateRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/TimeRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
+	<script type="text/javascript">
+        const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
+        let TITLE
+        ExtUtil.mRequest({
+            url: '/properties/getPropertiesValues',
+            method: 'GET',
+            async: false,
+            params: {
+                propertiesPath: 'BOT_PROPERTIES',
+                keys: ['bot.name']
+            },
+            success: function (response) {
+                let value = response.body.data[0].value
+                TITLE = value ? value : 'Обменник'
+            }
+        })
+        document.title = TITLE
+        let IS_DEV
+        ExtUtil.mRequest({
+            url: '/util/isDev',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                IS_DEV = response.body.data.isDev
+            }
+        })
+	</script>
     <script type="text/javascript" th:src="@{/js/dashboard/Dashboard.js}"a></script>
-    <script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ExtUtilConfig.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
-    <script type="text/javascript" th:src="@{/js/common/range/DateRange.js}"></script>
-    <script type="text/javascript" th:src="@{/js/common/range/TimeRange.js}"></script>
-    <script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
 </head>
 <body>
-<script type="text/javascript">
-    const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
-    let TITLE
-    ExtUtil.mRequest({
-        url: '/properties/getPropertiesValues',
-        method: 'GET',
-        async: false,
-        params: {
-            propertiesPath: 'BOT_PROPERTIES',
-            keys: ['bot.name']
-        },
-        success: function (response) {
-            let value = response.body.data[0].value
-            TITLE = value ? value : 'Обменник'
-        }
-    })
-    document.title = TITLE
-</script>
 </body>
 </html>

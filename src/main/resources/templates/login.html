@@ -8,12 +8,23 @@
     <script type="text/javascript" th:src="@{/extJS/ext-modern-all.js}"></script>
     <script type="text/javascript" th:src="@{/extJS/locale/locale-ru.js}"></script>
     <script type="text/javascript" th:src="@{/extJS/theme-material/theme-material.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
+	<script type="text/javascript">
+        let IS_DEV
+        ExtUtil.mRequest({
+            url: '/util/isDev',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                IS_DEV = response.body.data.isDev
+            }
+        })
+	</script>
     <script type="text/javascript" th:src="@{/js/login/Login.js}"a></script>
-    <script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
-    <script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
-    <script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
 </head>
 <body>
 </body>

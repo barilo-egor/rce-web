@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/web/main",
                         "/registration/**",
                         "/api/**", "/documentation/**",
-                        "/users/web/exist"
+                        "/users/web/exist", "/util/isDev"
                 )
                 .permitAll();
         // Доступ для юзеров
@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/")
                 .permitAll()
                 .and()
                 .logout()
