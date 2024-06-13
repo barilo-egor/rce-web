@@ -15,6 +15,10 @@ public class SuccessResponseUtil {
     private SuccessResponseUtil() {
     }
 
+    public static <T extends JsonConvertable> SuccessResponse<?> data(T t) {
+        return getDataObjectNode(JacksonUtil.toObjectNode(t));
+    }
+
     public static <T extends ObjectNodeConvertable<T>> SuccessResponse<?> data(T t) {
         return getDataObjectNode(JacksonUtil.toObjectNode(t));
     }

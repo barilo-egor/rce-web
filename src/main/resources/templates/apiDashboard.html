@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset="UTF-8">
+	<title>Управление</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/extJS/theme-material/resources/theme-material-all.css}"/>
+	<script type="text/javascript" th:src="@{/extJS/ext-modern-all.js}"></script>
+	<script type="text/javascript" th:src="@{/extJS/locale/locale-ru.js}"></script>
+	<script type="text/javascript" th:src="@{/extJS/theme-material/theme-material.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/Main.css}"/>
+	<script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtilConfig.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/DateRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/TimeRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
+	<script type="text/javascript">
+        const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
+        let TITLE
+        ExtUtil.mRequest({
+            url: '/dashboard/api/util/getBotName',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                let value = response.body.data.value
+                TITLE = value ? value : 'Обменник'
+            }
+        })
+        document.title = TITLE
+	</script>
+	<script type="text/javascript" th:src="@{/js/apiDashboard/ApiDashboard.js}"a></script>
 </head>
 <body>
-
 </body>
 </html>

@@ -50,6 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/", "/js/mainUser/**"
                 )
                 .hasRole("USER");
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers(
+                        "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound"
+                )
+                .hasRole("API_CLIENT");
 
         // Доступ всех оставшихся юрлов
         httpSecurity
@@ -75,4 +81,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers();
     }
+
 }
