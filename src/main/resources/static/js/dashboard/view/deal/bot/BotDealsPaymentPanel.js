@@ -6,6 +6,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsPaymentPanel', {
     collapsible: ExtUtilConfig.getCollapsible('bottom'),
     height: '30%',
 
+
     layout: 'fit',
     items: [
         {
