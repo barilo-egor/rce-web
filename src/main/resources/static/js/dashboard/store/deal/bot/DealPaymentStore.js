@@ -1,12 +1,10 @@
-Ext.define('Dashboard.store.deal.bot.PaymentTypesComboStore', {
+Ext.define('Dashboard.store.deal.bot.DealPaymentStore', {
     extend: 'Ext.data.Store',
-    alias: 'store.paymentTypesComboStore',
-    storeId: 'paymentTypesComboStore',
-    fields: ['name', 'pid', 'dealType'],
-    autoLoad: true,
+    storeId: 'dealPaymentStore',
+    autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: '/deal/bot/paymentTypes/combo',
+        url: '/deal/payment/findAll',
         reader: {
             type: 'json',
             rootProperty: 'body.data'

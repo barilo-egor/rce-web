@@ -2,6 +2,7 @@ package tgb.btc.web.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -20,6 +21,10 @@ public class SuccessResponseUtil {
 
     public static <T extends ObjectNodeConvertable<T>> SuccessResponse<?> data(Collection<T> objects) {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects));
+    }
+
+    public static <T extends JsonConvertable> SuccessResponse<?> jsonData(Collection<T> objects) {
+        return getDataObjectNode(JacksonUtil.toJsonArrayNode(objects));
     }
 
     public static <T> SuccessResponse<?> data(T[] objects, Function<T, ObjectNode> mapper) {
