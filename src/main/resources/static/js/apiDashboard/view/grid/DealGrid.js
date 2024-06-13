@@ -3,6 +3,7 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
     xtype: 'dealgrid',
 
     shadow: true,
+    columnsMenuItem: null,
 
     columns: [
         {
