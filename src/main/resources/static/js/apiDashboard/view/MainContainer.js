@@ -20,22 +20,22 @@ Ext.define('ApiDashboard.view.MainContainer', {
         },
         {
             xtype: 'container',
-            flex: 1,
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
+            margin: '5 5 10 10',
+            shadow: true,
+            docked: 'left',
             items: [
                 {
                     xtype: 'dealfilterpanel',
-                    margin: '5 10 5 10',
                 },
                 {
-                    flex: 1,
-                    xtype: 'dealgrid',
-                    margin: '5 10 10 10'
+                    xtype: 'panel',
                 }
             ]
+        },
+        {
+            flex: 1,
+            xtype: 'dealgrid',
+            margin: '5 10 10 5'
         }
     ]
 })

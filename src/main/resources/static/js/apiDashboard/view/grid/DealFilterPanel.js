@@ -3,7 +3,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
     xtype: 'dealfilterpanel',
 
     shadow: true,
-    padding: '20 20 20 20',
+    // padding: '20 20 20 20',
 
     items: [
         {
