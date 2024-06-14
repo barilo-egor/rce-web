@@ -19,23 +19,36 @@ Ext.define('ApiDashboard.view.MainContainer', {
             margin: '10 10 5 10'
         },
         {
+            xtype: 'dealfilterpanel',
+            margin: '5 10 5 10'
+        },
+        {
             xtype: 'container',
-            margin: '5 5 10 10',
-            shadow: true,
-            docked: 'left',
+            layout: {
+                type: 'vbox',
+                align: 'center'
+            },
             items: [
                 {
-                    xtype: 'dealfilterpanel',
-                },
-                {
-                    xtype: 'panel',
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-chevron-up',
+                    handler: function (me) {
+                        let panel = ExtUtil.referenceQuery('dealFilterPanel')
+                        if (panel.getHidden()) {
+                            me.setIconCls('x-fa fa-chevron-up')
+                            panel.show()
+                        } else {
+                            me.setIconCls('x-fa fa-chevron-down')
+                            panel.hide()
+                        }
+                    }
                 }
             ]
         },
         {
             flex: 1,
             xtype: 'dealgrid',
-            margin: '5 10 10 5'
+            margin: '5 10 10 10'
         }
     ]
 })
