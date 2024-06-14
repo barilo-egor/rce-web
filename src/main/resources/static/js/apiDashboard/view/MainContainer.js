@@ -23,32 +23,55 @@ Ext.define('ApiDashboard.view.MainContainer', {
             margin: '5 10 5 10'
         },
         {
-            xtype: 'container',
-            layout: {
-                type: 'vbox',
-                align: 'center'
-            },
-            items: [
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-chevron-up',
-                    handler: function (me) {
-                        let panel = ExtUtil.referenceQuery('dealFilterPanel')
-                        if (panel.getHidden()) {
-                            me.setIconCls('x-fa fa-chevron-up')
-                            panel.show()
-                        } else {
-                            me.setIconCls('x-fa fa-chevron-down')
-                            panel.hide()
-                        }
-                    }
+            xtype: 'button',
+            iconCls: 'x-fa fa-chevron-up',
+            handler: function (me) {
+                let panel = ExtUtil.referenceQuery('dealFilterPanel')
+                if (panel.getHidden()) {
+                    me.setIconCls('x-fa fa-chevron-up')
+                    panel.show()
+                } else {
+                    me.setIconCls('x-fa fa-chevron-down')
+                    panel.hide()
                 }
-            ]
+            }
         },
         {
             flex: 1,
-            xtype: 'dealgrid',
-            margin: '5 10 10 10'
+            xtype: 'container',
+
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    flex: 1,
+                    xtype: 'dealgrid',
+                    margin: '5 5 10 10'
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-chevron-right',
+                    handler: function (me) {
+                        let panel = ExtUtil.referenceQuery('statisticPanel')
+                        if (panel.getHidden()) {
+                            me.setIconCls('x-fa fa-chevron-right')
+                            panel.show()
+                        } else {
+                            me.setIconCls('x-fa fa-chevron-left')
+                            panel.hide()
+                        }
+                    }
+                },
+                {
+                    flex: 0.2,
+                    xtype: 'panel',
+                    reference: 'statisticPanel',
+                    shadow: true,
+                    margin: '5 10 10 5'
+                }
+            ]
         }
     ]
 })
