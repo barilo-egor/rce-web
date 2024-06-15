@@ -10,6 +10,9 @@ Ext.define('ApiDashboard.view.MainToolbar', {
         },
         '->',
         {
+            text: 'Уведомления'
+        },
+        {
             menu: [
                 {
                     text: 'Выйти из аккаунта',
