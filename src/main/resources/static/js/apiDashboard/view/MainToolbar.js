@@ -1,6 +1,9 @@
 Ext.define('ApiDashboard.view.MainToolbar', {
     extend: 'Ext.Panel',
     xtype: 'maintoolbar',
+    requires: [
+        'ApiDashboard.view.statistic.DealStatisticDialog'
+    ],
 
     shadow: true,
 
@@ -9,6 +12,12 @@ Ext.define('ApiDashboard.view.MainToolbar', {
             text: TITLE
         },
         '->',
+        {
+            text: 'Статистика',
+            handler: function (me) {
+                Ext.create('ApiDashboard.view.statistic.DealStatisticDialog').show()
+            }
+        },
         {
             text: 'Уведомления'
         },

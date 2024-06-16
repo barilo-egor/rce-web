@@ -4,7 +4,8 @@ Ext.define('ApiDashboard.view.MainContainer', {
     requires: [
         'ApiDashboard.view.grid.DealGrid',
         'ApiDashboard.view.MainToolbar',
-        'ApiDashboard.view.grid.DealFilterPanel'
+        'ApiDashboard.view.grid.DealFilterPanel',
+        'ApiDashboard.view.statistic.DealStatisticPanel'
     ],
 
     layout: {
@@ -38,40 +39,8 @@ Ext.define('ApiDashboard.view.MainContainer', {
         },
         {
             flex: 1,
-            xtype: 'container',
-
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            items: [
-                {
-                    flex: 1,
-                    xtype: 'dealgrid',
-                    margin: '5 5 10 10'
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-chevron-right',
-                    handler: function (me) {
-                        let panel = ExtUtil.referenceQuery('statisticPanel')
-                        if (panel.getHidden()) {
-                            me.setIconCls('x-fa fa-chevron-right')
-                            panel.show()
-                        } else {
-                            me.setIconCls('x-fa fa-chevron-left')
-                            panel.hide()
-                        }
-                    }
-                },
-                {
-                    flex: 0.2,
-                    xtype: 'panel',
-                    reference: 'statisticPanel',
-                    shadow: true,
-                    margin: '5 10 10 5'
-                }
-            ]
+            xtype: 'dealgrid',
+            margin: '5 5 10 10'
         }
     ]
 })
