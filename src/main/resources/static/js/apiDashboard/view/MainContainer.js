@@ -4,8 +4,7 @@ Ext.define('ApiDashboard.view.MainContainer', {
     requires: [
         'ApiDashboard.view.grid.DealGrid',
         'ApiDashboard.view.MainToolbar',
-        'ApiDashboard.view.grid.DealFilterPanel',
-        'ApiDashboard.view.statistic.DealStatisticPanel'
+        'ApiDashboard.view.grid.DealFilterPanel'
     ],
 
     layout: {

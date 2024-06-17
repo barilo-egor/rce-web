@@ -6,7 +6,7 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     closable: true,
     title: 'Статистика сделок',
 
-    minWidth: 900,
+    minWidth: 700,
 
     layout: {
         type: 'vbox',
@@ -14,95 +14,13 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     },
     items: [
         {
-            xtype: 'container',
-            margin: '0 0 20 0',
-            width: '97%',
-
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            items: [
-                {
-                    flex: 0.3,
-                    xtype: 'container',
-
-                    layout: {
-                        type: 'vbox',
-                        align: 'left'
-                    },
-                    items: [
-                        {
-                            flex: 0.5,
-                            xtype: 'radiogroup',
-                            listeners: {
-                                change: function (me, newValue) {
-                                    if (newValue === 2) {
-                                        // ExtUtil.referenceQuery('idDeleteField').hide()
-                                        me.getItems().items[0].setChecked(false)
-                                    } else {
-                                        // ExtUtil.referenceQuery('idDeleteField').show()
-                                        me.getItems().items[1].setChecked(false)
-                                    }
-                                }
-                            },
-                            items: [
-                                {
-                                    label: 'За период',
-                                    value: 1,
-                                    checked: true
-                                }
-                            ]
-                        },
-                        {
-                            xtype: 'combobox',
-                            label: 'Период',
-                            margin: '0 0 0 20'
-                        }
-                    ]
-                },
-                {
-                    flex: 0.7,
-                    xtype: 'container',
-
-                    layout: {
-                        type: 'vbox',
-                        align: 'left'
-                    },
-                    items: [
-                        {
-                            flex: 0.5,
-                            xtype: 'radiogroup',
-                            listeners: {
-                                change: function (me, newValue) {
-                                    if (newValue === 2) {
-                                        ExtUtil.referenceQuery('idDeleteField').hide()
-                                        me.getItems().items[0].setChecked(false)
-                                    } else {
-                                        ExtUtil.referenceQuery('idDeleteField').show()
-                                        me.getItems().items[1].setChecked(false)
-                                    }
-                                }
-                            },
-                            items: [
-                                {
-                                    label: 'По дате',
-                                    value: 2
-                                }
-                            ]
-                        },
-                        {
-                            xtype: 'daterange',
-                            margin: '0 0 0 20'
-                        }
-                    ]
-                }
-            ]
+            xtype: 'daterange',
+            margin: '0 0 20 0'
         },
         {
             xtype: 'button',
             text: 'Загрузить',
-            margin: '0 0 20 0'
+            margin: '0 0 30 0'
         },
         {
             flex: 1,
