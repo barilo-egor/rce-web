@@ -13,9 +13,27 @@ Ext.define('ApiDashboard.view.MainToolbar', {
         },
         '->',
         {
+            text: 'Расчёты'
+        },
+        {
             text: 'Статистика',
             handler: function (me) {
                 Ext.create('ApiDashboard.view.statistic.DealStatisticDialog').show()
+            }
+        },
+        {
+            text: 'Документация',
+            handler: function (me) {
+                window.open('/api/10/documentation')
+            }
+        },
+        {
+            xtype: 'component',
+            html: '|',
+            style: {
+                'margin-left': '10px',
+                'margin-right': '10px',
+                'color': 'gray'
             }
         },
         {
@@ -23,6 +41,9 @@ Ext.define('ApiDashboard.view.MainToolbar', {
         },
         {
             menu: [
+                {
+                    text: 'Профиль'
+                },
                 {
                     text: 'Выйти из аккаунта',
                     handler: function (me) {

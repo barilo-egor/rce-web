@@ -25,6 +25,11 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
         {
             flex: 1,
             xtype: 'grid',
+            emptyText: 'Выберите дату и нажмите "Загрузить"',
+            store: {
+                storeId: 'statisticStore',
+                data: []
+            },
             minHeight: 205,
             width: '97%',
             margin: '0 10 0 0',

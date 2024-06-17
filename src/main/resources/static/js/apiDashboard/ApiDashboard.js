@@ -14,5 +14,5 @@ Ext.application({
                 xtype: 'maincontainer'
             }
         ]
-    },
+    }
 })

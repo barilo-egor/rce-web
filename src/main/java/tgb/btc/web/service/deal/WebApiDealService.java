@@ -57,6 +57,27 @@ public class WebApiDealService {
         this.apiDealService = apiDealService;
     }
 
+
+    public List<ApiDealVO> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
+            Map<String, Object> parameters) {
+        String hqlQuery = "from ApiDeal where apiUser.pid=:apiUserPid";
+        parameters.put("apiUserPid", apiUserPid);
+        hqlQuery = hqlQuery.concat(whereStr);
+        if (StringUtils.isBlank(orderStr)) hqlQuery = hqlQuery.concat(" order by pid desc");
+        else {
+            hqlQuery = hqlQuery.concat(orderStr);
+        }
+        Query query = entityManager.createQuery(hqlQuery, ApiDeal.class);
+        query.setFirstResult((page - 1) * limit);
+        query.setMaxResults(limit);
+        parameters.forEach(query::setParameter);
+        List<ApiDeal> deals = query.getResultList();
+        return deals
+                .stream()
+                .map(this::fromDeal)
+                .collect(Collectors.toList());
+    }
+
     public List<ApiDealVO> findAll(Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
@@ -101,6 +122,15 @@ public class WebApiDealService {
                 .apiUser(deal.getApiUser())
                 .dealsCount(dealsCounts)
                 .build();
+    }
+
+    public Long count(Long apiUserPid, String whereStr, Map<String, Object> parameters) {
+        String hqlQuery = "select count(pid) from ApiDeal where apiUser.pid=:apiUserPid";
+        parameters.put("apiUserPid", apiUserPid);
+        hqlQuery = hqlQuery.concat(whereStr);
+        Query query = entityManager.createQuery(hqlQuery);
+        parameters.forEach(query::setParameter);
+        return (Long) query.getSingleResult();
     }
 
     public Long count(String whereStr, Map<String, Object> parameters) {

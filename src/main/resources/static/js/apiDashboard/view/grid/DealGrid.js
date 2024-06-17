@@ -4,6 +4,16 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
 
     shadow: true,
     columnsMenuItem: null,
+    store: Ext.create('ApiDashboard.store.DealStore'),
+
+    listeners: {
+        painted: function (me) {
+            me.getStore().load()
+        }
+    },
+    plugins: {
+        pagingtoolbar: true
+    },
 
     columns: [
         {

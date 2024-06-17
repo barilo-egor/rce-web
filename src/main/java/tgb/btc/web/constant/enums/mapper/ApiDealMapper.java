@@ -53,6 +53,27 @@ public enum ApiDealMapper implements ObjectNodeConvertable<ApiDealVO> {
             result.put("apiUser.id", apiUser.getId());
         }
         return result;
+    }),
+    API_FIND_ALL(deal -> {
+        ObjectNode result = JacksonUtil.getEmpty();
+        result.put("pid", deal.getPid());
+        ObjectNode status = JacksonUtil.getEmpty()
+                .put("name", deal.getDealStatus().name())
+                .put("description", deal.getDealStatus().getDescription())
+                .put("color", deal.getDealStatus().getColor());
+        result.set("apiDealStatus", status);
+        ObjectNode dealType = JacksonUtil.getEmpty()
+                .put("name", deal.getDealType().name())
+                .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
+        result.set("dealType", dealType);
+        result.put("cryptoAmount", BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+                deal.getCryptoCurrency().getScale()) + " " + deal.getCryptoCurrency().getShortName());
+        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmount())
+                + " " + (Objects.nonNull(deal.getFiatCurrency()) ? deal.getFiatCurrency().getCode() :
+                StringUtils.EMPTY));
+        result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        result.put("requisite", deal.getRequisite());
+        return result;
     });
 
     private final Function<ApiDealVO, ObjectNode> mapFunction;
