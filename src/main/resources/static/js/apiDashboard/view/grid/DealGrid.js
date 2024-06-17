@@ -1,6 +1,7 @@
 Ext.define('ApiDashboard.view.grid.DealGrid', {
     extend: 'Ext.Panel',
     xtype: 'dealgrid',
+    reference: 'dealGrid',
     requires: [
         'ApiDashboard.view.grid.DealController',
         'ApiDashboard.view.grid.DealGridMenu'

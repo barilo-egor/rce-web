@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.ApiDealReportService;
@@ -15,6 +16,7 @@ import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.FailureResponse;
+import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.WebResponse;
 import tgb.btc.web.vo.api.ApiUserDealSearchForm;
 import tgb.btc.web.vo.bean.ApiDealVO;
@@ -94,5 +96,21 @@ public class ApiUserDealsController extends BaseController {
         log.debug("API пользователь {} выгрузил отчет по API сделкам. Количество сделок {}.", principal.getName(), dealsPids.size());
         request.getSession().removeAttribute("dealsPids");
         return result;
+    }
+
+    @PostMapping("/cancel")
+    @ResponseBody
+    public SuccessResponse<?> cancel(Principal principal, Long dealPid) {
+        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, dealPid);
+        log.debug("API пользователь {} отменил сделку {}.", principal.getName(), dealPid);
+        return SuccessResponseUtil.toast("Сделка была отменена.");
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public SuccessResponse<?> delete(Principal principal, Long dealPid) {
+        apiDealRepository.deleteById(dealPid);
+        log.debug("API пользователь {} удалил сделку {}.", principal.getName(), dealPid);
+        return SuccessResponseUtil.toast("Сделка была удалена.");
     }
 }

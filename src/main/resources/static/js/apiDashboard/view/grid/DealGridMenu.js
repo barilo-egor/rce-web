@@ -17,7 +17,17 @@ Ext.define('ApiDashboard.view.grid.DealGridMenu', {
             reference: 'cancelMenuButton',
             iconCls: 'x-fa fa-ban orangeColor',
             handler: function (me) {
-
+                ExtUtil.mask('dealGrid', 'Отмена сделки')
+                ExtUtil.mRequest({
+                    url: '/dashboard/api/deal/cancel',
+                    params: {
+                        dealPid: me.up('menu').getViewModel().getData().deal.getData().pid
+                    },
+                    success: function (response) {
+                        Ext.getStore('dealStore').reload()
+                        ExtUtil.maskOff('dealGrid')
+                    }
+                })
             }
         },
         {
@@ -25,7 +35,17 @@ Ext.define('ApiDashboard.view.grid.DealGridMenu', {
             reference: 'deleteMenuButton',
             iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
-
+                ExtUtil.mask('dealGrid', 'Удаление сделки')
+                ExtUtil.mRequest({
+                    url: '/dashboard/api/deal/delete',
+                    params: {
+                        dealPid: me.up('menu').getViewModel().getData().deal.getData().pid
+                    },
+                    success: function (response) {
+                        Ext.getStore('dealStore').reload()
+                        ExtUtil.maskOff('dealGrid')
+                    }
+                })
             }
         }
     ]
