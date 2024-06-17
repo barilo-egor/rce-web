@@ -14,5 +14,20 @@ Ext.define('ApiDashboard.view.grid.DealController', {
                 }
             }
         })
+    },
+
+    openGridMenu: function (me, eObj) {
+        me.deselectAll();
+        me.setSelection(eObj.record);
+        if (!me.menu) {
+            me.menu = Ext.create('ApiDashboard.view.grid.DealGridMenu')
+        }
+        me.menu.setViewModel({
+            data: {
+                deal: eObj.record
+            }
+        })
+        me.menu.showAt(eObj.event.getX(), eObj.event.getY());
+        eObj.event.stopEvent()
     }
 })

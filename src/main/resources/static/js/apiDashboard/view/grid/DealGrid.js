@@ -2,7 +2,8 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
     extend: 'Ext.Panel',
     xtype: 'dealgrid',
     requires: [
-        'ApiDashboard.view.grid.DealController'
+        'ApiDashboard.view.grid.DealController',
+        'ApiDashboard.view.grid.DealGridMenu'
     ],
     controller: 'dealController',
 
@@ -28,7 +29,8 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
             listeners: {
                 painted: function (me) {
                     me.getStore().load()
-                }
+                },
+                childcontextmenu: 'openGridMenu',
             },
             plugins: {
                 pagingtoolbar: true
