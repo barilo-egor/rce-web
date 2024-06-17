@@ -1,12 +1,12 @@
 Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     extend: 'Ext.Dialog',
     requires: [
-        'ApiDashboard.view.statistic.DealStatisticPanel'
     ],
 
-    width: '50%',
     closable: true,
     title: 'Статистика сделок',
+
+    minWidth: 900,
 
     layout: {
         type: 'vbox',
@@ -16,41 +16,93 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
         {
             xtype: 'container',
             margin: '0 0 20 0',
+            width: '97%',
 
             layout: {
-                type: 'vbox'
+                type: 'hbox',
+                align: 'stretch'
             },
             items: [
                 {
-                    width: '100%',
-                    xtype: 'radiogroup',
-                    reference: 'deleteUserRadio',
-                    listeners: {
-                        change: function (me, newValue) {
-                            if (newValue === 2) {
-                                ExtUtil.referenceQuery('idDeleteField').hide()
-                                me.getItems().items[0].setChecked(false)
-                            } else {
-                                ExtUtil.referenceQuery('idDeleteField').show()
-                                me.getItems().items[1].setChecked(false)
-                            }
-                        }
+                    flex: 0.3,
+                    xtype: 'container',
+
+                    layout: {
+                        type: 'vbox',
+                        align: 'left'
                     },
                     items: [
                         {
-                            label: 'Перенести сделки на другого пользователя',
-                            width: 300,
-                            value: 1,
-                            checked: true
+                            flex: 0.5,
+                            xtype: 'radiogroup',
+                            listeners: {
+                                change: function (me, newValue) {
+                                    if (newValue === 2) {
+                                        // ExtUtil.referenceQuery('idDeleteField').hide()
+                                        me.getItems().items[0].setChecked(false)
+                                    } else {
+                                        // ExtUtil.referenceQuery('idDeleteField').show()
+                                        me.getItems().items[1].setChecked(false)
+                                    }
+                                }
+                            },
+                            items: [
+                                {
+                                    label: 'За период',
+                                    value: 1,
+                                    checked: true
+                                }
+                            ]
                         },
                         {
-                            label: 'Удалить все сделки пользователя',
-                            width: 230,
-                            value: 2
+                            xtype: 'combobox',
+                            label: 'Период',
+                            margin: '0 0 0 20'
+                        }
+                    ]
+                },
+                {
+                    flex: 0.7,
+                    xtype: 'container',
+
+                    layout: {
+                        type: 'vbox',
+                        align: 'left'
+                    },
+                    items: [
+                        {
+                            flex: 0.5,
+                            xtype: 'radiogroup',
+                            listeners: {
+                                change: function (me, newValue) {
+                                    if (newValue === 2) {
+                                        ExtUtil.referenceQuery('idDeleteField').hide()
+                                        me.getItems().items[0].setChecked(false)
+                                    } else {
+                                        ExtUtil.referenceQuery('idDeleteField').show()
+                                        me.getItems().items[1].setChecked(false)
+                                    }
+                                }
+                            },
+                            items: [
+                                {
+                                    label: 'По дате',
+                                    value: 2
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'daterange',
+                            margin: '0 0 0 20'
                         }
                     ]
                 }
             ]
+        },
+        {
+            xtype: 'button',
+            text: 'Загрузить',
+            margin: '0 0 20 0'
         },
         {
             flex: 1,

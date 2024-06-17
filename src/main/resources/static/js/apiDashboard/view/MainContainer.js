@@ -40,7 +40,7 @@ Ext.define('ApiDashboard.view.MainContainer', {
         {
             flex: 1,
             xtype: 'dealgrid',
-            margin: '5 5 10 10'
+            margin: '5 10 10 10'
         }
     ]
 })
