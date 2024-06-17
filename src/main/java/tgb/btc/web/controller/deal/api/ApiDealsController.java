@@ -102,8 +102,9 @@ public class ApiDealsController extends BaseController {
     @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
-        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
-        log.debug("Пользователь {} выгрузил отчет по API сделкам", principal.getName());
+        List<Long> dealsPids = (List<Long>) request.getSession().getAttribute("dealsPids");
+        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids(dealsPids));
+        log.debug("Пользователь {} выгрузил отчет по API сделкам. Количество {}.", principal.getName(), dealsPids.size());
         request.getSession().removeAttribute("dealsPids");
         return result;
     }

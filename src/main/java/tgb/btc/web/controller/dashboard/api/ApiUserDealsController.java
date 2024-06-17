@@ -1,20 +1,25 @@
 package tgb.btc.web.controller.dashboard.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.FailureResponse;
+import tgb.btc.web.vo.WebResponse;
 import tgb.btc.web.vo.api.ApiUserDealSearchForm;
 import tgb.btc.web.vo.bean.ApiDealVO;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +27,26 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/dashboard/api/deal")
+@Slf4j
 public class ApiUserDealsController extends BaseController {
 
     private WebApiDealService webApiDealService;
 
     private ApiUserRepository apiUserRepository;
+
+    private ApiDealReportService apiDealReportService;
+
+    private ApiDealRepository apiDealRepository;
+
+    @Autowired
+    public void setApiDealReportService(ApiDealReportService apiDealReportService) {
+        this.apiDealReportService = apiDealReportService;
+    }
+
+    @Autowired
+    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
+        this.apiDealRepository = apiDealRepository;
+    }
 
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
@@ -52,4 +72,27 @@ public class ApiUserDealsController extends BaseController {
                 ApiDealMapper.FIND_ALL);
     }
 
+    @PostMapping("/beforeExport")
+    @ResponseBody
+    public WebResponse beforeExport(Principal principal, HttpServletRequest request, @RequestBody ApiUserDealSearchForm form) {
+        Map<String, Object> parameters = new HashMap<>();
+        List<Long> pids = webApiDealService.findAllPids(apiUserRepository.getPidByUsername(principal.getName()),
+                form.getWhereStr(parameters), form.getSortStr(), parameters);
+        if (CollectionUtils.isEmpty(pids)) {
+            return new FailureResponse("Не найдено ни одной сделки.");
+        }
+        request.getSession().setAttribute("dealsPids", pids);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty()
+                .put("success", true));
+    }
+
+    @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @ResponseBody
+    public byte[] export(HttpServletRequest request, Principal principal) {
+        List<Long> dealsPids = (List<Long>) request.getSession().getAttribute("dealsPids");
+        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids(dealsPids));
+        log.debug("API пользователь {} выгрузил отчет по API сделкам. Количество сделок {}.", principal.getName(), dealsPids.size());
+        request.getSession().removeAttribute("dealsPids");
+        return result;
+    }
 }

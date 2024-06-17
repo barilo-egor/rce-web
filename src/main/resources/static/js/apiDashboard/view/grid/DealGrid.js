@@ -1,6 +1,10 @@
 Ext.define('ApiDashboard.view.grid.DealGrid', {
     extend: 'Ext.Panel',
     xtype: 'dealgrid',
+    requires: [
+        'ApiDashboard.view.grid.DealController'
+    ],
+    controller: 'dealController',
 
     shadow: true,
 
@@ -9,6 +13,7 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
             {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
+                handler: 'exportDeals'
             }
         ]
     },

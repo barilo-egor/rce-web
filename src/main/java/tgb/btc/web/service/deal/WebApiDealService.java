@@ -107,6 +107,17 @@ public class WebApiDealService {
         return query.getResultList();
     }
 
+    public List<Long> findAllPids(Long userPid, String whereStr, String orderStr, Map<String, Object> parameters) {
+        String hqlQuery = "select d.pid from ApiDeal d where d.apiUser.pid=:apiUserPid";
+        parameters.put("apiUserPid", userPid);
+        hqlQuery = hqlQuery.concat(whereStr);
+        hqlQuery = hqlQuery.concat(" order by pid desc");
+        hqlQuery = hqlQuery.concat(orderStr);
+        Query query = entityManager.createQuery(hqlQuery, Long.class);
+        parameters.forEach(query::setParameter);
+        return query.getResultList();
+    }
+
     private ApiDealVO fromDeal(ApiDeal deal) {
         long dealsCounts = apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
         return ApiDealVO.builder()
