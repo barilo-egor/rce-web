@@ -14,5 +14,11 @@ Ext.application({
                 xtype: 'maincontainer'
             }
         ]
-    }
+    },
+    stores: [
+        'ApiDashboard.store.enum.FiatCurrenciesStore',
+        'ApiDashboard.store.enum.CryptoCurrenciesStore',
+        'ApiDashboard.store.enum.DealTypesStore',
+        'ApiDashboard.store.enum.ApiDealStatusesStore'
+    ]
 })

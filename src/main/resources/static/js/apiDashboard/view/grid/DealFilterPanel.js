@@ -48,9 +48,9 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     valueField: 'name',
                     label: 'Фиатная валюта',
                     displayField: 'code',
-                    // store: {
-                    //     type: 'fiatCurrenciesStore'
-                    // },
+                    store: {
+                        type: 'fiatCurrenciesStore'
+                    },
                     reference: 'fiatCurrencyFilterField',
                     margin: '0 20 0 20'
                 },
@@ -61,9 +61,9 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     valueField: 'name',
                     label: 'Криптовалюта',
                     displayField: 'shortName',
-                    // store: {
-                    //     type: 'cryptoCurrenciesStore'
-                    // },
+                    store: {
+                        type: 'cryptoCurrenciesStore'
+                    },
                     reference: 'cryptoCurrencyFilterField',
                     margin: '0 20 0 20'
                 },
@@ -78,9 +78,9 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     valueField: 'name',
                     label: 'Тип сделки',
                     displayField: 'nominative',
-                    // store: {
-                    //     type: 'dealTypesStore'
-                    // },
+                    store: {
+                        type: 'dealTypesStore'
+                    },
                     reference: 'dealTypeFilterField',
                     margin: '0 20 0 20'
                 },
@@ -91,9 +91,9 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     editable: false,
                     clearable: true,
                     valueField: 'name',
-                    // store: {
-                    //     type: 'apiDealStatusesStore'
-                    // },
+                    store: {
+                        type: 'apiDealStatusesStore'
+                    },
                     reference: 'dealStatusFilterField',
                     margin: '0 20 0 20'
                 }
