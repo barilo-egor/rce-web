@@ -10,23 +10,24 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.DateRange;
 import tgb.btc.web.vo.FailureResponse;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.WebResponse;
 import tgb.btc.web.vo.api.ApiUserDealSearchForm;
+import tgb.btc.web.vo.api.TotalSum;
 import tgb.btc.web.vo.bean.ApiDealVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -41,6 +42,13 @@ public class ApiUserDealsController extends BaseController {
     private ApiDealReportService apiDealReportService;
 
     private ApiDealRepository apiDealRepository;
+
+    private ApiDealService apiDealService;
+
+    @Autowired
+    public void setApiDealService(ApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
 
     @Autowired
     public void setApiDealReportService(ApiDealReportService apiDealReportService) {
@@ -123,5 +131,18 @@ public class ApiUserDealsController extends BaseController {
                 .map(pid -> JacksonUtil.getEmpty()
                         .put("value", pid))
                 .collect(Collectors.toList()));
+    }
+
+    @PostMapping("/statistic")
+    @ResponseBody
+    public SuccessResponse<?> statistic(@RequestBody DateRange dateRange) {
+        Date startDate = Objects.isNull(dateRange) ? null : dateRange.getStartDate();
+        Date endDate = Objects.isNull(dateRange) ? null : dateRange.getEndDate();
+        Boolean isRange = Objects.isNull(dateRange) ? null : dateRange.getIsRange();
+        List<TotalSum> totalSums = webApiDealService.getTotalSums(
+                apiDealService.getAcceptedByDateBetween(startDate, endDate, isRange)
+        );
+        if (CollectionUtils.isEmpty(totalSums)) return SuccessResponseUtil.toast("Сделок не найдено.");
+        return new SuccessResponse<>(totalSums);
     }
 }

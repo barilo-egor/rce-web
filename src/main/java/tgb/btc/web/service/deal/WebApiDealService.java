@@ -160,6 +160,10 @@ public class WebApiDealService {
         LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
         LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(currentDealPid);
         List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeEnd(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        return getTotalSums(apiDeals);
+    }
+
+    public List<TotalSum> getTotalSums(List<ApiDeal> apiDeals) {
         if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
         List<TotalSum> totalSums = new ArrayList<>();
         for (DealType dealType: DealType.values()) {

@@ -18,7 +18,7 @@ Ext.define('ApiDashboard.view.grid.DealGridMenu', {
             iconCls: 'x-fa fa-ban orangeColor',
             handler: function (me) {
                 let dealPid = me.up('menu').getViewModel().getData().deal.getData().pid
-                ExtMessages.confirm('Отмена сделки №', 'Вы действительно хотите отменить сделку?',
+                ExtMessages.confirm('Отмена сделки №' + dealPid, 'Вы действительно хотите отменить сделку?',
                     function () {
                         ExtUtil.mask('dealGrid', 'Отмена сделки')
                         ExtUtil.mRequest({
@@ -39,7 +39,7 @@ Ext.define('ApiDashboard.view.grid.DealGridMenu', {
             reference: 'deleteMenuButton',
             iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
-                ExtMessages.confirm('Удаление сделки №', 'Вы действительно хотите удалить сделку?',
+                ExtMessages.confirm('Удаление сделки №' + dealPid, 'Вы действительно хотите удалить сделку?',
                     function () {
                         ExtUtil.mask('dealGrid', 'Удаление сделки')
                         ExtUtil.mRequest({

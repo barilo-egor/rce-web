@@ -4,7 +4,25 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     ],
 
     closable: true,
-    title: 'Статистика сделок',
+    title: 'Статистика подтвержденных сделок',
+
+    tools: [
+        {
+            type: 'help',
+            tooltip: {
+                align: 'tr-bl',
+                anchorToTarget: true,
+                anchor: true,
+                autoHide: false,
+                closable: true,
+                showOnTap: true,
+                scrollable: 'y',
+                title: 'Статистика',
+                html: 'Здесь вы можете посмотреть общую статистику <br> сделок в статусе "ACCEPTED"(Подтверждена оператором).<br>' +
+                    'При выборе диапазона дат сделки выбираются включительно <br>каждую выбранную дату.<br> Чтобы загрузить статистику за всё время, оставьте дату пустой.'
+            }
+        }
+    ],
 
     minWidth: 700,
 
@@ -15,12 +33,18 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     items: [
         {
             xtype: 'daterange',
+            reference: 'statisticDateRange',
             margin: '0 0 20 0'
         },
         {
             xtype: 'button',
             text: 'Загрузить',
-            margin: '0 0 30 0'
+            margin: '0 0 30 0',
+            handler: function (me) {
+                Ext.getStore('statisticStore').load({
+                    params: ExtUtil.referenceQuery('statisticDateRange').getValue()
+                })
+            }
         },
         {
             flex: 1,
@@ -28,7 +52,20 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
             emptyText: 'Выберите дату и нажмите "Загрузить"',
             store: {
                 storeId: 'statisticStore',
-                data: []
+                fields: ['dealType'],
+                autoLoad: false,
+                proxy: {
+                    type: 'rest',
+                    paramsAsJson: true,
+                    actionMethods: {
+                        read: 'POST'
+                    },
+                    url: '/dashboard/api/deal/statistic',
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'body'
+                    }
+                }
             },
             minHeight: 205,
             width: '97%',
