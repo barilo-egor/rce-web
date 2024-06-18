@@ -1,5 +1,6 @@
 package tgb.btc.web.controller.dashboard.api;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/dashboard/api/deal")
@@ -112,5 +114,14 @@ public class ApiUserDealsController extends BaseController {
         apiDealRepository.deleteById(dealPid);
         log.debug("API пользователь {} удалил сделку {}.", principal.getName(), dealPid);
         return SuccessResponseUtil.toast("Сделка была удалена.");
+    }
+
+    @GetMapping("/getIds")
+    @ResponseBody
+    public ArrayNode getIds(String query) {
+        return JacksonUtil.getEmptyArray().addAll(apiDealRepository.getPidsByQuery(query).stream()
+                .map(pid -> JacksonUtil.getEmpty()
+                        .put("value", pid))
+                .collect(Collectors.toList()));
     }
 }

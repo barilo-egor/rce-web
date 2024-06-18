@@ -34,7 +34,15 @@ Ext.define('Common.range.DateRange', {
             dateFormat: 'd.m.Y',
             label: 'Дата',
             margin: '0 15 0 0',
-            clearable: true
+            clearable: true,
+            listeners: {
+                painted: function (me) {
+                    let container = me.up('daterange')
+                    if (container.dateFieldChangeListener) {
+                        me.on('change', container.dateFieldChangeListener)
+                    }
+                }
+            }
         },
         {
             flex: 1,
@@ -42,7 +50,15 @@ Ext.define('Common.range.DateRange', {
             dateFormat: 'd.m.Y',
             label: 'Дата до',
             margin: '0 15 0 0',
-            clearable: true
+            clearable: true,
+            listeners: {
+                painted: function (me) {
+                    let container = me.up('daterange')
+                    if (container.dateFieldChangeListener) {
+                        me.on('change', container.dateFieldChangeListener)
+                    }
+                }
+            }
         },
         {
             flex: 0.2,

@@ -27,15 +27,54 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
         {
             items: [
                 {
-                    xtype: 'textfield',
-                    label: 'Номер заявки',
+                    xtype: 'container',
                     reference: 'pidFilterField',
-                    margin: '0 20 0 20'
+                    getValue: function () {
+                        let numberFrom = this.getItems().items[0].getValue()
+                        let numberTo = this.getItems().items[1].getValue()
+                        if (!numberFrom && !numberTo) return null
+                        return {
+                            numberFrom: numberFrom,
+                            numberTo: numberTo
+                        }
+                    },
+
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
+                    items: [
+                        {
+                            flex: 0.5,
+                            xtype: 'textfield',
+                            label: 'Номер заявки от',
+                            margin: '0 20 0 20',
+                            listeners: {
+                                change: function() {
+                                    Ext.getStore('dealStore').loadPage(1)
+                                }
+                            }
+                        },
+                        {
+                            flex: 0.5,
+                            xtype: 'textfield',
+                            label: 'Номер заявки до',
+                            margin: '0 20 0 20',
+                            listeners: {
+                                change: function() {
+                                    Ext.getStore('dealStore').loadPage(1)
+                                }
+                            }
+                        }
+                    ]
                 },
                 {
                     xtype: 'daterange',
                     reference: 'dateFilterField',
-                    margin: '0 20 0 20'
+                    margin: '0 20 0 20',
+                    dateFieldChangeListener: function() {
+                        Ext.getStore('dealStore').loadPage(1)
+                    }
                 },
             ]
         },
@@ -52,7 +91,12 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                         type: 'fiatCurrenciesStore'
                     },
                     reference: 'fiatCurrencyFilterField',
-                    margin: '0 20 0 20'
+                    margin: '0 20 0 20',
+                    listeners: {
+                        change: function() {
+                            Ext.getStore('dealStore').loadPage(1)
+                        }
+                    }
                 },
                 {
                     xtype: 'combobox',
@@ -65,7 +109,12 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                         type: 'cryptoCurrenciesStore'
                     },
                     reference: 'cryptoCurrencyFilterField',
-                    margin: '0 20 0 20'
+                    margin: '0 20 0 20',
+                    listeners: {
+                        change: function() {
+                            Ext.getStore('dealStore').loadPage(1)
+                        }
+                    }
                 },
             ]
         },
@@ -82,7 +131,12 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                         type: 'dealTypesStore'
                     },
                     reference: 'dealTypeFilterField',
-                    margin: '0 20 0 20'
+                    margin: '0 20 0 20',
+                    listeners: {
+                        change: function() {
+                            Ext.getStore('dealStore').loadPage(1)
+                        }
+                    }
                 },
                 {
                     xtype: 'combobox',
@@ -94,8 +148,13 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     store: {
                         type: 'apiDealStatusesStore'
                     },
-                    reference: 'dealStatusFilterField',
-                    margin: '0 20 0 20'
+                    reference: 'apiDealStatusFilterField',
+                    margin: '0 20 0 20',
+                    listeners: {
+                        change: function() {
+                            Ext.getStore('dealStore').loadPage(1)
+                        }
+                    }
                 }
             ]
         }

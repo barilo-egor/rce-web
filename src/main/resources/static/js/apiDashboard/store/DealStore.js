@@ -26,7 +26,7 @@ Ext.define('ApiDashboard.store.DealStore', {
 
     fieldsReferences: [
         'pidFilterField', 'dateFilterField', 'fiatCurrencyFilterField',
-        'cryptoCurrencyFilterField', 'dealTypeFilterField', 'dealStatusFilterField'
+        'cryptoCurrencyFilterField', 'dealTypeFilterField', 'apiDealStatusFilterField'
     ],
 
     getFiltersFromPanel: function() {

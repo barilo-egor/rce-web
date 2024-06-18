@@ -20,6 +20,13 @@ public class DateRange {
         if (Objects.isNull(startDate) && Objects.isNull(endDate)) return null;
         parameters.put("startDate", startDate);
         if (isRange) {
+            if (Objects.nonNull(startDate) && Objects.isNull(endDate)) {
+                parameters.put("startDate", startDate);
+                return "date(date_time) >= date(:startDate)";
+            } else if (Objects.isNull(startDate) && Objects.nonNull(endDate)) {
+                parameters.put("endDate", endDate);
+                return "date(date_time) <= date(:endDate)";
+            }
             parameters.put("endDate", endDate);
             return "date(date_time) between date(:startDate) and date(:endDate)";
         } else return "date(date_time)=:startDate";

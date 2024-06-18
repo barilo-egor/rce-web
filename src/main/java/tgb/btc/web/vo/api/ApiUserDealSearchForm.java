@@ -6,6 +6,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.web.vo.DateRange;
+import tgb.btc.web.vo.NumberRange;
 import tgb.btc.web.vo.Pageable;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 @Data
 public class ApiUserDealSearchForm extends Pageable {
-    private Long pid;
+    private NumberRange pid;
 
     private DateRange date;
 
@@ -28,8 +29,8 @@ public class ApiUserDealSearchForm extends Pageable {
     public String getWhereStr(Map<String, Object> parameters) {
         StringBuilder result = new StringBuilder();
         if (Objects.nonNull(pid)) {
-            result.append(" and pid=:pid");
-            parameters.put("pid", pid);
+            String hqlCondition = pid.getHqlCondition(parameters, "pid");
+            if (Objects.nonNull(hqlCondition)) result.append(" and ").append(hqlCondition);
         }
         if (Objects.nonNull(date)) {
             String hqlCondition = date.getHqlCondition(parameters);
@@ -49,6 +50,7 @@ public class ApiUserDealSearchForm extends Pageable {
         }
         if (Objects.nonNull(apiDealStatus)) {
             result.append(" and apiDealStatus=:apiDealStatus");
+            parameters.put("apiDealStatus", apiDealStatus);
         }
         return result.toString();
     }
