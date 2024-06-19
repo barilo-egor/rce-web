@@ -18,7 +18,7 @@ Ext.define('Dashboard.view.users.api.calculate.CalculationDialog', {
                     function () {
                         ExtUtil.mask('calculationDialog')
                         ExtUtil.mRequest({
-                            url: '/users/api/updateLastPaidDeal',
+                            url: '/users/api/saveCalculation',
                             async: false,
                             params: {
                                 lastPaidDealPid: lastDealPid,

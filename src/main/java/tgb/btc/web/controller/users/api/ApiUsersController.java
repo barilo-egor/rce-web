@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.service.process.ApiCalculationProcessService;
 import tgb.btc.web.service.process.ApiUserProcessService;
 import tgb.btc.web.service.users.WebApiUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -36,11 +36,12 @@ public class ApiUsersController extends BaseController {
 
     private WebApiDealService webApiDealService;
 
-    private ApiDealRepository apiDealRepository;
+    private ApiCalculationProcessService apiCalculationProcessService;
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiCalculationProcessService(
+            ApiCalculationProcessService apiCalculationProcessService) {
+        this.apiCalculationProcessService = apiCalculationProcessService;
     }
 
     @Autowired
@@ -119,10 +120,10 @@ public class ApiUsersController extends BaseController {
         return new SuccessResponse<>(webApiDealService.getCalculating(currentDealPid, userPid));
     }
 
-    @PostMapping("/updateLastPaidDeal")
+    @PostMapping("/saveCalculation")
     @ResponseBody
-    public SuccessResponse<?> updateLastPaidDeal(Long userPid, Long lastPaidDealPid) {
-        apiUserRepository.updateLastPidDeal(userPid, apiDealRepository.getByPid(lastPaidDealPid));
-            return SuccessResponseUtil.toast("Расчёт произведен.");
+    public SuccessResponse<?> saveCalculation(Long userPid, Long lastPaidDealPid) {
+        apiCalculationProcessService.saveCalculation(userPid, lastPaidDealPid);
+        return SuccessResponseUtil.toast("Расчёт произведен.");
     }
 }
