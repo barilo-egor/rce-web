@@ -55,6 +55,10 @@ public class SuccessResponseUtil {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("warningString", warningString));
     }
 
+    public static <T> SuccessResponse<?> blockString(String blockString) {
+        return new SuccessResponse<>(JacksonUtil.toObjectNode("blockString", blockString));
+    }
+
     public static <T> SuccessResponse<?> message(String message) {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("message", message));
     }

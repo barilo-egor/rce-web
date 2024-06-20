@@ -1,13 +1,18 @@
 package tgb.btc.web.service.process;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.UsdApiUserCourseRepository;
+import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.web.vo.form.ApiUserVO;
 
 import java.time.LocalDate;
@@ -21,6 +26,20 @@ public class ApiUserProcessService {
     private ApiUserRepository apiUserRepository;
 
     private UsdApiUserCourseRepository usdApiUserCourseRepository;
+
+    private WebUserRepository webUserRepository;
+
+    private RoleRepository roleRepository;
+
+    @Autowired
+    public void setWebUserRepository(WebUserRepository webUserRepository) {
+        this.webUserRepository = webUserRepository;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Autowired
     public void setUsdApiUserCourseRepository(UsdApiUserCourseRepository usdApiUserCourseRepository) {
@@ -94,5 +113,21 @@ public class ApiUserProcessService {
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);
+    }
+
+    public void updateWebUser(Long apiUserPid, String username) {
+        if (StringUtils.isBlank(username)) {
+            WebUser webUser = apiUserRepository.getWebUser(apiUserPid);
+            webUser.setRoles(roleRepository.getByName(RoleConstants.ROLE_USER.name()));
+            webUserRepository.save(webUser);
+            apiUserRepository.updateWebUser(apiUserPid, null);
+            return;
+        }
+        WebUser webUser = webUserRepository.getByUsername(username);
+        if (webUser.getRoles().stream().noneMatch(role -> role.getName().equals(RoleConstants.ROLE_API_CLIENT.name()))) {
+            webUser.setRoles(roleRepository.getByName(RoleConstants.ROLE_API_CLIENT.name()));
+            webUser = webUserRepository.save(webUser);
+        }
+        apiUserRepository.updateWebUser(apiUserPid, webUser);
     }
 }

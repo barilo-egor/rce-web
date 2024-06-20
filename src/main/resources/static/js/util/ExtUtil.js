@@ -170,6 +170,8 @@ let ExtUtil = {
                 Ext.Msg.alert('Внимание', response.body.warningString)
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
                 else if (config.loadingComponentRef) ExtUtil.maskOff(config.loadingComponentRef)
+            } else if (response.body && response.body.blockString) {
+                ExtMessages.block('Внимание', response.body.blockString)
             } else {
                 if (response.body && response.body.message) {
                     Ext.Msg.alert('Информация', response.body.message)

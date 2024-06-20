@@ -45,6 +45,25 @@ let ExtMessages = {
         }).show()
     },
 
+    block: function (title, message) {
+        Ext.create('Ext.Dialog', {
+            title: title,
+            closable: false,
+
+            layout: {
+                type: 'vbox',
+                align: 'center',
+                pack: 'middle'
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    html: message
+                }
+            ]
+        }).show()
+    },
+
     error: function (title, message) {
         Ext.create('Ext.Dialog', {
             title: title,

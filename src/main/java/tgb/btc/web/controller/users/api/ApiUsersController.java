@@ -2,6 +2,7 @@ package tgb.btc.web.controller.users.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -76,15 +77,15 @@ public class ApiUsersController extends BaseController {
                                       @RequestParam(required = false) String token,
                                       @RequestParam(required = false) String buyRequisite,
                                       @RequestParam(required = false) String sellRequisite) {
-        return SuccessResponseUtil.data(webApiUsersService.findAll(id, fiatCurrency, token, buyRequisite, sellRequisite));
+        return SuccessResponseUtil.jsonData(webApiUsersService.findAll(id, fiatCurrency, token, buyRequisite, sellRequisite));
     }
 
     @GetMapping("/generateToken")
     @ResponseBody
     public SuccessResponse<?> generateToken() {
-        String token = RandomStringUtils.randomAlphanumeric(40);
+        String token = RandomStringUtils.randomAlphanumeric(42);
         while (apiUserRepository.countByToken(token) > 0) {
-            token = RandomStringUtils.randomAlphanumeric(40);
+            token = RandomStringUtils.randomAlphanumeric(42);
         }
         return SuccessResponseUtil.data(token, data -> JacksonUtil.getEmpty().put("token", data));
     }
@@ -125,5 +126,16 @@ public class ApiUsersController extends BaseController {
     public SuccessResponse<?> saveCalculation(Long userPid, Long lastPaidDealPid) {
         apiCalculationProcessService.saveCalculation(userPid, lastPaidDealPid);
         return SuccessResponseUtil.toast("Расчёт произведен.");
+    }
+
+    @PostMapping("/tie")
+    @ResponseBody
+    public SuccessResponse<?> tie(Long apiUserPid, String username) {
+        if (StringUtils.isBlank(username)) {
+            apiUserProcessService.updateWebUser(apiUserPid, username);
+            return SuccessResponseUtil.toast("Пользователь успешно отвязан.");
+        }
+        apiUserProcessService.updateWebUser(apiUserPid, username);
+        return SuccessResponseUtil.toast("Пользователь успешно привязан.");
     }
 }

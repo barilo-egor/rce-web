@@ -29,7 +29,13 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
 
             listeners: {
                 painted: function (me) {
-                    me.getStore().load()
+                    ExtUtil.mRequest({
+                        url: '/dashboard/api/deal/check',
+                        method: 'GET',
+                        success: function (response) {
+                            me.getStore().load()
+                        }
+                    })
                 },
                 childcontextmenu: 'openGridMenu',
             },

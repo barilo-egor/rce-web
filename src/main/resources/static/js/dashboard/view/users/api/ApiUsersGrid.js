@@ -39,6 +39,18 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     flex: 0.5
                 },
                 {
+                    text: 'WEB логин',
+                    dataIndex: 'webUser',
+                    flex: 0.5,
+                    renderer: function (val) {
+                        if (!val || val.trim().length === 0) {
+                            return 'Не привязан'
+                        } else {
+                            return val
+                        }
+                    }
+                },
+                {
                     text: 'Скидка',
                     dataIndex: 'personalDiscount',
                     width: 70

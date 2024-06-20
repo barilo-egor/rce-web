@@ -6,8 +6,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.session.SessionDestroyedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.web.controller.common.NotificationsController;
+
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -18,9 +21,12 @@ public class SessionExpiredListener implements ApplicationListener<SessionDestro
         for (SecurityContext securityContext : event.getSecurityContexts()) {
             Authentication authentication = securityContext.getAuthentication();
             WebUser user = (WebUser) authentication.getPrincipal();
-            NotificationsController.LISTENERS.get(user.getUsername()).complete();
-            NotificationsController.LISTENERS.remove(user.getUsername());
-            log.debug("Удален SSEEmitter пользователя={} после уничтожения сессии.", user.getUsername());
+            SseEmitter sseEmitter = NotificationsController.LISTENERS.get(user.getUsername());
+            if (Objects.nonNull(sseEmitter)) {
+                sseEmitter.complete();
+                NotificationsController.LISTENERS.remove(user.getUsername());
+                log.debug("Удален SSEEmitter пользователя={} после уничтожения сессии.", user.getUsername());
+            }
         }
     }
 

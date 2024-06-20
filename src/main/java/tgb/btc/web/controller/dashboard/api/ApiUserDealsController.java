@@ -70,6 +70,12 @@ public class ApiUserDealsController extends BaseController {
         this.webApiDealService = webApiDealService;
     }
 
+    @GetMapping("/check")
+    @ResponseBody
+    public SuccessResponse<?> check() {
+        return SuccessResponseUtil.blockString("Вы пока что не были привязаны ни к одному API клиенту. Обратитесь к оператору.");
+    }
+
     @PostMapping("/findAll")
     @ResponseBody
     public ObjectNode findAll(Principal principal, @RequestBody ApiUserDealSearchForm searchForm) {
@@ -135,12 +141,14 @@ public class ApiUserDealsController extends BaseController {
 
     @PostMapping("/statistic")
     @ResponseBody
-    public SuccessResponse<?> statistic(@RequestBody DateRange dateRange) {
+    public SuccessResponse<?> statistic(Principal principal, @RequestBody DateRange dateRange) {
         Date startDate = Objects.isNull(dateRange) ? null : dateRange.getStartDate();
         Date endDate = Objects.isNull(dateRange) ? null : dateRange.getEndDate();
         Boolean isRange = Objects.isNull(dateRange) ? null : dateRange.getIsRange();
         List<TotalSum> totalSums = webApiDealService.getTotalSums(
-                apiDealService.getAcceptedByDateBetween(startDate, endDate, isRange)
+                apiDealService.getAcceptedByDateBetween(
+                        apiUserRepository.getPidByUsername(principal.getName()), startDate, endDate, isRange
+                )
         );
         if (CollectionUtils.isEmpty(totalSums)) return SuccessResponseUtil.toast("Сделок не найдено.");
         return new SuccessResponse<>(totalSums);
