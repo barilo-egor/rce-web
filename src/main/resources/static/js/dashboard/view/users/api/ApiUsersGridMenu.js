@@ -1,6 +1,9 @@
 Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
     extend: 'Ext.menu.Menu',
     xtype: 'apiusersgridmenu',
+    requires: [
+        'Dashboard.view.users.api.tie.TieDialog'
+    ],
 
     items: [
         {
@@ -26,139 +29,12 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
             handler: function (me) {
                 let username = ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('webUser')
                 if (!username || username.length === 0) username = 'Не привязан'
-                Ext.create('Ext.Dialog', {
-                    reference: 'tieDialog',
-                    closable: 'true',
-                    title: 'Привязка WEB пользователя',
-                    minWidth: 350,
-                    width: '20%',
-
-                    tools: [
-                        {
-                            type: 'help',
-                            tooltip: {
-                                align: 'tr-bl',
-                                anchorToTarget: true,
-                                anchor: true,
-                                autoHide: false,
-                                closable: true,
-                                showOnTap: true,
-                                scrollable: 'y',
-                                title: 'Привязка',
-                                html: 'Здесь вы можете привязать API пользователя к WEB пользователю<br>' +
-                                    'для того чтобы клиент мог зайти в кабинет.<br>' +
-                                    'Для привязки двойным кликом в списке выберите<br>' +
-                                    'нужного пользователя и нажмите "Привязать"<br>' +
-                                    'Чтобы полностью отвязать пользователя, очистите поле<br>' +
-                                    'текущего пользователя и нажмите "Привязать".'
-                            }
+                Ext.create('Dashboard.view.users.api.tie.TieDialog', {
+                    viewModel: {
+                        data: {
+                            username: username
                         }
-                    ],
-
-                    layout: {
-                        type: 'vbox',
-                        align: 'stretch'
-                    },
-                    items: [
-                        {
-                            xtype: 'textfield',
-                            reference: 'currentUserField',
-                            label: 'Текущий WEB пользователь',
-                            value: username,
-                            defaultValue: username,
-                            editable: false,
-                            margin: '0 0 20 0',
-                            listeners: {
-                                change: function (me, newValue) {
-                                    ExtUtil.referenceQuery('tieButton').setDisabled(newValue === me.defaultValue)
-                                }
-                            }
-                        },
-                        {
-                            xtype: 'panel',
-                            shadow: true,
-                            height: 255,
-                            margin: '0 0 30 0',
-
-                            layout: 'fit',
-                            tbar: {
-                                layout: 'fit',
-                                items: [
-                                    {
-                                        xtype: 'textfield',
-                                        filterId: 'userNameFilter',
-                                        listeners: {
-                                            change: function (me, newValue) {
-                                                let store = Ext.getStore('userLoginStore')
-                                                store.removeFilter(me.filterId)
-                                                store.addFilter(new Ext.util.Filter({
-                                                    id: me.filterId,
-                                                    filterFn: function (item) {
-                                                        return item.get('username').startsWith(newValue)
-                                                    }
-                                                }))
-                                            }
-                                        }
-                                    }
-                                ]
-                            },
-                            items: [
-                                {
-                                    xtype: 'list',
-                                    itemTpl: '{username}',
-                                    store: {
-                                        storeId: 'userLoginStore',
-                                        autoLoad: true,
-                                        fields: [
-                                            'username'
-                                        ],
-                                        proxy: {
-                                            type: 'ajax',
-                                            url: '/util/getUsernames',
-                                            reader: {
-                                                type: 'json'
-                                            }
-                                        }
-                                    },
-                                    listeners: {
-                                        childdoubletap: function (me, location) {
-                                            let username = me.getStore().getAt(location.recordIndex).get('username')
-                                            ExtUtil.referenceQuery('currentUserField').setValue(username)
-                                        }
-                                    }
-                                },
-                            ]
-                        },
-                        {
-                            xtype: 'button',
-                            reference: 'tieButton',
-                            text: 'Привязать',
-                            disabled: true,
-                            handler: function (me) {
-                                let username = ExtUtil.referenceQuery('currentUserField').getValue()
-                                let text = !username || username.length === 0
-                                    ? 'У пользователя будет снята роль API клиента. Продолжить?'
-                                    : 'Пользователю так же будет установлена роль API клиента,<br>если она ещё не установлена. Продолжить?'
-                                ExtMessages.confirm('Привязка', text,
-                                    function () {
-                                        ExtUtil.mask('tieDialog')
-                                        ExtUtil.mRequest({
-                                            url: '/users/api/tie',
-                                            loadingComponentRef: 'tieDialog',
-                                            params: {
-                                                apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid'),
-                                                username: username
-                                            },
-                                            success: function (response) {
-                                                Ext.getStore('apiUserStore').reload()
-                                                ExtUtil.maskOff('tieDialog')
-                                                ExtUtil.referenceQuery('tieDialog').close()
-                                            }
-                                        })
-                                    })
-                            }
-                        }
-                    ]
+                    }
                 }).show()
             }
         },
