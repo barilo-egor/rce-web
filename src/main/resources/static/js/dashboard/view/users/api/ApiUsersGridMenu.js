@@ -2,7 +2,8 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
     extend: 'Ext.menu.Menu',
     xtype: 'apiusersgridmenu',
     requires: [
-        'Dashboard.view.users.api.tie.TieDialog'
+        'Dashboard.view.users.api.tie.TieDialog',
+        'Dashboard.view.users.calculations.CalculationsDialog'
     ],
 
     items: [
@@ -44,6 +45,13 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
             reference: 'calculationGridButton',
             handler: function (me) {
                 Ext.create('Dashboard.view.users.api.calculate.CalculationDialog').show()
+            }
+        },
+        {
+            text: 'Предыдущие расчеты',
+            iconCls: 'x-fa fa-file-invoice-dollar',
+            handler: function (me) {
+                Ext.create('Dashboard.view.users.calculations.CalculationsDialog').show()
             }
         },
         {
