@@ -72,8 +72,11 @@ public class ApiUserDealsController extends BaseController {
 
     @GetMapping("/check")
     @ResponseBody
-    public SuccessResponse<?> check() {
-        return SuccessResponseUtil.blockString("Вы пока что не были привязаны ни к одному API клиенту. Обратитесь к оператору.");
+    public SuccessResponse<?> check(Principal principal) {
+        Long pid = apiUserRepository.getPidByUsername(principal.getName());
+        if (Objects.isNull(pid)) {
+            return SuccessResponseUtil.blockString("Вы пока что не были привязаны ни к одному API клиенту. Обратитесь к оператору.");
+        } else return new SuccessResponse<>();
     }
 
     @PostMapping("/findAll")
