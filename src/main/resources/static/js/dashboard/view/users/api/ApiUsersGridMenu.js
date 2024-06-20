@@ -33,6 +33,28 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
                     minWidth: 350,
                     width: '20%',
 
+                    tools: [
+                        {
+                            type: 'help',
+                            tooltip: {
+                                align: 'tr-bl',
+                                anchorToTarget: true,
+                                anchor: true,
+                                autoHide: false,
+                                closable: true,
+                                showOnTap: true,
+                                scrollable: 'y',
+                                title: 'Привязка',
+                                html: 'Здесь вы можете привязать API пользователя к WEB пользователю<br>' +
+                                    'для того чтобы клиент мог зайти в кабинет.<br>' +
+                                    'Для привязки двойным кликом в списке выберите<br>' +
+                                    'нужного пользователя и нажмите "Привязать"<br>' +
+                                    'Чтобы полностью отвязать пользователя, очистите поле<br>' +
+                                    'текущего пользователя и нажмите "Привязать".'
+                            }
+                        }
+                    ],
+
                     layout: {
                         type: 'vbox',
                         align: 'stretch'
