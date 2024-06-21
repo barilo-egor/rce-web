@@ -51,16 +51,33 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
             text: 'Предыдущие расчеты',
             iconCls: 'x-fa fa-file-invoice-dollar',
             handler: function (me) {
-                let store = Ext.getStore('calculationsStore')
-                store.load({
-                    callback: function() {
-                        Ext.create('Dashboard.view.users.api.calculations.CalculationsDialog', {
-                            viewModel: {
-                                data: {
-                                    store: store
-                                }
+                ExtUtil.mask('apiUsersContainer')
+                ExtUtil.mRequest({
+                    url: '/users/api/hasCalculations',
+                    params: {
+                        apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid')
+                    },
+                    loadingComponentRef: 'apiUsersContainer',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.body.data.hasCalculations === false) {
+                            ExtUtil.maskOff('apiUsersContainer')
+                            ExtMessages.topToast('У пользователя отсутствуют расчёты.')
+                            return
+                        }
+                        let store = Ext.getStore('calculationsStore')
+                        store.load({
+                            callback: function() {
+                                Ext.create('Dashboard.view.users.api.calculations.CalculationsDialog', {
+                                    viewModel: {
+                                        data: {
+                                            store: store
+                                        }
+                                    }
+                                }).show()
+                                ExtUtil.maskOff('apiUsersContainer')
                             }
-                        }).show()
+                        })
                     }
                 })
             }

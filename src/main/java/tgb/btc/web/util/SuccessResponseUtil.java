@@ -31,6 +31,10 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toJsonArrayNode(objects));
     }
 
+    public static <T extends JsonConvertable> SuccessResponse<?> jsonData(T t) {
+        return getDataObjectNode(t.map());
+    }
+
     public static <T> SuccessResponse<?> data(T[] objects, Function<T, ObjectNode> mapper) {
         return getDataObjectNode(JacksonUtil.toArrayNode(List.of(objects), mapper));
     }

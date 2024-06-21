@@ -152,6 +152,13 @@ public class ApiUsersController extends BaseController {
         return SuccessResponseUtil.toast("Пользователь успешно привязан.");
     }
 
+    @GetMapping("/hasCalculations")
+    @ResponseBody
+    public SuccessResponse<?> hasCalculations(Long apiUserPid) {
+        return SuccessResponseUtil.jsonData(() -> JacksonUtil.getEmpty().put("hasCalculations",
+                apiCalculationRepository.countAllByApiUser(apiUserRepository.getById(apiUserPid)) > 0));
+    }
+
     @GetMapping("/getCalculations")
     @ResponseBody
     public ObjectNode getCalculations(Long apiUserPid, Integer page, Integer limit) {
