@@ -35,7 +35,7 @@ public class Calculation implements JsonConvertable {
                         .map(TotalSum::map)
                         .collect(Collectors.toList())));
         result.put("leaf", false);
-        result.put("expanded", false);
+        result.put("expanded", true);
         result.put("iconCls", "none");
         return result;
     }

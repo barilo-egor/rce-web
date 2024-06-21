@@ -28,7 +28,7 @@ public class TotalSum implements JsonConvertable {
                 .put("dealType", dealType)
                 .put("fiatCurrency", fiatCurrency)
                 .put("cryptoCurrency", cryptoCurrency)
-                .put("totalFiatSum", totalCryptoSum)
+                .put("totalFiatSum", totalFiatSum)
                 .put("totalCryptoSum", totalCryptoSum)
                 .put("iconCls", "none")
                 .put("leaf", true);

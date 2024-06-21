@@ -49,7 +49,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGridMenu', {
         },
         {
             text: 'Предыдущие расчеты',
-            iconCls: 'x-fa fa-file-invoice-dollar',
+            iconCls: 'x-fa fa-file-invoice-dollar forestgreenColor',
             handler: function (me) {
                 ExtUtil.mask('apiUsersContainer')
                 ExtUtil.mRequest({
