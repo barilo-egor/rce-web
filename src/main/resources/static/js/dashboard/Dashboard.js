@@ -23,6 +23,7 @@ Ext.application({
         'Dashboard.store.enum.DeliveryTypesStore',
         'Dashboard.store.deal.bot.PaymentTypesComboStore',
         'Dashboard.store.enum.ApiDealStatusesStore',
-        'Dashboard.store.enum.RoleStore'
+        'Dashboard.store.enum.RoleStore',
+        'Dashboard.store.deal.api.CalculationsStore'
     ]
 })

@@ -1,5 +1,6 @@
 package tgb.btc.web.service.process;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +11,13 @@ import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.ApiCalculationRepository;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.vo.api.Calculation;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ApiCalculationProcessService {
@@ -47,13 +51,26 @@ public class ApiCalculationProcessService {
         }
         LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
         LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(newLastPaidDeal);
-        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeEnd(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeStart(dateTimeLastPaidDeal,
+                dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
         apiCalculationRepository.save(ApiCalculation.builder()
                 .apiUser(apiUserRepository.findById(userPid)
                         .orElseThrow(() -> new BaseException("Пользователь с pid=" + userPid + " не найден.")))
                 .deals(apiDeals)
+                .dateTime(LocalDateTime.now())
                 .build());
         apiUserRepository.updateLastPidDeal(userPid, apiDealRepository.getByPid(newLastPaidDeal));
-
     }
+
+    public ObjectNode mapToTree(List<Calculation> calculations) {
+        ObjectNode root = JacksonUtil.getEmpty();
+        root.put("expanded", true);
+        root.set("children", JacksonUtil.getEmptyArray().addAll(
+                calculations.stream()
+                        .map(Calculation::map)
+                        .collect(Collectors.toList()))
+        );
+        return root;
+    }
+
 }

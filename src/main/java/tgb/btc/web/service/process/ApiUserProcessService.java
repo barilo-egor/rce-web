@@ -3,16 +3,19 @@ package tgb.btc.web.service.process;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.RoleConstants;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.UsdApiUserCourseRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.repository.web.*;
+import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
 
 import java.time.LocalDate;
@@ -30,6 +33,20 @@ public class ApiUserProcessService {
     private WebUserRepository webUserRepository;
 
     private RoleRepository roleRepository;
+
+    private ApiCalculationRepository apiCalculationRepository;
+
+    private WebApiDealService webApiDealService;
+
+    @Autowired
+    public void setWebApiDealService(WebApiDealService webApiDealService) {
+        this.webApiDealService = webApiDealService;
+    }
+
+    @Autowired
+    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
+        this.apiCalculationRepository = apiCalculationRepository;
+    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -124,10 +141,26 @@ public class ApiUserProcessService {
             return;
         }
         WebUser webUser = webUserRepository.getByUsername(username);
-        if (webUser.getRoles().stream().noneMatch(role -> role.getName().equals(RoleConstants.ROLE_API_CLIENT.name()))) {
+        if (webUser.getRoles().stream()
+                .noneMatch(role -> role.getName().equals(RoleConstants.ROLE_API_CLIENT.name()))) {
             webUser.setRoles(roleRepository.getByName(RoleConstants.ROLE_API_CLIENT.name()));
             webUser = webUserRepository.save(webUser);
         }
         apiUserRepository.updateWebUser(apiUserPid, webUser);
     }
+
+    public List<Calculation> getCalculations(ApiUser apiUser, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("dateTime")));
+        List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser, pageable);
+        List<Calculation> calculations = new ArrayList<>();
+        for (ApiCalculation apiCalculation : apiCalculations) {
+            calculations.add(Calculation.builder()
+                    .dateTime(apiCalculation.getDateTime())
+                    .dealsCount(apiCalculation.getDeals().size())
+                    .children(webApiDealService.getTotalSums(apiCalculation.getDeals()))
+                    .build());
+        }
+        return calculations;
+    }
+
 }

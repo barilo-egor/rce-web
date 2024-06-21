@@ -1,13 +1,16 @@
 package tgb.btc.web.vo.api;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Builder;
 import lombok.Data;
+import tgb.btc.library.interfaces.JsonConvertable;
+import tgb.btc.library.util.web.JacksonUtil;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class TotalSum {
+public class TotalSum implements JsonConvertable {
 
     private String dealType;
 
@@ -18,4 +21,17 @@ public class TotalSum {
     private BigDecimal totalFiatSum;
 
     private BigDecimal totalCryptoSum;
+
+    @Override
+    public ObjectNode map() {
+        return JacksonUtil.getEmpty()
+                .put("dealType", dealType)
+                .put("fiatCurrency", fiatCurrency)
+                .put("cryptoCurrency", cryptoCurrency)
+                .put("totalFiatSum", totalCryptoSum)
+                .put("totalCryptoSum", totalCryptoSum)
+                .put("iconCls", "none")
+                .put("leaf", true);
+    }
+
 }
