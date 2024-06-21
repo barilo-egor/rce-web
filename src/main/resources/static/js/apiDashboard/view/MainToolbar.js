@@ -13,7 +13,31 @@ Ext.define('ApiDashboard.view.MainToolbar', {
         },
         '->',
         {
-            text: 'Расчёты'
+            text: 'Расчёты',
+            handler: function (me) {
+                ExtUtil.mRequest({
+                    url: '/dashboard/api/calculation/hasCalculations',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.body.data.hasCalculations === false) {
+                            ExtMessages.topToast('У пользователя отсутствуют расчёты.')
+                            return
+                        }
+                        let store = Ext.getStore('calculationsStore')
+                        store.load({
+                            callback: function() {
+                                Ext.create('ApiDashboard.view.calculation.CalculationsDialog', {
+                                    viewModel: {
+                                        data: {
+                                            store: store
+                                        }
+                                    }
+                                }).show()
+                            }
+                        })
+                    }
+                })
+            }
         },
         {
             text: 'Статистика',
