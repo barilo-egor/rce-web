@@ -38,7 +38,7 @@ Ext.define('ApiDashboard.view.MainToolbar', {
                                 Ext.getStore('dealStore').reload()
                                 break
                         }
-                        NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
+                        if (NOTIFICATION_SOUND_ON === true) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
                     }
                     eventSource.onerror = () => console.log('Произошла ошибка SSE.');
                 }
@@ -194,7 +194,10 @@ Ext.define('ApiDashboard.view.MainToolbar', {
         {
             menu: [
                 {
-                    text: 'Профиль'
+                    text: 'Профиль',
+                    handler: function (me) {
+                        Ext.create('ApiDashboard.view.profile.ProfileDialog').show()
+                    }
                 },
                 {
                     text: 'Выйти из аккаунта',

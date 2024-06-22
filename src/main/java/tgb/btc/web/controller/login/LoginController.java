@@ -1,6 +1,7 @@
 package tgb.btc.web.controller.login;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,10 +55,16 @@ public class LoginController extends BaseController {
     @GetMapping(path = "/registerLogin", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter registerLogin(HttpServletRequest request, String loginField) {
         Long chatId;
+        WebUser webUser;
         try {
             chatId = Long.parseLong(loginField);
+            webUser = webUserRepository.getByChatId(chatId);
         } catch (NumberFormatException e) {
-            chatId = webUserRepository.getByUsername(loginField).getChatId();
+            webUser = webUserRepository.getByUsername(loginField);
+            chatId = webUser.getChatId();
+        }
+        if (BooleanUtils.isFalse(webUser.getEnabled())) {
+            return null;
         }
         SseEmitter emitter = new SseEmitter(60000L);
         Long finalChatId = chatId;

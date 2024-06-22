@@ -78,9 +78,9 @@ public class ApiUserProcessService {
             apiUser = new ApiUser();
             apiUser.setRegistrationDate(LocalDate.now());
             apiUser.setIsBanned(false);
-            String token = RandomStringUtils.randomAlphanumeric(40);
+            String token = RandomStringUtils.randomAlphanumeric(42);
             while (apiUserRepository.countByToken(token) > 0) {
-                token = RandomStringUtils.randomAlphanumeric(40);
+                token = RandomStringUtils.randomAlphanumeric(42);
             }
             apiUser.setToken(token);
             List<UsdApiUserCourse> usdApiUserCourseList = new ArrayList<>();

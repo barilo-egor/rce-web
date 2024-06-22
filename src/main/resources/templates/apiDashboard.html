@@ -18,6 +18,15 @@
 	<script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
 	<script type="text/javascript">
         const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
+		let NOTIFICATION_SOUND_ON
+		ExtUtil.mRequest({
+			url: '/dashboard/api/util/getSoundEnabled',
+			method: 'GET',
+			async: false,
+			success: function (response) {
+				NOTIFICATION_SOUND_ON = response.body.data.soundEnabled
+			}
+		})
         let TITLE
         ExtUtil.mRequest({
             url: '/dashboard/api/util/getBotName',

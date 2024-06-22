@@ -113,7 +113,7 @@ public class ApiController extends BaseController {
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
-        if (apiDealRepository.countByPid(id) == 0) {
+        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             log.debug("Запрос на перевод несуществующей сделки {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
@@ -143,7 +143,7 @@ public class ApiController extends BaseController {
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
-        if (apiDealRepository.countByPid(id) == 0) {
+        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
             ApiDealStatus status = apiDealRepository.getApiDealStatusByPid(id);
@@ -167,7 +167,7 @@ public class ApiController extends BaseController {
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         log.debug("Запрос статуса АПИ сделки {}.", id);
-        if (apiDealRepository.countByPid(id) == 0) {
+        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
             return ApiStatusCode.DEAL_EXISTS.toJson()
