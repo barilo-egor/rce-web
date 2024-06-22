@@ -14,9 +14,6 @@ Ext.define('Dashboard.view.users.api.calculations.CalculationsDialog', {
             bind: {
                 store: '{store}'
             },
-            plugins: {
-                pagingtoolbar: true
-            },
 
             listeners: {
                 painted: function(me) {

@@ -62,9 +62,9 @@ public class ApiCalculationsController extends BaseController {
 
     @GetMapping("/getCalculations")
     @ResponseBody
-    public ObjectNode getCalculations(Principal principal, Integer page, Integer limit) {
+    public ObjectNode getCalculations(Principal principal) {
         ApiUser apiUser = apiUserRepository.getById(apiUserRepository.getPidByUsername(principal.getName()));
-        List<Calculation> calculations = apiUserProcessService.getCalculations(apiUser, page - 1, limit);
+        List<Calculation> calculations = apiUserProcessService.getCalculations(apiUser);
         ObjectNode result = apiCalculationProcessService.mapToTree(calculations);
         JacksonUtil.pagingData(result, apiCalculationRepository.countAllByApiUser(apiUser));
         return result;

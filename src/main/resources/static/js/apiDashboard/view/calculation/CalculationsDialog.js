@@ -14,9 +14,6 @@ Ext.define('ApiDashboard.view.calculation.CalculationsDialog', {
             bind: {
                 store: '{store}'
             },
-            plugins: {
-                pagingtoolbar: true
-            },
 
             listeners: {
                 painted: function(me) {

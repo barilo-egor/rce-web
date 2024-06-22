@@ -3,7 +3,6 @@ Ext.define('ApiDashboard.store.CalculationsStore', {
     storeId: 'calculationsStore',
 
     autoLoad: false,
-    pageSize: 4,
     proxy: {
         type: 'ajax',
         url: '/dashboard/api/calculation/getCalculations',

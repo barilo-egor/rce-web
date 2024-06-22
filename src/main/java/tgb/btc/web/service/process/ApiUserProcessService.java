@@ -149,9 +149,8 @@ public class ApiUserProcessService {
         apiUserRepository.updateWebUser(apiUserPid, webUser);
     }
 
-    public List<Calculation> getCalculations(ApiUser apiUser, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("dateTime")));
-        List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser, pageable);
+    public List<Calculation> getCalculations(ApiUser apiUser) {
+        List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser);
         List<Calculation> calculations = new ArrayList<>();
         for (ApiCalculation apiCalculation : apiCalculations) {
             calculations.add(Calculation.builder()
