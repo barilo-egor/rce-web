@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.bean.bot.DealPayment;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.repository.web.DealPaymentRepository;
+import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -35,6 +37,13 @@ public class DealPaymentController extends BaseController {
 
     private DealPaymentRepository dealPaymentRepository;
 
+    private NotificationsAPI notificationsAPI;
+
+    @Autowired
+    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
+
     @Autowired
     public void setDealPaymentRepository(DealPaymentRepository dealPaymentRepository) {
         this.dealPaymentRepository = dealPaymentRepository;
@@ -51,6 +60,7 @@ public class DealPaymentController extends BaseController {
         }
         Instant instant = Instant.ofEpochMilli(Long.parseLong(time));
         LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        notificationsAPI.send(NotificationType.NEW_PAYMENT, "Поступила новая оплата: " + app + ", " + phone + ".");
         dealPaymentRepository.save(DealPayment.builder()
                 .title(title)
                 .message(message)

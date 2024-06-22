@@ -63,6 +63,11 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
                     break
+                case 'NEW_PAYMENT':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('dealPaymentStore').reload()
+                    break
             }
             if (NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }
