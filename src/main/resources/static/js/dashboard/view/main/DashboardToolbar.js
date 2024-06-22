@@ -45,6 +45,41 @@ Ext.define('Dashboard.view.main.DashboardToolbar', {
 
                 buttons: [
                     {
+                        handler: function (me) {
+                            let newValue = me.getText() === 'Включить звук'
+                            ExtUtil.mRequest({
+                                url: '/dashboard/api/util/updateSoundEnabled',
+                                params: {
+                                    soundEnabled: newValue
+                                },
+                                success: function (response) {
+                                    NOTIFICATION_SOUND_ON = newValue
+                                    if (newValue === true) {
+                                        me.setText('Выключить звук')
+                                    } else {
+                                        me.setText('Включить звук')
+                                    }
+                                }
+                            })
+                        },
+                        listeners: {
+                            painted: function (me) {
+                                ExtUtil.mRequest({
+                                    url: '/util/getSoundEnabled',
+                                    method: 'GET',
+                                    async: false,
+                                    success: function (response) {
+                                        if (response.body.data.soundEnabled === true) {
+                                            me.setText('Выключить звук')
+                                        } else {
+                                            me.setText('Включить звук')
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    },
+                    {
                         text: 'Очистить',
                         handler: function (me) {
                             Ext.getStore('notificationsStore').removeAll()

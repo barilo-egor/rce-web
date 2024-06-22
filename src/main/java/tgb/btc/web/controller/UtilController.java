@@ -1,6 +1,7 @@
 package tgb.btc.web.controller;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -38,6 +39,13 @@ public class UtilController extends BaseController {
     public SuccessResponse<?> getUsername(Principal principal) {
         return SuccessResponseUtil.data(principal.getName(),
                 data -> JacksonUtil.getEmpty().put("username", data));
+    }
+
+    @GetMapping("/getSoundEnabled")
+    @ResponseBody
+    public SuccessResponse<?> getSoundEnabled(Principal principal) {
+        return SuccessResponseUtil.data(BooleanUtils.isNotFalse(webUserRepository.getSoundEnabledByUsername(principal.getName())),
+                data -> JacksonUtil.getEmpty().put("soundEnabled", data));
     }
 
     @GetMapping("/getUsernames")

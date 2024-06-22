@@ -64,7 +64,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
                     break
             }
-            NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
+            if (NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }
         eventSource.onerror = () => console.log('Произошла ошибка SSE.');
     }
