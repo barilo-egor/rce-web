@@ -53,7 +53,7 @@ Ext.define('ApiDashboard.view.MainToolbar', {
                     method: 'GET',
                     success: function (response) {
                         if (response.body.data.hasCalculations === false) {
-                            ExtMessages.topToast('У пользователя отсутствуют расчёты.')
+                            ExtMessages.topToast('У вас пока что отсутствуют расчёты.')
                             return
                         }
                         let store = Ext.getStore('calculationsStore')
