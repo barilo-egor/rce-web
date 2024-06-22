@@ -32,7 +32,7 @@ public class NotificationsAPI implements INotificationsAPI {
             try {
                 value.send(
                         Notification.builder()
-                                .type(notificationType)
+                                .type(notificationType.name())
                                 .message(message)
                                 .build()
                                 .map()

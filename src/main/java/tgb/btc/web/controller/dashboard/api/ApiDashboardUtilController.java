@@ -26,6 +26,15 @@ public class ApiDashboardUtilController extends BaseController {
         );
     }
 
+    @GetMapping("/getBotLink")
+    @ResponseBody
+    public SuccessResponse<?> getBotLink() {
+        return SuccessResponseUtil.data((JsonConvertable) () ->
+                JacksonUtil.getEmpty()
+                        .put("value", PropertiesPath.BOT_PROPERTIES.getString("bot.link"))
+        );
+    }
+
     @GetMapping("/getUsername")
     @ResponseBody
     public SuccessResponse<?> getUsername(Principal principal) {

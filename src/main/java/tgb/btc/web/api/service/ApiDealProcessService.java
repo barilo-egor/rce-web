@@ -21,6 +21,8 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.constant.enums.ApiUserNotificationType;
+import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.util.ApiResponseUtil;
 import tgb.btc.web.vo.form.ApiDealVO;
 
@@ -39,6 +41,13 @@ public class ApiDealProcessService {
     private CryptoCurrencyService cryptoCurrencyService;
 
     private CalculateService calculateService;
+
+    private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    @Autowired
+    public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
+        this.apiUserNotificationsAPI = apiUserNotificationsAPI;
+    }
 
     @Autowired
     public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
@@ -90,6 +99,7 @@ public class ApiDealProcessService {
                     JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
         }
         log.debug("АПИ клиент {} создал новую АПИ сделку {}.", apiUser.getId(), apiDeal.getPid());
+        apiUserNotificationsAPI.send(apiUser.getPid(), ApiUserNotificationType.CREATED_DEAL, "Создана новая сделка №" + apiDeal.getPid());
         return ApiResponseUtil.build(ApiStatusCode.CREATED_DEAL,
                 dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
     }

@@ -11,8 +11,10 @@ import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.constant.enums.ApiUserNotificationType;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -39,6 +41,13 @@ public class ApiDealsController extends BaseController {
     private ApiDealReportService apiDealReportService;
 
     private ApiUserRepository apiUserRepository;
+
+    private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    @Autowired
+    public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
+        this.apiUserNotificationsAPI = apiUserNotificationsAPI;
+    }
 
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
@@ -78,6 +87,7 @@ public class ApiDealsController extends BaseController {
     public SuccessResponse<?> accept(Principal principal, Long pid) {
         apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
+        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
@@ -86,6 +96,7 @@ public class ApiDealsController extends BaseController {
     public SuccessResponse<?> decline(Principal principal, Long pid) {
         apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
         log.debug("Пользователь {} отклонил АПИ сделку {}", principal.getName(), pid);
+        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.DECLINED_DEAL, "Сделка №" + pid + " отклонена.");
         return SuccessResponseUtil.toast("Сделка отклонена.");
     }
 

@@ -21,8 +21,10 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.ApiStatusCode;
+import tgb.btc.web.constant.enums.ApiUserNotificationType;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -48,6 +50,13 @@ public class ApiController extends BaseController {
     private INotifier notifier;
 
     private NotificationsAPI notificationsAPI;
+
+    private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    @Autowired
+    public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
+        this.apiUserNotificationsAPI = apiUserNotificationsAPI;
+    }
 
     @Autowired
     public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
@@ -112,6 +121,7 @@ public class ApiController extends BaseController {
             return ApiStatusCode.DEAL_ALREADY_PAID.toJson();
         } else {
             ApiDeal apiDeal = apiDealRepository.getByPid(id);
+            if (ApiDealStatus.CANCELED.equals(apiDeal.getApiDealStatus())) return ApiStatusCode.DEAL_CANCELED.toJson();
             LocalDateTime now = LocalDateTime.now();
             if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
                 log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
@@ -120,6 +130,7 @@ public class ApiController extends BaseController {
             apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
             if (Objects.nonNull(notifier)) notifier.notifyNewApiDeal(id);
             notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
+            apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL, "Оплачена сделка №" + apiDeal.getPid());
             log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), apiDeal.getApiDealStatus().name());
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
@@ -142,6 +153,7 @@ public class ApiController extends BaseController {
                     notificationsAPI.send(NotificationType.API_DEAL_CANCELED, "API сделка №" + id + " была отменена клиентом");
                 }
                 log.debug("АПИ сделка {} переведена в статус {}.", id, ApiDealStatus.CANCELED.name());
+                apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(id), ApiUserNotificationType.CANCELED_DEAL, "Отмена сделки №" + id);
                 return ApiStatusCode.DEAL_DELETED.toJson();
             } else return ApiStatusCode.DEAL_CONFIRMED.toJson();
         }

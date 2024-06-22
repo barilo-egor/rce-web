@@ -12,12 +12,12 @@ import tgb.btc.web.constant.enums.NotificationType;
 public class Notification implements JsonConvertable {
     private String message;
 
-    private NotificationType type;
+    private String type;
 
     @Override
     public ObjectNode map() {
         return JacksonUtil.getEmpty()
-                .put("type", type.name())
+                .put("type", type)
                 .put("message", message);
     }
 }
