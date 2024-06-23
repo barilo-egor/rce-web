@@ -73,7 +73,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     playSound = true
                     break
             }
-            if (NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
+            if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }
         eventSource.onerror = () => console.log('Произошла ошибка SSE.');
     }
