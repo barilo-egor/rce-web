@@ -47,6 +47,11 @@ public class LoginController extends BaseController {
     public static Map<Long, EmitterVO> LOGIN_EMITTER_MAP = new HashMap<>();
 
     @Autowired
+    public void setWebApi(WebApi webApi) {
+        this.webApi = webApi;
+    }
+
+    @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
     }
