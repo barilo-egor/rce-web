@@ -7,6 +7,26 @@ Ext.define('ApiDashboard.view.profile.ProfileDialog', {
     height: 300,
     width: 430,
 
+    tools: [
+        {
+            type: 'help',
+            tooltip: {
+                align: 'tr-bl',
+                anchorToTarget: true,
+                anchor: true,
+                autoHide: false,
+                closable: true,
+                showOnTap: true,
+                scrollable: 'y',
+                title: 'Редактирование профиля',
+                html: 'Для редактирования логина введите новое<br>' +
+                    'значение в поле и нажмите кнопку подтверждения.<br>' +
+                    'Для генерации нового токена нажмите<br>' +
+                    'кнопку "Сгенерировать новый"<br>'
+            }
+        }
+    ],
+
     layout: {
         type: 'vbox',
         align: 'stretch',
