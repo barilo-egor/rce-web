@@ -24,7 +24,6 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
         }
     ],
 
-    minWidth: 700,
 
     layout: {
         type: 'vbox',
@@ -68,33 +67,37 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
                 }
             },
             minHeight: 205,
-            width: '97%',
             margin: '0 10 0 0',
             columns: [
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
-                    flex: 1
+                    width: 100
                 },
                 {
                     text: 'Фиатная валюта',
                     dataIndex: 'fiatCurrency',
-                    flex: 1
+                    width: 140
                 },
                 {
                     text: 'Криптовалюта',
                     dataIndex: 'cryptoCurrency',
-                    flex: 1
+                    width: 120
                 },
                 {
                     text: 'Сумма в фиате',
                     dataIndex: 'totalFiatSum',
-                    flex: 1
+                    width: 120
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'totalCryptoSum',
-                    flex: 1
+                    width: 130
+                },
+                {
+                    text: 'Количество сделок',
+                    dataIndex: 'sumDealsCount',
+                    width: 150
                 }
             ]
         }

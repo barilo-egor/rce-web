@@ -186,6 +186,7 @@ public class WebApiDealService {
                                 .totalFiatSum(matchDeals.stream()
                                         .map(ApiDeal::getAmount)
                                         .reduce(BigDecimal.ZERO, BigDecimal::add))
+                                        .sumDealsCount(matchDeals.size())
                                 .build());
                     }
                 }

@@ -22,6 +22,8 @@ public class TotalSum implements JsonConvertable {
 
     private BigDecimal totalCryptoSum;
 
+    private Integer sumDealsCount;
+
     @Override
     public ObjectNode map() {
         return JacksonUtil.getEmpty()
@@ -30,6 +32,7 @@ public class TotalSum implements JsonConvertable {
                 .put("cryptoCurrency", cryptoCurrency)
                 .put("totalFiatSum", totalFiatSum)
                 .put("totalCryptoSum", totalCryptoSum)
+                .put("sumDealsCount", sumDealsCount)
                 .put("iconCls", "none")
                 .put("leaf", true);
     }
