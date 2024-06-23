@@ -74,6 +74,6 @@ public class DealPaymentController extends BaseController {
     @GetMapping("/findAll")
     @ResponseBody
     public SuccessResponse<?> findAll() {
-        return SuccessResponseUtil.jsonData(dealPaymentRepository.findAll());
+        return SuccessResponseUtil.jsonData(dealPaymentRepository.findAllSortedDescDateTime());
     }
 }
