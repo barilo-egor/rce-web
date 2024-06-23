@@ -29,6 +29,11 @@ Ext.define('Dashboard.view.deal.bot.BotDealsPaymentPanel', {
                     width: 150
                 },
                 {
+                    text: 'Дата и время',
+                    dataIndex: 'dateTime',
+                    width: 150
+                },
+                {
                     text: 'Заголовок',
                     dataIndex: 'title',
                     width: 250,
