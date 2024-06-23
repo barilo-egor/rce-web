@@ -44,12 +44,14 @@ Ext.define('Dashboard.view.main.DashboardController', {
         eventSource.onmessage = e => {
             let response = Ext.JSON.decode(e.data);
             let workspaceItem = ExtUtil.referenceQuery('dashboardWorkspace').getItems().items[0]
+            let playSound = false
             switch (response.type) {
                 case 'NEW_BOT_DEAL':
                 case 'ADDITIONAL_VERIFICATION_RECEIVE':
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    playSound = true
                     break
                 case 'ADD_MANUAL_DEAL':
                 case 'CONFIRM_BOT_DEAL':
@@ -62,11 +64,13 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
+                    playSound = true
                     break
                 case 'NEW_PAYMENT':
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('dealPaymentStore').reload()
+                    playSound = true
                     break
             }
             if (NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
