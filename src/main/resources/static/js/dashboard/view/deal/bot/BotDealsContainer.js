@@ -50,7 +50,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsContainer', {
             },
             shadow: true,
             margin: '0 5 10 10',
-            hidden: !IS_DEV,
             docked: 'bottom',
             listeners: {
                 collapse: function(me) {
