@@ -176,7 +176,9 @@ Ext.define('ApiDashboard.view.profile.ProfileDialog', {
                         method: 'GET',
                         async: false,
                         success: function (response) {
+                            me.suspendEvent('change')
                             me.setValue(response.body.data.soundEnabled)
+                            me.resumeEvent('change')
                         }
                     })
                 }
