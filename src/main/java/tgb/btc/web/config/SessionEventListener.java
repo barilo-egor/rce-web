@@ -8,12 +8,13 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
 public class SessionEventListener extends HttpSessionEventPublisher {
 
-    public static Map<Long, HttpSession> HTTP_SESSIONS = new HashMap<>();
+    public static Map<Long, HttpSession> HTTP_SESSIONS = new ConcurrentHashMap<>();
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {

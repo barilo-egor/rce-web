@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import tgb.btc.api.bot.WebAPI;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
@@ -21,6 +22,7 @@ import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.SystemUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.WebApi;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.EmitterVO;
@@ -39,6 +41,8 @@ public class LoginController extends BaseController {
     private WebUserRepository webUserRepository;
 
     private INotifier notifier;
+
+    private WebApi webApi;
 
     public static Map<Long, EmitterVO> LOGIN_EMITTER_MAP = new HashMap<>();
 
@@ -87,17 +91,7 @@ public class LoginController extends BaseController {
     public SuccessResponse<?> loginInstant(HttpServletRequest request, String login) {
         if (!SystemUtil.isDev()) return null;
         WebUser webUser = webUserRepository.getByUsername(login);
-        String[] roles = new String[webUser.getRoles().size()];
-        int i = 0;
-        for (Role role : webUser.getRoles()) {
-            roles[i] = role.getName();
-        }
-        Authentication auth = new UsernamePasswordAuthenticationToken(webUser, null,
-                AuthorityUtils.createAuthorityList(roles)
-        );
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        SecurityContext sc = SecurityContextHolder.getContext();
-        request.getSession().setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+        webApi.authorize(webUser, request);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("success", true));
     }
 }

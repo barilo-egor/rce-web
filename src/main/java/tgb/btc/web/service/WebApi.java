@@ -47,7 +47,7 @@ public class WebApi implements WebAPI {
     public void submitLogin(Long chatId) {
         EmitterVO emitter = LoginController.LOGIN_EMITTER_MAP.get(chatId);
         WebUser webUser = webUserRepository.getByChatId(chatId);
-        authorize(webUser, chatId, emitter.getRequest());
+        authorize(webUser, emitter.getRequest());
         try {
             emitter.getEmitter().send(JacksonUtil.getEmpty().put("success", true));
             emitter.getEmitter().complete();
@@ -59,7 +59,7 @@ public class WebApi implements WebAPI {
         }
     }
 
-    private void authorize(WebUser webUser, Long chatId, HttpServletRequest request) {
+    public void authorize(WebUser webUser, HttpServletRequest request) {
         String[] roles = new String[webUser.getRoles().size()];
         int i = 0;
         for (Role role : webUser.getRoles()) {
@@ -70,11 +70,11 @@ public class WebApi implements WebAPI {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
         HttpSession session = request.getSession(true);
-        SessionEventListener.HTTP_SESSIONS.put(chatId, session);
-        session.setAttribute("chatId", chatId);
+        SessionEventListener.HTTP_SESSIONS.put(webUser.getChatId(), session);
+        session.setAttribute("chatId", webUser.getChatId());
         SecurityContext sc = SecurityContextHolder.getContext();
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-        log.debug("Авторизация пользователя chatId={}, username={}.", chatId, webUser.getUsername());
+        log.debug("Авторизация пользователя chatId={}, username={}.", webUser.getChatId(), webUser.getUsername());
     }
 
     @Override
@@ -84,7 +84,7 @@ public class WebApi implements WebAPI {
         EmitterVO.RegistrationData registrationData = emitter.getRegistrationData();
         WebUser webUser = webUserService.save(registrationData.getUsername(), registrationData.getChatId(), registrationData.getToken());
         try {
-            authorize(webUser, chatId, emitter.getRequest());
+            authorize(webUser, emitter.getRequest());
             emitter.getEmitter().send(JacksonUtil.getEmpty().put("success", true));
             emitter.getEmitter().complete();
         } catch (IOException e) {

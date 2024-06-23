@@ -1,5 +1,6 @@
 package tgb.btc.web.controller.dashboard.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebApi;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -22,6 +24,7 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/dashboard/api/util")
+@Slf4j
 public class ApiDashboardUtilController extends BaseController {
 
     private ApiUserService apiUserService;
@@ -29,13 +32,6 @@ public class ApiDashboardUtilController extends BaseController {
     private ApiUserRepository apiUserRepository;
 
     private WebUserRepository webUserRepository;
-
-    private WebApi webApi;
-
-    @Autowired
-    public void setWebApi(WebApi webApi) {
-        this.webApi = webApi;
-    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -94,15 +90,19 @@ public class ApiDashboardUtilController extends BaseController {
     @PostMapping("/tokenGenerate")
     @ResponseBody
     public SuccessResponse<?> tokenGenerate(Principal principal) {
-        return SuccessResponseUtil.data(apiUserService.generateToken(principal.getName()),
+        String newToken = apiUserService.generateToken(principal.getName());
+        log.debug("API пользователь {} сгенерировал новый токен.", principal.getName());
+        return SuccessResponseUtil.data(newToken,
                 data -> JacksonUtil.getEmpty().put("token", data));
     }
 
     @PostMapping("/updateLogin")
     @ResponseBody
     public SuccessResponse<?> updateLogin(Principal principal, String login) {
-        webUserRepository.updateUsername(login, principal.getName());
-        webApi.logout(webUserRepository.getChatIdByUsername(login));
+        String oldUsername = principal.getName();
+        webUserRepository.updateUsername(login, oldUsername);
+        log.debug("Пользователь {} сменил username на {}", oldUsername, login);
+        SessionEventListener.HTTP_SESSIONS.get(webUserRepository.getChatIdByUsername(login)).invalidate();
         return new SuccessResponse<>();
     }
 
