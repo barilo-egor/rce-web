@@ -2,6 +2,10 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
     extend: 'Ext.Panel',
     xtype: 'dealfilterpanel',
     reference: 'dealFilterPanel',
+    requires: [
+        'ApiDashboard.view.grid.DealController'
+    ],
+    controller: 'dealController',
 
     shadow: true,
     header: false,
@@ -50,9 +54,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                             label: 'Номер заявки от',
                             margin: '0 20 0 20',
                             listeners: {
-                                change: function() {
-                                    Ext.getStore('dealStore').loadPage(1)
-                                }
+                                change: 'loadFirstPage'
                             }
                         },
                         {
@@ -61,9 +63,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                             label: 'Номер заявки до',
                             margin: '0 20 0 20',
                             listeners: {
-                                change: function() {
-                                    Ext.getStore('dealStore').loadPage(1)
-                                }
+                                change: 'loadFirstPage'
                             }
                         }
                     ]
@@ -73,7 +73,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     reference: 'dateFilterField',
                     margin: '0 20 0 20',
                     dateFieldChangeListener: function() {
-                        Ext.getStore('dealStore').loadPage(1)
+                        ExtUtil.referenceQuery('dealFilterPanel').getController().loadFirstPage()
                     }
                 },
             ]
@@ -93,9 +93,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     reference: 'fiatCurrencyFilterField',
                     margin: '0 20 0 20',
                     listeners: {
-                        change: function() {
-                            Ext.getStore('dealStore').loadPage(1)
-                        }
+                        change: 'loadFirstPage'
                     }
                 },
                 {
@@ -111,9 +109,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     reference: 'cryptoCurrencyFilterField',
                     margin: '0 20 0 20',
                     listeners: {
-                        change: function() {
-                            Ext.getStore('dealStore').loadPage(1)
-                        }
+                        change: 'loadFirstPage'
                     }
                 },
             ]
@@ -133,9 +129,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     reference: 'dealTypeFilterField',
                     margin: '0 20 0 20',
                     listeners: {
-                        change: function() {
-                            Ext.getStore('dealStore').loadPage(1)
-                        }
+                        change: 'loadFirstPage'
                     }
                 },
                 {
@@ -151,9 +145,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     reference: 'apiDealStatusFilterField',
                     margin: '0 20 0 20',
                     listeners: {
-                        change: function() {
-                            Ext.getStore('dealStore').loadPage(1)
-                        }
+                        change: 'loadFirstPage'
                     }
                 }
             ]

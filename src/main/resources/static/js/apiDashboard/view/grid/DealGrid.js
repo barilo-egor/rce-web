@@ -28,15 +28,7 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
             store: Ext.create('ApiDashboard.store.DealStore'),
 
             listeners: {
-                painted: function (me) {
-                    ExtUtil.mRequest({
-                        url: '/dashboard/api/deal/check',
-                        method: 'GET',
-                        success: function (response) {
-                            me.getStore().load()
-                        }
-                    })
-                },
+                painted: 'checkTie',
                 childcontextmenu: 'openGridMenu',
             },
             plugins: {

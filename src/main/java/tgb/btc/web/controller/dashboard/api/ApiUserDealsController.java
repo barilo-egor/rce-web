@@ -70,9 +70,9 @@ public class ApiUserDealsController extends BaseController {
         this.webApiDealService = webApiDealService;
     }
 
-    @GetMapping("/check")
+    @GetMapping("/checkTie")
     @ResponseBody
-    public SuccessResponse<?> check(Principal principal) {
+    public SuccessResponse<?> checkTie(Principal principal) {
         Long pid = apiUserRepository.getPidByUsername(principal.getName());
         if (Objects.isNull(pid)) {
             return SuccessResponseUtil.blockString("Вы пока что не были привязаны ни к одному API клиенту. Обратитесь к оператору.");

@@ -2,6 +2,20 @@ Ext.define('ApiDashboard.view.grid.DealController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.dealController',
 
+    loadFirstPage: function() {
+        Ext.getStore('dealStore').loadPage(1)
+    },
+
+    checkTie: function (me) {
+        ExtUtil.mRequest({
+            url: '/dashboard/api/deal/checkTie',
+            method: 'GET',
+            success: function (response) {
+                me.getStore().load()
+            }
+        })
+    },
+
     exportDeals: function (me) {
         ExtUtil.mRequest({
             url: '/dashboard/api/deal/beforeExport',

@@ -1,29 +1,21 @@
 Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
     extend: 'Ext.Dialog',
     requires: [
+        'ApiDashboard.view.statistic.DealStatisticController'
     ],
+    controller: 'dealStatisticController',
 
     closable: true,
     title: 'Статистика подтвержденных сделок',
 
     tools: [
-        {
-            type: 'help',
-            tooltip: {
-                align: 'tr-bl',
-                anchorToTarget: true,
-                anchor: true,
-                autoHide: false,
-                closable: true,
-                showOnTap: true,
-                scrollable: 'y',
-                title: 'Статистика',
-                html: 'Здесь вы можете посмотреть общую статистику <br> сделок в статусе "ACCEPTED"(Подтверждена оператором).<br>' +
-                    'При выборе диапазона дат сделки выбираются включительно <br>каждую выбранную дату.<br> Чтобы загрузить статистику за всё время, оставьте дату пустой.'
-            }
-        }
+        ExtUtilConfig.getHelpDialogTool('Статистика',
+            'Здесь вы можете посмотреть общую статистику <br>' +
+            ' сделок в статусе "ACCEPTED"(Подтверждена оператором).<br>' +
+            'При выборе диапазона дат сделки выбираются включительно <br>' +
+            'каждую выбранную дату.<br>' +
+            'Чтобы загрузить статистику за всё время, оставьте дату пустой.')
     ],
-
 
     layout: {
         type: 'vbox',
@@ -39,11 +31,7 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
             xtype: 'button',
             text: 'Загрузить',
             margin: '0 0 30 0',
-            handler: function (me) {
-                Ext.getStore('statisticStore').load({
-                    params: ExtUtil.referenceQuery('statisticDateRange').getValue()
-                })
-            }
+            handler: 'load'
         },
         {
             flex: 1,
