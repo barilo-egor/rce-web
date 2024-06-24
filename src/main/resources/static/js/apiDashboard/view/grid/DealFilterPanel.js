@@ -86,6 +86,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     clearable: true,
                     valueField: 'name',
                     label: 'Фиатная валюта',
+                    queryMode: 'local',
                     displayField: 'code',
                     store: {
                         type: 'fiatCurrenciesStore'
@@ -102,6 +103,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     clearable: true,
                     valueField: 'name',
                     label: 'Криптовалюта',
+                    queryMode: 'local',
                     displayField: 'shortName',
                     store: {
                         type: 'cryptoCurrenciesStore'
@@ -123,6 +125,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     valueField: 'name',
                     label: 'Тип сделки',
                     displayField: 'nominative',
+                    queryMode: 'local',
                     store: {
                         type: 'dealTypesStore'
                     },
@@ -139,6 +142,7 @@ Ext.define('ApiDashboard.view.grid.DealFilterPanel', {
                     editable: false,
                     clearable: true,
                     valueField: 'name',
+                    queryMode: 'local',
                     store: {
                         type: 'apiDealStatusesStore'
                     },
