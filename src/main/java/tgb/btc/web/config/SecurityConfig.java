@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/web/main",
                         "/registration/**",
                         "/api/**", "/documentation/**",
-                        "/users/web/exist", "/util/isDev", "/deal/payment/new"
+                        "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico"
                 )
                 .permitAll();
         // Доступ для юзеров
