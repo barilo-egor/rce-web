@@ -16,6 +16,20 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: 'exportDeals'
+            },
+            '->',
+            {
+                xtype: 'button',
+                iconCls: 'x-fa fa-question',
+                tooltip: 'Статусы сделок',
+                handler: function (me) {
+                    ExtMessages.info('Статусы сделок',
+                        '<span class="blackColor" style="font-size: 14px; margin-bottom: 10px; display: inline-block;">Создана</span> - <span style="font-size: 14px">CREATED</span><br>' +
+                        '<span class="mediumSeaGreenColor" style="font-size: 14px; margin-bottom: 10px; display: inline-block;">Оплачена</span> - <span style="font-size: 14px">PAID</span><br>' +
+                        '<span class="orangeColor" style="font-size: 14px; margin-bottom: 10px; display: inline-block;">Отменена клиентом</span> - <span style="font-size: 14px">CANCELED</span><br>' +
+                        '<span class="lightGrey" style="font-size: 14px; margin-bottom: 10px; display: inline-block;">Подтверждена оператором</span> - <span style="font-size: 14px">ACCEPTED</span><br>' +
+                        '<span class="redColor" style="font-size: 14px; margin-bottom: 10px; display: inline-block;">Отклонена оператором</span> - <span style="font-size: 14px">DECLINED</span><br>')
+                }
             }
         ]
     },

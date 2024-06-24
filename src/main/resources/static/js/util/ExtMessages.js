@@ -91,5 +91,26 @@ let ExtMessages = {
                 }
             ]
         }).show()
+    },
+
+    info: function (title, message) {
+        Ext.create('Ext.Dialog', {
+            title: title,
+            closable: true,
+            buttonAlign: 'center',
+
+            layout: {
+                type: 'vbox',
+                align: 'center',
+                pack: 'middle'
+            },
+            items: [
+                {
+                    xtype: 'container',
+                    margin: '0 40 20 40',
+                    html: message
+                }
+            ]
+        }).show()
     }
 }
