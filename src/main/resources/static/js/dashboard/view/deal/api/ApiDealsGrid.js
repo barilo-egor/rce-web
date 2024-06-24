@@ -90,7 +90,7 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     text: 'Реквизит',
                     dataIndex: 'requisite',
                     flex: 1,
-                    menuDisabled: true,v
+                    menuDisabled: true
                 }
             ]
         }
