@@ -36,7 +36,8 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                 {
                     text: 'ID',
                     dataIndex: 'id',
-                    flex: 0.5
+                    flex: 0.5,
+                    menuDisabled: true,
                 },
                 {
                     text: 'WEB логин',
@@ -48,19 +49,22 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                         } else {
                             return val
                         }
-                    }
+                    },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Скидка',
                     dataIndex: 'personalDiscount',
-                    width: 70
+                    width: 70,
+                    menuDisabled: true,
                 },
                 {
                     xtype: 'datecolumn',
                     text: 'Дата регистрации',
                     dataIndex: 'registrationDate',
                     width: 140,
-                    format: 'd.m.Y'
+                    format: 'd.m.Y',
+                    menuDisabled: true,
                 },
                 {
                     text: 'В бане',
@@ -69,22 +73,26 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     renderer: function (val) {
                         return val ? 'Да' : 'Нет'
                     },
-                    width: 80
+                    width: 80,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Токен',
                     dataIndex: 'token',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Реквизит покупки',
                     dataIndex: 'buyRequisite',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Реквизит продажи',
                     dataIndex: 'sellRequisite',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиат',
@@ -97,7 +105,8 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                             return val1.get('fiatCurrency').code.localeCompare(val2.get('fiatCurrency').code)
                         }
                     },
-                    width: 60
+                    width: 60,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Курс RUB',
@@ -112,6 +121,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                             return course1 - course2
                         }
                     },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Курс BYN',
@@ -126,6 +136,7 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                             return course1 - course2
                         }
                     },
+                    menuDisabled: true,
                 }
             ]
         }

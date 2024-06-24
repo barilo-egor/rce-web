@@ -24,32 +24,38 @@ Ext.define('Dashboard.view.users.api.calculations.CalculationsDialog', {
             columns: [
                 {
                     xtype: 'treecolumn',
-                    width: 50
+                    width: 50,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Дата и время',
                     dataIndex: 'dateTime',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Кол-во сделок',
                     dataIndex: 'dealsCount',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиатная валюта',
                     dataIndex: 'fiatCurrency',
-                    width: 130
+                    width: 130,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Криптовалюта',
                     dataIndex: 'cryptoCurrency',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в фиате',
@@ -59,7 +65,8 @@ Ext.define('Dashboard.view.users.api.calculations.CalculationsDialog', {
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'totalCryptoSum',
-                    width: 130
+                    width: 130,
+                    menuDisabled: true,
                 }
             ]
         }

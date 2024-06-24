@@ -22,7 +22,8 @@ Ext.define('Dashboard.view.users.web.WebUsersGrid', {
         {
             text: 'Логин',
             dataIndex: 'username',
-            flex: 0.25
+            flex: 0.25,
+            menuDisabled: true,
         },
         {
             text: 'Роль',
@@ -36,7 +37,8 @@ Ext.define('Dashboard.view.users.web.WebUsersGrid', {
                 sorterFn: function (val1, val2) {
                     return val1.get('role').displayName.localeCompare(val2.get('role').displayName)
                 }
-            }
+            },
+            menuDisabled: true,
         },
         {
             text: 'В бане',
@@ -45,12 +47,14 @@ Ext.define('Dashboard.view.users.web.WebUsersGrid', {
             editable: true,
             renderer: function (val) {
                 return val ? 'Нет' : 'Да'
-            }
+            },
+            menuDisabled: true,
         },
         {
             text: 'Chat id',
             flex: 0.25,
-            dataIndex: 'chatId'
+            dataIndex: 'chatId',
+            menuDisabled: true,
         }
     ]
 })

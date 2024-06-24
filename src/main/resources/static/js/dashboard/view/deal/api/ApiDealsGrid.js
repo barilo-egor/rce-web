@@ -38,7 +38,8 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 {
                     text: '№',
                     dataIndex: 'pid',
-                    width: 80
+                    width: 80,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Статус',
@@ -49,7 +50,8 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     },
                     renderer: function (val) {
                         return '<span class="' + val.color + '">' + val.description + '</span>'
-                    }
+                    },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Тип сделки',
@@ -57,32 +59,38 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     renderer: function (val) {
                         return val.displayName
                     },
-                    flex: 0.3
+                    flex: 0.3,
+                    menuDisabled: true,
                 },
                 {
                     text: 'ID',
                     dataIndex: 'apiUser.id',
-                    flex: 0.3
+                    flex: 0.3,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
-                    flex: 0.3
+                    flex: 0.3,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиат сумма',
                     dataIndex: 'amount',
-                    flex: 0.3
+                    flex: 0.3,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Дата и время',
                     dataIndex: 'dateTime',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Реквизит',
                     dataIndex: 'requisite',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,v
                 }
             ]
         }

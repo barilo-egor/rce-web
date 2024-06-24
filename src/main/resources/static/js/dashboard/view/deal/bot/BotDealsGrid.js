@@ -45,7 +45,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 {
                     text: '№',
                     dataIndex: 'pid',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Статус',
@@ -56,12 +57,14 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     },
                     renderer: function (val) {
                         return '<span class="' + val.color + '">' + val.displayName + '</span>'
-                    }
+                    },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Тип оплаты',
                     dataIndex: 'paymentType.name',
-                    flex: 0.6
+                    flex: 0.6,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Username',
@@ -69,37 +72,44 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     dataIndex: 'user',
                     renderer: function (val) {
                         return val.username
-                    }
+                    },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
                     renderer: function (val) {
                         return val.displayName
-                    }
+                    },
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиат сумма',
-                    dataIndex: 'amount'
+                    dataIndex: 'amount',
+                    menuDisabled: true,
                 },
                 {
                     text: 'Доставка',
-                    dataIndex: 'deliveryType'
+                    dataIndex: 'deliveryType',
+                    menuDisabled: true,
                 },
                 {
                     text: 'Дата и время',
                     dataIndex: 'dateTime',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Реквизит',
                     dataIndex: 'wallet',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 }
             ]
         }

@@ -153,27 +153,32 @@ Ext.define('Dashboard.view.users.api.calculate.CalculationDialog', {
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиатная валюта',
                     dataIndex: 'fiatCurrency',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Криптовалюта',
                     dataIndex: 'cryptoCurrency',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в фиате',
                     dataIndex: 'totalFiatSum',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'totalCryptoSum',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 }
             ]
         }

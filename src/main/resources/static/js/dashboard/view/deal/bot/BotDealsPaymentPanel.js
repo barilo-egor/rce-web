@@ -21,32 +21,38 @@ Ext.define('Dashboard.view.deal.bot.BotDealsPaymentPanel', {
                 {
                     text: 'Сделка',
                     dataIndex: 'deal.pid',
-                    width : 100
+                    width : 100,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Приложение',
                     dataIndex: 'app',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Дата и время',
                     dataIndex: 'dateTime',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Заголовок',
                     dataIndex: 'title',
                     width: 250,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сообщение',
                     dataIndex: 'message',
-                    flex: 1
+                    flex: 1,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Телефон',
                     dataIndex: 'phone',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 }
             ]
         }
