@@ -60,32 +60,38 @@ Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
                 {
                     text: 'Тип сделки',
                     dataIndex: 'dealType',
-                    width: 100
+                    width: 100,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Фиатная валюта',
                     dataIndex: 'fiatCurrency',
-                    width: 140
+                    width: 140,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Криптовалюта',
                     dataIndex: 'cryptoCurrency',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в фиате',
                     dataIndex: 'totalFiatSum',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Сумма в крипте',
                     dataIndex: 'totalCryptoSum',
-                    width: 130
+                    width: 130,
+                    menuDisabled: true,
                 },
                 {
                     text: 'Количество сделок',
                     dataIndex: 'sumDealsCount',
-                    width: 150
+                    width: 150,
+                    menuDisabled: true,
                 }
             ]
         }
