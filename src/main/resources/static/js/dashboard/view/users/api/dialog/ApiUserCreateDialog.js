@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     reference: 'createDialog',
 
     closable: true,

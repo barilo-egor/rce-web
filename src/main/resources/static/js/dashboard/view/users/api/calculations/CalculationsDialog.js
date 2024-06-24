@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.users.api.calculations.CalculationsDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
 
     title: 'Предыдущие расчёты',
     closable: true,

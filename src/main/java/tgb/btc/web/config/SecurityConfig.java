@@ -60,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**"
+                        "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**",
+                        "/common/**"
                 )
                 .hasAnyRole("ADMIN", "OPERATOR", "API_CLIENT");
 

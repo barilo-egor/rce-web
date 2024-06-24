@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.deal.bot.add.AddDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     requires: [
         'Dashboard.view.deal.bot.add.AddController'
     ],

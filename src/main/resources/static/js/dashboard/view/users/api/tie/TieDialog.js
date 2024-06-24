@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.users.api.tie.TieDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     reference: 'tieDialog',
     requires: [
         'Dashboard.view.users.api.tie.TieController'

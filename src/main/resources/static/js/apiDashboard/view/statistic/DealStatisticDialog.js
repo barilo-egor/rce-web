@@ -1,5 +1,5 @@
 Ext.define('ApiDashboard.view.statistic.DealStatisticDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     requires: [
         'ApiDashboard.view.statistic.DealStatisticController'
     ],

@@ -1,5 +1,5 @@
 Ext.define('ApiDashboard.view.profile.ProfileDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     reference: 'profileDialog',
     requires: [
         'ApiDashboard.view.profile.ProfileController'

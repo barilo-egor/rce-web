@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.users.api.calculate.CalculationDialog', {
-    extend: 'Ext.Dialog',
+    extend: 'Common.dialog.CommonDialog',
     reference: 'calculationDialog',
 
     title: 'Расчёт клиента',
