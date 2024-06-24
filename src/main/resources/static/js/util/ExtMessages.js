@@ -64,7 +64,7 @@ let ExtMessages = {
         }).show()
     },
 
-    error: function (title, message) {
+    error: function (title, message, handler) {
         Ext.create('Ext.Dialog', {
             title: title,
             closable: true,
@@ -73,7 +73,8 @@ let ExtMessages = {
                 {
                     text: 'Ок',
                     handler: function (me) {
-                        me.up('dialog').close()
+                        if (handler) handler()
+                        else me.up('dialog').close()
                     }
                 }
             ],

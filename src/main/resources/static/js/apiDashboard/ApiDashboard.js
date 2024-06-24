@@ -1,3 +1,11 @@
+Ext.Ajax.on('requestexception', function(conn, response, options) {
+    if (response.status === 401) {
+        ExtMessages.error('Сессия завершена', 'Ваша сессия истекла. Пожалуйста, войдите снова.',
+            function () {
+                window.location.href = '/';
+            })
+    }
+});
 Ext.application({
     extend: 'Ext.app.Application',
     name: 'ApiDashboard',

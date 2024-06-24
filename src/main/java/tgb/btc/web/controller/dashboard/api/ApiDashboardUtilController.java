@@ -16,7 +16,6 @@ import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.WebApi;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -102,7 +101,9 @@ public class ApiDashboardUtilController extends BaseController {
         String oldUsername = principal.getName();
         webUserRepository.updateUsername(login, oldUsername);
         log.debug("Пользователь {} сменил username на {}", oldUsername, login);
-        SessionEventListener.HTTP_SESSIONS.get(webUserRepository.getChatIdByUsername(login)).invalidate();
+        Long chatId = webUserRepository.getChatIdByUsername(login);
+        SessionEventListener.HTTP_SESSIONS.get(chatId).invalidate();
+        SessionEventListener.HTTP_SESSIONS.remove(chatId);
         return new SuccessResponse<>();
     }
 

@@ -99,6 +99,7 @@ public class WebApi implements WebAPI {
     public void logout(Long chatId) {
         log.debug("Пользователь с chatId={} запросил закрытие сессии.", chatId);
         SessionEventListener.HTTP_SESSIONS.get(chatId).invalidate();
+        SessionEventListener.HTTP_SESSIONS.remove(chatId);
         log.debug("Сессия пользователя с chatId={} закрыта.", chatId);
     }
 }

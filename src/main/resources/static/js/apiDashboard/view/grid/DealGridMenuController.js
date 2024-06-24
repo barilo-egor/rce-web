@@ -28,13 +28,14 @@ Ext.define('ApiDashboard.view.grid.DealGridMenuController', {
     },
 
     deleteHandler: function (me) {
+        let dealPid = me.up('menu').getViewModel().getData().deal.getData().pid
         ExtMessages.confirm('Удаление сделки №' + dealPid, 'Вы действительно хотите удалить сделку?',
             function () {
                 ExtUtil.mask('dealGrid', 'Удаление сделки')
                 ExtUtil.mRequest({
                     url: '/dashboard/api/deal/delete',
                     params: {
-                        dealPid: me.up('menu').getViewModel().getData().deal.getData().pid
+                        dealPid: dealPid
                     },
                     success: function (response) {
                         Ext.getStore('dealStore').reload()

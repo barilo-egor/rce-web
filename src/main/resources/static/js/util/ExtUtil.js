@@ -107,6 +107,7 @@ let ExtUtil = {
         if (config.jsonData) requestObj.jsonData = config.jsonData
         let failure = this.failure
         requestObj.failure = function(response) {
+            if (response.status === 401) return
             if (config.loadingComponent) {
                 config.loadingComponent.setLoading(false)
             } else if (config.loadingComponentRef) {
@@ -149,6 +150,7 @@ let ExtUtil = {
         if (config.jsonData) requestObj.jsonData = config.jsonData
         let failure = this.failure
         requestObj.failure = function(response) {
+            if (response.status === 401) return
             if (config.loadingComponent) {
                 config.loadingComponent.setMasked(false)
             } else if (config.loadingComponentRef) {
