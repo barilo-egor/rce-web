@@ -15,6 +15,7 @@ import tgb.btc.library.repository.bot.UserRepository;
 import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.vo.bean.DealVO;
@@ -33,7 +34,7 @@ public class WebDealService {
 
     private DealRepository dealRepository;
 
-    private PagingDealRepository pagingDealRepository;
+    private PagingDealService pagingDealService;
 
     private DealService dealService;
 
@@ -46,6 +47,11 @@ public class WebDealService {
     private NotificationsAPI notificationsAPI;
 
     private WebUserRepository webUserRepository;
+
+    @Autowired
+    public void setPagingDealService(PagingDealService pagingDealService) {
+        this.pagingDealService = pagingDealService;
+    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -82,13 +88,8 @@ public class WebDealService {
         this.dealRepository = dealRepository;
     }
 
-    @Autowired
-    public void setPagingDealRepository(PagingDealRepository pagingDealRepository) {
-        this.pagingDealRepository = pagingDealRepository;
-    }
-
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
-        return pagingDealRepository.findAllByDealStatusNot(DealStatus.NEW,
+        return pagingDealService.findAllByDealStatusNot(DealStatus.NEW,
                         PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
                 .map(deal -> {
                     Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
