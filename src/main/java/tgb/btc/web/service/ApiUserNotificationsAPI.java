@@ -34,7 +34,10 @@ public class ApiUserNotificationsAPI {
         }
         emittersToRemove.forEach((key, value) -> {
             log.debug("Удаление и завершение с ошибкой SSE уведомлений пользователя {}.", key);
-            LISTENERS.get(key).completeWithError(value);
+            SseEmitter sseEmitter = LISTENERS.get(key);
+            if (Objects.nonNull(sseEmitter)) {
+                sseEmitter.completeWithError(value);
+            }
         });
         emittersToRemove.keySet().forEach(LISTENERS::remove);
     }
