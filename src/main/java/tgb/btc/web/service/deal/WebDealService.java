@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.CreateType;
@@ -12,7 +13,6 @@ import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.repository.bot.UserDiscountRepository;
 import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.repository.bot.paging.PagingDealRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.paging.PagingDealService;
@@ -23,7 +23,6 @@ import tgb.btc.web.vo.bean.DealVO;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +87,7 @@ public class WebDealService {
         this.dealRepository = dealRepository;
     }
 
+    @Transactional
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
         return pagingDealService.findAllByDealStatusNot(DealStatus.NEW,
                         PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
@@ -116,6 +116,7 @@ public class WebDealService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
                                 Map<String, Object> parameters) {
         String hqlQuery = "from Deal d where d.dealStatus not like 'NEW'";
@@ -136,6 +137,7 @@ public class WebDealService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select pid from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -146,6 +148,7 @@ public class WebDealService {
         return query.getResultList();
     }
 
+    @Transactional
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);

@@ -3,6 +3,7 @@ package tgb.btc.web.service.deal;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
@@ -57,7 +58,7 @@ public class WebApiDealService {
         this.apiDealService = apiDealService;
     }
 
-
+    @Transactional
     public List<ApiDealVO> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiUser.pid=:apiUserPid";
@@ -78,6 +79,7 @@ public class WebApiDealService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<ApiDealVO> findAll(Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
@@ -97,6 +99,7 @@ public class WebApiDealService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -107,6 +110,7 @@ public class WebApiDealService {
         return query.getResultList();
     }
 
+    @Transactional
     public List<Long> findAllPids(Long userPid, String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", userPid);
@@ -135,6 +139,7 @@ public class WebApiDealService {
                 .build();
     }
 
+    @Transactional
     public Long count(Long apiUserPid, String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", apiUserPid);
@@ -144,6 +149,7 @@ public class WebApiDealService {
         return (Long) query.getSingleResult();
     }
 
+    @Transactional
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
