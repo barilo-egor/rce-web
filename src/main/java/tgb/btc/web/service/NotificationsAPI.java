@@ -2,6 +2,7 @@ package tgb.btc.web.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotificationsAPI;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.vo.Notification;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static tgb.btc.web.controller.common.NotificationsController.LISTENERS;
 
@@ -43,7 +45,8 @@ public class NotificationsAPI implements INotificationsAPI {
         });
         emittersToRemove.forEach((key, value) -> {
             log.debug("Удаление и завершение с ошибкой SSE уведомлений пользователя {}.", key);
-            LISTENERS.get(key).completeWithError(value);
+            SseEmitter sseEmitter = LISTENERS.get(key);
+            if (Objects.nonNull(sseEmitter)) sseEmitter.completeWithError(value);
         });
         emittersToRemove.keySet().forEach(LISTENERS::remove);
     }
