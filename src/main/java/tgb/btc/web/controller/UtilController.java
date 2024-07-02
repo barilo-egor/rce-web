@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.SystemUtil;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -28,6 +29,13 @@ import java.util.stream.Collectors;
 public class UtilController extends BaseController {
 
     private WebUserRepository webUserRepository;
+
+    private IWebUserService webUserService;
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
+    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
@@ -52,7 +60,17 @@ public class UtilController extends BaseController {
     @ResponseBody
     public ArrayNode getUsernames() {
         return JacksonUtil.getEmptyArray().addAll(
-                webUserRepository.getUsernames().stream()
+                webUserService.getNotTiedToApiWebUsernames().stream()
+                        .map(username -> JacksonUtil.getEmpty().put("username", username))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping("/getApiWebUsernames")
+    @ResponseBody
+    public ArrayNode getApiWebUsernames(Long apiUserPid) {
+        return JacksonUtil.getEmptyArray().addAll(
+                webUserRepository.getWebUsernamesByApiUserPid(apiUserPid).stream()
                         .map(username -> JacksonUtil.getEmpty().put("username", username))
                         .collect(Collectors.toList())
         );

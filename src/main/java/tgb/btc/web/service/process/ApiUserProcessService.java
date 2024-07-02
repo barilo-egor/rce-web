@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiUser;
@@ -130,23 +131,6 @@ public class ApiUserProcessService {
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);
-    }
-
-    public void updateWebUser(Long apiUserPid, String username) {
-        if (StringUtils.isBlank(username)) {
-            WebUser webUser = apiUserRepository.getWebUser(apiUserPid);
-            webUser.setRoles(roleRepository.getByName(RoleConstants.ROLE_USER.name()));
-            webUserRepository.save(webUser);
-            apiUserRepository.updateWebUser(apiUserPid, null);
-            return;
-        }
-        WebUser webUser = webUserRepository.getByUsername(username);
-        if (webUser.getRoles().stream()
-                .noneMatch(role -> role.getName().equals(RoleConstants.ROLE_API_CLIENT.name()))) {
-            webUser.setRoles(roleRepository.getByName(RoleConstants.ROLE_API_CLIENT.name()));
-            webUser = webUserRepository.save(webUser);
-        }
-        apiUserRepository.updateWebUser(apiUserPid, webUser);
     }
 
     public List<Calculation> getCalculations(ApiUser apiUser) {

@@ -10,6 +10,7 @@ Ext.define('Dashboard.view.users.api.tie.TieDialog', {
     title: 'Привязка WEB пользователя',
     minWidth: 350,
     width: '20%',
+    height: '90%',
 
     tools: [
         ExtUtilConfig.getHelpDialogTool('Привязка',
@@ -27,21 +28,22 @@ Ext.define('Dashboard.view.users.api.tie.TieDialog', {
     },
     items: [
         {
-            xtype: 'textfield',
-            reference: 'currentUserField',
-            label: 'Текущий WEB пользователь',
-            editable: false,
-            margin: '0 0 20 0',
-            listeners: {
-                change: 'changeCurrentUser',
-                painted: 'setValues'
-            }
-        },
-        {
+            flex: 0.5,
             xtype: 'panel',
             shadow: true,
             height: 255,
             margin: '0 0 30 0',
+            title: 'Привязанные пользователи',
+
+            listeners: {
+                painted: function(me) {
+                    Ext.getStore('apiWebUsersLoginStore').load({
+                        params: {
+                            apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid')
+                        }
+                    })
+                }
+            },
 
             layout: 'fit',
             tbar: {
@@ -51,7 +53,52 @@ Ext.define('Dashboard.view.users.api.tie.TieDialog', {
                         xtype: 'textfield',
                         filterId: 'userNameFilter',
                         listeners: {
-                            change: 'changeFilterField'
+                            change: 'changeExistFilterField'
+                        }
+                    }
+                ]
+            },
+            items: [
+                {
+                    xtype: 'list',
+                    itemTpl: '{username}',
+                    store: {
+                        storeId: 'apiWebUsersLoginStore',
+                        autoLoad: false,
+                        fields: [
+                            'username'
+                        ],
+                        proxy: {
+                            type: 'ajax',
+                            url: '/util/getApiWebUsernames',
+                            reader: {
+                                type: 'json'
+                            }
+                        }
+                    },
+                    listeners: {
+                        childdoubletap: 'doubleClickRemove'
+                    }
+                },
+            ]
+        },
+        {
+            flex: 0.5,
+            xtype: 'panel',
+            shadow: true,
+            height: 255,
+            margin: '0 0 30 0',
+            title: 'Свободные пользователи',
+
+            layout: 'fit',
+            tbar: {
+                layout: 'fit',
+                items: [
+                    {
+                        xtype: 'textfield',
+                        filterId: 'userNameFilter',
+                        listeners: {
+                            change: 'changeAddFilterField'
                         }
                     }
                 ]
@@ -75,17 +122,10 @@ Ext.define('Dashboard.view.users.api.tie.TieDialog', {
                         }
                     },
                     listeners: {
-                        childdoubletap: 'doubleClick'
+                        childdoubletap: 'doubleClickAdd'
                     }
                 },
             ]
-        },
-        {
-            xtype: 'button',
-            reference: 'tieButton',
-            text: 'Привязать',
-            disabled: true,
-            handler: 'tie'
         }
     ]
 })

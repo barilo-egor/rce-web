@@ -12,6 +12,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.web.ApiCalculationRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiUserService;
+import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.deal.WebApiDealService;
@@ -45,6 +46,13 @@ public class ApiUsersController extends BaseController {
     private ApiCalculationProcessService apiCalculationProcessService;
 
     private ApiCalculationRepository apiCalculationRepository;
+
+    private WebUserService webUserService;
+
+    @Autowired
+    public void setWebUserService(WebUserService webUserService) {
+        this.webUserService = webUserService;
+    }
 
     @Autowired
     public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
@@ -141,17 +149,6 @@ public class ApiUsersController extends BaseController {
         return SuccessResponseUtil.toast("Расчёт произведен.");
     }
 
-    @PostMapping("/tie")
-    @ResponseBody
-    public SuccessResponse<?> tie(Long apiUserPid, String username) {
-        if (StringUtils.isBlank(username)) {
-            apiUserProcessService.updateWebUser(apiUserPid, username);
-            return SuccessResponseUtil.toast("Пользователь успешно отвязан.");
-        }
-        apiUserProcessService.updateWebUser(apiUserPid, username);
-        return SuccessResponseUtil.toast("Пользователь успешно привязан.");
-    }
-
     @GetMapping("/hasCalculations")
     @ResponseBody
     public SuccessResponse<?> hasCalculations(Long apiUserPid) {
@@ -170,4 +167,17 @@ public class ApiUsersController extends BaseController {
         return result;
     }
 
+    @PostMapping("/addWebUser")
+    @ResponseBody
+    public SuccessResponse<?> addWebUser(String username, Long apiUserPid) {
+        webUserService.addWebUser(username, apiUserPid);
+        return SuccessResponseUtil.toast("WEB пользователь привязан.");
+    }
+
+    @PostMapping("/removeWebUser")
+    @ResponseBody
+    public SuccessResponse<?> removeWebUser(String username, Long apiUserPid) {
+        webUserService.removeWebUser(username, apiUserPid);
+        return SuccessResponseUtil.toast("WEB пользователь отвязан.");
+    }
 }

@@ -12,8 +12,15 @@ Ext.define('Dashboard.view.users.api.tie.TieController', {
         me.setValue(username)
     },
 
-    changeFilterField: function (me, newValue) {
-        let store = Ext.getStore('userLoginStore')
+    changeExistFilterField: function (me, newValue) {
+        this.changeFilterField(me, newValue, Ext.getStore('apiWebUsersLoginStore'))
+    },
+
+    changeAddFilterField: function (me, newValue) {
+        this.changeFilterField(me, newValue, Ext.getStore('userLoginStore'))
+    },
+
+    changeFilterField: function (me, newValue, store) {
         store.removeFilter(me.filterId)
         store.addFilter(new Ext.util.Filter({
             id: me.filterId,
@@ -23,32 +30,33 @@ Ext.define('Dashboard.view.users.api.tie.TieController', {
         }))
     },
 
-    doubleClick: function (me, location) {
+    doubleClickAdd: function (me, location) {
         let username = me.getStore().getAt(location.recordIndex).get('username')
-        ExtUtil.referenceQuery('currentUserField').setValue(username)
+        ExtUtil.mRequest({
+            url: '/users/api/addWebUser',
+            params: {
+                apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid'),
+                username: username
+            },
+            success: function (response) {
+                Ext.getStore('userLoginStore').reload()
+                Ext.getStore('apiWebUsersLoginStore').reload()
+            }
+        })
     },
 
-    tie: function (me) {
-        let username = ExtUtil.referenceQuery('currentUserField').getValue()
-        let text = !username || username.length === 0
-            ? 'У пользователя будет снята роль API клиента. Продолжить?'
-            : 'Пользователю так же будет установлена роль API клиента,<br>если она ещё не установлена. Продолжить?'
-        ExtMessages.confirm('Привязка', text,
-            function () {
-                ExtUtil.mask('tieDialog')
-                ExtUtil.mRequest({
-                    url: '/users/api/tie',
-                    loadingComponentRef: 'tieDialog',
-                    params: {
-                        apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid'),
-                        username: username
-                    },
-                    success: function (response) {
-                        Ext.getStore('apiUserStore').reload()
-                        ExtUtil.maskOff('tieDialog')
-                        ExtUtil.referenceQuery('tieDialog').close()
-                    }
-                })
-            })
+    doubleClickRemove: function (me, location) {
+        let username = me.getStore().getAt(location.recordIndex).get('username')
+        ExtUtil.mRequest({
+            url: '/users/api/removeWebUser',
+            params: {
+                apiUserPid: ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid'),
+                username: username
+            },
+            success: function (response) {
+                Ext.getStore('apiWebUsersLoginStore').reload()
+                Ext.getStore('userLoginStore').reload()
+            }
+        })
     }
 })
