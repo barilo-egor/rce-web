@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.api.bot.WebAPI;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -31,10 +32,10 @@ public class WebApi implements WebAPI {
 
     private WebUserRepository webUserRepository;
 
-    private WebUserService webUserService;
+    private IWebUserService webUserService;
 
     @Autowired
-    public void setWebUserService(WebUserService webUserService) {
+    public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
     }
 
