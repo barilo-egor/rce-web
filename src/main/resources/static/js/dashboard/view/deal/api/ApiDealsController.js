@@ -146,5 +146,9 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         }
         ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите отклонить сделку №' + deal.pid + '?',
             confirmFn)
+    },
+
+    reloadDeals: function (me) {
+        Ext.getStore('apiDealStore').reload()
     }
 })

@@ -13,6 +13,11 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
     tbar: {
         items: [
             {
+                iconCls: 'x-fa fa-sync-alt',
+                tooltip: 'Перезагрузить сделки',
+                handler: 'reloadDeals'
+            },
+            {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: 'exportDeals'

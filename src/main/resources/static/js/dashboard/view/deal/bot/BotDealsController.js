@@ -122,5 +122,9 @@ Ext.define('Dashboard.view.deal.bot.BotDealsController', {
 
     loadStore: function(me) {
         me.getStore().load()
+    },
+
+    reloadDeals: function (me) {
+        Ext.getStore('botDealStore').reload()
     }
 })

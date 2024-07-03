@@ -43,5 +43,9 @@ Ext.define('ApiDashboard.view.grid.DealController', {
         })
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
+    },
+
+    reloadDeals: function (me) {
+        Ext.getStore('dealStore').reload()
     }
 })

@@ -17,6 +17,11 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     tbar: {
         items: [
             {
+                iconCls: 'x-fa fa-sync-alt',
+                tooltip: 'Перезагрузить сделки',
+                handler: 'reloadDeals'
+            },
+            {
                 iconCls: 'x-fa fa-plus forestgreenColor',
                 tooltip: 'Добавление ручных сделок',
                 handler: 'manualAddDeal'
