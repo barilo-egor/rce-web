@@ -69,6 +69,7 @@ public class WebApi implements WebAPI {
         Authentication auth = new UsernamePasswordAuthenticationToken(webUser, null,
                 AuthorityUtils.createAuthorityList(roles)
         );
+        SecurityContextHolder.clearContext();
         SecurityContextHolder.getContext().setAuthentication(auth);
         HttpSession session = request.getSession(true);
         SessionEventListener.HTTP_SESSIONS.put(webUser.getChatId(), session);
