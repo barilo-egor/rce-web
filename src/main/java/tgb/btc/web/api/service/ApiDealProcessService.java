@@ -11,10 +11,10 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.CalculateService;
-import tgb.btc.library.service.process.CryptoCurrencyService;
 import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -38,7 +38,7 @@ public class ApiDealProcessService {
 
     private ApiDealRepository apiDealRepository;
 
-    private CryptoCurrencyService cryptoCurrencyService;
+    private ICurrencyGetter currencyGetter;
 
     private CalculateService calculateService;
 
@@ -50,8 +50,8 @@ public class ApiDealProcessService {
     }
 
     @Autowired
-    public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
-        this.cryptoCurrencyService = cryptoCurrencyService;
+    public void setCurrencyGetter(ICurrencyGetter currencyGetter) {
+        this.currencyGetter = currencyGetter;
     }
 
     @Autowired
@@ -86,7 +86,7 @@ public class ApiDealProcessService {
         builder.dealType(apiDealVO.getDealType())
                 .fiatCurrency(fiatCurrency)
                 .usdCourse(apiUser.getCourse(apiUser.getFiatCurrency()).getCourse())
-                .cryptoCourse(cryptoCurrencyService.getCurrency(apiDealVO.getCryptoCurrency()))
+                .cryptoCourse(currencyGetter.getCourseCurrency(apiDealVO.getCryptoCurrency()))
                 .personalDiscount(apiUser.getPersonalDiscount())
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());

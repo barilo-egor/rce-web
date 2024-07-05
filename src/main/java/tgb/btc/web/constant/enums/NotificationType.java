@@ -9,6 +9,7 @@ public enum NotificationType {
     CONFIRM_BOT_DEAL,
     DELETE_BOT_DEAL,
     ADDITIONAL_VERIFICATION_REQUEST,
-    NEW_PAYMENT
+    NEW_PAYMENT,
+    COURSE_GET_FAILED
     ;
 }

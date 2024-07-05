@@ -72,6 +72,11 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('dealPaymentStore').reload()
                     playSound = true
                     break
+                case 'COURSE_GET_FAILED':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    playSound = true
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

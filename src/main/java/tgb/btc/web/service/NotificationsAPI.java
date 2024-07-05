@@ -67,4 +67,9 @@ public class NotificationsAPI implements INotificationsAPI {
                 "Поступил отказ верификации по заявке в боте №" + dealPid);
     }
 
+    @Override
+    public void sendNotify(String s) {
+        send(NotificationType.COURSE_GET_FAILED, s);
+    }
+
 }
