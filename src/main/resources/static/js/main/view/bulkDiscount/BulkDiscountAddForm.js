@@ -47,6 +47,15 @@ Ext.define('Main.view.bulkDiscount.BulkDiscountAddForm', {
                     }
                 },
                 {
+                    xtype: 'textfield',
+                    id: 'cryptoCurrency',
+                    name: 'cryptoCurrency',
+                    hidden: true,
+                    bind: {
+                        value: '{cryptoCurrency}'
+                    }
+                },
+                {
                     xtype: 'numberfield',
                     id: 'sum',
                     fieldLabel: 'Сумма',

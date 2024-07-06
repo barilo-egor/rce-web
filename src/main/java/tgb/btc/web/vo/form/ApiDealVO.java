@@ -37,4 +37,18 @@ public class ApiDealVO {
         if (Objects.isNull(requisite)) return ApiStatusCode.EMPTY_REQUISITE;
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "ApiDealVO{" +
+                "token='" + token + '\'' +
+                ", dealType=" + dealType +
+                ", amount=" + amount +
+                ", cryptoAmount=" + cryptoAmount +
+                ", cryptoCurrency=" + (Objects.nonNull(cryptoCurrency) ? cryptoCurrency.name() : "null") +
+                ", requisite='" + requisite + '\'' +
+                ", fiatCurrency=" + (Objects.nonNull(fiatCurrency) ? fiatCurrency.name() : "null") +
+                '}';
+    }
+
 }

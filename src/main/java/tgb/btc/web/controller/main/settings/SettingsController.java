@@ -12,8 +12,8 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
+import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
 import tgb.btc.library.service.process.CalculateService;
-import tgb.btc.library.service.process.CryptoCurrencyService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
@@ -33,11 +33,11 @@ public class SettingsController extends BaseController {
 
     private CalculateService calculateService;
 
-    private CryptoCurrencyService cryptoCurrencyService;
+    private ICurrencyGetter currencyGetter;
 
     @Autowired
-    public void setCryptoCurrencyService(CryptoCurrencyService cryptoCurrencyService) {
-        this.cryptoCurrencyService = cryptoCurrencyService;
+    public void setCurrencyGetter(ICurrencyGetter currencyGetter) {
+        this.currencyGetter = currencyGetter;
     }
 
     @Autowired
@@ -93,7 +93,7 @@ public class SettingsController extends BaseController {
         ArrayNode arrayNode = objectMapper.createArrayNode().addAll(Arrays.stream(CryptoCurrency.values())
                 .map(cryptoCurrency -> objectMapper.createObjectNode()
                         .put("name", cryptoCurrency.name())
-                        .put("currency", cryptoCurrencyService.getCurrency(cryptoCurrency)))
+                        .put("currency", currencyGetter.getCourseCurrency(cryptoCurrency)))
                 .collect(Collectors.toList()));
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("success", true);

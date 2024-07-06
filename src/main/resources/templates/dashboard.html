@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/extJS/theme-material/resources/theme-material-all.css}"/>
+    <script type="text/javascript" th:src="@{/extJS/ext-modern-all.js}"></script>
+    <script type="text/javascript" th:src="@{/extJS/locale/locale-ru.js}"></script>
+    <script type="text/javascript" th:src="@{/extJS/theme-material/theme-material.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/Main.css}"/>
+	<script type="text/javascript" th:src="@{/js/util/Regex.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ValidatorUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtil.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtUtilConfig.js}"></script>
+	<script type="text/javascript" th:src="@{/js/util/ExtMessages.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/DateRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/range/TimeRange.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/Triggers.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common/dialog/CommonDialog.js}"></script>
+	<script type="text/javascript">
+        const NOTIFICATION_SOUND = new Audio("/util/getNotificationSound");
+		let NOTIFICATION_SOUND_ON
+		ExtUtil.mRequest({
+			url: '/dashboard/api/util/getSoundEnabled',
+			method: 'GET',
+			async: false,
+			success: function (response) {
+				NOTIFICATION_SOUND_ON = response.body.data.soundEnabled
+			}
+		})
+        let TITLE
+        ExtUtil.mRequest({
+            url: '/properties/getPropertiesValues',
+            method: 'GET',
+            async: false,
+            params: {
+                propertiesPath: 'BOT_PROPERTIES',
+                keys: ['bot.name']
+            },
+            success: function (response) {
+                let value = response.body.data[0].value
+                TITLE = value ? value : 'Обменник'
+            }
+        })
+        document.title = TITLE
+        let IS_DEV
+        ExtUtil.mRequest({
+            url: '/util/isDev',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                IS_DEV = response.body.data.isDev
+            }
+        })
+	</script>
+    <script type="text/javascript" th:src="@{/js/dashboard/Dashboard.js}"a></script>
+</head>
+<body>
+</body>
+</html>

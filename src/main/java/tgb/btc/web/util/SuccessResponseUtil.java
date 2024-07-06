@@ -2,6 +2,7 @@ package tgb.btc.web.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -14,6 +15,10 @@ public class SuccessResponseUtil {
     private SuccessResponseUtil() {
     }
 
+    public static <T extends JsonConvertable> SuccessResponse<?> data(T t) {
+        return getDataObjectNode(JacksonUtil.toObjectNode(t));
+    }
+
     public static <T extends ObjectNodeConvertable<T>> SuccessResponse<?> data(T t) {
         return getDataObjectNode(JacksonUtil.toObjectNode(t));
     }
@@ -22,8 +27,12 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toArrayNode(objects));
     }
 
-    public static <T> SuccessResponse<?> data(Collection<T> objects, Function<T, ObjectNode> mapper) {
-        return getDataObjectNode(JacksonUtil.toArrayNode(objects, mapper));
+    public static <T extends JsonConvertable> SuccessResponse<?> jsonData(Collection<T> objects) {
+        return getDataObjectNode(JacksonUtil.toJsonArrayNode(objects));
+    }
+
+    public static <T extends JsonConvertable> SuccessResponse<?> jsonData(T t) {
+        return getDataObjectNode(t.map());
     }
 
     public static <T> SuccessResponse<?> data(T[] objects, Function<T, ObjectNode> mapper) {
@@ -50,6 +59,10 @@ public class SuccessResponseUtil {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("warningString", warningString));
     }
 
+    public static <T> SuccessResponse<?> blockString(String blockString) {
+        return new SuccessResponse<>(JacksonUtil.toObjectNode("blockString", blockString));
+    }
+
     public static <T> SuccessResponse<?> message(String message) {
         return new SuccessResponse<>(JacksonUtil.toObjectNode("message", message));
     }
@@ -72,4 +85,6 @@ public class SuccessResponseUtil {
     public static SuccessResponse<?> getObjectNode(JsonNode jsonNode, String fieldName) {
         return new SuccessResponse<>(JacksonUtil.DEFAULT_OBJECT_MAPPER.createObjectNode().set(fieldName,jsonNode));
     }
+
+
 }

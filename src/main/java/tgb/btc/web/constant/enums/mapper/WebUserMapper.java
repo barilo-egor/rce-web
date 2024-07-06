@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.web.JacksonUtil;
 
@@ -18,13 +19,10 @@ public enum WebUserMapper implements ObjectNodeConvertable<WebUser> {
                 .put("username", webUser.getUsername())
                 .put("isEnabled", webUser.isEnabled())
                 .put("chatId", webUser.getChatId());
-        List<String> roles = webUser.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toList());
-        RoleConstants role;
-        if (roles.contains(RoleConstants.ROLE_ADMIN.name())) role = RoleConstants.ROLE_ADMIN;
-        else if (roles.contains(RoleConstants.ROLE_OPERATOR.name())) role = RoleConstants.ROLE_OPERATOR;
-        else role = RoleConstants.ROLE_USER;
+        RoleConstants role = RoleConstants.valueOf(webUser.getRoles().stream()
+                .findFirst()
+                .orElseThrow(() -> new BaseException("Роль пользователя " + webUser.getPid() + " не найдена"))
+                .getName());
         result.set("role", role.mapFunction().apply(role));
         return result;
     });

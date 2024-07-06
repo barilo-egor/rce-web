@@ -1,13 +1,22 @@
 package tgb.btc.web.service.process;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tgb.btc.library.bean.web.WebUser;
+import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.repository.web.UsdApiUserCourseRepository;
+import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.repository.web.*;
+import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
 
 import java.time.LocalDate;
@@ -21,6 +30,34 @@ public class ApiUserProcessService {
     private ApiUserRepository apiUserRepository;
 
     private UsdApiUserCourseRepository usdApiUserCourseRepository;
+
+    private WebUserRepository webUserRepository;
+
+    private RoleRepository roleRepository;
+
+    private ApiCalculationRepository apiCalculationRepository;
+
+    private WebApiDealService webApiDealService;
+
+    @Autowired
+    public void setWebApiDealService(WebApiDealService webApiDealService) {
+        this.webApiDealService = webApiDealService;
+    }
+
+    @Autowired
+    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
+        this.apiCalculationRepository = apiCalculationRepository;
+    }
+
+    @Autowired
+    public void setWebUserRepository(WebUserRepository webUserRepository) {
+        this.webUserRepository = webUserRepository;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Autowired
     public void setUsdApiUserCourseRepository(UsdApiUserCourseRepository usdApiUserCourseRepository) {
@@ -37,13 +74,14 @@ public class ApiUserProcessService {
         if (Objects.nonNull(apiUserVO.getPid())) {
             apiUser = apiUserRepository.getById(apiUserVO.getPid());
             apiUser.setIsBanned(apiUserVO.getIsBanned());
+            apiUser.setToken(apiUserVO.getToken());
         } else {
             apiUser = new ApiUser();
             apiUser.setRegistrationDate(LocalDate.now());
             apiUser.setIsBanned(false);
-            String token = RandomStringUtils.randomAlphanumeric(40);
+            String token = RandomStringUtils.randomAlphanumeric(42);
             while (apiUserRepository.countByToken(token) > 0) {
-                token = RandomStringUtils.randomAlphanumeric(40);
+                token = RandomStringUtils.randomAlphanumeric(42);
             }
             apiUser.setToken(token);
             List<UsdApiUserCourse> usdApiUserCourseList = new ArrayList<>();
@@ -94,4 +132,18 @@ public class ApiUserProcessService {
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         return apiUserRepository.save(apiUser);
     }
+
+    public List<Calculation> getCalculations(ApiUser apiUser) {
+        List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser);
+        List<Calculation> calculations = new ArrayList<>();
+        for (ApiCalculation apiCalculation : apiCalculations) {
+            calculations.add(Calculation.builder()
+                    .dateTime(apiCalculation.getDateTime())
+                    .dealsCount(apiCalculation.getDeals().size())
+                    .children(webApiDealService.getTotalSums(apiCalculation.getDeals()))
+                    .build());
+        }
+        return calculations;
+    }
+
 }

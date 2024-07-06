@@ -1,55 +1,93 @@
 package tgb.btc.web.controller.login;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tgb.btc.library.constants.enums.web.RoleConstants;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import tgb.btc.api.web.INotifier;
+import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.util.SystemUtil;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.service.WebApi;
+import tgb.btc.web.util.RequestUtil;
+import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.EmitterVO;
+import tgb.btc.web.vo.SuccessResponse;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
+@Slf4j
 public class LoginController extends BaseController {
 
     private WebUserRepository webUserRepository;
+
+    private INotifier notifier;
+
+    private WebApi webApi;
+
+    public static Map<Long, EmitterVO> LOGIN_EMITTER_MAP = new HashMap<>();
+
+    @Autowired
+    public void setWebApi(WebApi webApi) {
+        this.webApi = webApi;
+    }
 
     @Autowired
     public void setWebUserRepository(WebUserRepository webUserRepository) {
         this.webUserRepository = webUserRepository;
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @Autowired(required = false)
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
     }
 
-    @GetMapping("/loginError")
-    @ResponseBody
-    public ObjectNode loginError() {
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("error", true);
-        return objectNode;
-    }
-
-    @GetMapping("/loginSuccess")
-    @ResponseBody
-    public ObjectNode loginSuccess(Principal principal) {
-        ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("loginSuccess", true);
-        List<RoleConstants> roles = webUserRepository.getRolesByUsername(principal.getName()).stream()
-                .map(role -> RoleConstants.valueOf(role.getName()))
-                .collect(Collectors.toList());
-        if (roles.stream().anyMatch(role -> RoleConstants.ROLE_ADMIN.equals(role) || RoleConstants.ROLE_OPERATOR.equals(role))) {
-            objectNode.put("loginUrl", "/web/main");
-        } else {
-            objectNode.put("loginUrl", "/");
+    @GetMapping(path = "/registerLogin", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter registerLogin(HttpServletRequest request, String loginField) {
+        Long chatId;
+        WebUser webUser;
+        try {
+            chatId = Long.parseLong(loginField);
+            webUser = webUserRepository.getByChatId(chatId);
+        } catch (NumberFormatException e) {
+            webUser = webUserRepository.getByUsername(loginField);
+            chatId = webUser.getChatId();
         }
-        return objectNode;
+        if (BooleanUtils.isFalse(webUser.getEnabled())) {
+            return null;
+        }
+        SseEmitter emitter = new SseEmitter(60000L);
+        Long finalChatId = chatId;
+        emitter.onCompletion(() ->
+                LOGIN_EMITTER_MAP.remove(finalChatId));
+        emitter.onTimeout(() ->
+                LOGIN_EMITTER_MAP.remove(finalChatId));
+        emitter.onError((e) -> {
+            log.error("Ошибка SSE Emitter авторизации.", e);
+            LOGIN_EMITTER_MAP.remove(finalChatId);
+        });
+        LOGIN_EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
+        notifier.sendLoginRequest(chatId);
+        log.debug("Попытка входа по значению={}, chatId={}, IP={}", loginField, chatId, RequestUtil.getIp(request));
+        return emitter;
+    }
+
+    @PostMapping("/loginInstant")
+    @ResponseBody
+    public SuccessResponse<?> loginInstant(HttpServletRequest request, String login) {
+        if (!SystemUtil.isDev()) return null;
+        WebUser webUser = webUserRepository.getByUsername(login);
+        webApi.authorize(webUser, request);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("success", true));
     }
 }

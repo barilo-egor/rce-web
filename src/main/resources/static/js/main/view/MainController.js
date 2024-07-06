@@ -10,7 +10,8 @@ Ext.define('Main.view.MainController', {
             success: function (response) {
                 me.setViewModel({
                     data: {
-                        isNotAdmin: response.body.data.filter(role => role.name === 'ROLE_ADMIN').length === 0
+                        isNotAdmin: response.body.data.filter(role => role.name === 'ROLE_ADMIN').length === 0,
+                        isNotOperator: response.body.data.filter(role => role.name === 'ROLE_OPERATOR').length === 0
                     }
                 })
             }
@@ -80,5 +81,17 @@ Ext.define('Main.view.MainController', {
 
     webUserControlClick: function (btn) {
         this.mainToolBarClick(btn, 'webusercontrolpanel')
+    },
+
+    slotReelClick: function (btn) {
+        this.mainToolBarClick(btn, 'slotreelpanel')
+    },
+
+    rpsClick: function (btn) {
+        this.mainToolBarClick(btn, 'rpspanel')
+    },
+
+    diceClick: function (btn) {
+        this.mainToolBarClick(btn, 'dicepanel')
     }
 })

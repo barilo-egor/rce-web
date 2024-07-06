@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ApiUserVO {
 
     @Getter
@@ -45,4 +46,8 @@ public class ApiUserVO {
     @Getter
     @Setter
     private Boolean isBanned;
+
+    @Getter
+    @Setter
+    private String token;
 }

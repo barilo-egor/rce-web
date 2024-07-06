@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -25,18 +27,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .csrf()
                 .disable();
+        httpSecurity.exceptionHandling()
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired");
+                        });
         //  Доступ для всех
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
                         "/web/registration/**", "/static/**", "/extJS/**",
-                        "/js/login/**", "/login/**",
+                        "/js/login/**", "/login/**", "/loginInstant",
                         "/js/util/**", "/js/registration/**",
                         "/js/api/**",
+                        "/js/common/**",
                         "/api/**",
-                        "/loginSuccess", "/loginError",
-                        "/css/**", "/web/main",
-                        "/api/**", "/documentation/**"
+                        "/registerLogin", "/telegramLogin",
+                        "/css/**", "/scss/**",
+                        "/web/main",
+                        "/registration/**",
+                        "/api/**", "/documentation/**",
+                        "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico"
                 )
                 .permitAll();
         // Доступ для юзеров
@@ -46,6 +56,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/", "/js/mainUser/**"
                 )
                 .hasRole("USER");
+
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers(
+                        "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**",
+                        "/common/**"
+                )
+                .hasAnyRole("ADMIN", "OPERATOR", "API_CLIENT");
 
         // Доступ всех оставшихся юрлов
         httpSecurity
@@ -57,16 +75,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Конфигурация логина
         httpSecurity
                 .formLogin()
-                .loginPage("/web/main")
-                //Перенарпавление на главную страницу после успешного входа
-                .defaultSuccessUrl("/loginSuccess", true)
-                .failureUrl("/loginError")
+                .loginPage("/")
                 .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .logoutSuccessUrl("/web/main");
+                .logoutSuccessUrl("/");
     }
 
     @Override
@@ -74,4 +89,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers();
     }
+
 }

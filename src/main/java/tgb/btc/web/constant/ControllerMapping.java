@@ -8,7 +8,7 @@ public interface ControllerMapping {
     String API10 = API + "/10";
     String API_USER = WEB + API + "/user";
 
-    String REGISTRATION = WEB + "/registration";
+    String REGISTRATION = "/registration";
 
     String BACKUP = WEB + "/backUpDB";
 
@@ -27,5 +27,9 @@ public interface ControllerMapping {
 
     String WEB_USER = WEB + "/user";
 
-    String PROPERTIES = WEB + "/properties";
+    String PROPERTIES = "/properties";
+
+    String GAMES = WEB + "/games";
+
+    String SLOT_REEL = GAMES + "/slotReel";
 }

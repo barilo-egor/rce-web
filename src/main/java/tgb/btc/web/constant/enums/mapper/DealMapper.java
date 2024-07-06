@@ -2,7 +2,10 @@ package tgb.btc.web.constant.enums.mapper;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import tgb.btc.library.bean.bot.User;
+import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -15,11 +18,58 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum DealMapper implements ObjectNodeConvertable<DealVO> {
-    FIND_ALL(deal -> JacksonUtil.getEmpty()
-            .put("pid", deal.getPid())
-            .put("chatId", deal.getChatId())
-            .put("dealStatus", "<i class=\"fas fa-circle " + deal.getDealStatus().getColor() + "\">  "
-                    + deal.getDealStatus().getDisplayName() + "</i>")),
+    FIND_ALL(deal -> {
+        ObjectNode result = JacksonUtil.getEmpty();
+        result.put("pid", deal.getPid());
+        ObjectNode status = JacksonUtil.getEmpty()
+                .put("name", deal.getDealStatus().name())
+                .put("displayName", deal.getDealStatus().getDisplayName())
+                .put("color", deal.getDealStatus().getColor());
+        result.set("dealStatus", status);
+        result.put("paymentType.name", Objects.nonNull(deal.getPaymentType())
+                ? deal.getPaymentType().getName()
+                : StringUtils.EMPTY);
+        ObjectNode dealType = JacksonUtil.getEmpty()
+                .put("name", deal.getDealType().name())
+                .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
+        result.set("dealType", dealType);
+        result.put("cryptoAmount", BigDecimalUtil.roundToPlainString(deal.getAmountCrypto(), deal.getCryptoCurrency().getScale())
+                + " " + deal.getCryptoCurrency().getShortName());
+        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmountFiat()) + " " + deal.getFiatCurrency().getCode());
+        result.put("deliveryType", Objects.nonNull(deal.getDeliveryType())
+                ? deal.getDeliveryType().getDisplayName()
+                : StringUtils.EMPTY);
+        result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        result.put("wallet", deal.getRequisite());
+        result.put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
+        result.set("createType", deal.getCreateType().mapFunction().apply(deal.getCreateType()));
+        User user = deal.getUser();
+        ObjectNode userNode = JacksonUtil.getEmpty()
+                .put("chatId", user.getChatId())
+                .put("username", user.getUsername())
+                .put("banned", user.getBanned())
+                .put("fromChatId", user.getFromChatId())
+                .put("referralBalance", user.getReferralBalance())
+                .put("referralPercent", user.getReferralPercent())
+                .put("referralUsersCount", user.getReferralUsers().size())
+                .put("active", user.getActive())
+                .put("dealsCount", deal.getDealsCount())
+                .put("registrationDate", user.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        UserDiscount userDiscount = deal.getUserDiscount();
+        if (Objects.nonNull(userDiscount)) {
+            userNode.put("rankDiscountOn", BooleanUtils.isNotFalse(userDiscount.getRankDiscountOn()))
+                    .put("personalBuy", userDiscount.getPersonalBuy())
+                    .put("personalSell", userDiscount.getPersonalSell());
+        }
+        result.set("user", userNode);
+        ArrayNode paymentReceipts = JacksonUtil.getEmptyArray().addAll(deal.getPaymentReceipts().stream()
+                .map(paymentReceipt -> JacksonUtil.getEmpty()
+                        .put("format", paymentReceipt.getReceiptFormat().name())
+                        .put("fileId", paymentReceipt.getReceipt()))
+                .collect(Collectors.toList()));
+        result.set("paymentReceipts", paymentReceipts);
+        return result;
+    }),
     GET(deal -> {
         ObjectNode dealType = JacksonUtil.getEmpty()
                 .put("name", deal.getDealType().name())

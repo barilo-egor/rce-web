@@ -5497,7 +5497,7 @@ __rt_setDynamic("$base-invisible-color", __rt_getGlobalDefault("$base_invisible_
 __rt_setDynamic("$material-foreground-colors", __rt_getGlobalDefault("$material_foreground_colors") || new __Map([new __Text("red", "'"), __ColorRGBA.fromHex("#fff"), new __Text("pink", "'"), __ColorRGBA.fromHex("#fff"), new __Text("purple", "'"), __ColorRGBA.fromHex("#fff"), new __Text("deep-purple", "'"), __ColorRGBA.fromHex("#fff"), new __Text("indigo", "'"), __ColorRGBA.fromHex("#fff"), new __Text("blue", "'"), __ColorRGBA.fromHex("#fff"), new __Text("light-blue", "'"), __ColorRGBA.fromHex("#fff"), new __Text("cyan", "'"), __ColorRGBA.fromHex("#fff"), new __Text("teal", "'"), __ColorRGBA.fromHex("#fff"), new __Text("green", "'"), __ColorRGBA.fromHex("#fff"), new __Text("light-green", "'"), __ColorRGBA.fromHex("#222"), new __Text("lime", "'"), __ColorRGBA.fromHex("#222"), new __Text("yellow", "'"), __ColorRGBA.fromHex("#222"), new __Text("amber", "'"), __ColorRGBA.fromHex("#222"), new __Text("orange", "'"), __ColorRGBA.fromHex("#222"), new __Text("deep-orange", "'"), __ColorRGBA.fromHex("#fff"), new __Text("brown", "'"), __ColorRGBA.fromHex("#fff"), new __Text("grey", "'"), __ColorRGBA.fromHex("#222"), new __Text("blue-grey", "'"), __ColorRGBA.fromHex("#fff")]), 10);
 __rt_setDynamic("$base-foreground-color", __rt_getGlobalDefault("$base_foreground_color") || __rt_box((__rt.functions.material_foreground_color || material_foreground_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
     __rt_get("$base_color_name")]))), 11);
-__rt_setDynamic("$accent_color_name", __rt_getGlobalDefault("$accent_color_name") || new __Text("grey", "'"), 12);
+__rt_setDynamic("$accent_color_name", __rt_getGlobalDefault("$accent_color_name") || new __Text("orange", "'"), 12);
 __rt_setDynamic("$accent-color", __rt_getGlobalDefault("$accent_color") || __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
     __rt_get("$accent_color_name"), 
     new __Text("500", "'")]))), 13);
@@ -5536,7 +5536,7 @@ __rt_setDynamic("$alert-pressed-color", __rt_getGlobalDefault("$alert_pressed_co
     new __Numeric(15, "%")]))) : __rt_box(__rt.registered.lighten.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get("$alert_color"), 
     new __Numeric(15, "%")])))), 22);
-__rt_setDynamic(__strings._, __rt_getGlobalDefault(__strings._) || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#ffffff") : __ColorRGBA.fromHex("#111111")), 23);
+__rt_setDynamic(__strings._, __rt_getGlobalDefault(__strings._) || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#fff") : __ColorRGBA.fromHex("#111111")), 23);
 __rt_setDynamic("$reverse-color", __rt_getGlobalDefault("$reverse_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#222") : __ColorRGBA.fromHex("#fff")), 24);
 __rt_setDynamic("$highlight-color", __rt_getGlobalDefault("$highlight_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get(__strings._), 
@@ -5588,6 +5588,11 @@ __rt_setDynamic("$overlay-color", __rt_getGlobalDefault("$overlay_color") || (__
     __udf, 
     __udf])))), 37);
 __rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") || new __Numeric(16, "px"), 38);
+__rt_setDynamic("$dataview_item_selected_background_color", __rt_getGlobalDefault("$dataview_item_selected_background_color") || __rt_get("$selected_background_color"), 39);
+__rt_setDynamic("$dataitem_selected_background_color", __rt_getGlobalDefault("$dataitem_selected_background_color") || __rt_get("$dataview_item_selected_background_color"), 40);
+__rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$listitem_selected_background_color") || __rt_get("$dataitem_selected_background_color"), 41);
+__rt_setDynamic("$reverse-border-color", __rt_getGlobalDefault("$reverse_border_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#212121") : __ColorRGBA.fromHex("#e0e0e0")), 42);
+__rt_setDynamic("$reverse-alt-border-color", __rt_getGlobalDefault("$reverse_alt_border_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#3a3a3a") : __ColorRGBA.fromHex("#e0e0e0")), 43);
 },
  {
 	":root": [
@@ -5625,10 +5630,15 @@ __rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") ||
 		"reverse-background-color",
 		"reverse-alt-background-color",
 		"overlay-color",
-		"content-padding"
+		"content-padding",
+		"listitem-selected-background-color",
+		"reverse-border-color",
+		"reverse-alt-border-color"
 	],
 	"html": [
 		"base_color_name",
-		"accent_color_name"
+		"accent_color_name",
+		"dataview_item_selected_background_color",
+		"dataitem_selected_background_color"
 	]});
 })(Fashion);

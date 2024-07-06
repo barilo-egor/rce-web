@@ -72,7 +72,7 @@ Ext.define('Main.view.components.MainToolBar', {
             xtype: 'button',
             iconCls: 'fas fa-shopping-cart menu-icon-color',
             bind: {
-                hidden: '{isNotAdmin}'
+                hidden: '{isNotAdmin && isNotOperator}'
             },
             menu: [
                 {
@@ -92,7 +92,27 @@ Ext.define('Main.view.components.MainToolBar', {
                     handler: 'botDealsClick'
                 }
             ]
-
+        },
+        {
+            xtype: 'button',
+            iconCls: 'fas fa-gamepad menu-icon-color',
+            menu: [
+                {
+                    text: 'Барабан',
+                    iconCls: 'fas fa-drum menu-icon-color',
+                    handler: 'slotReelClick'
+                },
+                {
+                    text: 'КНБ',
+                    iconCls: 'fas fa-hand-rock menu-icon-color',
+                    handler: 'rpsClick'
+                },
+                {
+                    text: 'Кости',
+                    iconCls: 'fas fa-dice menu-icon-color',
+                    handler: 'diceClick'
+                }
+            ]
         }
     ]
 })

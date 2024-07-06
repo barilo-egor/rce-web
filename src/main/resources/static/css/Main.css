@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
 .x-btn-wrap-default-toolbar-small.x-btn-arrow-right:after {
     content: '\f0da' !important;
     font: 16px/24px 'Font Awesome 5 Free' !important;
@@ -69,6 +72,10 @@
     color: lime !important;
 }
 
+.darkGreen {
+    color: darkgreen !important;
+}
+
 .redColor {
     color: red !important;
 }
@@ -108,5 +115,30 @@
     border-width: 1px;
     color: #404040 !important;
     box-shadow: none;
-    background-image: none;
+    background-image: none !important;
+}
+
+.x-treelist-nav .x-treelist-item-text {
+    color: #111;
+    color: var(--color);
+    margin-left: 45px;
+    margin-right: 24px;
+    font-size: 14px;
+    line-height: 44px;
+}
+
+.backgroundMain {
+    background-color: lightgrey;
+}
+
+.forestgreenColor {
+    color: forestgreen !important;
+}
+
+.lightBlue {
+    color: #7fb5e4 !important;
+}
+
+.material-blue-color {
+    color: #2196f3 !important;
 }
