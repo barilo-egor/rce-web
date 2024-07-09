@@ -219,6 +219,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> updateDealRequestGroup(Long pid) {
         groupChatService.updateTypeByPid(GroupChatType.DEAL_REQUEST, pid);
+        if (Objects.nonNull(notifier)) notifier.sendGreetingToNewGroup();
         return SuccessResponseUtil.toast("Группа обновлена");
     }
 }
