@@ -12,7 +12,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             ExtUtil.referenceQuery('showCheckMenuButton')
                 .setHidden(createType === 'MANUAL')
             ExtUtil.referenceQuery('confirmDealMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL'
+                    || ExtUtil.referenceQuery('dealRequestGroupField').groupPid === null)
             ExtUtil.referenceQuery('confirmDealWithRequestMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
