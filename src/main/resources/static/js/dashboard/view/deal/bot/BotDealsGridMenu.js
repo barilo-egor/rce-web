@@ -33,6 +33,25 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             }
         },
         {
+            text: 'Скопировать фиат.сумму',
+            reference: 'copyAmountMenuButton',
+            iconCls: 'x-fa fa-copy',
+            handler: function (me) {
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('amount').split(' ')[0])
+                ExtMessages.topToast('Фиат.сумма скопирована в буфер обмена')
+            }
+        },
+        {
+            text: 'Скопировать сумму крипты',
+            reference: 'copyCryptoAmountMenuButton',
+            iconCls: 'x-fa fa-copy',
+            handler: function (me) {
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('cryptoAmount').split(' ')[0])
+                ExtMessages.topToast('Сумма крипты скопирована в буфер обмена')
+            }
+        },
+        '-',
+        {
             text: 'Показать чек',
             reference: 'showCheckMenuButton',
             iconCls: 'x-fa fa-receipt lightBlue',
