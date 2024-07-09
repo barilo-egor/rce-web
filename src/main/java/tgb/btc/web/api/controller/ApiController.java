@@ -131,7 +131,7 @@ public class ApiController extends BaseController {
             if (Objects.nonNull(notifier)) notifier.notifyNewApiDeal(id);
             notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
             apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL, "Оплачена сделка №" + apiDeal.getPid());
-            log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), apiDeal.getApiDealStatus().name());
+            log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), ApiDealStatus.PAID.name());
             return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
     }
