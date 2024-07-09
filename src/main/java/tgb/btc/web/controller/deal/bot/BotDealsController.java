@@ -2,6 +2,7 @@ package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -131,8 +132,9 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/confirm")
     @ResponseBody
-    public SuccessResponse<?> confirm(Principal principal, Long pid) {
+    public SuccessResponse<?> confirm(Principal principal, Long pid, Boolean isNeedRequest) {
         dealService.confirm(pid);
+        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdraw("веба", principal.getName(), pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка подтверждена.");

@@ -13,6 +13,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                 .setHidden(createType === 'MANUAL')
             ExtUtil.referenceQuery('confirmDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
+            ExtUtil.referenceQuery('confirmDealWithRequestMenuButton')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')
@@ -166,6 +168,28 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                     })
                 }
                 ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
+                    confirmFn)
+            }
+        },
+        {
+            text: 'Подтвердить с запросом',
+            reference: 'confirmDealWithRequestMenuButton',
+            iconCls: 'x-fa fa-check-circle darkGreen',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let confirmFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/confirm',
+                        params: {
+                            pid: deal.pid,
+                            isNeedRequest: true
+                        },
+                        success: function (response) {
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    })
+                }
+                ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и отправить запрос на вывод?',
                     confirmFn)
             }
         },
