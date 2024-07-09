@@ -77,6 +77,13 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     playSound = true
                     break
+                case 'CHANGED_DEAL_REQUEST_GROUP':
+                    if (workspaceItem.xtype === 'botdealscontainer') {
+                        let field = ExtUtil.referenceQuery('dealRequestGroupField')
+                        field.setValue(response.data.title)
+                        field.groupPid = response.data.pid
+                        ExtMessages.topToast('Группа запросов была обновлена')
+                    }
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

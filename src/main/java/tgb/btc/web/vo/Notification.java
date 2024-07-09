@@ -14,10 +14,13 @@ public class Notification implements JsonConvertable {
 
     private String type;
 
+    private ObjectNode data;
+
     @Override
     public ObjectNode map() {
         return JacksonUtil.getEmpty()
                 .put("type", type)
-                .put("message", message);
+                .put("message", message)
+                .set("data", data);
     }
 }

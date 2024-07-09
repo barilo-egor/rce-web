@@ -12,6 +12,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
@@ -220,6 +221,8 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> updateDealRequestGroup(Long pid) {
         groupChatService.updateTypeByPid(GroupChatType.DEAL_REQUEST, pid);
         if (Objects.nonNull(notifier)) notifier.sendGreetingToNewGroup();
-        return SuccessResponseUtil.toast("Группа обновлена");
+        notificationsAPI.send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, groupChatService.getByType(GroupChatType.DEAL_REQUEST)
+                .orElseThrow(() -> new BaseException("Не найдена группа для отправки запросов сразу после обновления.")));
+        return new SuccessResponse<>();
     }
 }

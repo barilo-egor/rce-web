@@ -73,9 +73,6 @@ Ext.define('Dashboard.view.deal.bot.DealRequestGroupDialog', {
                                 },
                                 loadingComponentRef: 'dealRequestGroupDialog',
                                 success: function (response) {
-                                    let field = ExtUtil.referenceQuery('dealRequestGroupField')
-                                    field.setValue(rec.get('title'))
-                                    field.groupPid = rec.get('pid')
                                     ExtUtil.maskOff('dealRequestGroupDialog')
                                     ExtUtil.referenceQuery('dealRequestGroupDialog').close()
                                 }
