@@ -11,7 +11,7 @@ import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.PaymentRequisiteMapper;
 import tgb.btc.web.constant.enums.mapper.PaymentTypeMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.process.PaymentTypeProcessService;
+import tgb.btc.web.service.impl.process.PaymentTypeProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.PaymentTypeVO;

@@ -9,7 +9,6 @@ Ext.define('Dashboard.view.users.api.tie.TieDialog', {
     closable: 'true',
     title: 'Привязка WEB пользователя',
     minWidth: 350,
-    width: '20%',
     height: '90%',
 
     tools: [

@@ -1,4 +1,4 @@
-package tgb.btc.web.service.process;
+package tgb.btc.web.service.impl.process;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

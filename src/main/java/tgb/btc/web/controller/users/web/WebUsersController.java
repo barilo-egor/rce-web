@@ -4,24 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.library.bean.web.Role;
-import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
-import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
-import tgb.btc.web.service.users.WebWebUsersService;
+import tgb.btc.web.service.impl.users.WebWebUsersService;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/users/web/")

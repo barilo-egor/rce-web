@@ -11,6 +11,8 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.GroupChatType;
+import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.repository.bot.DealRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.process.CalculateService;
@@ -21,8 +23,9 @@ import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.NotificationsAPI;
-import tgb.btc.web.service.deal.WebDealService;
+import tgb.btc.web.service.IWebGroupChatService;
+import tgb.btc.web.service.impl.NotificationsAPI;
+import tgb.btc.web.service.impl.deal.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.DealVO;
@@ -56,6 +59,21 @@ public class BotDealsController extends BaseController {
     private DealRepository dealRepository;
 
     private CalculateService calculateService;
+
+    private IWebGroupChatService webGroupChatService;
+
+    private IGroupChatService groupChatService;
+
+    @Autowired
+    public void setGroupChatService(IGroupChatService groupChatService) {
+        this.groupChatService = groupChatService;
+    }
+
+    @Autowired
+    public void setWebGroupChatService(IWebGroupChatService webGroupChatService) {
+        this.webGroupChatService = webGroupChatService;
+    }
+
     @Autowired
     public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
         this.notificationsAPI = notificationsAPI;
@@ -179,5 +197,28 @@ public class BotDealsController extends BaseController {
         Deal deal = webDealService.createManual(principal.getName(), cryptoAmount, amount, cryptoCurrency, dealType, fiatCurrency);
         log.debug("Пользователь {} создал ручную сделку={}", principal.getName(), deal.manualToString());
         return SuccessResponseUtil.toast("Сделка №" + deal.getPid() + " создана");
+    }
+
+    @GetMapping("/getDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> getDealRequestGroup() {
+        return SuccessResponseUtil.data(webGroupChatService.getDealRequests(),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
+    @GetMapping("/getDefaultGroups")
+    @ResponseBody
+    public SuccessResponse<?> getDefaultGroups() {
+        return SuccessResponseUtil.jsonData(webGroupChatService.getDefaultGroups());
+    }
+
+    @PostMapping("/updateDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> updateDealRequestGroup(Long pid) {
+        groupChatService.updateTypeByPid(GroupChatType.DEAL_REQUEST, pid);
+        return SuccessResponseUtil.toast("Группа обновлена");
     }
 }

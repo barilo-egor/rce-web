@@ -1,4 +1,4 @@
-package tgb.btc.web.service;
+package tgb.btc.web.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.login.LoginController;

@@ -30,7 +30,48 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: 'exportDeals'
-            }
+            },
+            {
+                xtype: 'component',
+                html: '|',
+                style: {
+                    'margin-left': '10px',
+                    'margin-right': '10px',
+                    'color': 'gray'
+                }
+            },
+            {
+                xtype: 'textfield',
+                reference: 'dealRequestGroupField',
+                label: 'Группа запросов',
+                labelAlign: 'left',
+                labelWidth: 110,
+                width: 230,
+                clearable: false,
+                editable: false,
+                tooltip: 'Группа, в которую отправляются запросы на вывод сделок.',
+                triggers: {
+                    change: {
+                        iconCls: 'x-fa fa-wrench material-blue-color',
+                        handler: function (me) {
+                            Ext.create('Dashboard.view.deal.bot.DealRequestGroupDialog').show()
+                        }
+                    }
+                },
+                listeners: {
+                    painted: function (me) {
+                        ExtUtil.mRequest({
+                            url: '/deal/bot/getDealRequestGroup',
+                            method: 'GET',
+                            loadingComponentRef: 'dealRequestGroupField',
+                            success: function (response) {
+                                me.setValue(response.body.data.title)
+                                me.groupPid = response.body.data.pid
+                            }
+                        })
+                    }
+                }
+            },
         ]
     },
     items: [

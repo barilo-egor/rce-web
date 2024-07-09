@@ -1,21 +1,14 @@
-package tgb.btc.web.service.process;
+package tgb.btc.web.service.impl.process;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.repository.web.*;
-import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.service.impl.deal.WebApiDealService;
 import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
 
