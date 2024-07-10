@@ -22,10 +22,7 @@ public class WebGroupChatService implements IWebGroupChatService {
     @Override
     public GroupChat getDealRequests() {
         return groupChatService.getByType(GroupChatType.DEAL_REQUEST)
-                .orElse(GroupChat.builder()
-                                .title("Отсутствует")
-                                .build()
-                );
+                .orElse(GroupChat.empty());
     }
 
     @Override
