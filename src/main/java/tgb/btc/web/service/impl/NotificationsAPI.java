@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotificationsAPI;
+import tgb.btc.library.bean.bot.GroupChat;
 import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.vo.Notification;
@@ -80,6 +81,12 @@ public class NotificationsAPI implements INotificationsAPI {
     @Override
     public void sendNotify(String s) {
         send(NotificationType.COURSE_GET_FAILED, s);
+    }
+
+    @Override
+    public void notifyDeletedDealRequestGroup() {
+        send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, "Бот был удален из группы, в которую отправлял запросы на вывод.",
+                GroupChat.empty(), null);
     }
 
 }
