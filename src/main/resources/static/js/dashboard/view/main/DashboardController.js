@@ -82,6 +82,8 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         let field = ExtUtil.referenceQuery('dealRequestGroupField')
                         field.setValue(response.data.title)
                         field.groupPid = response.data.pid
+                        if (response.data.message)
+                            ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                         ExtMessages.topToast('Группа запросов была обновлена')
                     }
             }
