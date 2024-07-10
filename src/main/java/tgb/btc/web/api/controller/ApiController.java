@@ -109,37 +109,46 @@ public class ApiController extends BaseController {
     @PostMapping("/paid")
     @ResponseBody
     public ObjectNode paid(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
-        log.debug("Запрос на оплату АПИ сделки IP={}", RequestUtil.getIp(request));
+        log.debug("Запрос на оплату АПИ сделки №{} IP={}", id, RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             log.debug("Запрос на перевод несуществующей сделки {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
-        } else if (ApiDealStatus.PAID.equals(apiDealRepository.getApiDealStatusByPid(id))) {
+        }
+        ApiDealStatus apiDealStatus = apiDealRepository.getApiDealStatusByPid(id);
+        if (ApiDealStatus.PAID.equals(apiDealStatus)) {
             log.debug("Повторная попытка перевести сделку {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_ALREADY_PAID.toJson();
-        } else {
-            ApiDeal apiDeal = apiDealRepository.getByPid(id);
-            if (ApiDealStatus.CANCELED.equals(apiDeal.getApiDealStatus())) return ApiStatusCode.DEAL_CANCELED.toJson();
-            LocalDateTime now = LocalDateTime.now();
-            if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
-                log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
-                return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
-            }
-            apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
-            if (Objects.nonNull(notifier)) notifier.notifyNewApiDeal(id);
-            notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
-            apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL, "Оплачена сделка №" + apiDeal.getPid());
-            log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), ApiDealStatus.PAID.name());
-            return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
         }
+        if (ApiDealStatus.CONFIRMED_STATUSES.contains(apiDealStatus)) {
+            log.debug("Попытка перевести сделку {} в статус {}, которая уже обработана.", id, ApiDealStatus.PAID.name());
+            return ApiStatusCode.DEAL_CONFIRMED.toJson();
+        }
+        ApiDeal apiDeal = apiDealRepository.getByPid(id);
+        if (ApiDealStatus.CANCELED.equals(apiDeal.getApiDealStatus())) {
+            log.debug("Попытка перевести сделку в статус {} которая отменена клиентом.", ApiDealStatus.PAID);
+            return ApiStatusCode.DEAL_CANCELED.toJson();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+            log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
+            return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
+        }
+        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
+        if (Objects.nonNull(notifier))
+            notifier.notifyNewApiDeal(id);
+        notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
+        apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL, "Оплачена сделка №" + apiDeal.getPid());
+        log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), ApiDealStatus.PAID.name());
+        return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
     }
 
     @PostMapping("/cancel")
     @ResponseBody
     public ObjectNode cancel(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
-        log.debug("Запрос на отмену АПИ сделки IP={}", RequestUtil.getIp(request));
+        log.debug("Запрос на отмену АПИ сделки №{} IP={}", id, RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
         if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
