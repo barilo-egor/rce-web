@@ -11,6 +11,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
     collapsed: true,
     title: 'Пользователь',
     shadow: true,
+    width: 400,
     collapsible: ExtUtilConfig.getCollapsible('right'),
 
     layout: {
@@ -36,6 +37,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
         },
         {
             xtype: 'container',
+            alignSelf: 'stretch',
             reference: 'userFieldsContainer',
             hidden: true,
 
@@ -51,7 +53,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                 align: 'stretch'
             },
             defaults: {
-                width: 200,
+                // width: 200,
                 margin: '0 20 0 20'
             },
             items: [
@@ -124,8 +126,9 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     }
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'textareafield',
                     label: 'Реквизит покупки',
+                    maxLength: 254,
                     reference: 'buyRequisiteField',
                     listeners: {
                         change: 'change'
@@ -136,8 +139,9 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     }
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'textareafield',
                     label: 'Реквизит продажи',
+                    maxLength: 254,
                     reference: 'sellRequisiteField',
                     listeners: {
                         change: 'change'
