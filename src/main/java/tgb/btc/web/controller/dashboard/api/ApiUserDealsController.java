@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -37,13 +37,11 @@ public class ApiUserDealsController extends BaseController {
 
     private WebApiDealService webApiDealService;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private ApiDealReportService apiDealReportService;
 
-    private ApiDealRepository apiDealRepository;
-
-    private ApiDealService apiDealService;
+    private IApiDealService apiDealService;
 
     @Autowired
     public void setApiDealService(ApiDealService apiDealService) {
@@ -56,13 +54,13 @@ public class ApiUserDealsController extends BaseController {
     }
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Autowired
@@ -73,7 +71,7 @@ public class ApiUserDealsController extends BaseController {
     @GetMapping("/checkTie")
     @ResponseBody
     public SuccessResponse<?> checkTie(Principal principal) {
-        Long pid = apiUserRepository.getPidByUsername(principal.getName());
+        Long pid = apiUserService.getPidByUsername(principal.getName());
         if (Objects.isNull(pid)) {
             return SuccessResponseUtil.blockString("Вы пока что не были привязаны ни к одному API клиенту. Обратитесь к оператору.");
         } else return new SuccessResponse<>();
@@ -82,7 +80,7 @@ public class ApiUserDealsController extends BaseController {
     @PostMapping("/findAll")
     @ResponseBody
     public ObjectNode findAll(Principal principal, @RequestBody ApiUserDealSearchForm searchForm) {
-        Long userPid = apiUserRepository.getPidByUsername(principal.getName());
+        Long userPid = apiUserService.getPidByUsername(principal.getName());
         Map<String, Object> parameters = new HashMap<>();
         List<ApiDealVO> dealVOList = webApiDealService.findAll(userPid, searchForm.getPage(),
                 searchForm.getLimit(),
@@ -97,7 +95,7 @@ public class ApiUserDealsController extends BaseController {
     @ResponseBody
     public WebResponse beforeExport(Principal principal, HttpServletRequest request, @RequestBody ApiUserDealSearchForm form) {
         Map<String, Object> parameters = new HashMap<>();
-        List<Long> pids = webApiDealService.findAllPids(apiUserRepository.getPidByUsername(principal.getName()),
+        List<Long> pids = webApiDealService.findAllPids(apiUserService.getPidByUsername(principal.getName()),
                 form.getWhereStr(parameters), form.getSortStr(), parameters);
         if (CollectionUtils.isEmpty(pids)) {
             return new FailureResponse("Не найдено ни одной сделки.");
@@ -111,7 +109,7 @@ public class ApiUserDealsController extends BaseController {
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
         List<Long> dealsPids = (List<Long>) request.getSession().getAttribute("dealsPids");
-        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids(dealsPids));
+        byte[] result = apiDealReportService.loadReport(apiDealService.getDealsByPids(dealsPids));
         log.debug("API пользователь {} выгрузил отчет по API сделкам. Количество сделок {}.", principal.getName(), dealsPids.size());
         request.getSession().removeAttribute("dealsPids");
         return result;
@@ -120,7 +118,7 @@ public class ApiUserDealsController extends BaseController {
     @PostMapping("/cancel")
     @ResponseBody
     public SuccessResponse<?> cancel(Principal principal, Long dealPid) {
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, dealPid);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.CANCELED, dealPid);
         log.debug("API пользователь {} отменил сделку {}.", principal.getName(), dealPid);
         return SuccessResponseUtil.toast("Сделка была отменена.");
     }
@@ -128,7 +126,7 @@ public class ApiUserDealsController extends BaseController {
     @PostMapping("/delete")
     @ResponseBody
     public SuccessResponse<?> delete(Principal principal, Long dealPid) {
-        apiDealRepository.deleteById(dealPid);
+        apiDealService.deleteById(dealPid);
         log.debug("API пользователь {} удалил сделку {}.", principal.getName(), dealPid);
         return SuccessResponseUtil.toast("Сделка была удалена.");
     }
@@ -136,7 +134,7 @@ public class ApiUserDealsController extends BaseController {
     @GetMapping("/getIds")
     @ResponseBody
     public ArrayNode getIds(String query) {
-        return JacksonUtil.getEmptyArray().addAll(apiDealRepository.getPidsByQuery(query).stream()
+        return JacksonUtil.getEmptyArray().addAll(apiDealService.getPidsByQuery(query).stream()
                 .map(pid -> JacksonUtil.getEmpty()
                         .put("value", pid))
                 .collect(Collectors.toList()));
@@ -150,7 +148,7 @@ public class ApiUserDealsController extends BaseController {
         Boolean isRange = Objects.isNull(dateRange) ? null : dateRange.getIsRange();
         List<TotalSum> totalSums = webApiDealService.getTotalSums(
                 apiDealService.getAcceptedByDateBetween(
-                        apiUserRepository.getPidByUsername(principal.getName()), startDate, endDate, isRange
+                        apiUserService.getPidByUsername(principal.getName()), startDate, endDate, isRange
                 )
         );
         if (CollectionUtils.isEmpty(totalSums)) return SuccessResponseUtil.toast("Сделок не найдено.");

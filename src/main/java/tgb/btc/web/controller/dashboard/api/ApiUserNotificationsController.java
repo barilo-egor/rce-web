@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 
 import java.security.Principal;
 import java.util.Map;
@@ -20,17 +20,17 @@ public class ApiUserNotificationsController {
 
     public static final Map<Long, SseEmitter> LISTENERS = new ConcurrentHashMap<>();
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @RequestMapping(path = "/listen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
-        Long pid = apiUserRepository.getPidByUsername(principal.getName());
+        Long pid = apiUserService.getPidByUsername(principal.getName());
         sseEmitter.onError(throwable -> LISTENERS.remove(pid));
         sseEmitter.onTimeout(() -> LISTENERS.remove(pid));
         if (Objects.isNull(pid)) return null;

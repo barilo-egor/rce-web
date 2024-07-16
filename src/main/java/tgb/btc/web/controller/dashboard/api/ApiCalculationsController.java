@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.bean.web.api.ApiUser;
-import tgb.btc.library.repository.web.ApiCalculationRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.impl.process.ApiCalculationProcessService;
@@ -24,27 +24,28 @@ import java.util.List;
 @RequestMapping("/dashboard/api/calculation")
 public class ApiCalculationsController extends BaseController {
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private ApiUserProcessService apiUserProcessService;
 
-    private ApiCalculationRepository apiCalculationRepository;
+    private IApiCalculationService apiCalculationService;
 
     private ApiCalculationProcessService apiCalculationProcessService;
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiCalculationService(
+            IApiCalculationService apiCalculationService) {
+        this.apiCalculationService = apiCalculationService;
+    }
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Autowired
     public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
-    }
-
-    @Autowired
-    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
-        this.apiCalculationRepository = apiCalculationRepository;
     }
 
     @Autowired
@@ -57,16 +58,16 @@ public class ApiCalculationsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> hasCalculations(Principal principal) {
         return SuccessResponseUtil.jsonData(() -> JacksonUtil.getEmpty().put("hasCalculations",
-                apiCalculationRepository.countAllByApiUser(apiUserRepository.getByUsername(principal.getName())) > 0));
+                apiCalculationService.countAllByApiUser(apiUserService.getByUsername(principal.getName())) > 0));
     }
 
     @GetMapping("/getCalculations")
     @ResponseBody
     public ObjectNode getCalculations(Principal principal) {
-        ApiUser apiUser = apiUserRepository.getById(apiUserRepository.getPidByUsername(principal.getName()));
+        ApiUser apiUser = apiUserService.findById(apiUserService.getPidByUsername(principal.getName()));
         List<Calculation> calculations = apiUserProcessService.getCalculations(apiUser);
         ObjectNode result = apiCalculationProcessService.mapToTree(calculations);
-        JacksonUtil.pagingData(result, apiCalculationRepository.countAllByApiUser(apiUser));
+        JacksonUtil.pagingData(result, apiCalculationService.countAllByApiUser(apiUser));
         return result;
     }
 }
