@@ -15,7 +15,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
-import tgb.btc.library.repository.bot.DealRepository;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
@@ -58,7 +58,7 @@ public class BotDealsController extends BaseController {
 
     private DealReportService dealReportService;
 
-    private DealRepository dealRepository;
+    private IReadDealService readDealService;
 
     private CalculateService calculateService;
 
@@ -87,8 +87,8 @@ public class BotDealsController extends BaseController {
     }
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
     }
 
     @Autowired
@@ -173,7 +173,7 @@ public class BotDealsController extends BaseController {
     @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
-        byte[] result = dealReportService.loadReport(dealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        byte[] result = dealReportService.loadReport(readDealService.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
         log.debug("Пользователь {} экспортировал сделки из бота.", principal.getName());
         request.getSession().removeAttribute("dealsPids");
         return result;

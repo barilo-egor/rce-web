@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
@@ -36,13 +36,23 @@ public class ApiDealsController extends BaseController {
 
     private WebApiDealService webApiDealService;
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     private ApiDealReportService apiDealReportService;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     @Autowired
     public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
@@ -50,18 +60,8 @@ public class ApiDealsController extends BaseController {
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
-    }
-
-    @Autowired
     public void setApiDealReportService(ApiDealReportService apiDealReportService) {
         this.apiDealReportService = apiDealReportService;
-    }
-
-    @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
     }
 
     @Autowired
@@ -85,18 +85,18 @@ public class ApiDealsController extends BaseController {
     @PostMapping("/accept")
     @ResponseBody
     public SuccessResponse<?> accept(Principal principal, Long pid) {
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
-        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
+        apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
     @PostMapping("/decline")
     @ResponseBody
     public SuccessResponse<?> decline(Principal principal, Long pid) {
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
         log.debug("Пользователь {} отклонил АПИ сделку {}", principal.getName(), pid);
-        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.DECLINED_DEAL, "Сделка №" + pid + " отклонена.");
+        apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.DECLINED_DEAL, "Сделка №" + pid + " отклонена.");
         return SuccessResponseUtil.toast("Сделка отклонена.");
     }
 
@@ -114,7 +114,7 @@ public class ApiDealsController extends BaseController {
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
         List<Long> dealsPids = (List<Long>) request.getSession().getAttribute("dealsPids");
-        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids(dealsPids));
+        byte[] result = apiDealReportService.loadReport(apiDealService.getDealsByPids(dealsPids));
         log.debug("Пользователь {} выгрузил отчет по API сделкам. Количество {}.", principal.getName(), dealsPids.size());
         request.getSession().removeAttribute("dealsPids");
         return result;
@@ -123,11 +123,11 @@ public class ApiDealsController extends BaseController {
     @GetMapping(value = "/getCalculationDeals")
     @ResponseBody
     public SuccessResponse<?> getCalculationDeals(Long userPid) {
-        ApiDeal lastPaidDeal = apiUserRepository.getLastPaidDeal(userPid);
+        ApiDeal lastPaidDeal = apiUserService.getLastPaidDeal(userPid);
         if (Objects.isNull(lastPaidDeal)) {
-            lastPaidDeal = apiDealRepository.getFirstDeal(userPid);
+            lastPaidDeal = apiDealService.getFirstDeal(userPid);
         }
-        ApiDeal lastDeal = apiDealRepository.getLastDeal(userPid);
+        ApiDeal lastDeal = apiDealService.getLastDeal(userPid);
         if (Objects.isNull(lastPaidDeal) || lastPaidDeal.getPid().equals(lastDeal.getPid())) {
             return SuccessResponseUtil.getDataObjectNode(JacksonUtil.getEmpty()
                     .put("isEmpty", true)
