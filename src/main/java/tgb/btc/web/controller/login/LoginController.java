@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.SystemUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 public class LoginController extends BaseController {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
     private INotifier notifier;
 
@@ -43,8 +43,8 @@ public class LoginController extends BaseController {
     }
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Autowired(required = false)
@@ -58,9 +58,9 @@ public class LoginController extends BaseController {
         WebUser webUser;
         try {
             chatId = Long.parseLong(loginField);
-            webUser = webUserRepository.getByChatId(chatId);
+            webUser = webUserService.getByChatId(chatId);
         } catch (NumberFormatException e) {
-            webUser = webUserRepository.getByUsername(loginField);
+            webUser = webUserService.getByUsername(loginField);
             chatId = webUser.getChatId();
         }
         if (BooleanUtils.isFalse(webUser.getEnabled())) {
@@ -86,7 +86,7 @@ public class LoginController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> loginInstant(HttpServletRequest request, String login) {
         if (!SystemUtil.isDev()) return null;
-        WebUser webUser = webUserRepository.getByUsername(login);
+        WebUser webUser = webUserService.getByUsername(login);
         webApi.authorize(webUser, request);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("success", true));
     }
