@@ -1,19 +1,18 @@
-package tgb.btc.web.constant.enums.mapper;
+package tgb.btc.web.service.map;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import tgb.btc.library.bean.web.Role;
+import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.interfaces.map.IWebUserMappingService;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+@Service
+public class WebUserMappingService implements IWebUserMappingService {
 
-public enum WebUserMapper implements ObjectNodeConvertable<WebUser> {
-    FIND_ALL(webUser -> {
+    @Override
+    public ObjectNode map(WebUser webUser) {
         ObjectNode result = JacksonUtil.getEmpty()
                 .put("pid", webUser.getPid())
                 .put("username", webUser.getUsername())
@@ -25,16 +24,5 @@ public enum WebUserMapper implements ObjectNodeConvertable<WebUser> {
                 .getName());
         result.set("role", role.mapFunction().apply(role));
         return result;
-    });
-
-    final Function<WebUser, ObjectNode> mapFunction;
-
-    WebUserMapper(Function<WebUser, ObjectNode> mapFunction) {
-        this.mapFunction = mapFunction;
-    }
-
-    @Override
-    public Function<WebUser, ObjectNode> mapFunction() {
-        return mapFunction;
     }
 }

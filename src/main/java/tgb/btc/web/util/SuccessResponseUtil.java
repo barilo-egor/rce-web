@@ -51,6 +51,10 @@ public class SuccessResponseUtil {
         return getDataObjectNode(JacksonUtil.toObjectNode(t, mapper));
     }
 
+    public static <T> SuccessResponse<?> arrayData(Collection<T> t, Function<T, ObjectNode> mapper) {
+        return getDataObjectNode(JacksonUtil.toArrayNode(t, mapper));
+    }
+
     public static <T> SuccessResponse<?> data(T t, ObjectNodeConvertable<T> mapper) {
         return getDataObjectNode(JacksonUtil.toObjectNode(t, mapper));
     }

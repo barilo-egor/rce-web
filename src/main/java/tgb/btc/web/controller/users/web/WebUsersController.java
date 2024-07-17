@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.web.constant.enums.mapper.WebUserMapper;
+import tgb.btc.web.interfaces.map.IWebUserMappingService;
 import tgb.btc.web.interfaces.users.IWebWebUsersService;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -25,6 +25,13 @@ public class WebUsersController {
 
     private IWebWebUsersService webWebUsersService;
 
+    private IWebUserMappingService webUserMappingService;
+
+    @Autowired
+    public void setWebUserMappingService(IWebUserMappingService webUserMappingService) {
+        this.webUserMappingService = webUserMappingService;
+    }
+
     @Autowired
     public void setWebWebUsersService(IWebWebUsersService webWebUsersService) {
         this.webWebUsersService = webWebUsersService;
@@ -40,7 +47,7 @@ public class WebUsersController {
     public SuccessResponse<?> findAll(@RequestParam(required = false) String username,
                                       @RequestParam(required = false) RoleConstants role,
                                       @RequestParam(required = false) Long chatId) {
-        return SuccessResponseUtil.data(webWebUsersService.findAll(username, role, chatId), WebUserMapper.FIND_ALL);
+        return SuccessResponseUtil.arrayData(webWebUsersService.findAll(username, role, chatId), webUser -> webUserMappingService.map(webUser));
     }
 
     @PostMapping("/update")
