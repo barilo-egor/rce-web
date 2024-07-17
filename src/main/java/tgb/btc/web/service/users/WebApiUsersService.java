@@ -1,4 +1,4 @@
-package tgb.btc.web.service.impl.users;
+package tgb.btc.web.service.users;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

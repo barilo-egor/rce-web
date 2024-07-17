@@ -14,7 +14,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.web.IDealPaymentService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.impl.NotificationsAPI;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 

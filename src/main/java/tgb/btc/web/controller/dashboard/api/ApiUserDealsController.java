@@ -15,7 +15,7 @@ import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.impl.deal.WebApiDealService;
+import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.DateRange;
 import tgb.btc.web.vo.FailureResponse;

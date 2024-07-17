@@ -1,4 +1,4 @@
-package tgb.btc.web.service.impl.process;
+package tgb.btc.web.service.process;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,7 +22,7 @@ import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
-import tgb.btc.web.service.impl.ApiUserNotificationsAPI;
+import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.util.ApiResponseUtil;
 import tgb.btc.web.vo.form.ApiDealVO;
 

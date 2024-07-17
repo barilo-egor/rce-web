@@ -1,4 +1,4 @@
-package tgb.btc.web.service;
+package tgb.btc.web.interfaces;
 
 import tgb.btc.library.bean.bot.GroupChat;
 

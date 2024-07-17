@@ -1,4 +1,4 @@
-package tgb.btc.web.service.impl.process;
+package tgb.btc.web.service.process;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.web.*;
-import tgb.btc.web.service.impl.deal.WebApiDealService;
+import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
 

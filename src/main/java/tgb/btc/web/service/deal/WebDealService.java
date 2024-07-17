@@ -1,4 +1,4 @@
-package tgb.btc.web.service.impl.deal;
+package tgb.btc.web.service.deal;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
-import tgb.btc.web.service.impl.NotificationsAPI;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.vo.bean.DealVO;
 
 import javax.persistence.EntityManager;
