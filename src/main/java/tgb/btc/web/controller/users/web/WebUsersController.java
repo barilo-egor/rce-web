@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.web.RoleConstants;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
 import tgb.btc.web.service.impl.users.WebWebUsersService;
@@ -22,9 +21,7 @@ import java.security.Principal;
 @Slf4j
 public class WebUsersController {
 
-    private WebUserRepository webUserRepository;
-
-    private RoleRepository roleRepository;
+    private IWebUserService webUserService;
 
     private WebWebUsersService webWebUsersService;
 
@@ -34,13 +31,8 @@ public class WebUsersController {
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @RequestMapping("/findAll")
@@ -68,9 +60,9 @@ public class WebUsersController {
         boolean isExist;
         try {
             Long chatId = Long.parseLong(loginField);
-            isExist = webUserRepository.existsByChatId(chatId);
+            isExist = webUserService.existsByChatId(chatId);
         } catch (NumberFormatException e) {
-            isExist = webUserRepository.existsByUsername(loginField);
+            isExist = webUserService.existsByUsername(loginField);
         }
 
         log.debug("Проверка существования пользователя по значению \"{}\", результат={}. IP={}",

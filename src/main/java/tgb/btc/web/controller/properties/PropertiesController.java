@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.library.service.properties.PropertiesService;
+import tgb.btc.library.interfaces.service.properties.IPropertiesService;
 import tgb.btc.library.vo.properties.PropertiesValue;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
@@ -17,10 +17,10 @@ import java.util.List;
 @RequestMapping(ControllerMapping.PROPERTIES)
 public class PropertiesController extends BaseController {
 
-    private PropertiesService propertiesService;
+    private IPropertiesService propertiesService;
 
     @Autowired
-    public void setPropertiesService(PropertiesService propertiesService) {
+    public void setPropertiesService(IPropertiesService propertiesService) {
         this.propertiesService = propertiesService;
     }
 

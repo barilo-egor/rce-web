@@ -8,10 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.web.ApiCalculationRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.service.bean.web.ApiUserService;
-import tgb.btc.library.service.bean.web.WebUserService;
+import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.impl.deal.WebApiDealService;
@@ -34,28 +33,27 @@ public class ApiUsersController extends BaseController {
 
     private WebApiUsersService webApiUsersService;
 
-    private ApiUserRepository apiUserRepository;
-
     private ApiUserProcessService apiUserProcessService;
 
-    private ApiUserService apiUserService;
+    private IApiUserService apiUserService;
 
     private WebApiDealService webApiDealService;
 
     private ApiCalculationProcessService apiCalculationProcessService;
 
-    private ApiCalculationRepository apiCalculationRepository;
+    private IApiCalculationService apiCalculationService;
 
-    private WebUserService webUserService;
+    private IWebUserService webUserService;
 
     @Autowired
-    public void setWebUserService(WebUserService webUserService) {
+    public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
     }
 
     @Autowired
-    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
-        this.apiCalculationRepository = apiCalculationRepository;
+    public void setApiCalculationService(
+            IApiCalculationService apiCalculationService) {
+        this.apiCalculationService = apiCalculationService;
     }
 
     @Autowired
@@ -70,18 +68,13 @@ public class ApiUsersController extends BaseController {
     }
 
     @Autowired
-    public void setApiUserService(ApiUserService apiUserService) {
+    public void setApiUserService(IApiUserService apiUserService) {
         this.apiUserService = apiUserService;
     }
 
     @Autowired
     public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
     }
 
     @Autowired
@@ -104,7 +97,7 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> generateToken() {
         String token = RandomStringUtils.randomAlphanumeric(42);
-        while (apiUserRepository.countByToken(token) > 0) {
+        while (apiUserService.countByToken(token) > 0) {
             token = RandomStringUtils.randomAlphanumeric(42);
         }
         return SuccessResponseUtil.data(token, data -> JacksonUtil.getEmpty().put("token", data));
@@ -122,7 +115,7 @@ public class ApiUsersController extends BaseController {
     @GetMapping("/isExistById")
     @ResponseBody
     public SuccessResponse<?> isExistById(String id) {
-        return SuccessResponseUtil.data(apiUserRepository.countById(id) > 0,
+        return SuccessResponseUtil.data(apiUserService.countById(id) > 0,
                 data -> JacksonUtil.getEmpty().put("exist", data));
     }
 
@@ -152,17 +145,17 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> hasCalculations(Long apiUserPid) {
         return SuccessResponseUtil.jsonData(() -> JacksonUtil.getEmpty().put("hasCalculations",
-                apiCalculationRepository.countAllByApiUser(apiUserRepository.getById(apiUserPid)) > 0));
+                apiCalculationService.countAllByApiUser(apiUserService.findById(apiUserPid)) > 0));
     }
 
     @GetMapping("/getCalculations")
     @ResponseBody
     public ObjectNode getCalculations(Long apiUserPid) {
         if (Objects.isNull(apiUserPid)) return JacksonUtil.getEmpty();
-        ApiUser apiUser = apiUserRepository.getById(apiUserPid);
+        ApiUser apiUser = apiUserService.findById(apiUserPid);
         List<Calculation> calculations = apiUserProcessService.getCalculations(apiUser);
         ObjectNode result = apiCalculationProcessService.mapToTree(calculations);
-        JacksonUtil.pagingData(result, apiCalculationRepository.countAllByApiUser(apiUser));
+        JacksonUtil.pagingData(result, apiCalculationService.countAllByApiUser(apiUser));
         return result;
     }
 

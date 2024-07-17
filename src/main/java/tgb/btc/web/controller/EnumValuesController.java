@@ -13,7 +13,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -26,11 +26,11 @@ import java.util.List;
 @RequestMapping("/enum/")
 public class EnumValuesController extends BaseController {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @GetMapping("/fiatCurrencies")
@@ -44,7 +44,7 @@ public class EnumValuesController extends BaseController {
     public SuccessResponse<?> roles(Principal principal, @RequestParam(required = false) Boolean byAccess) {
         List<RoleConstants> roleConstants;
         if (BooleanUtils.isTrue(byAccess)) roleConstants = RoleConstants.getAvailable(RoleConstants.valueOf(
-                    webUserRepository.getRolesByUsername(principal.getName()).get(0).getName()));
+                    webUserService.getRolesByUsername(principal.getName()).get(0).getName()));
         else roleConstants = List.of(RoleConstants.values());
         return SuccessResponseUtil.data(roleConstants);
     }

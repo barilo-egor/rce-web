@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.SystemUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -28,18 +27,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/util")
 public class UtilController extends BaseController {
 
-    private WebUserRepository webUserRepository;
-
     private IWebUserService webUserService;
 
     @Autowired
     public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
     }
 
     @GetMapping("/getUsername")
@@ -52,7 +44,7 @@ public class UtilController extends BaseController {
     @GetMapping("/getSoundEnabled")
     @ResponseBody
     public SuccessResponse<?> getSoundEnabled(Principal principal) {
-        return SuccessResponseUtil.data(BooleanUtils.isNotFalse(webUserRepository.getSoundEnabledByUsername(principal.getName())),
+        return SuccessResponseUtil.data(BooleanUtils.isNotFalse(webUserService.getSoundEnabledByUsername(principal.getName())),
                 data -> JacksonUtil.getEmpty().put("soundEnabled", data));
     }
 
@@ -70,7 +62,7 @@ public class UtilController extends BaseController {
     @ResponseBody
     public ArrayNode getApiWebUsernames(Long apiUserPid) {
         return JacksonUtil.getEmptyArray().addAll(
-                webUserRepository.getWebUsernamesByApiUserPid(apiUserPid).stream()
+                webUserService.getWebUsernamesByApiUserPid(apiUserPid).stream()
                         .map(username -> JacksonUtil.getEmpty().put("username", username))
                         .collect(Collectors.toList())
         );
