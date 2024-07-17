@@ -15,7 +15,6 @@ import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
-import tgb.btc.web.vo.bean.ApiDealVO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -111,23 +110,6 @@ public class WebApiDealService implements IWebApiDealService {
         Query query = entityManager.createQuery(hqlQuery, Long.class);
         parameters.forEach(query::setParameter);
         return query.getResultList();
-    }
-
-    private ApiDealVO fromDeal(ApiDeal deal) {
-        long dealsCounts = apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
-        return ApiDealVO.builder()
-                .pid(deal.getPid())
-                .dealStatus(deal.getApiDealStatus())
-                .dealType(deal.getDealType())
-                .cryptoCurrency(deal.getCryptoCurrency())
-                .cryptoAmount(deal.getCryptoAmount())
-                .fiatCurrency(deal.getFiatCurrency())
-                .amount(deal.getAmount())
-                .dateTime(deal.getDateTime())
-                .requisite(deal.getRequisite())
-                .apiUser(deal.getApiUser())
-                .dealsCount(dealsCounts)
-                .build();
     }
 
     @Transactional
