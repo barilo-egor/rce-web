@@ -2,12 +2,9 @@ package tgb.btc.web.service.deal;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.CreateType;
 import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
@@ -22,7 +19,6 @@ import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.service.NotificationsAPI;
-import tgb.btc.web.vo.bean.DealVO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -30,7 +26,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class WebDealService implements IWebDealService {
@@ -114,37 +109,7 @@ public class WebDealService implements IWebDealService {
 
     @Transactional
     @Override
-    public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
-        return pagingDealService.findAllByDealStatusNot(DealStatus.NEW,
-                        PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
-                .map(deal -> {
-                    Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
-                    return DealVO.builder()
-                            .pid(deal.getPid())
-                            .dateTime(deal.getDateTime())
-                            .paymentType(deal.getPaymentType())
-                            .requisite(deal.getWallet())
-                            .dealStatus(deal.getDealStatus())
-                            .dealsCount(reportDealService.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
-                            .dealStatus(deal.getDealStatus())
-                            .fiatCurrency(deal.getFiatCurrency())
-                            .cryptoCurrency(deal.getCryptoCurrency())
-                            .amountCrypto(deal.getCryptoAmount())
-                            .amountFiat(deal.getAmount())
-                            .dealType(deal.getDealType())
-                            .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
-                            .paymentReceipts(readDealService.getPaymentReceipts(deal.getPid()))
-                            .deliveryType(deal.getDeliveryType())
-                            .user(readUserService.findByChatId(userChatId))
-                            .userDiscount(userDiscountService.getByUserChatId(userChatId))
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    @Override
-    public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
+    public List<Deal> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from Deal d where d.dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -158,10 +123,7 @@ public class WebDealService implements IWebDealService {
         parameters.forEach(query::setParameter);
         List<Deal> deals = query.getResultList();
         // entityManager.createQuery("from Deal d where d.dealStatus not like 'NEW' order by d.dateTime DESC", Deal.class).setMaxResults(20).setFirstResult(0).getResultList()
-        return deals
-                .stream()
-                .map(this::fromDeal)
-                .collect(Collectors.toList());
+        return deals;
     }
 
     @Transactional
@@ -184,54 +146,6 @@ public class WebDealService implements IWebDealService {
         Query query = entityManager.createQuery(hqlQuery);
         parameters.forEach(query::setParameter);
         return (Long) query.getSingleResult();
-    }
-
-    private DealVO fromDeal(Deal deal) {
-        Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
-        return DealVO.builder()
-                .pid(deal.getPid())
-                .dateTime(deal.getDateTime())
-                .paymentType(deal.getPaymentType())
-                .requisite(deal.getWallet())
-                .dealStatus(deal.getDealStatus())
-                .dealsCount(reportDealService.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
-                .dealStatus(deal.getDealStatus())
-                .fiatCurrency(deal.getFiatCurrency())
-                .cryptoCurrency(deal.getCryptoCurrency())
-                .amountCrypto(deal.getCryptoAmount())
-                .amountFiat(deal.getAmount())
-                .dealType(deal.getDealType())
-                .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
-                .paymentReceipts(readDealService.getPaymentReceipts(deal.getPid()))
-                .deliveryType(deal.getDeliveryType())
-                .user(readUserService.findByChatId(userChatId))
-                .userDiscount(userDiscountService.getByUserChatId(userChatId))
-                .createType(deal.getCreateType())
-                .build();
-    }
-
-    @Override
-    public DealVO get(Long pid) {
-        Deal deal = readDealService.findByPid(pid);
-        Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
-        List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
-        return DealVO.builder()
-                .pid(deal.getPid())
-                .dateTime(deal.getDateTime())
-                .paymentType(deal.getPaymentType())
-                .requisite(deal.getWallet())
-                .username(dealUserService.getUserUsernameByDealPid(deal.getPid()))
-                .dealsCount(dealCountService.getCountPassedByUserChatId(userChatId))
-                .dealStatus(deal.getDealStatus())
-                .chatId(userChatId)
-                .cryptoCurrency(deal.getCryptoCurrency())
-                .amountCrypto(deal.getCryptoAmount())
-                .fiatCurrency(deal.getFiatCurrency())
-                .amountFiat(deal.getAmount())
-                .dealType(deal.getDealType())
-                .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
-                .paymentReceipts(paymentReceipts)
-                .build();
     }
 
     @Override

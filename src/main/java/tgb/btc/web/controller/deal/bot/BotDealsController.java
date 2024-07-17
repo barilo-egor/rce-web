@@ -23,14 +23,13 @@ import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.NotificationType;
-import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.IWebGroupChatService;
 import tgb.btc.web.interfaces.deal.IWebDealService;
+import tgb.btc.web.interfaces.map.IDealMappingService;
 import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
-import tgb.btc.web.vo.bean.DealVO;
 import tgb.btc.web.vo.form.BotDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +64,13 @@ public class BotDealsController extends BaseController {
     private IWebGroupChatService webGroupChatService;
 
     private IGroupChatService groupChatService;
+
+    private IDealMappingService dealMappingService;
+
+    @Autowired
+    public void setDealMappingService(IDealMappingService dealMappingService) {
+        this.dealMappingService = dealMappingService;
+    }
 
     @Autowired
     public void setGroupChatService(IGroupChatService groupChatService) {
@@ -120,14 +126,14 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public ObjectNode findAll(@RequestBody BotDealsSearchForm botDealsSearchForm) {
         Map<String, Object> parameters = new HashMap<>();
-        List<DealVO> dealVOList = webDealService.findAll(botDealsSearchForm.getPage(),
+        List<Deal> deals = webDealService.findAll(botDealsSearchForm.getPage(),
                 botDealsSearchForm.getLimit(),
                 null,
                 botDealsSearchForm.getWhereStr(parameters),
                 botDealsSearchForm.getSortStr(), parameters);
-        return JacksonUtil.pagingData(dealVOList,
+        return JacksonUtil.pagingData(deals,
                 webDealService.count(botDealsSearchForm.getWhereStr(parameters), parameters),
-                DealMapper.FIND_ALL);
+                deal -> dealMappingService.mapFindAll(deal));
     }
 
     @PostMapping("/confirm")
