@@ -45,6 +45,7 @@ public class ApiCalculationProcessService implements IApiCalculationProcessServi
     }
 
     @Transactional
+    @Override
     public void saveCalculation(Long userPid, Long newLastPaidDeal) {
         Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
         if (Objects.isNull(lastPaidDealPid)) {
@@ -63,6 +64,7 @@ public class ApiCalculationProcessService implements IApiCalculationProcessServi
         apiUserRepository.updateLastPidDeal(userPid, apiDealRepository.getByPid(newLastPaidDeal));
     }
 
+    @Override
     public ObjectNode mapToTree(List<Calculation> calculations) {
         ObjectNode root = JacksonUtil.getEmpty();
         root.put("expanded", true);

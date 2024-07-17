@@ -89,6 +89,7 @@ public class WebDealService implements IWebDealService {
     }
 
     @Transactional
+    @Override
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
         return pagingDealService.findAllByDealStatusNot(DealStatus.NEW,
                         PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
@@ -118,6 +119,7 @@ public class WebDealService implements IWebDealService {
     }
 
     @Transactional
+    @Override
     public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
                                 Map<String, Object> parameters) {
         String hqlQuery = "from Deal d where d.dealStatus not like 'NEW'";
@@ -139,6 +141,7 @@ public class WebDealService implements IWebDealService {
     }
 
     @Transactional
+    @Override
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select pid from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -150,6 +153,7 @@ public class WebDealService implements IWebDealService {
     }
 
     @Transactional
+    @Override
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from Deal d where dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -182,6 +186,7 @@ public class WebDealService implements IWebDealService {
                 .build();
     }
 
+    @Override
     public DealVO get(Long pid) {
         Deal deal = dealRepository.getById(pid);
         Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
@@ -205,6 +210,7 @@ public class WebDealService implements IWebDealService {
                 .build();
     }
 
+    @Override
     public Deal createManual(String username, BigDecimal cryptoAmount, BigDecimal amount, CryptoCurrency cryptoCurrency,
             DealType dealType, FiatCurrency fiatCurrency) {
         Deal deal = dealService.save(Deal.builder()

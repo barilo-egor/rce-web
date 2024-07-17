@@ -12,7 +12,6 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
@@ -33,8 +32,6 @@ public class WebApiDealService implements IWebApiDealService {
 
     private EntityManager entityManager;
 
-    private ApiDealService apiDealService;
-
     private ApiUserRepository apiUserRepository;
 
     private ApiDealRepository apiDealRepository;
@@ -54,12 +51,8 @@ public class WebApiDealService implements IWebApiDealService {
         this.entityManager = entityManager;
     }
 
-    @Autowired
-    public void setApiDealService(ApiDealService apiDealService) {
-        this.apiDealService = apiDealService;
-    }
-
     @Transactional
+    @Override
     public List<ApiDealVO> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiUser.pid=:apiUserPid";
@@ -81,6 +74,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     @Transactional
+    @Override
     public List<ApiDealVO> findAll(Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
@@ -101,6 +95,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     @Transactional
+    @Override
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -112,6 +107,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     @Transactional
+    @Override
     public List<Long> findAllPids(Long userPid, String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", userPid);
@@ -141,6 +137,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     @Transactional
+    @Override
     public Long count(Long apiUserPid, String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", apiUserPid);
@@ -151,6 +148,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     @Transactional
+    @Override
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -159,6 +157,7 @@ public class WebApiDealService implements IWebApiDealService {
         return (Long) query.getSingleResult();
     }
 
+    @Override
     public List<TotalSum> getCalculating(Long currentDealPid, Long userPid) {
         Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
         if (Objects.isNull(lastPaidDealPid)) {
@@ -170,6 +169,7 @@ public class WebApiDealService implements IWebApiDealService {
         return getTotalSums(apiDeals);
     }
 
+    @Override
     public List<TotalSum> getTotalSums(List<ApiDeal> apiDeals) {
         if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
         List<TotalSum> totalSums = new ArrayList<>();

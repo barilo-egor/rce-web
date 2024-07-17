@@ -63,6 +63,7 @@ public class ApiUserProcessService implements IApiUserProcessService {
         this.apiUserRepository = apiUserRepository;
     }
 
+    @Override
     public ApiUser save(ApiUserVO apiUserVO) {
         ApiUser apiUser;
         if (Objects.nonNull(apiUserVO.getPid())) {
@@ -127,6 +128,7 @@ public class ApiUserProcessService implements IApiUserProcessService {
         return apiUserRepository.save(apiUser);
     }
 
+    @Override
     public List<Calculation> getCalculations(ApiUser apiUser) {
         List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser);
         List<Calculation> calculations = new ArrayList<>();

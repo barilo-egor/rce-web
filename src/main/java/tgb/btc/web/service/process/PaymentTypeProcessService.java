@@ -40,6 +40,7 @@ public class PaymentTypeProcessService implements IPaymentTypeProcessService {
         this.paymentTypeRepository = paymentTypeRepository;
     }
 
+    @Override
     public PaymentType save(PaymentTypeVO paymentTypeVO) {
         if (Objects.isNull(paymentTypeVO.getPid()) && paymentTypeRepository.countByNameLike(paymentTypeVO.getName()) > 0)
             throw new EntityUniqueFieldException("Тип оплаты с таким именем уже существует.");

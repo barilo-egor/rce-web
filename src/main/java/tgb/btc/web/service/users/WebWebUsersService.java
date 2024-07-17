@@ -44,6 +44,7 @@ public class WebWebUsersService implements IWebWebUsersService {
         this.entityManager = entityManager;
     }
 
+    @Override
     public List<WebUser> findAll(String username, RoleConstants role, Long chatId) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder hqlQuery = new StringBuilder(FIND_ALL_QUERY);
@@ -72,12 +73,14 @@ public class WebWebUsersService implements IWebWebUsersService {
         return query.getResultList();
     }
 
+    @Override
     public boolean hasAccess(RoleConstants roleConstants, String username) {
         List<Role> roles = webUserRepository.getRolesByUsername(username);
         return RoleConstants.getAvailable(RoleConstants.valueOf(roles.get(0).getName())).contains(roleConstants);
     }
 
     @Transactional
+    @Override
     public WebUser update(Long pid, String username, RoleConstants role, Boolean isBanned, Long chatId) {
         WebUser webUser = webUserRepository.getById(pid);
         String webUserBeforeUpdate = webUser.toString();

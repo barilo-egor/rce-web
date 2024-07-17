@@ -26,6 +26,7 @@ public class WebApiUsersService implements IWebApiUsersService {
         this.entityManager = entityManager;
     }
 
+    @Override
     public List<ApiUser> findAll(String id, FiatCurrency fiatCurrency, String token, String buyRequisite, String sellRequisite) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder hqlQuery = new StringBuilder(FIND_ALL_QUERY);

@@ -26,6 +26,7 @@ public class WebUserProcessService implements IWebUserProcessService {
         this.roleRepository = roleRepository;
     }
 
+    @Override
     public void update(WebUserVO webUserVO) {
         WebUser webUser = webUserRepository.getById(webUserVO.getPid());
         webUser.setUsername(webUserVO.getUsername());

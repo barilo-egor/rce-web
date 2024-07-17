@@ -20,6 +20,7 @@ public class FileService implements IFileService {
         this.fileDownloader = fileDownloader;
     }
 
+    @Override
     public byte[] getTelegramImage(String fileId, String pathString) throws IOException {
         fileDownloader.downloadFile(fileId, pathString);
         Path path = Paths.get(pathString);
