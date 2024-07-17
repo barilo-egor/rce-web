@@ -10,8 +10,8 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
@@ -32,18 +32,18 @@ public class WebApiDealService implements IWebApiDealService {
 
     private EntityManager entityManager;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Autowired
@@ -120,7 +120,7 @@ public class WebApiDealService implements IWebApiDealService {
     }
 
     private ApiDealVO fromDeal(ApiDeal deal) {
-        long dealsCounts = apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
+        long dealsCounts = apiDealService.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
         return ApiDealVO.builder()
                 .pid(deal.getPid())
                 .dealStatus(deal.getApiDealStatus())
@@ -159,13 +159,13 @@ public class WebApiDealService implements IWebApiDealService {
 
     @Override
     public List<TotalSum> getCalculating(Long currentDealPid, Long userPid) {
-        Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
+        Long lastPaidDealPid = apiUserService.getLastPaidDealPidByUserPid(userPid);
         if (Objects.isNull(lastPaidDealPid)) {
-            lastPaidDealPid = apiDealRepository.getFirstDealPid(userPid);
+            lastPaidDealPid = apiDealService.getFirstDealPid(userPid);
         }
-        LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
-        LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(currentDealPid);
-        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeStart(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        LocalDateTime dateTimeLastPaidDeal = apiDealService.getDateTimeByPid(lastPaidDealPid);
+        LocalDateTime dateTimeCurrentPaidDeal = apiDealService.getDateTimeByPid(currentDealPid);
+        List<ApiDeal> apiDeals = apiDealService.getByDateBetweenExcludeStart(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
         return getTotalSums(apiDeals);
     }
 

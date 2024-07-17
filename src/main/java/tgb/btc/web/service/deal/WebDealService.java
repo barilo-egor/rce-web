@@ -10,11 +10,14 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.PaymentReceipt;
 import tgb.btc.library.constants.enums.CreateType;
 import tgb.btc.library.constants.enums.bot.*;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.repository.bot.UserDiscountRepository;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.interfaces.deal.IWebDealService;
@@ -32,30 +35,71 @@ import java.util.stream.Collectors;
 @Service
 public class WebDealService implements IWebDealService {
 
-    private DealRepository dealRepository;
+    private IReadDealService readDealService;
+
+    private IDealCountService dealCountService;
+
+    private IDealUserService dealUserService;
+
+    private IModifyDealService modifyDealService;
+
+    private IReadUserService readUserService;
+
+    private IUserDiscountService userDiscountService;
+
+    private IWebUserService webUserService;
+
+    private IReportDealService reportDealService;
 
     private PagingDealService pagingDealService;
-
-    private DealService dealService;
-
-    private UserRepository userRepository;
-
-    private UserDiscountRepository userDiscountRepository;
 
     private EntityManager entityManager;
 
     private NotificationsAPI notificationsAPI;
 
-    private WebUserRepository webUserRepository;
+    @Autowired
+    public void setReportDealService(IReportDealService reportDealService) {
+        this.reportDealService = reportDealService;
+    }
+
+    @Autowired
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
+    }
+
+    @Autowired
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
+
+    @Autowired
+    public void setDealUserService(IDealUserService dealUserService) {
+        this.dealUserService = dealUserService;
+    }
+
+    @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
+    }
+
+    @Autowired
+    public void setUserDiscountService(IUserDiscountService userDiscountService) {
+        this.userDiscountService = userDiscountService;
+    }
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
+    }
 
     @Autowired
     public void setPagingDealService(PagingDealService pagingDealService) {
         this.pagingDealService = pagingDealService;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
     }
 
     @Autowired
@@ -68,40 +112,20 @@ public class WebDealService implements IWebDealService {
         this.entityManager = entityManager;
     }
 
-    @Autowired
-    public void setUserDiscountRepository(UserDiscountRepository userDiscountRepository) {
-        this.userDiscountRepository = userDiscountRepository;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
-    }
-
     @Transactional
     @Override
     public List<DealVO> findAll(Integer page, Integer limit, Integer start) {
         return pagingDealService.findAllByDealStatusNot(DealStatus.NEW,
                         PageRequest.of(page - 1, limit, Sort.by(Sort.Order.desc("pid")))).stream()
                 .map(deal -> {
-                    Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
+                    Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
                     return DealVO.builder()
                             .pid(deal.getPid())
                             .dateTime(deal.getDateTime())
                             .paymentType(deal.getPaymentType())
                             .requisite(deal.getWallet())
                             .dealStatus(deal.getDealStatus())
-                            .dealsCount(dealRepository.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
+                            .dealsCount(reportDealService.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
                             .dealStatus(deal.getDealStatus())
                             .fiatCurrency(deal.getFiatCurrency())
                             .cryptoCurrency(deal.getCryptoCurrency())
@@ -109,10 +133,10 @@ public class WebDealService implements IWebDealService {
                             .amountFiat(deal.getAmount())
                             .dealType(deal.getDealType())
                             .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
-                            .paymentReceipts(dealService.getPaymentReceipts(deal.getPid()))
+                            .paymentReceipts(readDealService.getPaymentReceipts(deal.getPid()))
                             .deliveryType(deal.getDeliveryType())
-                            .user(userRepository.findByChatId(userChatId))
-                            .userDiscount(userDiscountRepository.getByUserChatId(userChatId))
+                            .user(readUserService.findByChatId(userChatId))
+                            .userDiscount(userDiscountService.getByUserChatId(userChatId))
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -121,7 +145,7 @@ public class WebDealService implements IWebDealService {
     @Transactional
     @Override
     public List<DealVO> findAll(Integer page, Integer limit, Integer start, String whereStr, String orderStr,
-                                Map<String, Object> parameters) {
+            Map<String, Object> parameters) {
         String hqlQuery = "from Deal d where d.dealStatus not like 'NEW'";
         hqlQuery = hqlQuery.concat(whereStr);
         if (StringUtils.isBlank(orderStr)) hqlQuery = hqlQuery.concat(" order by pid desc");
@@ -163,14 +187,14 @@ public class WebDealService implements IWebDealService {
     }
 
     private DealVO fromDeal(Deal deal) {
-        Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
+        Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
         return DealVO.builder()
                 .pid(deal.getPid())
                 .dateTime(deal.getDateTime())
                 .paymentType(deal.getPaymentType())
                 .requisite(deal.getWallet())
                 .dealStatus(deal.getDealStatus())
-                .dealsCount(dealRepository.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
+                .dealsCount(reportDealService.getCountByChatIdAndStatus(userChatId, DealStatus.CONFIRMED))
                 .dealStatus(deal.getDealStatus())
                 .fiatCurrency(deal.getFiatCurrency())
                 .cryptoCurrency(deal.getCryptoCurrency())
@@ -178,26 +202,26 @@ public class WebDealService implements IWebDealService {
                 .amountFiat(deal.getAmount())
                 .dealType(deal.getDealType())
                 .additionalVerificationImageId(deal.getAdditionalVerificationImageId())
-                .paymentReceipts(dealService.getPaymentReceipts(deal.getPid()))
+                .paymentReceipts(readDealService.getPaymentReceipts(deal.getPid()))
                 .deliveryType(deal.getDeliveryType())
-                .user(userRepository.findByChatId(userChatId))
-                .userDiscount(userDiscountRepository.getByUserChatId(userChatId))
+                .user(readUserService.findByChatId(userChatId))
+                .userDiscount(userDiscountService.getByUserChatId(userChatId))
                 .createType(deal.getCreateType())
                 .build();
     }
 
     @Override
     public DealVO get(Long pid) {
-        Deal deal = dealRepository.getById(pid);
-        Long userChatId = dealRepository.getUserChatIdByDealPid(deal.getPid());
-        List<PaymentReceipt> paymentReceipts = dealService.getPaymentReceipts(deal.getPid());
+        Deal deal = readDealService.findByPid(pid);
+        Long userChatId = dealUserService.getUserChatIdByDealPid(deal.getPid());
+        List<PaymentReceipt> paymentReceipts = readDealService.getPaymentReceipts(deal.getPid());
         return DealVO.builder()
                 .pid(deal.getPid())
                 .dateTime(deal.getDateTime())
                 .paymentType(deal.getPaymentType())
                 .requisite(deal.getWallet())
-                .username(dealRepository.getUserUsernameByDealPid(deal.getPid()))
-                .dealsCount(dealRepository.getCountPassedByUserChatId(userChatId))
+                .username(dealUserService.getUserUsernameByDealPid(deal.getPid()))
+                .dealsCount(dealCountService.getCountPassedByUserChatId(userChatId))
                 .dealStatus(deal.getDealStatus())
                 .chatId(userChatId)
                 .cryptoCurrency(deal.getCryptoCurrency())
@@ -213,8 +237,8 @@ public class WebDealService implements IWebDealService {
     @Override
     public Deal createManual(String username, BigDecimal cryptoAmount, BigDecimal amount, CryptoCurrency cryptoCurrency,
             DealType dealType, FiatCurrency fiatCurrency) {
-        Deal deal = dealService.save(Deal.builder()
-                .user(userRepository.getByChatId(webUserRepository.getByUsername(username).getChatId()))
+        Deal deal = modifyDealService.save(Deal.builder()
+                .user(readUserService.getByChatId(webUserService.getByUsername(username).getChatId()))
                 .dateTime(LocalDateTime.now())
                 .cryptoAmount(cryptoAmount)
                 .amount(amount)
