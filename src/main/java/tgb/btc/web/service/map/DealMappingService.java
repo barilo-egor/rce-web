@@ -10,6 +10,7 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.bot.DealStatus;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.util.BigDecimalUtil;
@@ -26,6 +27,13 @@ public class DealMappingService implements IDealMappingService {
     private IReportDealService reportDealService;
 
     private IUserDiscountService userDiscountService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
 
     @Autowired
     public void setReportDealService(IReportDealService reportDealService) {
@@ -57,7 +65,7 @@ public class DealMappingService implements IDealMappingService {
                 + " " + deal.getCryptoCurrency().getShortName());
         result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmount()) + " " + deal.getFiatCurrency().getCode());
         result.put("deliveryType", Objects.nonNull(deal.getDeliveryType())
-                ? deal.getDeliveryType().getDisplayName()
+                ? deliveryTypeService.getDisplayName(deal.getDeliveryType())
                 : StringUtils.EMPTY);
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("wallet", deal.getWallet());
