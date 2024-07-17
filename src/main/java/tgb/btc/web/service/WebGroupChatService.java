@@ -20,6 +20,12 @@ public class WebGroupChatService implements IWebGroupChatService {
     }
 
     @Override
+    public GroupChat getApiDealRequests() {
+        return groupChatService.getByType(GroupChatType.API_DEAL_REQUEST)
+                .orElse(GroupChat.empty());
+    }
+
+    @Override
     public GroupChat getDealRequests() {
         return groupChatService.getByType(GroupChatType.DEAL_REQUEST)
                 .orElse(GroupChat.empty());

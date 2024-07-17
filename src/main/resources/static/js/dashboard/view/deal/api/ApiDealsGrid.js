@@ -21,7 +21,47 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: 'dealsExport'
-            }
+            },
+            {
+                xtype: 'component',
+                html: '|',
+                style: {
+                    'margin-left': '10px',
+                    'margin-right': '10px',
+                    'color': 'gray'
+                }
+            },
+            {
+                xtype: 'textfield',
+                reference: 'apiDealRequestGroupField',
+                label: 'Группа запросов',
+                labelAlign: 'left',
+                labelWidth: 110,
+                width: 230,
+                clearable: false,
+                editable: false,
+                tooltip: 'Группа, в которую отправляются запросы на вывод API сделок.',
+                triggers: {
+                    change: {
+                        iconCls: 'x-fa fa-wrench material-blue-color',
+                        handler: function (me) {
+                            Ext.create('Dashboard.view.deal.api.DealRequestGroupDialog').show()
+                        }
+                    }
+                },
+                listeners: {
+                    painted: function (me) {
+                        ExtUtil.mRequest({
+                            url: '/deal/api/getApiDealRequestGroup',
+                            method: 'GET',
+                            success: function (response) {
+                                me.setValue(response.body.data.title)
+                                me.groupPid = response.body.data.pid
+                            }
+                        })
+                    }
+                }
+            },
         ]
     },
 

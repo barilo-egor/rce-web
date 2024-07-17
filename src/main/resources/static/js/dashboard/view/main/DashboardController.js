@@ -84,8 +84,19 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         field.groupPid = response.data.pid
                         if (response.message)
                             ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
-                        ExtMessages.topToast('Группа запросов была обновлена')
+                        ExtMessages.topToast('Группа запросов сделок была обновлена')
                     }
+                    break
+                case 'CHANGED_API_DEAL_REQUEST_GROUP':
+                    if (workspaceItem.xtype === 'apidealscontainer') {
+                        let field = ExtUtil.referenceQuery('apiDealRequestGroupField')
+                        field.setValue(response.data.title)
+                        field.groupPid = response.data.pid
+                        if (response.message)
+                            ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                        ExtMessages.topToast('Группа запросов API сделок была обновлена')
+                    }
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

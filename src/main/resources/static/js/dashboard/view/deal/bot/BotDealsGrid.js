@@ -63,7 +63,6 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                         ExtUtil.mRequest({
                             url: '/deal/bot/getDealRequestGroup',
                             method: 'GET',
-                            loadingComponentRef: 'dealRequestGroupField',
                             success: function (response) {
                                 me.setValue(response.body.data.title)
                                 me.groupPid = response.body.data.pid
