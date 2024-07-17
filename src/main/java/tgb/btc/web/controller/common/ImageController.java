@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tgb.btc.web.service.process.FileService;
+import tgb.btc.web.interfaces.process.IFileService;
 
 import java.io.IOException;
 
@@ -16,10 +16,10 @@ import java.io.IOException;
 @RequestMapping("/image")
 public class ImageController {
 
-    private FileService fileService;
+    private IFileService fileService;
 
     @Autowired(required = false)
-    public void setFileService(FileService fileService) {
+    public void setFileService(IFileService fileService) {
         this.fileService = fileService;
     }
 

@@ -11,7 +11,7 @@ import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.constant.enums.mapper.PaymentRequisiteMapper;
 import tgb.btc.web.constant.enums.mapper.PaymentTypeMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.process.PaymentTypeProcessService;
+import tgb.btc.web.interfaces.process.IPaymentTypeProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.PaymentTypeVO;
@@ -27,10 +27,10 @@ public class OldPaymentTypesController extends BaseController {
 
     private PaymentRequisiteRepository paymentRequisiteRepository;
 
-    private PaymentTypeProcessService paymentTypeProcessService;
+    private IPaymentTypeProcessService paymentTypeProcessService;
 
     @Autowired
-    public void setPaymentTypeProcessService(PaymentTypeProcessService paymentTypeProcessService) {
+    public void setPaymentTypeProcessService(IPaymentTypeProcessService paymentTypeProcessService) {
         this.paymentTypeProcessService = paymentTypeProcessService;
     }
 

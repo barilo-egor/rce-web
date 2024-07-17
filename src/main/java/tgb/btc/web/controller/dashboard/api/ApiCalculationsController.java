@@ -11,8 +11,8 @@ import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.process.ApiCalculationProcessService;
-import tgb.btc.web.service.process.ApiUserProcessService;
+import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
+import tgb.btc.web.interfaces.process.IApiUserProcessService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.api.Calculation;
@@ -26,11 +26,11 @@ public class ApiCalculationsController extends BaseController {
 
     private IApiUserService apiUserService;
 
-    private ApiUserProcessService apiUserProcessService;
+    private IApiUserProcessService apiUserProcessService;
 
     private IApiCalculationService apiCalculationService;
 
-    private ApiCalculationProcessService apiCalculationProcessService;
+    private IApiCalculationProcessService apiCalculationProcessService;
 
     @Autowired
     public void setApiCalculationService(
@@ -44,13 +44,13 @@ public class ApiCalculationsController extends BaseController {
     }
 
     @Autowired
-    public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
+    public void setApiUserProcessService(IApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
     }
 
     @Autowired
     public void setApiCalculationProcessService(
-            ApiCalculationProcessService apiCalculationProcessService) {
+            IApiCalculationProcessService apiCalculationProcessService) {
         this.apiCalculationProcessService = apiCalculationProcessService;
     }
 

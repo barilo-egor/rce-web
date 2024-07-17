@@ -8,8 +8,8 @@ import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.web.*;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.interfaces.process.IApiUserProcessService;
-import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
 
@@ -31,10 +31,10 @@ public class ApiUserProcessService implements IApiUserProcessService {
 
     private ApiCalculationRepository apiCalculationRepository;
 
-    private WebApiDealService webApiDealService;
+    private IWebApiDealService webApiDealService;
 
     @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 

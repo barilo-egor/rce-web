@@ -14,8 +14,8 @@ import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
-import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.bean.ApiDealVO;
@@ -34,7 +34,7 @@ import java.util.Objects;
 @Slf4j
 public class ApiDealsController extends BaseController {
 
-    private WebApiDealService webApiDealService;
+    private IWebApiDealService webApiDealService;
 
     private IApiDealService apiDealService;
 
@@ -65,7 +65,7 @@ public class ApiDealsController extends BaseController {
     }
 
     @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 

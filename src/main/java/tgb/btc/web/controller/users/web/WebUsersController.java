@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.WebUserMapper;
-import tgb.btc.web.service.users.WebWebUsersService;
+import tgb.btc.web.interfaces.users.IWebWebUsersService;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -23,10 +23,10 @@ public class WebUsersController {
 
     private IWebUserService webUserService;
 
-    private WebWebUsersService webWebUsersService;
+    private IWebWebUsersService webWebUsersService;
 
     @Autowired
-    public void setWebWebUsersService(WebWebUsersService webWebUsersService) {
+    public void setWebWebUsersService(IWebWebUsersService webWebUsersService) {
         this.webWebUsersService = webWebUsersService;
     }
 

@@ -15,7 +15,7 @@ import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.deal.WebApiDealService;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.DateRange;
 import tgb.btc.web.vo.FailureResponse;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ApiUserDealsController extends BaseController {
 
-    private WebApiDealService webApiDealService;
+    private IWebApiDealService webApiDealService;
 
     private IApiUserService apiUserService;
 
@@ -64,7 +64,7 @@ public class ApiUserDealsController extends BaseController {
     }
 
     @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 

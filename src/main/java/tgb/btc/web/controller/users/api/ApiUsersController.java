@@ -13,10 +13,10 @@ import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.deal.WebApiDealService;
-import tgb.btc.web.service.process.ApiCalculationProcessService;
-import tgb.btc.web.service.process.ApiUserProcessService;
-import tgb.btc.web.service.users.WebApiUsersService;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
+import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
+import tgb.btc.web.interfaces.process.IApiUserProcessService;
+import tgb.btc.web.interfaces.users.IWebApiUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.api.Calculation;
@@ -31,15 +31,15 @@ import java.util.Objects;
 @Slf4j
 public class ApiUsersController extends BaseController {
 
-    private WebApiUsersService webApiUsersService;
+    private IWebApiUsersService webApiUsersService;
 
-    private ApiUserProcessService apiUserProcessService;
+    private IApiUserProcessService apiUserProcessService;
 
     private IApiUserService apiUserService;
 
-    private WebApiDealService webApiDealService;
+    private IWebApiDealService webApiDealService;
 
-    private ApiCalculationProcessService apiCalculationProcessService;
+    private IApiCalculationProcessService apiCalculationProcessService;
 
     private IApiCalculationService apiCalculationService;
 
@@ -58,12 +58,12 @@ public class ApiUsersController extends BaseController {
 
     @Autowired
     public void setApiCalculationProcessService(
-            ApiCalculationProcessService apiCalculationProcessService) {
+            IApiCalculationProcessService apiCalculationProcessService) {
         this.apiCalculationProcessService = apiCalculationProcessService;
     }
 
     @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 
@@ -73,12 +73,12 @@ public class ApiUsersController extends BaseController {
     }
 
     @Autowired
-    public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
+    public void setApiUserProcessService(IApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
     }
 
     @Autowired
-    public void setWebApiUsersService(WebApiUsersService webApiUsersService) {
+    public void setWebApiUsersService(IWebApiUsersService webApiUsersService) {
         this.webApiUsersService = webApiUsersService;
     }
 
