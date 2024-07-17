@@ -7,15 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
+import tgb.btc.web.interfaces.map.IApiDealMappingService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.DateRange;
 import tgb.btc.web.vo.FailureResponse;
@@ -23,7 +24,6 @@ import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.WebResponse;
 import tgb.btc.web.vo.api.ApiUserDealSearchForm;
 import tgb.btc.web.vo.api.TotalSum;
-import tgb.btc.web.vo.bean.ApiDealVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -42,6 +42,13 @@ public class ApiUserDealsController extends BaseController {
     private ApiDealReportService apiDealReportService;
 
     private IApiDealService apiDealService;
+
+    private IApiDealMappingService apiDealMappingService;
+
+    @Autowired
+    public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
+        this.apiDealMappingService = apiDealMappingService;
+    }
 
     @Autowired
     public void setApiDealService(ApiDealService apiDealService) {
@@ -82,13 +89,13 @@ public class ApiUserDealsController extends BaseController {
     public ObjectNode findAll(Principal principal, @RequestBody ApiUserDealSearchForm searchForm) {
         Long userPid = apiUserService.getPidByUsername(principal.getName());
         Map<String, Object> parameters = new HashMap<>();
-        List<ApiDealVO> dealVOList = webApiDealService.findAll(userPid, searchForm.getPage(),
+        List<ApiDeal> deals = webApiDealService.findAll(userPid, searchForm.getPage(),
                 searchForm.getLimit(),
                 searchForm.getWhereStr(parameters),
                 searchForm.getSortStr(), parameters);
-        return JacksonUtil.pagingData(dealVOList,
+        return JacksonUtil.pagingData(deals,
                 webApiDealService.count(userPid, searchForm.getWhereStr(parameters), parameters),
-                ApiDealMapper.FIND_ALL);
+                deal -> apiDealMappingService.mapFindAll(deal));
     }
 
     @PostMapping("/beforeExport")

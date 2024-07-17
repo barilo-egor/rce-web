@@ -53,7 +53,7 @@ public class WebApiDealService implements IWebApiDealService {
 
     @Transactional
     @Override
-    public List<ApiDealVO> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
+    public List<ApiDeal> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", apiUserPid);
@@ -67,15 +67,12 @@ public class WebApiDealService implements IWebApiDealService {
         query.setMaxResults(limit);
         parameters.forEach(query::setParameter);
         List<ApiDeal> deals = query.getResultList();
-        return deals
-                .stream()
-                .map(this::fromDeal)
-                .collect(Collectors.toList());
+        return deals;
     }
 
     @Transactional
     @Override
-    public List<ApiDealVO> findAll(Integer page, Integer limit, String whereStr, String orderStr,
+    public List<ApiDeal> findAll(Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -88,10 +85,7 @@ public class WebApiDealService implements IWebApiDealService {
         query.setMaxResults(limit);
         parameters.forEach(query::setParameter);
         List<ApiDeal> deals = query.getResultList();
-        return deals
-                .stream()
-                .map(this::fromDeal)
-                .collect(Collectors.toList());
+        return deals;
     }
 
     @Transactional

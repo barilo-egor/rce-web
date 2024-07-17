@@ -12,13 +12,12 @@ import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
-import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
+import tgb.btc.web.interfaces.map.IApiDealMappingService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
-import tgb.btc.web.vo.bean.ApiDealVO;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +42,13 @@ public class ApiDealsController extends BaseController {
     private IApiUserService apiUserService;
 
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    private IApiDealMappingService apiDealMappingService;
+
+    @Autowired
+    public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
+        this.apiDealMappingService = apiDealMappingService;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -73,13 +79,13 @@ public class ApiDealsController extends BaseController {
     @ResponseBody
     public ObjectNode findAll(@RequestBody ApiDealsSearchForm apiDealsSearchForm) {
         Map<String, Object> parameters = new HashMap<>();
-        List<ApiDealVO> dealVOList = webApiDealService.findAll(apiDealsSearchForm.getPage(),
+        List<ApiDeal> deals = webApiDealService.findAll(apiDealsSearchForm.getPage(),
                 apiDealsSearchForm.getLimit(),
                 apiDealsSearchForm.getWhereStr(parameters),
                 apiDealsSearchForm.getSortStr(), parameters);
-        return JacksonUtil.pagingData(dealVOList,
+        return JacksonUtil.pagingData(deals,
                 webApiDealService.count(apiDealsSearchForm.getWhereStr(parameters), parameters),
-                ApiDealMapper.FIND_ALL);
+                deal -> apiDealMappingService.mapFindAll(deal));
     }
 
     @PostMapping("/accept")
