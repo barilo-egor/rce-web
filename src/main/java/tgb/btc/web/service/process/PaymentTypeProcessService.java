@@ -6,9 +6,8 @@ import org.springframework.util.CollectionUtils;
 import tgb.btc.library.bean.bot.PaymentRequisite;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.exception.EntityUniqueFieldException;
-import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
-import tgb.btc.library.repository.bot.PaymentTypeRepository;
-import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentRequisiteService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.web.interfaces.process.IPaymentTypeProcessService;
 import tgb.btc.web.vo.form.PaymentTypeVO;
 import tgb.btc.web.vo.form.RequisiteVO;
@@ -19,34 +18,28 @@ import java.util.Objects;
 @Service
 public class PaymentTypeProcessService implements IPaymentTypeProcessService {
 
-    private PaymentTypeRepository paymentTypeRepository;
+    private IPaymentTypeService paymentTypeService;
 
-    private PaymentRequisiteRepository paymentRequisiteRepository;
-
-    private PaymentRequisiteService paymentRequisiteService;
+    private IPaymentRequisiteService paymentRequisiteService;
 
     @Autowired
-    public void setPaymentRequisiteService(PaymentRequisiteService paymentRequisiteService) {
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
+        this.paymentTypeService = paymentTypeService;
+    }
+
+    @Autowired
+    public void setPaymentRequisiteService(
+            IPaymentRequisiteService paymentRequisiteService) {
         this.paymentRequisiteService = paymentRequisiteService;
-    }
-
-    @Autowired
-    public void setPaymentRequisiteRepository(PaymentRequisiteRepository paymentRequisiteRepository) {
-        this.paymentRequisiteRepository = paymentRequisiteRepository;
-    }
-
-    @Autowired
-    public void setPaymentTypeRepository(PaymentTypeRepository paymentTypeRepository) {
-        this.paymentTypeRepository = paymentTypeRepository;
     }
 
     @Override
     public PaymentType save(PaymentTypeVO paymentTypeVO) {
-        if (Objects.isNull(paymentTypeVO.getPid()) && paymentTypeRepository.countByNameLike(paymentTypeVO.getName()) > 0)
+        if (Objects.isNull(paymentTypeVO.getPid()) && paymentTypeService.countByNameLike(paymentTypeVO.getName()) > 0)
             throw new EntityUniqueFieldException("Тип оплаты с таким именем уже существует.");
         PaymentType paymentType;
         if (Objects.nonNull(paymentTypeVO.getPid())) {
-            paymentType = paymentTypeRepository.getByPid(paymentTypeVO.getPid());
+            paymentType = paymentTypeService.getByPid(paymentTypeVO.getPid());
         } else {
             paymentType = new PaymentType();
         }
@@ -56,13 +49,13 @@ public class PaymentTypeProcessService implements IPaymentTypeProcessService {
         if (Objects.nonNull(paymentTypeVO.getDealType())) paymentType.setDealType(paymentTypeVO.getDealType());
         paymentType.setMinSum(paymentTypeVO.getMinSum());
         paymentType.setDynamicOn(paymentTypeVO.getIsDynamicOn());
-        paymentType = paymentTypeRepository.save(paymentType);
+        paymentType = paymentTypeService.save(paymentType);
         if (Objects.nonNull(paymentTypeVO.getPid())) {
-            List<PaymentRequisite> existsRequisites = paymentRequisiteRepository.getByPaymentType_Pid(paymentTypeVO.getPid());
+            List<PaymentRequisite> existsRequisites = paymentRequisiteService.getByPaymentType_Pid(paymentTypeVO.getPid());
             if (!CollectionUtils.isEmpty(existsRequisites)) {
                 for (PaymentRequisite requisite : existsRequisites) {
                     if (paymentTypeVO.getRequisites().stream().noneMatch(req -> req.getPid().equals(requisite.getPid()))) {
-                        paymentRequisiteRepository.delete(requisite);
+                        paymentRequisiteService.delete(requisite);
                     }
                 }
             }
@@ -71,7 +64,7 @@ public class PaymentTypeProcessService implements IPaymentTypeProcessService {
             for (RequisiteVO requisite: paymentTypeVO.getRequisites()) {
                 PaymentRequisite paymentRequisite;
                 if (Objects.nonNull(requisite.getPid())) {
-                    paymentRequisite = paymentRequisiteRepository.getById(requisite.getPid());
+                    paymentRequisite = paymentRequisiteService.findById(requisite.getPid());
                 } else {
                     paymentRequisite = new PaymentRequisite();
                 }
@@ -79,7 +72,7 @@ public class PaymentTypeProcessService implements IPaymentTypeProcessService {
                 paymentRequisite.setRequisite(requisite.getRequisite());
                 paymentRequisite.setOn(requisite.getIsOn());
                 paymentRequisite.setPaymentType(paymentType);
-                paymentRequisiteRepository.save(paymentRequisite);
+                paymentRequisiteService.save(paymentRequisite);
             }
         }
         paymentRequisiteService.removeOrder(paymentType.getPid());

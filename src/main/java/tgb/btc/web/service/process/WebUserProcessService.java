@@ -4,36 +4,35 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IRoleService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.web.interfaces.process.IWebUserProcessService;
 import tgb.btc.web.vo.form.WebUserVO;
 
 @Service
 public class WebUserProcessService implements IWebUserProcessService {
 
-    private WebUserRepository webUserRepository;
-
-    private RoleRepository roleRepository;
+    private IWebUserService webUserService;
+    private IRoleService roleService;
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public void setRoleService(IRoleService roleService) {
+        this.roleService = roleService;
     }
 
     @Override
     public void update(WebUserVO webUserVO) {
-        WebUser webUser = webUserRepository.getById(webUserVO.getPid());
+        WebUser webUser = webUserService.findById(webUserVO.getPid());
         webUser.setUsername(webUserVO.getUsername());
         webUser.setEnabled(BooleanUtils.isTrue(webUserVO.getIsEnabled()));
         webUser.setChatId(webUserVO.getChatId());
-        webUser.setRoles(roleRepository.getByName(webUserVO.getRole().name()));
-        webUserRepository.save(webUser);
+        webUser.setRoles(roleService.getByName(webUserVO.getRole().name()));
+        webUserService.save(webUser);
     }
 
 }

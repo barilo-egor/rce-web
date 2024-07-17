@@ -9,8 +9,8 @@ import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IRoleService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.web.interfaces.users.IWebWebUsersService;
 
 import javax.persistence.EntityManager;
@@ -25,18 +25,18 @@ public class WebWebUsersService implements IWebWebUsersService {
 
     private EntityManager entityManager;
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
-    private RoleRepository roleRepository;
+    private IRoleService roleService;
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setRoleService(IRoleService roleService) {
+        this.roleService = roleService;
     }
 
     @Autowired
@@ -75,21 +75,21 @@ public class WebWebUsersService implements IWebWebUsersService {
 
     @Override
     public boolean hasAccess(RoleConstants roleConstants, String username) {
-        List<Role> roles = webUserRepository.getRolesByUsername(username);
+        List<Role> roles = webUserService.getRolesByUsername(username);
         return RoleConstants.getAvailable(RoleConstants.valueOf(roles.get(0).getName())).contains(roleConstants);
     }
 
     @Transactional
     @Override
     public WebUser update(Long pid, String username, RoleConstants role, Boolean isBanned, Long chatId) {
-        WebUser webUser = webUserRepository.getById(pid);
+        WebUser webUser = webUserService.findById(pid);
         String webUserBeforeUpdate = webUser.toString();
         if (Objects.nonNull(username)) {
             webUser.setUsername(username);
         }
         if (Objects.nonNull(role)) {
             Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.getByName(role.name()).stream()
+            roles.add(roleService.getByName(role.name()).stream()
                     .findFirst()
                     .orElseThrow(() -> new BaseException("Роль " + role.name() + " не найдена.")));
             webUser.setRoles(roles);
@@ -100,7 +100,7 @@ public class WebWebUsersService implements IWebWebUsersService {
         if (Objects.nonNull(chatId)) {
             webUser.setChatId(chatId);
         }
-        webUser = webUserRepository.save(webUser);
+        webUser = webUserService.save(webUser);
         log.debug("Пользователь {} обновлен в {}", webUserBeforeUpdate, webUser);
         return webUser;
     }

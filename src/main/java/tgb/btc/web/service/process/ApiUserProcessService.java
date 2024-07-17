@@ -7,7 +7,9 @@ import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.web.*;
+import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.service.bean.web.IUsdApiUserCourseService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.interfaces.process.IApiUserProcessService;
 import tgb.btc.web.vo.api.Calculation;
@@ -21,53 +23,41 @@ import java.util.Objects;
 @Service
 public class ApiUserProcessService implements IApiUserProcessService {
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
-    private UsdApiUserCourseRepository usdApiUserCourseRepository;
+    private IUsdApiUserCourseService usdApiUserCourseService;
 
-    private WebUserRepository webUserRepository;
-
-    private RoleRepository roleRepository;
-
-    private ApiCalculationRepository apiCalculationRepository;
+    private IApiCalculationService apiCalculationService;
 
     private IWebApiDealService webApiDealService;
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
+
+    @Autowired
+    public void setUsdApiUserCourseService(
+            IUsdApiUserCourseService usdApiUserCourseService) {
+        this.usdApiUserCourseService = usdApiUserCourseService;
+    }
+
+    @Autowired
+    public void setApiCalculationService(
+            IApiCalculationService apiCalculationService) {
+        this.apiCalculationService = apiCalculationService;
+    }
 
     @Autowired
     public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 
-    @Autowired
-    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
-        this.apiCalculationRepository = apiCalculationRepository;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
-    }
-
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    @Autowired
-    public void setUsdApiUserCourseRepository(UsdApiUserCourseRepository usdApiUserCourseRepository) {
-        this.usdApiUserCourseRepository = usdApiUserCourseRepository;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
-    }
-
     @Override
     public ApiUser save(ApiUserVO apiUserVO) {
         ApiUser apiUser;
         if (Objects.nonNull(apiUserVO.getPid())) {
-            apiUser = apiUserRepository.getById(apiUserVO.getPid());
+            apiUser = apiUserService.findById(apiUserVO.getPid());
             apiUser.setIsBanned(apiUserVO.getIsBanned());
             apiUser.setToken(apiUserVO.getToken());
         } else {
@@ -75,19 +65,19 @@ public class ApiUserProcessService implements IApiUserProcessService {
             apiUser.setRegistrationDate(LocalDate.now());
             apiUser.setIsBanned(false);
             String token = RandomStringUtils.randomAlphanumeric(42);
-            while (apiUserRepository.countByToken(token) > 0) {
+            while (apiUserService.countByToken(token) > 0) {
                 token = RandomStringUtils.randomAlphanumeric(42);
             }
             apiUser.setToken(token);
             List<UsdApiUserCourse> usdApiUserCourseList = new ArrayList<>();
             if (Objects.nonNull(apiUserVO.getUsdCourseBYN())) {
-                usdApiUserCourseList.add(usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                usdApiUserCourseList.add(usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.BYN)
                         .course(apiUserVO.getUsdCourseBYN())
                         .build()));
             }
             if (Objects.nonNull(apiUserVO.getUsdCourseRUB())) {
-                usdApiUserCourseList.add(usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                usdApiUserCourseList.add(usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.BYN)
                         .course(apiUserVO.getUsdCourseRUB())
                         .build()));
@@ -97,27 +87,27 @@ public class ApiUserProcessService implements IApiUserProcessService {
         if (Objects.nonNull(apiUserVO.getUsdCourseBYN())) {
             UsdApiUserCourse byn = apiUser.getCourse(FiatCurrency.BYN);
             if (Objects.isNull(byn)) {
-                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.BYN)
                         .course(apiUserVO.getUsdCourseBYN())
                         .build());
                 apiUser.getUsdApiUserCourseList().add(usdApiUserCourse);
             } else {
                 byn.setCourse(apiUserVO.getUsdCourseBYN());
-                usdApiUserCourseRepository.save(byn);
+                usdApiUserCourseService.save(byn);
             }
         }
         if (Objects.nonNull(apiUserVO.getUsdCourseRUB())) {
             UsdApiUserCourse rub = apiUser.getCourse(FiatCurrency.RUB);
             if (Objects.isNull(rub)) {
-                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseRepository.save(UsdApiUserCourse.builder()
+                UsdApiUserCourse usdApiUserCourse = usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.RUB)
                         .course(apiUserVO.getUsdCourseRUB())
                         .build());
                 apiUser.getUsdApiUserCourseList().add(usdApiUserCourse);
             } else {
                 rub.setCourse(apiUserVO.getUsdCourseRUB());
-                usdApiUserCourseRepository.save(rub);
+                usdApiUserCourseService.save(rub);
             }
         }
         apiUser.setId(apiUserVO.getId());
@@ -125,12 +115,12 @@ public class ApiUserProcessService implements IApiUserProcessService {
         apiUser.setBuyRequisite(apiUserVO.getBuyRequisite());
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
-        return apiUserRepository.save(apiUser);
+        return apiUserService.save(apiUser);
     }
 
     @Override
     public List<Calculation> getCalculations(ApiUser apiUser) {
-        List<ApiCalculation> apiCalculations = apiCalculationRepository.findAllByApiUser(apiUser);
+        List<ApiCalculation> apiCalculations = apiCalculationService.findAllByApiUser(apiUser);
         List<Calculation> calculations = new ArrayList<>();
         for (ApiCalculation apiCalculation : apiCalculations) {
             calculations.add(Calculation.builder()
