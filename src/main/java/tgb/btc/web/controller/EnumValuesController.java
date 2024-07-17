@@ -13,6 +13,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
+import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.FiatCurrencyUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -21,12 +22,20 @@ import tgb.btc.web.vo.SuccessResponse;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/enum/")
 public class EnumValuesController extends BaseController {
 
     private IWebUserService webUserService;
+
+    private IDeliveryTypeService deliveryTypeService;
+
+    @Autowired
+    public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
+        this.deliveryTypeService = deliveryTypeService;
+    }
 
     @Autowired
     public void setWebUserService(IWebUserService webUserService) {
@@ -70,7 +79,9 @@ public class EnumValuesController extends BaseController {
     @GetMapping("/deliveryTypes")
     @ResponseBody
     public SuccessResponse<?> deliveryTypes() {
-        return SuccessResponseUtil.data(Arrays.asList(DeliveryType.values()));
+        return SuccessResponseUtil.jsonData(Arrays.stream(DeliveryType.values())
+                .map(deliveryType -> deliveryTypeService.getVO(deliveryType))
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/apiDealStatuses")
