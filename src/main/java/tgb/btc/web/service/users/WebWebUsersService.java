@@ -11,6 +11,7 @@ import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.web.interfaces.users.IWebWebUsersService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -18,7 +19,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class WebWebUsersService {
+public class WebWebUsersService implements IWebWebUsersService {
 
     public static final String FIND_ALL_QUERY = "select u from WebUser u";
 

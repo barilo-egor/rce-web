@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.web.interfaces.users.IWebApiUsersService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class WebApiUsersService {
+public class WebApiUsersService implements IWebApiUsersService {
 
     public static final String FIND_ALL_QUERY = "select u from ApiUser u";
 

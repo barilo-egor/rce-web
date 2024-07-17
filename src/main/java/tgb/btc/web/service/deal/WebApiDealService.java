@@ -14,6 +14,7 @@ import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
 import tgb.btc.web.vo.bean.ApiDealVO;
 
@@ -28,7 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class WebApiDealService {
+public class WebApiDealService implements IWebApiDealService {
 
     private EntityManager entityManager;
 

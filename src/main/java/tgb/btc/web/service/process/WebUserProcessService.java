@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.repository.web.RoleRepository;
 import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.web.interfaces.process.IWebUserProcessService;
 import tgb.btc.web.vo.form.WebUserVO;
 
 @Service
-public class WebUserProcessService {
+public class WebUserProcessService implements IWebUserProcessService {
 
     private WebUserRepository webUserRepository;
 

@@ -8,6 +8,7 @@ import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.repository.web.*;
+import tgb.btc.web.interfaces.process.IApiUserProcessService;
 import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.vo.api.Calculation;
 import tgb.btc.web.vo.form.ApiUserVO;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ApiUserProcessService {
+public class ApiUserProcessService implements IApiUserProcessService {
 
     private ApiUserRepository apiUserRepository;
 

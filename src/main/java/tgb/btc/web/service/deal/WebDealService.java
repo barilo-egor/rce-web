@@ -17,6 +17,7 @@ import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
+import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.vo.bean.DealVO;
 
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class WebDealService {
+public class WebDealService implements IWebDealService {
 
     private DealRepository dealRepository;
 

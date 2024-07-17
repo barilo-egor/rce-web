@@ -3,6 +3,7 @@ package tgb.btc.web.service.process;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.bot.IFileDownloader;
+import tgb.btc.web.interfaces.process.IFileService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
-public class FileService {
+public class FileService implements IFileService {
 
     private IFileDownloader fileDownloader;
 

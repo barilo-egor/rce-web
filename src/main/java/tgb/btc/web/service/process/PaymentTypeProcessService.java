@@ -9,6 +9,7 @@ import tgb.btc.library.exception.EntityUniqueFieldException;
 import tgb.btc.library.repository.bot.PaymentRequisiteRepository;
 import tgb.btc.library.repository.bot.PaymentTypeRepository;
 import tgb.btc.library.service.bean.bot.PaymentRequisiteService;
+import tgb.btc.web.interfaces.process.IPaymentTypeProcessService;
 import tgb.btc.web.vo.form.PaymentTypeVO;
 import tgb.btc.web.vo.form.RequisiteVO;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class PaymentTypeProcessService {
+public class PaymentTypeProcessService implements IPaymentTypeProcessService {
 
     private PaymentTypeRepository paymentTypeRepository;
 

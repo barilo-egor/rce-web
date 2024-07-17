@@ -12,6 +12,7 @@ import tgb.btc.library.repository.web.ApiCalculationRepository;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
 import tgb.btc.web.vo.api.Calculation;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class ApiCalculationProcessService {
+public class ApiCalculationProcessService implements IApiCalculationProcessService {
 
     private ApiUserRepository apiUserRepository;
 
