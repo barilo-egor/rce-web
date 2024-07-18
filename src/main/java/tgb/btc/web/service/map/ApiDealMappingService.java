@@ -11,7 +11,7 @@ import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.interfaces.map.IApiDealMappingService;
 
@@ -22,6 +22,13 @@ import java.util.Objects;
 public class ApiDealMappingService implements IApiDealMappingService {
 
     private IApiDealService apiDealService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -41,9 +48,9 @@ public class ApiDealMappingService implements IApiDealMappingService {
                 .put("name", deal.getDealType().name())
                 .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
         result.set("dealType", dealType);
-        result.put("cryptoAmount", BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(),
+        result.put("cryptoAmount", bigDecimalService.roundToPlainString(deal.getCryptoAmount(),
                 deal.getCryptoCurrency().getScale()) + " " + deal.getCryptoCurrency().getShortName());
-        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmount())
+        result.put("amount", bigDecimalService.roundToPlainString(deal.getAmount())
                 + " " + (Objects.nonNull(deal.getFiatCurrency()) ? deal.getFiatCurrency().getCode() :
                 StringUtils.EMPTY));
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
@@ -57,11 +64,11 @@ public class ApiDealMappingService implements IApiDealMappingService {
                     .put("dealsCount", apiDealService.countByApiDealStatusAndApiUser_Pid(
                             ApiDealStatus.ACCEPTED, deal.getApiUser().getPid()))
                     .put("isBanned", BooleanUtils.isTrue(apiUser.getIsBanned()))
-                    .put("personalDiscount", BigDecimalUtil.roundToPlainString(apiUser.getPersonalDiscount()))
+                    .put("personalDiscount", bigDecimalService.roundToPlainString(apiUser.getPersonalDiscount()))
                     .put("buyRequisite", apiUser.getBuyRequisite())
                     .put("sellRequisite", apiUser.getSellRequisite())
-                    .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? BigDecimalUtil.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
-                    .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? BigDecimalUtil.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
+                    .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? bigDecimalService.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
+                    .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? bigDecimalService.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
                     .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
             result.set("apiUser", user);
             result.put("apiUser.id", apiUser.getId());

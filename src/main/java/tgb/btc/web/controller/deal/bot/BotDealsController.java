@@ -16,10 +16,10 @@ import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.NotificationType;
@@ -66,6 +66,13 @@ public class BotDealsController extends BaseController {
     private IGroupChatService groupChatService;
 
     private IDealMappingService dealMappingService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setDealMappingService(IDealMappingService dealMappingService) {
@@ -196,7 +203,7 @@ public class BotDealsController extends BaseController {
                 fiatCurrency, dealType, isEnteredInCrypto, personalDiscount);
         return SuccessResponseUtil.data(isEnteredInCrypto ? dealAmount.getAmount() : dealAmount.getCryptoAmount(),
                 data -> JacksonUtil.getEmpty().put("amount",
-                        BigDecimalUtil.roundToPlainString(data, isEnteredInCrypto ? 0 : cryptoCurrency.getScale())));
+                        bigDecimalService.roundToPlainString(data, isEnteredInCrypto ? 0 : cryptoCurrency.getScale())));
     }
 
     @PostMapping("/saveDeal")

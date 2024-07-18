@@ -13,7 +13,7 @@ import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
-import tgb.btc.library.util.BigDecimalUtil;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 
@@ -29,6 +29,13 @@ public class DealMappingService implements IDealMappingService {
     private IUserDiscountService userDiscountService;
 
     private IDeliveryTypeService deliveryTypeService;
+
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
@@ -61,9 +68,9 @@ public class DealMappingService implements IDealMappingService {
                 .put("name", deal.getDealType().name())
                 .put("displayName", deal.getDealType().getNominativeFirstLetterToUpper());
         result.set("dealType", dealType);
-        result.put("cryptoAmount", BigDecimalUtil.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale())
+        result.put("cryptoAmount", bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale())
                 + " " + deal.getCryptoCurrency().getShortName());
-        result.put("amount", BigDecimalUtil.roundToPlainString(deal.getAmount()) + " " + deal.getFiatCurrency().getCode());
+        result.put("amount", bigDecimalService.roundToPlainString(deal.getAmount()) + " " + deal.getFiatCurrency().getCode());
         result.put("deliveryType", Objects.nonNull(deal.getDeliveryType())
                 ? deliveryTypeService.getDisplayName(deal.getDeliveryType())
                 : StringUtils.EMPTY);

@@ -12,11 +12,11 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -46,6 +46,13 @@ public class ApiDealProcessService {
 
     private VariablePropertiesReader variablePropertiesReader;
 
+    private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
+    
     @Autowired
     public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
         this.variablePropertiesReader = variablePropertiesReader;
@@ -103,7 +110,7 @@ public class ApiDealProcessService {
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0) {
             log.debug("Отказ в создании АПИ сделки с суммой меньше минимальной клиенту {}", apiUser.getId());
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
-                    JacksonUtil.getEmpty().put("minSum", BigDecimalUtil.roundToPlainString(minSum, 8)));
+                    JacksonUtil.getEmpty().put("minSum", bigDecimalService.roundToPlainString(minSum, 8)));
         }
         log.debug("АПИ клиент {} создал новую АПИ сделку {}.", apiUser.getId(), apiDeal.getPid());
         apiUserNotificationsAPI.send(apiUser.getPid(), ApiUserNotificationType.CREATED_DEAL, "Создана новая сделка №" + apiDeal.getPid());
@@ -128,9 +135,9 @@ public class ApiDealProcessService {
     public ObjectNode dealData(ApiDeal apiDeal, String requisite) {
         ObjectNode data = JacksonUtil.toObjectNode(apiDeal, deal -> JacksonUtil.getEmpty()
                 .put("id", deal.getPid())
-                .put("amountToPay", BigDecimalUtil.roundToPlainString(deal.getAmountToPay(), 8))
+                .put("amountToPay", bigDecimalService.roundToPlainString(deal.getAmountToPay(), 8))
                 .put("requisite", requisite));
-        if (DealType.isBuy(apiDeal.getDealType())) data.put("cryptoAmount", BigDecimalUtil.roundToPlainString(apiDeal.getCryptoAmount(), 8));
+        if (DealType.isBuy(apiDeal.getDealType())) data.put("cryptoAmount", bigDecimalService.roundToPlainString(apiDeal.getCryptoAmount(), 8));
         else data.put("amount", apiDeal.getAmount());
         return data;
     }
