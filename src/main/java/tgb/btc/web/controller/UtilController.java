@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.util.SystemUtil;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -28,6 +28,13 @@ import java.util.stream.Collectors;
 public class UtilController extends BaseController {
 
     private IWebUserService webUserService;
+
+    private ConfigPropertiesReader configPropertiesReader;
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
 
     @Autowired
     public void setWebUserService(IWebUserService webUserService) {
@@ -81,6 +88,6 @@ public class UtilController extends BaseController {
     @GetMapping(value = "/isDev")
     @ResponseBody
     public SuccessResponse<?> isDev() {
-        return SuccessResponseUtil.data(SystemUtil.isDev(), data -> JacksonUtil.getEmpty().put("isDev", data));
+        return SuccessResponseUtil.data(configPropertiesReader.isDev(), data -> JacksonUtil.getEmpty().put("isDev", data));
     }
 }
