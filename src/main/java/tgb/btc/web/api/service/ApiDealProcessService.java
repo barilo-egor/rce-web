@@ -15,8 +15,8 @@ import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.CalculateService;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.BigDecimalUtil;
-import tgb.btc.library.util.properties.VariablePropertiesUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
@@ -43,6 +43,13 @@ public class ApiDealProcessService {
     private CalculateService calculateService;
 
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
 
     @Autowired
     public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
@@ -92,7 +99,7 @@ public class ApiDealProcessService {
         if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
         else builder.cryptoAmount(apiDealVO.getCryptoAmount());
         ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()));
-        BigDecimal minSum = VariablePropertiesUtil.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
+        BigDecimal minSum = variablePropertiesReader.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0) {
             log.debug("Отказ в создании АПИ сделки с суммой меньше минимальной клиенту {}", apiUser.getId());
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
