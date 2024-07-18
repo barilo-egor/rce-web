@@ -15,7 +15,7 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
@@ -32,6 +32,13 @@ public class EnumValuesController extends BaseController {
 
     private IDeliveryTypeService deliveryTypeService;
 
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
+
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
         this.deliveryTypeService = deliveryTypeService;
@@ -45,7 +52,7 @@ public class EnumValuesController extends BaseController {
     @GetMapping("/fiatCurrencies")
     @ResponseBody
     public SuccessResponse<?> fiatCurrencies() {
-        return SuccessResponseUtil.data(FiatCurrencyUtil.getFiatCurrencies());
+        return SuccessResponseUtil.data(fiatCurrencyService.getFiatCurrencies());
     }
 
     @GetMapping("/roles")

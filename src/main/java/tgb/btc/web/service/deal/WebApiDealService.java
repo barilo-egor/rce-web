@@ -12,7 +12,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
-import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
 
@@ -34,6 +34,13 @@ public class WebApiDealService implements IWebApiDealService {
     private IApiUserService apiUserService;
 
     private IApiDealService apiDealService;
+
+    private IFiatCurrencyService fiatCurrencyService;
+
+    @Autowired
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
+    }
 
     @Autowired
     public void setApiUserService(IApiUserService apiUserService) {
@@ -150,7 +157,7 @@ public class WebApiDealService implements IWebApiDealService {
         if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
         List<TotalSum> totalSums = new ArrayList<>();
         for (DealType dealType: DealType.values()) {
-            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     List<ApiDeal> matchDeals = apiDeals.stream()
                             .filter(deal -> deal.getDealType().equals(dealType)
