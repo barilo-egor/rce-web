@@ -129,6 +129,12 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     menuDisabled: true,
                 },
                 {
+                    text: 'Курс',
+                    dataIndex: 'course',
+                    width: 80,
+                    menuDisabled: true
+                },
+                {
                     text: 'Сумма в крипте',
                     dataIndex: 'cryptoAmount',
                     width: 150,

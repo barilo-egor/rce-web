@@ -17,6 +17,7 @@ import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -77,6 +78,9 @@ public class DealMappingService implements IDealMappingService {
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("wallet", deal.getWallet());
         result.put("additionalVerificationImageId", deal.getAdditionalVerificationImageId());
+        result.put("course", Objects.nonNull(deal.getCourse())
+                ? bigDecimalService.roundToPlainString(deal.getCourse(), 0)
+                : StringUtils.EMPTY);
         result.set("createType", deal.getCreateType().mapFunction().apply(deal.getCreateType()));
         User user = deal.getUser();
         ObjectNode userNode = JacksonUtil.getEmpty()
