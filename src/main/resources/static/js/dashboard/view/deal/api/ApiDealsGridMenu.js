@@ -24,12 +24,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
             handler: 'confirmDeal'
         },
         {
-            text: 'Подтвердить с запросом',
-            reference: 'acceptDealWithRequestMenuButton',
-            iconCls: 'x-fa fa-check-circle darkGreen',
-            handler: 'confirmDealWithRequest'
-        },
-        {
             text: 'Отклонить',
             reference: 'declineDealMenuButton',
             iconCls: 'x-fa fa-times-circle redColor',

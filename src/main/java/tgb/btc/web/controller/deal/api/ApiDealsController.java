@@ -2,29 +2,20 @@ package tgb.btc.web.controller.deal.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.api.web.INotificationsAPI;
-import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
-import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
-import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.interfaces.IWebGroupChatService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.interfaces.map.IApiDealMappingService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
-import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
@@ -53,34 +44,6 @@ public class ApiDealsController extends BaseController {
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
 
     private IApiDealMappingService apiDealMappingService;
-
-    private IGroupChatService groupChatService;
-
-    private INotifier notifier;
-
-    private NotificationsAPI notificationsAPI;
-
-    private IWebGroupChatService webGroupChatService;
-
-    @Autowired
-    public void setGroupChatService(IGroupChatService groupChatService) {
-        this.groupChatService = groupChatService;
-    }
-
-    @Autowired
-    public void setNotifier(INotifier notifier) {
-        this.notifier = notifier;
-    }
-
-    @Autowired
-    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
-        this.notificationsAPI = notificationsAPI;
-    }
-
-    @Autowired
-    public void setWebGroupChatService(IWebGroupChatService webGroupChatService) {
-        this.webGroupChatService = webGroupChatService;
-    }
 
     @Autowired
     public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
@@ -125,12 +88,10 @@ public class ApiDealsController extends BaseController {
                 deal -> apiDealMappingService.mapFindAll(deal));
     }
 
-    // TODO проверить сначала, подтверждена ли уже сделка, а также есть ли дефолтная группа
     @PostMapping("/accept")
     @ResponseBody
-    public SuccessResponse<?> accept(Principal principal, Long pid, Boolean isNeedRequest) {
+    public SuccessResponse<?> accept(Principal principal, Long pid) {
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
-        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal("веба", principal.getName(), pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
         apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
@@ -191,31 +152,5 @@ public class ApiDealsController extends BaseController {
         result.set("lastPaidDeal", lastPaidDealNode);
         result.set("lastDeal", lastDealNode);
         return SuccessResponseUtil.getDataObjectNode(result);
-    }
-
-    @PostMapping("/updateApiDealRequestGroup")
-    @ResponseBody
-    public SuccessResponse<?> updateApiDealRequestGroup(Long pid) {
-        groupChatService.updateTypeByPid(GroupChatType.API_DEAL_REQUEST, pid);
-        if (Objects.nonNull(notifier)) notifier.sendGreetingToNewApiDealRequestGroup();
-        notificationsAPI.send(NotificationType.CHANGED_API_DEAL_REQUEST_GROUP, groupChatService.getByType(GroupChatType.API_DEAL_REQUEST)
-                .orElseThrow(() -> new BaseException("Не найдена группа для отправки запросов сразу после обновления.")));
-        return new SuccessResponse<>();
-    }
-
-    @GetMapping("/getApiDealRequestGroup")
-    @ResponseBody
-    public SuccessResponse<?> getApiDealRequestGroup() {
-        return SuccessResponseUtil.data(webGroupChatService.getApiDealRequests(),
-                data -> JacksonUtil.getEmpty()
-                        .put("title", data.getTitle())
-                        .put("pid", data.getPid())
-        );
-    }
-
-    @GetMapping("/getDefaultGroups")
-    @ResponseBody
-    public SuccessResponse<?> getDefaultGroups() {
-        return SuccessResponseUtil.jsonData(webGroupChatService.getDefaultGroups());
     }
 }

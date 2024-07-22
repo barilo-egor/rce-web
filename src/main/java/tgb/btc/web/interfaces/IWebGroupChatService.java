@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface IWebGroupChatService {
 
-    GroupChat getApiDealRequests();
-
     GroupChat getDealRequests();
 
     List<GroupChat> getDefaultGroups();

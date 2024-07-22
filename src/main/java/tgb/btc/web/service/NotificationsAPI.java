@@ -89,10 +89,4 @@ public class NotificationsAPI implements INotificationsAPI {
                 GroupChat.empty(), null);
     }
 
-    @Override
-    public void notifyDeletedApiDealRequestGroup() {
-        send(NotificationType.CHANGED_API_DEAL_REQUEST_GROUP, "Бот был удален из группы, в которую отправлял запросы на вывод API сделок.",
-                GroupChat.empty(), null);
-    }
-
 }

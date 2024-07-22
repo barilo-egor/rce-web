@@ -107,8 +107,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
             .setHidden(!(status === 'PAID'))
         ExtUtil.referenceQuery('declineDealMenuButton')
             .setHidden(!(status === 'PAID'))
-        ExtUtil.referenceQuery('acceptDealWithRequestMenuButton')
-            .setHidden(!(status === 'PAID') || ExtUtil.referenceQuery('apiDealRequestGroupField').groupPid === null)
     },
 
     copyRequisite: function (me) {
@@ -123,24 +121,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
                 url: '/deal/api/accept',
                 params: {
                     pid: deal.pid
-                },
-                success: function (response) {
-                    Ext.getStore('apiDealStore').reload()
-                }
-            })
-        }
-        ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
-            confirmFn)
-    },
-
-    confirmDealWithRequest: function (me) {
-        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
-        let confirmFn = function () {
-            ExtUtil.mRequest({
-                url: '/deal/api/accept',
-                params: {
-                    pid: deal.pid,
-                    isNeedRequest: true
                 },
                 success: function (response) {
                     Ext.getStore('apiDealStore').reload()

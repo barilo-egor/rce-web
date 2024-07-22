@@ -147,7 +147,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> confirm(Principal principal, Long pid, Boolean isNeedRequest) {
         dealService.confirm(pid);
-        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawDeal("веба", principal.getName(), pid);
+        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdraw("веба", principal.getName(), pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка подтверждена.");
