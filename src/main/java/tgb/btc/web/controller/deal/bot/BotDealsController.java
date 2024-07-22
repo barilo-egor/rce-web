@@ -15,9 +15,9 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
-import tgb.btc.library.service.bean.bot.DealService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -49,7 +49,7 @@ public class BotDealsController extends BaseController {
 
     private AdditionalVerificationProcessor additionalVerificationProcessor;
 
-    private DealService dealService;
+    private IModifyDealService modifyDealService;
 
     private INotifier notifier;
 
@@ -120,11 +120,6 @@ public class BotDealsController extends BaseController {
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
     public void setWebDealService(IWebDealService webDealService) {
         this.webDealService = webDealService;
     }
@@ -146,7 +141,7 @@ public class BotDealsController extends BaseController {
     @PostMapping("/confirm")
     @ResponseBody
     public SuccessResponse<?> confirm(Principal principal, Long pid, Boolean isNeedRequest) {
-        dealService.confirm(pid);
+        modifyDealService.confirm(pid);
         if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawDeal("веба", principal.getName(), pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
@@ -167,7 +162,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> delete(Principal principal, Long pid, Boolean isBanUser) {
         if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
-        dealService.deleteDeal(pid, isBanUser);
+        modifyDealService.deleteDeal(pid, isBanUser);
         notificationsAPI.send(NotificationType.DELETE_BOT_DEAL);
         log.debug("Пользователь {} удалил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
