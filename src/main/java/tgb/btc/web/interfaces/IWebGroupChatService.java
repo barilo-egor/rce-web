@@ -9,4 +9,6 @@ public interface IWebGroupChatService {
     GroupChat getDealRequests();
 
     List<GroupChat> getDefaultGroups();
+
+    GroupChat getApiDealRequests(Long apiUserPid);
 }

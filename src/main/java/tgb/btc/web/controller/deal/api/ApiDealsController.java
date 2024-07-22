@@ -2,9 +2,11 @@ package tgb.btc.web.controller.deal.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
@@ -44,6 +46,13 @@ public class ApiDealsController extends BaseController {
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
 
     private IApiDealMappingService apiDealMappingService;
+
+    private INotifier notifier;
+
+    @Autowired
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
+    }
 
     @Autowired
     public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
@@ -90,9 +99,10 @@ public class ApiDealsController extends BaseController {
 
     @PostMapping("/accept")
     @ResponseBody
-    public SuccessResponse<?> accept(Principal principal, Long pid) {
+    public SuccessResponse<?> accept(Principal principal, Long pid, Boolean isNeedRequest) {
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
+        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal(pid);
         apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }

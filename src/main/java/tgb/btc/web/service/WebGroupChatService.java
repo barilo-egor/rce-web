@@ -30,4 +30,9 @@ public class WebGroupChatService implements IWebGroupChatService {
         return groupChatService.getAllByType(GroupChatType.DEFAULT);
     }
 
+    @Override
+    public GroupChat getApiDealRequests(Long apiUserPid) {
+        return groupChatService.getByApiUserPid(apiUserPid).orElse(GroupChat.empty());
+    }
+
 }

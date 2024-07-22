@@ -57,6 +57,9 @@ public class ApiDealMappingService implements IApiDealMappingService {
         result.put("requisite", deal.getRequisite());
         ApiUser apiUser = deal.getApiUser();
         if (Objects.nonNull(apiUser)) {
+            if (Objects.nonNull(apiUser.getGroupChat())) {
+                result.put("groupChatPid", apiUser.getGroupChat().getPid());
+            }
             UsdApiUserCourse bynUsdCourse = apiUser.getCourse(FiatCurrency.BYN);
             UsdApiUserCourse rubUsdCourse = apiUser.getCourse(FiatCurrency.RUB);
             ObjectNode user = JacksonUtil.getEmpty()

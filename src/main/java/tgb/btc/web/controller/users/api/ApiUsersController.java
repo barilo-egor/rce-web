@@ -13,6 +13,7 @@ import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.interfaces.IWebGroupChatService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
 import tgb.btc.web.interfaces.process.IApiUserProcessService;
@@ -44,6 +45,13 @@ public class ApiUsersController extends BaseController {
     private IApiCalculationService apiCalculationService;
 
     private IWebUserService webUserService;
+
+    private IWebGroupChatService webGroupChatService;
+
+    @Autowired
+    public void setWebGroupChatService(IWebGroupChatService webGroupChatService) {
+        this.webGroupChatService = webGroupChatService;
+    }
 
     @Autowired
     public void setWebUserService(IWebUserService webUserService) {
@@ -171,5 +179,21 @@ public class ApiUsersController extends BaseController {
     public SuccessResponse<?> removeWebUser(String username, Long apiUserPid) {
         webUserService.removeWebUser(username, apiUserPid);
         return SuccessResponseUtil.toast("WEB пользователь отвязан.");
+    }
+
+    @GetMapping("/getApiDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> getApiDealRequestGroup(Long apiUserPid) {
+        return SuccessResponseUtil.data(webGroupChatService.getApiDealRequests(apiUserPid),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
+    @GetMapping("/getDefaultGroups")
+    @ResponseBody
+    public SuccessResponse<?> getDefaultGroups() {
+        return SuccessResponseUtil.jsonData(webGroupChatService.getDefaultGroups());
     }
 }

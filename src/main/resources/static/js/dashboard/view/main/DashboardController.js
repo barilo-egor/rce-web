@@ -84,8 +84,9 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         field.groupPid = response.data.pid
                         if (response.message)
                             ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
-                        ExtMessages.topToast('Группа запросов была обновлена')
+                        ExtMessages.topToast('Группа запросов сделок была обновлена')
                     }
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

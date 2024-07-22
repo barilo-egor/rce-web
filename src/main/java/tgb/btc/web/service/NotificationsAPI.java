@@ -88,5 +88,4 @@ public class NotificationsAPI implements INotificationsAPI {
         send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, "Бот был удален из группы, в которую отправлял запросы на вывод.",
                 GroupChat.empty(), null);
     }
-
 }

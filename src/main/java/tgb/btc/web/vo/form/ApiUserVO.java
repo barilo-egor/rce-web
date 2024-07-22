@@ -50,4 +50,8 @@ public class ApiUserVO {
     @Getter
     @Setter
     private String token;
+
+    @Getter
+    @Setter
+    private Long groupChatPid;
 }

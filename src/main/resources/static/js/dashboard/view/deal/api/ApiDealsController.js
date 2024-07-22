@@ -77,11 +77,15 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         if (!me.menu) {
             me.menu = Ext.create('Dashboard.view.deal.api.ApiDealsGridMenu')
         }
-        me.menu.setViewModel({
-            data: {
-                deal: eObj.record
-            }
-        })
+        let deal = eObj.record.getData()
+        let menu = me.menu
+        let status = deal.apiDealStatus.name
+        menu.lookupReference('acceptDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+        menu.lookupReference('declineDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+        menu.lookupReference('acceptDealWithRequestMenuButton')
+            .setHidden(status !== 'PAID' || !deal.groupChatPid)
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
     },
@@ -100,15 +104,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         me.getStore().load()
     },
 
-    updateMenuButtons: function (me) {
-        let deal = me.getViewModel().getData().deal.getData()
-        let status = deal.apiDealStatus.name
-        ExtUtil.referenceQuery('acceptDealMenuButton')
-            .setHidden(!(status === 'PAID'))
-        ExtUtil.referenceQuery('declineDealMenuButton')
-            .setHidden(!(status === 'PAID'))
-    },
-
     copyRequisite: function (me) {
         navigator.clipboard.writeText(ExtUtil.referenceQuery('apiDealsGrid').getSelection().get('requisite'))
         ExtMessages.topToast('Реквизит скопирован в буфер обмена')
@@ -121,6 +116,24 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
                 url: '/deal/api/accept',
                 params: {
                     pid: deal.pid
+                },
+                success: function (response) {
+                    Ext.getStore('apiDealStore').reload()
+                }
+            })
+        }
+        ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
+            confirmFn)
+    },
+
+    confirmDealWithRequest: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let confirmFn = function () {
+            ExtUtil.mRequest({
+                url: '/deal/api/accept',
+                params: {
+                    pid: deal.pid,
+                    isNeedRequest: true
                 },
                 success: function (response) {
                     Ext.getStore('apiDealStore').reload()
