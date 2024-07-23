@@ -9,15 +9,14 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
-import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 
-import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,6 +31,12 @@ public class DealMappingService implements IDealMappingService {
     private IDeliveryTypeService deliveryTypeService;
 
     private IBigDecimalService bigDecimalService;
+
+    private IDealCountService dealCountService;
+
+    public void setDealCountService(IDealCountService dealCountService) {
+        this.dealCountService = dealCountService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -92,7 +97,7 @@ public class DealMappingService implements IDealMappingService {
                 .put("referralPercent", user.getReferralPercent())
                 .put("referralUsersCount", user.getReferralUsers().size())
                 .put("active", user.getActive())
-                .put("dealsCount", reportDealService.getCountByChatIdAndStatus(user.getChatId(), DealStatus.CONFIRMED))
+                .put("dealsCount", dealCountService.getCountConfirmedByUserChatId(user.getChatId()))
                 .put("registrationDate", user.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         UserDiscount userDiscount = userDiscountService.getByUserChatId(user.getChatId());
         if (Objects.nonNull(userDiscount)) {
