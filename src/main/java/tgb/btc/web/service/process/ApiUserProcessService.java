@@ -129,11 +129,16 @@ public class ApiUserProcessService implements IApiUserProcessService {
             }
         }
         GroupChat previousChat = apiUser.getGroupChat();
+        boolean isChatUpdated = false;
         if (Objects.nonNull(apiUserVO.getGroupChatPid())) {
-            GroupChat groupChat = groupChatService.findById(apiUserVO.getGroupChatPid());
-            apiUser.setGroupChat(groupChat);
+            if (Objects.isNull(previousChat) || !previousChat.getPid().equals(apiUserVO.getGroupChatPid())) {
+                GroupChat groupChat = groupChatService.findById(apiUserVO.getGroupChatPid());
+                apiUser.setGroupChat(groupChat);
+                isChatUpdated = true;
+            }
         } else if (Objects.nonNull(previousChat)) {
             apiUser.setGroupChat(null);
+            isChatUpdated = true;
         }
         apiUser.setId(apiUserVO.getId());
         apiUser.setPersonalDiscount(apiUserVO.getPersonalDiscount());
@@ -141,12 +146,15 @@ public class ApiUserProcessService implements IApiUserProcessService {
         apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         apiUser = apiUserService.save(apiUser);
-        if (Objects.nonNull(apiUser.getGroupChat())) {
-            notifier.sendGreetingToNewApiDealRequestGroup(apiUserVO.getPid());
-            groupChatService.updateTypeByPid(GroupChatType.API_DEAL_REQUEST, apiUserVO.getGroupChatPid());
-        } else if (Objects.nonNull(previousChat)) {
-            groupChatService.updateTypeByPid(GroupChatType.DEFAULT, previousChat.getPid());
-            notifier.sendGoodbyeToNewApiDealRequestGroup(previousChat.getChatId(), apiUser.getId());
+        if (isChatUpdated) {
+            if (Objects.nonNull(apiUser.getGroupChat())) {
+                notifier.sendGreetingToNewApiDealRequestGroup(apiUserVO.getPid());
+                groupChatService.updateTypeByPid(GroupChatType.API_DEAL_REQUEST, apiUserVO.getGroupChatPid());
+            }
+            if (Objects.nonNull(previousChat)) {
+                groupChatService.updateTypeByPid(GroupChatType.DEFAULT, previousChat.getPid());
+                notifier.sendGoodbyeToNewApiDealRequestGroup(previousChat.getChatId(), apiUser.getId());
+            }
         }
         return apiUser;
     }
