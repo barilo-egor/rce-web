@@ -34,6 +34,7 @@ public class DealMappingService implements IDealMappingService {
 
     private IDealCountService dealCountService;
 
+    @Autowired
     public void setDealCountService(IDealCountService dealCountService) {
         this.dealCountService = dealCountService;
     }

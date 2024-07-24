@@ -1,11 +1,14 @@
 package tgb.btc.web.api.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
@@ -35,6 +38,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -170,18 +174,33 @@ public class ApiController extends BaseController {
 
     @GetMapping("/getStatus")
     @ResponseBody
-    public ObjectNode getStatus(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
-        log.debug("Запрос на получение статуса АПИ сделки IP={}", RequestUtil.getIp(request));
+    public JsonNode getStatus(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(name = "id", required = false) List<Long> ids) {
+        log.debug("Запрос на получение статуса АПИ сделок IP={}", RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
-        if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
-        log.debug("Запрос статуса АПИ сделки {}.", id);
-        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
-            return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
+        if (CollectionUtils.isEmpty(ids)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
+        log.debug("Запрос статуса АПИ сделок {}.", ids.stream().map(Object::toString).collect(Collectors.joining(",")));
+        ArrayNode arrayNode = JacksonUtil.getEmptyArray();
+        boolean isFewDeals = ids.size() > 1;
+        for (Long id : ids) {
+            ObjectNode resultNode;
+            if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
+                resultNode = ApiStatusCode.DEAL_NOT_EXISTS.toJson();
+            } else {
+                ObjectNode data = JacksonUtil.getEmpty()
+                        .put("status", apiDealRepository.getApiDealStatusByPid(id).name());
+                if (isFewDeals) {
+                    data.put("id", id);
+                }
+                resultNode = ApiStatusCode.DEAL_EXISTS.toJson()
+                        .set("data", data);
+            }
+            arrayNode.add(resultNode);
+        }
+        if (arrayNode.size() == 1) {
+            return arrayNode.get(0);
         } else {
-            return ApiStatusCode.DEAL_EXISTS.toJson()
-                    .set("data", JacksonUtil.getEmpty()
-                            .put("status", apiDealRepository.getApiDealStatusByPid(id).name()));
+            return arrayNode;
         }
     }
 
