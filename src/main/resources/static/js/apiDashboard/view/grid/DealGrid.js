@@ -18,6 +18,11 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
                 handler: 'reloadDeals'
             },
             {
+                iconCls: 'x-fa fa-plus',
+                tooltip: 'Создание диспута',
+                handler: 'createDispute'
+            },
+            {
                 iconCls: 'x-fa fa-file-excel darkGreen',
                 tooltip: 'Экспорт сделок в Excel',
                 handler: 'exportDeals'

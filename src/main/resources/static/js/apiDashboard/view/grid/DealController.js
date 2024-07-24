@@ -47,5 +47,9 @@ Ext.define('ApiDashboard.view.grid.DealController', {
 
     reloadDeals: function (me) {
         Ext.getStore('dealStore').reload()
+    },
+
+    createDispute: function (me) {
+        Ext.create('ApiDashboard.view.grid.CreateDisputeDialog').show()
     }
 })
