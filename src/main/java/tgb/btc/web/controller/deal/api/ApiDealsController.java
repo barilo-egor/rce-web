@@ -49,7 +49,7 @@ public class ApiDealsController extends BaseController {
 
     private INotifier notifier;
 
-    @Autowired
+    @Autowired(required = false)
     public void setNotifier(INotifier notifier) {
         this.notifier = notifier;
     }
@@ -102,7 +102,7 @@ public class ApiDealsController extends BaseController {
     public SuccessResponse<?> accept(Principal principal, Long pid, Boolean isNeedRequest) {
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
-        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal(pid);
+        if (Objects.nonNull(notifier) && BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal(pid);
         apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
