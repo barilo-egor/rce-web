@@ -89,15 +89,59 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                             items: [
                                 {
                                     xtype: 'combobox',
-                                    label: 'Тип сделки'
+                                    label: 'Фиатная валюта',
+                                    editable: false,
+                                    required: true,
+                                    queryMode: 'local',
+                                    valueField: 'name',
+                                    displayField: 'displayName',
+                                    store: {
+                                        type: 'fiatCurrenciesStore',
+                                        listeners: {
+                                            load: function (me) {
+                                                // TODO сделать выбор фиата который по умолчанию
+                                                ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(me.getAt(0))
+                                            }
+                                        }
+                                    },
+                                    reference: 'fiatCurrencyDisputeField'
                                 },
                                 {
                                     xtype: 'combobox',
-                                    label: 'Фиатная валюта'
+                                    label: 'Тип сделки',
+                                    editable: false,
+                                    required: true,
+                                    queryMode: 'local',
+                                    valueField: 'name',
+                                    displayField: 'nominativeFirstUpper',
+                                    store: {
+                                        type: 'dealTypesStore',
+                                        listeners: {
+                                            load: function (me, records) {
+                                                ExtUtil.referenceQuery('dealTypeDisputeField').setValue(me.getAt(0))
+                                            }
+                                        }
+                                    },
+                                    reference: 'dealTypeDisputeField',
                                 },
                                 {
                                     xtype: 'combobox',
-                                    label: 'Криптовалюта'
+                                    label: 'Криптовалюта',
+                                    editable: false,
+                                    required: true,
+                                    queryMode: 'local',
+                                    valueField: 'name',
+                                    displayField: 'name',
+                                    store: {
+                                        type: 'cryptoCurrenciesStore',
+                                        listeners: {
+                                            load: function (me, records) {
+                                                // TODO самый популярный среди последних сделок
+                                                ExtUtil.referenceQuery('cryptoCurrencyDisputeField').setValue(me.getAt(0))
+                                            }
+                                        }
+                                    },
+                                    reference: 'cryptoCurrencyDisputeField',
                                 }
                             ]
                         },
