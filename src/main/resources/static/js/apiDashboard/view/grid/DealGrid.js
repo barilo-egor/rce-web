@@ -4,7 +4,8 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
     reference: 'dealGrid',
     requires: [
         'ApiDashboard.view.grid.DealController',
-        'ApiDashboard.view.grid.DealGridMenu'
+        'ApiDashboard.view.grid.DealGridMenu',
+        'ApiDashboard.view.grid.CreateDisputeDialog'
     ],
     controller: 'dealController',
 

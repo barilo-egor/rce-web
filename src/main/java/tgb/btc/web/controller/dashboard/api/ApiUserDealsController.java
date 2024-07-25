@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
@@ -160,5 +161,11 @@ public class ApiUserDealsController extends BaseController {
         );
         if (CollectionUtils.isEmpty(totalSums)) return SuccessResponseUtil.toast("Сделок не найдено.");
         return new SuccessResponse<>(totalSums);
+    }
+
+    @PostMapping("/dispute")
+    @ResponseBody
+    public SuccessResponse<?> dispute(Principal principal, @RequestParam MultipartFile file) {
+        return SuccessResponseUtil.toast("ok");
     }
 }

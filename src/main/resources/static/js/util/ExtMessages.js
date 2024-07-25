@@ -6,6 +6,7 @@ let ExtMessages = {
     topToast: function (message) {
         Ext.toast({
             message: message,
+            timeout: 5000,
             alignment: 't-t'
         })
     },
