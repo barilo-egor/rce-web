@@ -36,7 +36,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
             ExtUtil.referenceQuery('card-next').setDisabled(true);
             ExtUtil.referenceQuery('card-prev').setDisabled(false);
 
-            container.setHtml('<div style="text-align: center">Скопируйте изображение и нажмите Ctrl+V<br> для вставки из буфера обмена.</div>')
+            container.setHtml(CHECK_BUFFER_CONTAINER_TEXT)
             container.file = null
         }
     },

@@ -1,3 +1,4 @@
+const CHECK_BUFFER_CONTAINER_TEXT = '<div style="text-align: center">Скопируйте изображение и нажмите Ctrl+V<br> для вставки из буфера обмена.</div>'
 Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
     extend: 'Ext.Dialog',
     requires: [
@@ -27,25 +28,28 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            defaults: {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                }
+            },
             items: [
                 {
                     flex: 0.25,
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
+                    defaults: {
+                        margin: '0 20 0 20',
                     },
                     items: [
                         {
                             flex: 0.33,
-                            margin: '0 20 0 20',
                             xtype: 'numberfield',
                             width: '50%',
                             label: 'Фиатная сумма',
                         },
                         {
                             flex: 0.66,
-                            margin: '0 20 0 20',
                             xtype: 'textfield',
                             label: 'Реквизит'
                         }
@@ -53,30 +57,28 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                 },
                 {
                     flex: 0.75,
-                    xtype: 'container',
+                    defaults: {
+                        xtype: 'container',
+                        margin: '0 20 0 20',
 
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
+                        layout: {
+                            type: 'vbox',
+                            align: 'stretch'
+                        }
                     },
                     items: [
                         {
                             flex: 0.33,
-                            xtype: 'container',
-                            margin: '0 20 0 20',
-
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
+                            defaults: {
+                                xtype: 'combobox',
+                                editable: false,
+                                required: true,
+                                queryMode: 'local',
+                                valueField: 'name'
                             },
                             items: [
                                 {
-                                    xtype: 'combobox',
                                     label: 'Фиатная валюта',
-                                    editable: false,
-                                    required: true,
-                                    queryMode: 'local',
-                                    valueField: 'name',
                                     displayField: 'displayName',
                                     store: {
                                         type: 'fiatCurrenciesStore',
@@ -87,12 +89,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     reference: 'fiatCurrencyDisputeField'
                                 },
                                 {
-                                    xtype: 'combobox',
                                     label: 'Тип сделки',
-                                    editable: false,
-                                    required: true,
-                                    queryMode: 'local',
-                                    valueField: 'name',
                                     displayField: 'nominativeFirstUpper',
                                     store: {
                                         type: 'dealTypesStore',
@@ -103,12 +100,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     reference: 'dealTypeDisputeField',
                                 },
                                 {
-                                    xtype: 'combobox',
                                     label: 'Криптовалюта',
-                                    editable: false,
-                                    required: true,
-                                    queryMode: 'local',
-                                    valueField: 'name',
                                     displayField: 'name',
                                     store: {
                                         type: 'cryptoCurrenciesStore',
@@ -122,13 +114,6 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                         },
                         {
                             flex: 0.66,
-                            xtype: 'container',
-                            margin: '0 20 0 20',
-
-                            layout: {
-                                type: 'vbox',
-                                align: 'stretch'
-                            },
                             items: [
                                 {
                                     xtype: 'panel',
@@ -155,29 +140,25 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     layout: {
                                         type: 'card'
                                     },
+                                    defaults: {
+                                        xtype: 'container',
+                                        layout: {
+                                            type: 'vbox',
+                                            align: 'center',
+                                            pack: 'middle'
+                                        },
+                                    },
                                     items: [
                                         {
-                                            xtype: 'container',
-                                            layout: {
-                                                type: 'vbox',
-                                                align: 'center',
-                                                pack: 'middle'
-                                            },
                                             items: [
                                                 {
                                                     xtype: 'container',
                                                     reference: 'checkBufferContainer',
-                                                    html: '<div style="text-align: center">Скопируйте изображение и нажмите Ctrl+V<br> для вставки из буфера обмена.</div>'
+                                                    html: CHECK_BUFFER_CONTAINER_TEXT
                                                 }
                                             ]
                                         },
                                         {
-                                            xtype: 'container',
-                                            layout: {
-                                                type: 'vbox',
-                                                align: 'center',
-                                                pack: 'middle'
-                                            },
                                             items: [
                                                 {
                                                     xtype: 'filefield',
