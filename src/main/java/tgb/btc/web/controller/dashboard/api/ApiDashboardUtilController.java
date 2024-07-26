@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.JsonConvertable;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.service.bean.web.ApiUserService;
@@ -30,6 +31,13 @@ public class ApiDashboardUtilController extends BaseController {
     private IApiUserService apiUserService;
 
     private IWebUserService webUserService;
+
+    private IApiDealService apiDealService;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
 
     @Autowired
     public void setApiUserService(IApiUserService apiUserService) {
@@ -123,7 +131,13 @@ public class ApiDashboardUtilController extends BaseController {
     @GetMapping("/mostUsedCryptoCurrency")
     @ResponseBody
     public SuccessResponse<?> mostUsedCryptoCurrency(Principal principal) {
-        return SuccessResponseUtil.data(apiUserService.findMostFrequentCryptoCurrency(
-                apiUserService.getPidByUsername(principal.getName())));
+        return SuccessResponseUtil.data(apiUserService.findMostFrequentCryptoCurrency(principal.getName()));
+    }
+
+    @GetMapping("/lastDealRequisite")
+    @ResponseBody
+    public SuccessResponse<?> lastDealRequisite(Principal principal) {
+        return SuccessResponseUtil.data(apiDealService.getRequisiteFromLastDeal(principal.getName()),
+                data -> JacksonUtil.getEmpty().put("value", data));
     }
 }

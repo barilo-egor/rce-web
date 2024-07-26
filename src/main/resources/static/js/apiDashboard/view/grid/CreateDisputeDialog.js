@@ -53,7 +53,10 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                             flex: 0.66,
                             xtype: 'textfield',
                             label: 'Реквизит',
-                            reference: 'requisiteField'
+                            reference: 'requisiteField',
+                            listeners: {
+                                painted: 'setDefaultRequisite'
+                            }
                         }
                     ]
                 },
@@ -85,7 +88,10 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'fiatCurrenciesStore',
                                         listeners: {
-                                            load: 'setDefaultFiat'
+                                            load: function (me) {
+                                                let defaultFiatRec = me.getAt(me.find('name', DEFAULT_FIAT.name))
+                                                ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(defaultFiatRec)
+                                            }
                                         }
                                     },
                                     reference: 'fiatCurrencyDisputeField'
@@ -96,7 +102,9 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'dealTypesStore',
                                         listeners: {
-                                            load: 'setDefaultDealType'
+                                            load: function (me, records) {
+                                                ExtUtil.referenceQuery('dealTypeDisputeField').setValue(me.getAt(0))
+                                            }
                                         }
                                     },
                                     reference: 'dealTypeDisputeField',
@@ -107,7 +115,10 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'cryptoCurrenciesStore',
                                         listeners: {
-                                            load: 'setDefaultCrypto'
+                                            load: function (me, records) {
+                                                let defaultCryptoRec = me.getAt(me.find('name', DEFAULT_CRYPTO.name))
+                                                ExtUtil.referenceQuery('cryptoCurrencyDisputeField').setValue(defaultCryptoRec)
+                                            }
                                         }
                                     },
                                     reference: 'cryptoCurrencyDisputeField',

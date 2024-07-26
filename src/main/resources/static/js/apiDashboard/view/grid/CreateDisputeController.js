@@ -62,18 +62,16 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
         document.onpaste = null
     },
 
-    setDefaultFiat: function (me) {
-        let defaultFiatRec = me.getAt(me.find('name', DEFAULT_FIAT.name))
-        ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(defaultFiatRec)
-    },
-
-    setDefaultDealType: function (me, records) {
-        ExtUtil.referenceQuery('dealTypeDisputeField').setValue(me.getAt(0))
-    },
-
-    setDefaultCrypto: function (me, records) {
-        let defaultCryptoRec = me.getAt(me.find('name', DEFAULT_CRYPTO.name))
-        ExtUtil.referenceQuery('cryptoCurrencyDisputeField').setValue(defaultCryptoRec)
+    setDefaultRequisite: function (me) {
+        let field = me
+        ExtUtil.mRequest({
+            url: '/dashboard/api/util/lastDealRequisite',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+                field.setValue(response.body.data.value)
+            }
+        })
     },
 
     setBrowseButtonText: function (fileField) {
@@ -81,12 +79,33 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
     },
 
     createDispute: function(button) {
+        let fiatSum = ExtUtil.referenceQuery('fiatSumField').getValue()
+        if (!fiatSum || fiatSum === 0) {
+            ExtMessages.info('Внимание', 'Введите сумму.')
+            return
+        }
+
         let fileField = ExtUtil.referenceQuery('checkFileField')
-        let file = fileField.getFiles()[0];
+        let file
+        if (fileField.getFiles().length > 0) {
+            file = fileField.getFiles()[0]
+        }
+        if (!file) {
+            file = ExtUtil.referenceQuery('checkBufferContainer').file
+        }
+        if (!file) {
+            ExtMessages.info('Внимание', 'Для создания диспута требуется чек.')
+            return
+        }
+
 
         if (file) {
             let formData = new FormData();
             formData.append('file', file);
+            formData.append('fiatSum', fiatSum);
+            formData.append('fiatCurrency', ExtUtil.referenceQuery('fiatCurrencyDisputeField').getValue());
+            formData.append('dealType', ExtUtil.referenceQuery('dealTypeDisputeField').getValue());
+            formData.append('cryptoCurrency', ExtUtil.referenceQuery('cryptoCurrencyDisputeField').getValue());
 
             Ext.Ajax.request({
                 url: '/dashboard/api/deal/dispute',  // URL для загрузки
