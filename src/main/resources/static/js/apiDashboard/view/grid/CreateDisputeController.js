@@ -39,5 +39,71 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
             container.setHtml('<div style="text-align: center">Скопируйте изображение и нажмите Ctrl+V<br> для вставки из буфера обмена.</div>')
             container.file = null
         }
+    },
+
+    setPasteHandler: function() {
+        document.onpaste = (evt) => {
+            let view = ExtUtil.referenceQuery('checkField')
+            if (view.indexOf(view.getActiveItem()) !== 0) return
+            const dT = evt.clipboardData || window.clipboardData;
+            const file = dT.files[0];
+            if (file && (file.type === 'application/pdf' || file.type.startsWith("image"))) {
+                let container = ExtUtil.referenceQuery('checkBufferContainer')
+                container.file = file
+                const fileURL = URL.createObjectURL(file);
+                container.setHtml('<div style="text-align: center"><a target="_blank" href="' + fileURL + '">Изображение</a> загружено из буфера обмена.' +
+                    '<br>Нажмите Ctrl+V для загрузки нового.</div>')
+                ExtMessages.topToast('Изображение загружено')
+            }
+        }
+    },
+
+    dropPasteHandler: function() {
+        document.onpaste = null
+    },
+
+    setDefaultFiat: function (me) {
+        let defaultFiatRec = me.getAt(me.find('name', DEFAULT_FIAT.name))
+        ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(defaultFiatRec)
+    },
+
+    setDefaultDealType: function (me, records) {
+        ExtUtil.referenceQuery('dealTypeDisputeField').setValue(me.getAt(0))
+    },
+
+    setDefaultCrypto: function (me, records) {
+        let defaultCryptoRec = me.getAt(me.find('name', DEFAULT_CRYPTO.name))
+        ExtUtil.referenceQuery('cryptoCurrencyDisputeField').setValue(defaultCryptoRec)
+    },
+
+    setBrowseButtonText: function (fileField) {
+        fileField.getFileButton().setText('Выбрать файл')
+    },
+
+    createDispute: function(button) {
+        let fileField = ExtUtil.referenceQuery('checkFileField')
+        let file = fileField.getFiles()[0];
+
+        if (file) {
+            let formData = new FormData();
+            formData.append('file', file);
+
+            Ext.Ajax.request({
+                url: '/dashboard/api/deal/dispute',  // URL для загрузки
+                method: 'POST',
+                rawData: formData,
+                headers: {
+                    'Content-Type': null  // Позволяет браузеру установить правильный заголовок
+                },
+                success: function (response) {
+
+                },
+                failure: function (response) {
+                    Ext.Msg.alert('Ошибка', 'Не удалось загрузить изображение.');
+                }
+            });
+        } else {
+            Ext.Msg.alert('Ошибка', 'Пожалуйста, выберите файл.');
+        }
     }
 })

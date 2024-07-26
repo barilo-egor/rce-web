@@ -9,25 +9,8 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
     width: 750,
 
     listeners: {
-        show: function (me) {
-            document.onpaste = (evt) => {
-                let view = ExtUtil.referenceQuery('checkField')
-                if (view.indexOf(view.getActiveItem()) !== 0) return
-                const dT = evt.clipboardData || window.clipboardData;
-                const file = dT.files[0];
-                if (file && (file.type === 'application/pdf' || file.type.startsWith("image"))) {
-                    let container = ExtUtil.referenceQuery('checkBufferContainer')
-                    container.file = file
-                    const fileURL = URL.createObjectURL(file);
-                    container.setHtml('<div style="text-align: center"><a target="_blank" href="' + fileURL + '">Изображение</a> загружено из буфера обмена.' +
-                        '<br>Нажмите Ctrl+V для загрузки нового.</div>')
-                    ExtMessages.topToast('Изображение загружено')
-                }
-            };
-        },
-        close: function (me) {
-            document.onpaste = null
-        }
+        show: 'setPasteHandler',
+        close: 'dropPasteHandler'
     },
 
     layout: {
@@ -98,10 +81,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'fiatCurrenciesStore',
                                         listeners: {
-                                            load: function (me) {
-                                                let defaultFiatRec = me.getAt(me.find('name', DEFAULT_FIAT.name))
-                                                ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(defaultFiatRec)
-                                            }
+                                            load: 'setDefaultFiat'
                                         }
                                     },
                                     reference: 'fiatCurrencyDisputeField'
@@ -117,9 +97,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'dealTypesStore',
                                         listeners: {
-                                            load: function (me, records) {
-                                                ExtUtil.referenceQuery('dealTypeDisputeField').setValue(me.getAt(0))
-                                            }
+                                            load: 'setDefaultDealType'
                                         }
                                     },
                                     reference: 'dealTypeDisputeField',
@@ -135,10 +113,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                     store: {
                                         type: 'cryptoCurrenciesStore',
                                         listeners: {
-                                            load: function (me, records) {
-                                                // TODO самый популярный среди последних сделок
-                                                ExtUtil.referenceQuery('cryptoCurrencyDisputeField').setValue(me.getAt(0))
-                                            }
+                                            load: 'setDefaultCrypto'
                                         }
                                     },
                                     reference: 'cryptoCurrencyDisputeField',
@@ -211,9 +186,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                                     width: '97%',
                                                     accept: 'image/*,.pdf',
                                                     listeners: {
-                                                        painted: function (filefield) {
-                                                            filefield.getFileButton().setText('Выбрать файл')
-                                                        }
+                                                        painted: 'setBrowseButtonText'
                                                     }
                                                 }
                                             ]
@@ -231,32 +204,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
             reference: 'createButton',
             margin: '20 0 0 0',
             text: 'Создать',
-            handler: function(button) {
-                let fileField = ExtUtil.referenceQuery('checkFileField')
-                let file = fileField.getFiles()[0];
-
-                if (file) {
-                    let formData = new FormData();
-                    formData.append('file', file);
-
-                    Ext.Ajax.request({
-                        url: '/dashboard/api/deal/dispute',  // URL для загрузки
-                        method: 'POST',
-                        rawData: formData,
-                        headers: {
-                            'Content-Type': null  // Позволяет браузеру установить правильный заголовок
-                        },
-                        success: function (response) {
-
-                        },
-                        failure: function (response) {
-                            Ext.Msg.alert('Ошибка', 'Не удалось загрузить изображение.');
-                        }
-                    });
-                } else {
-                    Ext.Msg.alert('Ошибка', 'Пожалуйста, выберите файл.');
-                }
-            }
+            handler: 'createDispute'
         }
     ]
 });
