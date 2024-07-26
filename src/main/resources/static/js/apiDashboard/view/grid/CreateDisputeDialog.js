@@ -47,11 +47,13 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                             xtype: 'numberfield',
                             width: '50%',
                             label: 'Фиатная сумма',
+                            reference: 'fiatSumField'
                         },
                         {
                             flex: 0.66,
                             xtype: 'textfield',
-                            label: 'Реквизит'
+                            label: 'Реквизит',
+                            reference: 'requisiteField'
                         }
                     ]
                 },
@@ -162,8 +164,8 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                             items: [
                                                 {
                                                     xtype: 'filefield',
-                                                    label: 'Выберите изображение',
                                                     reference: 'checkFileField',
+                                                    label: 'Выберите изображение',
                                                     width: '97%',
                                                     accept: 'image/*,.pdf',
                                                     listeners: {
