@@ -99,8 +99,8 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
                                         type: 'fiatCurrenciesStore',
                                         listeners: {
                                             load: function (me) {
-                                                // TODO сделать выбор фиата который по умолчанию
-                                                ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(me.getAt(0))
+                                                let defaultFiatRec = me.getAt(me.find('name', DEFAULT_FIAT.name))
+                                                ExtUtil.referenceQuery('fiatCurrencyDisputeField').setValue(defaultFiatRec)
                                             }
                                         }
                                     },

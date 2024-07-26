@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
@@ -110,5 +111,19 @@ public class ApiDashboardUtilController extends BaseController {
     public SuccessResponse<?> updateSoundEnabled(Principal principal, Boolean soundEnabled) {
         webUserService.updateSoundEnabled(principal.getName(), soundEnabled);
         return SuccessResponseUtil.toast(soundEnabled ? "Звуковые оповещения включены." : "Звуковые оповещения отключены.");
+    }
+
+    @GetMapping("/defaultFiat")
+    @ResponseBody
+    public SuccessResponse<?> defaultFiat(Principal principal) {
+        FiatCurrency fiatCurrency = apiUserService.getFiatCurrencyByUsername(principal.getName());
+        return SuccessResponseUtil.data(fiatCurrency);
+    }
+
+    @GetMapping("/mostUsedCryptoCurrency")
+    @ResponseBody
+    public SuccessResponse<?> mostUsedCryptoCurrency(Principal principal) {
+        return SuccessResponseUtil.data(apiUserService.findMostFrequentCryptoCurrency(
+                apiUserService.getPidByUsername(principal.getName())));
     }
 }

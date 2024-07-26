@@ -39,9 +39,26 @@
             }
         })
         document.title = TITLE
-
+		let DEFAULT_FIAT
+		ExtUtil.mRequest({
+			url: '/dashboard/api/util/defaultFiat',
+			method: 'GET',
+			async: false,
+			success: function (response) {
+				DEFAULT_FIAT = response.body.data
+			}
+		})
+		let DEFAULT_CRYPTO
+		ExtUtil.mRequest({
+			url: '/dashboard/api/util/mostUsedCryptoCurrency',
+			method: 'GET',
+			async: false,
+			success: function (response) {
+				DEFAULT_CRYPTO = response.body.data
+			}
+		})
 	</script>
-	<script type="text/javascript" th:src="@{/js/apiDashboard/ApiDashboard.js}"a></script>
+	<script type="text/javascript" th:src="@{/js/apiDashboard/ApiDashboard.js}"></script>
 </head>
 <body>
 </body>
