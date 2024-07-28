@@ -15,7 +15,6 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealUserService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.service.bean.bot.paging.PagingDealService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.service.NotificationsAPI;
@@ -45,8 +44,6 @@ public class WebDealService implements IWebDealService {
     private IWebUserService webUserService;
 
     private IReportDealService reportDealService;
-
-    private PagingDealService pagingDealService;
 
     private EntityManager entityManager;
 
@@ -90,11 +87,6 @@ public class WebDealService implements IWebDealService {
     @Autowired
     public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
-    }
-
-    @Autowired
-    public void setPagingDealService(PagingDealService pagingDealService) {
-        this.pagingDealService = pagingDealService;
     }
 
     @Autowired
