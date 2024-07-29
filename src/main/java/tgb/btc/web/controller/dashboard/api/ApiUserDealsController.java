@@ -9,6 +9,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealType;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
@@ -27,6 +30,7 @@ import tgb.btc.web.vo.api.ApiUserDealSearchForm;
 import tgb.btc.web.vo.api.TotalSum;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -165,7 +169,11 @@ public class ApiUserDealsController extends BaseController {
 
     @PostMapping("/dispute")
     @ResponseBody
-    public SuccessResponse<?> dispute(Principal principal, @RequestParam MultipartFile file) {
+    public SuccessResponse<?> dispute(Principal principal, @RequestParam MultipartFile file,
+                                      @RequestParam BigDecimal fiatSum, @RequestParam FiatCurrency fiatCurrency,
+                                      @RequestParam DealType dealType, @RequestParam CryptoCurrency cryptoCurrency,
+                                      @RequestParam(required = false) String requisite) {
+
         return SuccessResponseUtil.toast("ok");
     }
 }

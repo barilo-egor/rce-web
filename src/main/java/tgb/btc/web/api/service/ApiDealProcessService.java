@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
@@ -12,8 +13,8 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
-import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
@@ -22,21 +23,23 @@ import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
+import tgb.btc.web.interfaces.api.service.IApiDealProcessService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.util.ApiResponseUtil;
 import tgb.btc.web.vo.form.ApiDealVO;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
 @Slf4j
-public class ApiDealProcessService {
+public class ApiDealProcessService implements IApiDealProcessService {
 
     private ApiUserRepository apiUserRepository;
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     private ICurrencyGetter currencyGetter;
 
@@ -47,6 +50,11 @@ public class ApiDealProcessService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IBigDecimalService bigDecimalService;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
 
     @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
@@ -76,11 +84,6 @@ public class ApiDealProcessService {
     @Autowired
     public void setApiUserRepository(ApiUserRepository apiUserRepository) {
         this.apiUserRepository = apiUserRepository;
-    }
-
-    @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
     }
 
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
@@ -129,7 +132,35 @@ public class ApiDealProcessService {
         apiDeal.setCryptoCurrency(apiDealVO.getCryptoCurrency());
         apiDeal.setRequisite(apiDealVO.getRequisite());
         apiDeal.setFiatCurrency(apiDealVO.getFiatCurrency());
-        return apiDealRepository.save(apiDeal);
+        return apiDealService.save(apiDeal);
+    }
+
+    @Override
+    public ApiDeal newDispute(Principal principal, MultipartFile file,
+                           BigDecimal fiatSum, FiatCurrency fiatCurrency,
+                           DealType dealType, CryptoCurrency cryptoCurrency,
+                           String requisite) {
+        ApiUser apiUser = apiUserRepository.getByUsername(principal.getName());
+        CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
+        builder.dealType(dealType)
+                .fiatCurrency(fiatCurrency)
+                .usdCourse(apiUser.getCourse(fiatCurrency).getCourse())
+                .cryptoCourse(currencyGetter.getCourseCurrency(cryptoCurrency))
+                .personalDiscount(apiUser.getPersonalDiscount())
+                .cryptoCurrency(cryptoCurrency)
+                .amount(fiatSum);
+        DealAmount dealAmount = calculateService.calculate(builder.build());
+        ApiDeal apiDeal = new ApiDeal();
+        apiDeal.setApiUser(apiUser);
+        apiDeal.setDateTime(LocalDateTime.now());
+        apiDeal.setDealType(dealType);
+        apiDeal.setAmount(dealAmount.getAmount());
+        apiDeal.setCryptoAmount(dealAmount.getCryptoAmount());
+        apiDeal.setApiDealStatus(ApiDealStatus.CREATED);
+        apiDeal.setCryptoCurrency(cryptoCurrency);
+        apiDeal.setRequisite(requisite);
+        apiDeal.setFiatCurrency(fiatCurrency);
+        return apiDealService.save(apiDeal);
     }
 
     public ObjectNode dealData(ApiDeal apiDeal, String requisite) {

@@ -106,6 +106,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
             formData.append('fiatCurrency', ExtUtil.referenceQuery('fiatCurrencyDisputeField').getValue());
             formData.append('dealType', ExtUtil.referenceQuery('dealTypeDisputeField').getValue());
             formData.append('cryptoCurrency', ExtUtil.referenceQuery('cryptoCurrencyDisputeField').getValue());
+            formData.append('requisite', ExtUtil.referenceQuery('requisiteField').getValue());
 
             Ext.Ajax.request({
                 url: '/dashboard/api/deal/dispute',  // URL для загрузки
