@@ -19,6 +19,7 @@ import tgb.btc.library.service.bean.web.ApiDealService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.interfaces.api.service.IApiDealProcessService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.interfaces.map.IApiDealMappingService;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -49,6 +50,13 @@ public class ApiUserDealsController extends BaseController {
     private IApiDealService apiDealService;
 
     private IApiDealMappingService apiDealMappingService;
+
+    private IApiDealProcessService apiDealProcessService;
+
+    @Autowired
+    public void setApiDealProcessService(IApiDealProcessService apiDealProcessService) {
+        this.apiDealProcessService = apiDealProcessService;
+    }
 
     @Autowired
     public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
@@ -174,6 +182,7 @@ public class ApiUserDealsController extends BaseController {
                                       @RequestParam DealType dealType, @RequestParam CryptoCurrency cryptoCurrency,
                                       @RequestParam(required = false) String requisite) {
 
+        apiDealProcessService.newDispute(principal, file, fiatSum, fiatCurrency, dealType, cryptoCurrency, requisite);
         return SuccessResponseUtil.toast("ok");
     }
 }

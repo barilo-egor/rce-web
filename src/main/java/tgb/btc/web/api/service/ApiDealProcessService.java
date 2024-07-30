@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.bean.web.api.ApiUser;
+import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
@@ -23,8 +26,11 @@ import tgb.btc.library.vo.calculate.CalculateDataForm;
 import tgb.btc.library.vo.calculate.DealAmount;
 import tgb.btc.web.constant.enums.ApiStatusCode;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
+import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.interfaces.api.service.IApiDealProcessService;
+import tgb.btc.web.interfaces.process.IFileService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
+import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.ApiResponseUtil;
 import tgb.btc.web.vo.form.ApiDealVO;
 
@@ -50,6 +56,27 @@ public class ApiDealProcessService implements IApiDealProcessService {
     private VariablePropertiesReader variablePropertiesReader;
 
     private IBigDecimalService bigDecimalService;
+
+    private INotifier notifier;
+
+    private NotificationsAPI notificationsAPI;
+
+    private IFileService fileService;
+
+    @Autowired
+    public void setFileService(IFileService fileService) {
+        this.fileService = fileService;
+    }
+
+    @Autowired
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
+    }
+
+    @Autowired
+    public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
+        this.notificationsAPI = notificationsAPI;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -140,6 +167,16 @@ public class ApiDealProcessService implements IApiDealProcessService {
                            BigDecimal fiatSum, FiatCurrency fiatCurrency,
                            DealType dealType, CryptoCurrency cryptoCurrency,
                            String requisite) {
+        String checkImageId;
+        try {
+             checkImageId = fileService.saveToTelegram(file);
+        } catch (Exception e) {
+            log.debug("Ошибка при попытке сохранения чека диспута.", e);
+            throw new BaseException("Ошибка при сохранении чека диспута.", e);
+        }
+        log.debug("Создание диспута пользователем {}. fiatSum={}, fiatCurrency={}, dealType={},"
+                + "cryptoCurrency={}, requisite={}", principal.getName(), fiatSum.toPlainString(), fiatCurrency.name(),
+                dealType.name(), cryptoCurrency.name(), requisite);
         ApiUser apiUser = apiUserRepository.getByUsername(principal.getName());
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
         builder.dealType(dealType)
@@ -156,11 +193,18 @@ public class ApiDealProcessService implements IApiDealProcessService {
         apiDeal.setDealType(dealType);
         apiDeal.setAmount(dealAmount.getAmount());
         apiDeal.setCryptoAmount(dealAmount.getCryptoAmount());
-        apiDeal.setApiDealStatus(ApiDealStatus.CREATED);
+        apiDeal.setApiDealStatus(ApiDealStatus.PAID);
         apiDeal.setCryptoCurrency(cryptoCurrency);
         apiDeal.setRequisite(requisite);
         apiDeal.setFiatCurrency(fiatCurrency);
-        return apiDealService.save(apiDeal);
+        apiDeal.setApiDealType(ApiDealType.DISPUTE);
+        apiDeal.setCheckImageId(checkImageId);
+        apiDealService.save(apiDeal);
+        log.debug("Диспут сохранен под pid={}.", apiDeal.getPid());
+        if (Objects.nonNull(notifier))
+            notifier.notifyNewApiDeal(apiDeal.getPid());
+        notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новый диспут №" + apiDeal.getPid());
+        return apiDeal;
     }
 
     public ObjectNode dealData(ApiDeal apiDeal, String requisite) {
