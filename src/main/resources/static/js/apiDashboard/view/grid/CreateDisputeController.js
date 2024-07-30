@@ -78,7 +78,7 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
         fileField.getFileButton().setText('Выбрать файл')
     },
 
-    createDispute: function(button) {
+    createDispute: function() {
         let fiatSum = ExtUtil.referenceQuery('fiatSumField').getValue()
         if (!fiatSum || fiatSum === 0) {
             ExtMessages.info('Внимание', 'Введите сумму.')
@@ -97,9 +97,8 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
             ExtMessages.info('Внимание', 'Для создания диспута требуется чек.')
             return
         }
-
-
-        if (file) {
+        let createDisputeFn = function () {
+            ExtUtil.mask('createDisputeDialog', 'Создание диспута')
             let formData = new FormData();
             formData.append('file', file);
             formData.append('fiatSum', fiatSum);
@@ -108,22 +107,25 @@ Ext.define('ApiDashboard.view.grid.CreateDisputeController', {
             formData.append('cryptoCurrency', ExtUtil.referenceQuery('cryptoCurrencyDisputeField').getValue());
             formData.append('requisite', ExtUtil.referenceQuery('requisiteField').getValue());
 
-            Ext.Ajax.request({
-                url: '/dashboard/api/deal/dispute',  // URL для загрузки
+            ExtUtil.mRequest({
+                url: '/dashboard/api/deal/dispute',
                 method: 'POST',
                 rawData: formData,
+                loadingComponentRef: 'createDisputeDialog',
                 headers: {
-                    'Content-Type': null  // Позволяет браузеру установить правильный заголовок
+                    'Content-Type': null
                 },
                 success: function (response) {
-
+                    // TODO сделать обновление стора всем остальным веб юзерам этого апи клиента
+                    Ext.getStore('dealStore').reload()
+                    ExtUtil.maskOff('createDisputeDialog')
+                    ExtUtil.referenceQuery('createDisputeDialog').close()
                 },
                 failure: function (response) {
                     Ext.Msg.alert('Ошибка', 'Не удалось загрузить изображение.');
                 }
             });
-        } else {
-            Ext.Msg.alert('Ошибка', 'Пожалуйста, выберите файл.');
         }
+        ExtMessages.confirm('Подтверждение', 'Вы уверены, что хотите создать диспут?', createDisputeFn)
     }
 })

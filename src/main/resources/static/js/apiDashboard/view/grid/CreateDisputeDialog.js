@@ -1,6 +1,7 @@
 const CHECK_BUFFER_CONTAINER_TEXT = '<div style="text-align: center">Скопируйте изображение и нажмите Ctrl+V<br> для вставки из буфера обмена.</div>'
 Ext.define('ApiDashboard.view.grid.CreateDisputeDialog', {
     extend: 'Ext.Dialog',
+    reference: 'createDisputeDialog',
     requires: [
         'ApiDashboard.view.grid.CreateDisputeController'
     ],

@@ -148,6 +148,8 @@ let ExtUtil = {
         requestObj.method = config.method ? config.method : 'POST'
         if (config.params) requestObj.params = config.params
         if (config.jsonData) requestObj.jsonData = config.jsonData
+        if (config.rawData) requestObj.rawData = config.rawData
+        if (config.headers) requestObj.headers = config.headers
         let failure = this.failure
         requestObj.failure = function(response) {
             if (response.status === 401) return

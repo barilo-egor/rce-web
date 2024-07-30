@@ -183,6 +183,6 @@ public class ApiUserDealsController extends BaseController {
                                       @RequestParam(required = false) String requisite) {
 
         apiDealProcessService.newDispute(principal, file, fiatSum, fiatCurrency, dealType, cryptoCurrency, requisite);
-        return SuccessResponseUtil.toast("ok");
+        return SuccessResponseUtil.toast("Диспут создан.");
     }
 }
