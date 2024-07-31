@@ -2,6 +2,7 @@ package tgb.btc.web.api.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,7 @@ import tgb.btc.library.constants.enums.ApiDealType;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
+import tgb.btc.library.constants.enums.bot.ReceiptFormat;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.exception.BaseException;
@@ -199,6 +201,11 @@ public class ApiDealProcessService implements IApiDealProcessService {
         apiDeal.setFiatCurrency(fiatCurrency);
         apiDeal.setApiDealType(ApiDealType.DISPUTE);
         apiDeal.setCheckImageId(checkImageId);
+        String originalFileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(originalFileName)) {
+            throw new BaseException("Отсутствует originalFileName у файла. Невозможно определить формат.");
+        }
+        apiDeal.setReceiptFormat(originalFileName.endsWith(".pdf") ? ReceiptFormat.PDF : ReceiptFormat.PICTURE);
         apiDealService.save(apiDeal);
         log.debug("Диспут сохранен под pid={}.", apiDeal.getPid());
         if (Objects.nonNull(notifier))
