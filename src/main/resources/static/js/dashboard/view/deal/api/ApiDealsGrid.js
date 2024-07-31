@@ -41,6 +41,20 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
             },
             columns: [
                 {
+                    dataIndex: 'apiDealType',
+                    width: 50,
+                    cell: {
+                        encodeHtml: false
+                    },
+                    renderer: function (val) {
+                        if (val === 'DISPUTE') {
+                            return '<i class=\"fas fa-users-cog\"></i>'
+                        } else {
+                            return '<i class="fas fa-code"></i>'
+                        }
+                    }
+                },
+                {
                     text: '№',
                     dataIndex: 'pid',
                     width: 80,

@@ -86,6 +86,8 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
             .setHidden(!(status === 'PAID'))
         menu.lookupReference('acceptDealWithRequestMenuButton')
             .setHidden(status !== 'PAID' || !deal.groupChatPid)
+        menu.lookupReference('showCheckMenuButton')
+            .setHidden(deal.apiDealType !== 'DISPUTE')
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
     },
@@ -163,5 +165,64 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
 
     reloadDeals: function (me) {
         Ext.getStore('apiDealStore').reload()
+    },
+
+    showCheck: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let checkImageId = deal.checkImageId
+        let receiptFormat = deal.receiptFormat
+        if (receiptFormat === 'PICTURE') {
+            Ext.create('Ext.Dialog', {
+                title: 'Чек по диспуту ' + deal.pid,
+                closable: true,
+                layout: 'fit',
+                maxHeight: '90%',
+                maxWidth: '90%',
+                scrollable: 'y',
+                masked: 'Загрузка чека',
+                items: [
+                    {
+                        xtype: 'image',
+                        src: '/image/get?imageId=' + checkImageId,
+                        width: '100%',
+                        height: '100%',
+                        shadow: true,
+                        mode: 'image',
+                        margin: '5 5 5 5',
+                        listeners: {
+                            load: function (me) {
+                                me.up('dialog').center()
+                                me.up('dialog').setMasked(false)
+                            }
+                        }
+                    }
+                ]
+            }).show()
+        } else {
+            Ext.create('Ext.Dialog', {
+                title: 'Чек по диспуту ' + deal.pid,
+                closable: true,
+                layout: 'fit',
+                height: '90%',
+                width: '90%',
+                scrollable: 'y',
+                masked: 'Загрузка чека',
+                items: [
+                    {
+                        xtype: 'panel',
+                        shadow: true,
+                        scrollable: true,
+                        html: '<iframe src="/image/getPDF?fileId=' + checkImageId
+                            + '" frameborder="0" style="display: block;overflow:visible;height:100vh;width:100vw"></iframe>',
+                        listeners: {
+                            painted: function (me) {
+                                me.up('dialog').center()
+                                me.up('dialog').setMasked(false)
+                            }
+                        }
+                    }
+                ]
+            }).show()
+        }
     }
 })

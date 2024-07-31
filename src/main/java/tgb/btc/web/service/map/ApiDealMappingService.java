@@ -55,6 +55,9 @@ public class ApiDealMappingService implements IApiDealMappingService {
                 StringUtils.EMPTY));
         result.put("dateTime", deal.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         result.put("requisite", deal.getRequisite());
+        result.put("apiDealType", deal.getApiDealType().name());
+        result.put("checkImageId", deal.getCheckImageId());
+        result.put("receiptFormat", Objects.nonNull(deal.getReceiptFormat()) ? deal.getReceiptFormat().name() : null);
         ApiUser apiUser = deal.getApiUser();
         if (Objects.nonNull(apiUser)) {
             if (Objects.nonNull(apiUser.getGroupChat())) {

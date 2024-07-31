@@ -70,7 +70,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
         this.fileService = fileService;
     }
 
-    @Autowired
+    @Autowired(required = false)
     public void setNotifier(INotifier notifier) {
         this.notifier = notifier;
     }
@@ -210,7 +210,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
         log.debug("Диспут сохранен под pid={}.", apiDeal.getPid());
         if (Objects.nonNull(notifier))
             notifier.notifyNewApiDeal(apiDeal.getPid());
-        notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новый диспут №" + apiDeal.getPid());
+        notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступил новый диспут №" + apiDeal.getPid());
         return apiDeal;
     }
 

@@ -16,6 +16,12 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
             iconCls: 'x-fa fa-copy blackColor',
             handler: 'copyRequisite'
         },
+        {
+            text: 'Показать чек',
+            reference: 'showCheckMenuButton',
+            iconCls: 'x-fa fa-receipt lightBlue',
+            handler: 'showCheck'
+        },
         '-',
         {
             text: 'Подтвердить',
