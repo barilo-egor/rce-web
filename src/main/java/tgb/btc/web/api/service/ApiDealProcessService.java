@@ -118,7 +118,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
-        ApiStatusCode code = apiDealVO.verify();
+        ApiStatusCode code = apiDealVO.verify(true);
         if (Objects.nonNull(code)) {
             log.debug("Отказ по валидности={} в создании АПИ сделки={}", code.name(), apiDealVO);
             return ApiResponseUtil.build(code);
@@ -131,7 +131,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
                 : apiUser.getFiatCurrency();
         builder.dealType(apiDealVO.getDealType())
                 .fiatCurrency(fiatCurrency)
-                .usdCourse(apiUser.getCourse(apiUser.getFiatCurrency()).getCourse())
+                .usdCourse(apiUser.getCourse(fiatCurrency).getCourse())
                 .cryptoCourse(currencyGetter.getCourseCurrency(apiDealVO.getCryptoCurrency()))
                 .personalDiscount(apiUser.getPersonalDiscount())
                 .cryptoCurrency(apiDealVO.getCryptoCurrency());
@@ -148,6 +148,40 @@ public class ApiDealProcessService implements IApiDealProcessService {
         apiUserNotificationsAPI.send(apiUser.getPid(), ApiUserNotificationType.CREATED_DEAL, "Создана новая сделка №" + apiDeal.getPid());
         return ApiResponseUtil.build(ApiStatusCode.CREATED_DEAL,
                 dealData(apiDeal, apiUser.getRequisite(apiDeal.getDealType())));
+    }
+
+    public ObjectNode calculate(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
+            CryptoCurrency cryptoCurrency, FiatCurrency fiatCurrency) {
+        ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, null, fiatCurrency);
+        ApiStatusCode code = apiDealVO.verify(false);
+        if (Objects.nonNull(code)) {
+            log.debug("Отказ по валидности={} в подсчете, token={}", code.name(), token);
+            return ApiResponseUtil.build(code);
+        }
+        ApiUser apiUser = apiUserRepository.getByToken(token);
+        CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
+        fiatCurrency = Objects.nonNull(apiDealVO.getFiatCurrency())
+                ? apiDealVO.getFiatCurrency()
+                : apiUser.getFiatCurrency();
+        builder.dealType(apiDealVO.getDealType())
+                .fiatCurrency(fiatCurrency)
+                .usdCourse(apiUser.getCourse(fiatCurrency).getCourse())
+                .cryptoCourse(currencyGetter.getCourseCurrency(apiDealVO.getCryptoCurrency()))
+                .personalDiscount(apiUser.getPersonalDiscount())
+                .cryptoCurrency(apiDealVO.getCryptoCurrency());
+        if (Objects.nonNull(apiDealVO.getAmount())) builder.amount(apiDealVO.getAmount());
+        else builder.cryptoAmount(apiDealVO.getCryptoAmount());
+        DealAmount dealAmount = calculateService.calculate(builder.build());
+        BigDecimal minSum = variablePropertiesReader.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
+        if (dealAmount.getCryptoAmount().compareTo(minSum) < 0) {
+            log.debug("Сумма для подсчета оказалась меньше минимальной: amount={}, cryptoAmount={}, {}",
+                    Objects.nonNull(amount) ? amount.toPlainString() : "",
+                    Objects.nonNull(cryptoAmount) ? cryptoAmount.toPlainString() : "", apiUser.getId());
+            return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
+                    JacksonUtil.getEmpty().put("minSum", bigDecimalService.roundToPlainString(minSum, 8)));
+        }
+        return ApiResponseUtil.build(ApiStatusCode.AMOUNT_CALCULATED,
+                calculateData(dealAmount));
     }
 
     public ApiDeal create(ApiDealVO apiDealVO, ApiUser apiUser, DealAmount dealAmount) {
@@ -212,6 +246,16 @@ public class ApiDealProcessService implements IApiDealProcessService {
             notifier.notifyNewApiDeal(apiDeal.getPid());
         notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступил новый диспут №" + apiDeal.getPid());
         return apiDeal;
+    }
+
+    public ObjectNode calculateData(DealAmount dealAmount) {
+        ObjectNode data = JacksonUtil.toObjectNode(dealAmount, dAmount -> JacksonUtil.getEmpty()
+                .put("amountToPay", bigDecimalService.roundToPlainString(
+                        DealType.isBuy(dAmount.getDealType()) ? dAmount.getAmount() : dAmount.getCryptoAmount(), 8)));
+        if (DealType.isBuy(dealAmount.getDealType()))
+            data.put("cryptoAmount", bigDecimalService.roundToPlainString(dealAmount.getCryptoAmount(), 8));
+        else data.put("amount", dealAmount.getAmount());
+        return data;
     }
 
     public ObjectNode dealData(ApiDeal apiDeal, String requisite) {

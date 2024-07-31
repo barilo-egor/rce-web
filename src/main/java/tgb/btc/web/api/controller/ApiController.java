@@ -18,6 +18,7 @@ import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.repository.web.ApiDealRepository;
 import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -57,6 +58,13 @@ public class ApiController extends BaseController {
 
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
 
+    private IApiDealService apiDealService;
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
+
     @Autowired
     public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
         this.apiUserNotificationsAPI = apiUserNotificationsAPI;
@@ -95,12 +103,12 @@ public class ApiController extends BaseController {
     @PostMapping("/new")
     @ResponseBody
     public ObjectNode newDeal(HttpServletRequest request, @RequestParam(required = false) String token,
-                              @RequestParam(required = false) String dealType,
-                              @RequestParam(required = false) BigDecimal amount,
-                              @RequestParam(required = false) BigDecimal cryptoAmount,
-                              @RequestParam(required = false) String cryptoCurrency,
-                              @RequestParam(required = false) String requisite,
-                              @RequestParam(required = false) String fiatCurrency) {
+            @RequestParam(required = false) String dealType,
+            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) BigDecimal cryptoAmount,
+            @RequestParam(required = false) String cryptoCurrency,
+            @RequestParam(required = false) String requisite,
+            @RequestParam(required = false) String fiatCurrency) {
         log.debug("Запрос на создание АПИ сделки IP={}", RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) {
@@ -112,11 +120,14 @@ public class ApiController extends BaseController {
 
     @PostMapping("/paid")
     @ResponseBody
-    public ObjectNode paid(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
+    public ObjectNode paid(HttpServletRequest request, @RequestParam(required = false) String token,
+            @RequestParam(required = false) Long id) {
         log.debug("Запрос на оплату АПИ сделки №{} IP={}", id, RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
-        if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
-        if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        if (Objects.isNull(id))
+            return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             log.debug("Запрос на перевод несуществующей сделки {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
@@ -127,7 +138,8 @@ public class ApiController extends BaseController {
             return ApiStatusCode.DEAL_ALREADY_PAID.toJson();
         }
         if (ApiDealStatus.CONFIRMED_STATUSES.contains(apiDealStatus)) {
-            log.debug("Попытка перевести сделку {} в статус {}, которая уже обработана.", id, ApiDealStatus.PAID.name());
+            log.debug("Попытка перевести сделку {} в статус {}, которая уже обработана.", id,
+                    ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_CONFIRMED.toJson();
         }
         ApiDeal apiDeal = apiDealRepository.getByPid(id);
@@ -136,7 +148,8 @@ public class ApiController extends BaseController {
             return ApiStatusCode.DEAL_CANCELED.toJson();
         }
         LocalDateTime now = LocalDateTime.now();
-        if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)).isAfter(apiDeal.getDateTime())) {
+        if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L))
+                .isAfter(apiDeal.getDateTime())) {
             log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
             return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
         }
@@ -144,18 +157,22 @@ public class ApiController extends BaseController {
         if (Objects.nonNull(notifier))
             notifier.notifyNewApiDeal(id);
         notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
-        apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL, "Оплачена сделка №" + apiDeal.getPid());
+        apiUserNotificationsAPI.send(apiDeal.getApiUser().getPid(), ApiUserNotificationType.PAID_DEAL,
+                "Оплачена сделка №" + apiDeal.getPid());
         log.debug("АПИ сделка {} переведена в статус {}.", apiDeal.getPid(), ApiDealStatus.PAID.name());
         return ApiStatusCode.STATUS_PAID_UPDATED.toJson();
     }
 
     @PostMapping("/cancel")
     @ResponseBody
-    public ObjectNode cancel(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(required = false) Long id) {
+    public ObjectNode cancel(HttpServletRequest request, @RequestParam(required = false) String token,
+            @RequestParam(required = false) Long id) {
         log.debug("Запрос на отмену АПИ сделки №{} IP={}", id, RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
-        if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
-        if (Objects.isNull(id)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        if (Objects.isNull(id))
+            return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
@@ -163,22 +180,28 @@ public class ApiController extends BaseController {
             if (ApiDealStatus.CREATED.equals(status) || ApiDealStatus.PAID.equals(status)) {
                 apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, id);
                 if (ApiDealStatus.PAID.equals(status)) {
-                    notificationsAPI.send(NotificationType.API_DEAL_CANCELED, "API сделка №" + id + " была отменена клиентом");
+                    notificationsAPI.send(NotificationType.API_DEAL_CANCELED,
+                            "API сделка №" + id + " была отменена клиентом");
                 }
                 log.debug("АПИ сделка {} переведена в статус {}.", id, ApiDealStatus.CANCELED.name());
-                apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(id), ApiUserNotificationType.CANCELED_DEAL, "Отмена сделки №" + id);
+                apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(id),
+                        ApiUserNotificationType.CANCELED_DEAL, "Отмена сделки №" + id);
                 return ApiStatusCode.DEAL_DELETED.toJson();
-            } else return ApiStatusCode.DEAL_CONFIRMED.toJson();
+            } else
+                return ApiStatusCode.DEAL_CONFIRMED.toJson();
         }
     }
 
     @GetMapping("/getStatus")
     @ResponseBody
-    public JsonNode getStatus(HttpServletRequest request, @RequestParam(required = false) String token, @RequestParam(name = "id", required = false) List<Long> ids) {
+    public JsonNode getStatus(HttpServletRequest request, @RequestParam(required = false) String token,
+            @RequestParam(name = "id", required = false) List<Long> ids) {
         log.debug("Запрос на получение статуса АПИ сделок IP={}", RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
-        if (Objects.nonNull(apiStatusCode)) return apiStatusCode.toJson();
-        if (CollectionUtils.isEmpty(ids)) return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        if (CollectionUtils.isEmpty(ids))
+            return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
         log.debug("Запрос статуса АПИ сделок {}.", ids.stream().map(Object::toString).collect(Collectors.joining(",")));
         ArrayNode arrayNode = JacksonUtil.getEmptyArray();
         boolean isFewDeals = ids.size() > 1;
@@ -202,6 +225,37 @@ public class ApiController extends BaseController {
         } else {
             return arrayNode;
         }
+    }
+
+    @GetMapping("/getDealActiveTime")
+    @ResponseBody
+    public ObjectNode getDealActiveTime(HttpServletRequest request, @RequestParam(required = false) String token) {
+        if (StringUtils.isEmpty(token))
+            return ApiStatusCode.EMPTY_TOKEN.toJson();
+        ApiStatusCode apiStatusCode = hasAccess(token);
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        return JacksonUtil.getEmpty()
+                .put("dealActiveTime",
+                        PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L));
+    }
+
+    @GetMapping("/calculate")
+    @ResponseBody
+    public ObjectNode calculate(HttpServletRequest request, @RequestParam(required = false) String token,
+            @RequestParam(required = false) String dealType,
+            @RequestParam(required = false) BigDecimal amount,
+            @RequestParam(required = false) BigDecimal cryptoAmount,
+            @RequestParam(required = false) String cryptoCurrency,
+            @RequestParam(required = false) String fiatCurrency) {
+        log.debug("Запрос на получение статуса АПИ сделок IP={}", RequestUtil.getIp(request));
+        if (StringUtils.isEmpty(token))
+            return ApiStatusCode.EMPTY_TOKEN.toJson();
+        ApiStatusCode apiStatusCode = hasAccess(token);
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        return apiDealProcessService.calculate(token, DealType.valueOfNullable(dealType), amount, cryptoAmount,
+                CryptoCurrency.valueOfNullable(cryptoCurrency), FiatCurrency.valueOfNullable(fiatCurrency));
     }
 
     @GetMapping("/getUrl")
@@ -259,4 +313,5 @@ public class ApiController extends BaseController {
         }
         return null;
     }
+
 }
