@@ -64,7 +64,7 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                 data: [
                     {
                         name: 'id',
-                        type: 'Number',
+                        type: 'Number/Number array',
                         description: 'Идентификатор заявки, либо набор идентификаторов через запятую.'
                     },
                     {
@@ -105,6 +105,8 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                 {
                     xtype: 'textarea',
                     padding: '10 0 0 0',
+                    fieldLabel: 'Для одной сделки',
+                    labelWidth: 120,
                     height: 155,
                     width: 400,
                     editable: false,
@@ -115,7 +117,42 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                         '      "status": "PAID"\n' +
                         '   }\n' +
                         '}'
-                }
+                },
+                {
+                    xtype: 'textarea',
+                    padding: '10 0 0 0',
+                    fieldLabel: 'Для нескольких сделок',
+                    labelWidth: 120,
+                    height: 250,
+                    width: 400,
+                    editable: false,
+                    value: '[\n' +
+                        '   {\n' +
+                        '       "code": 8,\n' +
+                        '       "description": "Сделка найдена.",\n' +
+                        '       "data":{\n' +
+                        '           "status": "CONFIRMED"\n' +
+                        '           "id": 10\n' +
+                        '       }\n' +
+                        '   },\n' +
+                        '   {\n' +
+                        '       "code": 8,\n' +
+                        '       "description": "Сделка найдена.",\n' +
+                        '       "data":{\n' +
+                        '           "status": "PAID"\n' +
+                        '           "id": 11\n' +
+                        '       }\n' +
+                        '   },\n' +
+                        '   {\n' +
+                        '       "code": 8,\n' +
+                        '       "description": "Сделка найдена.",\n' +
+                        '       "data":{\n' +
+                        '           "status": "DECLINED"\n' +
+                        '           "id": 12\n' +
+                        '       }\n' +
+                        '   },\n' +
+                        ']'
+                },
             ]
         },
         {

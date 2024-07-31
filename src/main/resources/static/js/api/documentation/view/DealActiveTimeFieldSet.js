@@ -107,7 +107,7 @@ Ext.define('ApiDocumentation.view.DealActiveTimeFieldSet', {
                         '   "code": 20,\n' +
                         '   "description": "OK",\n' +
                         '   "data":{\n' +
-                        '      "dealActiveTime": "15"\n' +
+                        '      "dealActiveTime": 15\n' +
                         '   }\n' +
                         '}'
                 }
