@@ -235,9 +235,9 @@ public class ApiController extends BaseController {
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode))
             return apiStatusCode.toJson();
-        return JacksonUtil.getEmpty()
+        return ApiStatusCode.OK.toJson().set("data", JacksonUtil.getEmpty()
                 .put("dealActiveTime",
-                        PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L));
+                        PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)));
     }
 
     @GetMapping("/calculate")
@@ -272,6 +272,12 @@ public class ApiController extends BaseController {
         return PropertiesPath.CONFIG_PROPERTIES.getString("bot.fiat.currencies");
     }
 
+    @GetMapping("statusCodes/calculate")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesCalculate() {
+        return SuccessResponseUtil.data(ApiStatusCode.CALCULATE_DEAL_STATUSES);
+    }
+
     @GetMapping("/statusCodes/new")
     @ResponseBody
     public SuccessResponse<?> statusCodesNew() {
@@ -294,6 +300,12 @@ public class ApiController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> statusCodesGetStatuses() {
         return SuccessResponseUtil.data(ApiStatusCode.GET_STATUS_STATUSES);
+    }
+
+    @GetMapping("/statusCodes/getDealActiveTime")
+    @ResponseBody
+    public SuccessResponse<?> getDealActiveTime() {
+        return SuccessResponseUtil.data(ApiStatusCode.DEAL_ACTIVE_TIME_STATUSES);
     }
 
     @GetMapping("/getDealStatuses")

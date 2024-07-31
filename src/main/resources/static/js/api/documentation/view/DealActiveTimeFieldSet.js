@@ -1,8 +1,8 @@
-Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
+Ext.define('ApiDocumentation.view.DealActiveTimeFieldSet', {
     extend: 'Ext.form.FieldSet',
-    xtype: 'createdealfieldset',
+    xtype: 'dealactivetimefieldset',
 
-    title: 'Создание сделки',
+    title: 'Получение времени активности сделки',
     collapsible: true,
     collapsed: true,
     layout: {
@@ -15,8 +15,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
     items: [
         {
             xtype: 'component',
-            html: 'Для создания сделки необходимо отправить <b>POST</b> запрос.<br> ' +
-                'Сумма отправляется либо в фиате (<b>amount</b>), либо в криптовалюте (<b>cryptoAmount</b>).',
+            html: 'Для получения статуса сделки необходимо отправить <b>GET</b> запрос.\nЗначение в ответе указано в минутах.',
         },
         {
             xtype: 'container',
@@ -34,7 +33,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                                 url: '/api/10/getUrl',
                                 method: 'GET',
                                 success: function (response) {
-                                    me.setValue(response.data + '/api/10/new')
+                                    me.setValue(response.data + '/api/10/getDealActiveTime')
                                 }
                             })
                         }
@@ -67,37 +66,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         name: 'token',
                         type: 'String',
                         description: 'Ваш api-токен'
-                    },
-                    {
-                        name: 'dealType',
-                        type: 'String',
-                        description: 'Тип сделки: BUY - покупка, SELL - продажа'
-                    },
-                    {
-                        name: 'fiatCurrency',
-                        type: 'String',
-                        description:  API_DOCUMENTATION_VARIABLES.fiats
-                    },
-                    {
-                        name: 'cryptoCurrency',
-                        type: 'String',
-                        description: 'Криптовалюта: BITCOIN, LITECOIN, USDT, MONERO'
-                    },
-                    {
-                        name: 'amount',
-                        type: 'Decimal',
-                        description: 'Сумма в фиате'
-                    },
-                    {
-                        name: 'cryptoAmount',
-                        type: 'Decimal',
-                        description: 'Сумма к криптовалюте'
-                    },
-                    {
-                        name: 'requisite',
-                        type: 'String',
-                        description: 'Ваши реквизиты.'
-                    },
+                    }
                 ]
             }),
             columns: [
@@ -120,7 +89,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
         },
         {
             xtype: 'panel',
-            title: 'Пример ответа в случае, если сделка создана',
+            title: 'Пример ответа',
             collapsible: true,
             collapsed: true,
             layout: {
@@ -131,17 +100,14 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 {
                     xtype: 'textarea',
                     padding: '10 0 0 0',
-                    height: 215,
+                    height: 175,
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 0,\n' +
-                        '   "description": "Сделка создана.",\n' +
+                        '   "code": 20,\n' +
+                        '   "description": "OK",\n' +
                         '   "data":{\n' +
-                        '      "id": 8,\n' +
-                        '      "amountToPay": "5000",\n' +
-                        '      "requisite": "1111 1111 1111 1111",\n' +
-                        '      "cryptoAmount": "0.00217"\n' +
+                        '      "dealActiveTime": "15"\n' +
                         '   }\n' +
                         '}'
                 }
@@ -160,15 +126,12 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 {
                     xtype: 'textarea',
                     padding: '10 0 0 0',
-                    height: 175,
+                    height: 95,
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 14,\n' +
-                        '   "description": "Получившаяся сумма меньше минимально требуемой.",\n' +
-                        '   "data":{\n' +
-                        '      "minSum": "0.001"\n' +
-                        '   }\n' +
+                        '   "code": 1,\n' +
+                        '   "description": "Отсутствует токен."\n' +
                         '}'
                 }
             ]
@@ -183,7 +146,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/api/10/statusCodes/new',
+                    url: '/api/10/statusCodes/getDealActiveTime',
                     reader: {
                         type: 'json',
                         rootProperty: 'body.data'
@@ -205,57 +168,12 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                     width: 35,
                     dataIndex: 'code',
                     renderer: function (val) {
-                        if (val !== 0) {
-                            return '<i class="fas fa-circle redColor"></i>'
-                        } else {
+                        if (val === 20) {
                             return '<i class="fas fa-circle limeColor"></i>'
+                        } else {
+                            return '<i class="fas fa-circle redColor"></i>'
                         }
                     }
-                }
-            ]
-        },
-        {
-            xtype: 'grid',
-            title: 'Данные созданной сделки',
-            collapsed: true,
-            collapsible: true,
-            store: Ext.create('Ext.data.Store', {
-                fields: [
-                    'field', 'description'
-                ],
-                data: [
-                    {
-                        field: 'id',
-                        description: 'Идентификатор сделки.'
-                    },
-                    {
-                        field: 'amountToPay',
-                        description: 'Сумма к оплате.'
-                    },
-                    {
-                        field: 'requisite',
-                        description: 'Реквизиты для перевода.'
-                    },
-                    {
-                        field: 'cryptoAmount',
-                        description: 'Сумма криптовалюты к получению (для продажи).'
-                    },
-                    {
-                        field: 'amount',
-                        description: 'Сумма в фиате к получению (для покупки).'
-                    }
-                ]
-            }),
-            columns: [
-                {
-                    width: 150,
-                    text: 'Поле',
-                    dataIndex: 'field'
-                },
-                {
-                    flex: 1,
-                    text: 'Описание',
-                    dataIndex: 'description'
                 }
             ]
         }

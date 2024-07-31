@@ -29,7 +29,8 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
     DEAL_ID_EXPECTED(16, "Отсутствует идентификатор сделки."),
     USER_BANNED(17, "Доступ запрещен."),
     DEAL_CANCELED(18, "Сделка отменена клиентом."),
-    AMOUNT_CALCULATED(19, "Расчет произведен.");
+    AMOUNT_CALCULATED(19, "Расчёт произведен."),
+    OK(20, "OK");
 
     public static final List<ApiStatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
             ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND, MIN_SUM, USER_BANNED);
@@ -37,6 +38,9 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
             PAYMENT_TIME_IS_UP, DEAL_ID_EXPECTED, USER_BANNED, DEAL_CONFIRMED);
     public static final List<ApiStatusCode> CANCEL_STATUSES = List.of(DEAL_DELETED, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_CONFIRMED, DEAL_ID_EXPECTED, USER_BANNED);
     public static final List<ApiStatusCode> GET_STATUS_STATUSES = List.of(DEAL_EXISTS, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_ID_EXPECTED, USER_BANNED);
+    public static final List<ApiStatusCode> CALCULATE_DEAL_STATUSES = List.of(AMOUNT_CALCULATED, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS, ONLY_ONE_AMOUNT_NEEDED,
+            EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, MIN_SUM, USER_BANNED);
+    public static final List<ApiStatusCode> DEAL_ACTIVE_TIME_STATUSES = List.of(OK, EMPTY_TOKEN);
 
     final int code;
 

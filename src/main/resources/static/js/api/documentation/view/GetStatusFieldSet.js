@@ -65,7 +65,7 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                     {
                         name: 'id',
                         type: 'Number',
-                        description: 'Идентификатор заявки'
+                        description: 'Идентификатор заявки, либо набор идентификаторов через запятую.'
                     },
                     {
                         name: 'token',
@@ -76,12 +76,12 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
             }),
             columns: [
                 {
-                    width: 150,
+                    width: 100,
                     text: 'Параметр',
                     dataIndex: 'name'
                 },
                 {
-                    width: 100,
+                    width: 150,
                     text: 'Тип',
                     dataIndex: 'type'
                 },

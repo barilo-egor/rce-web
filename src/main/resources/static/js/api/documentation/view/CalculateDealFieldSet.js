@@ -1,10 +1,9 @@
-Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
+Ext.define('ApiDocumentation.view.CalculateDealFieldSet', {
     extend: 'Ext.form.FieldSet',
-    xtype: 'createdealfieldset',
+    xtype: 'calculatedealfieldset',
 
-    title: 'Создание сделки',
+    title: 'Расчёт суммы',
     collapsible: true,
-    collapsed: true,
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -15,7 +14,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
     items: [
         {
             xtype: 'component',
-            html: 'Для создания сделки необходимо отправить <b>POST</b> запрос.<br> ' +
+            html: 'Для расчёта необходимо отправить <b>GET</b> запрос.<br> ' +
                 'Сумма отправляется либо в фиате (<b>amount</b>), либо в криптовалюте (<b>cryptoAmount</b>).',
         },
         {
@@ -34,7 +33,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                                 url: '/api/10/getUrl',
                                 method: 'GET',
                                 success: function (response) {
-                                    me.setValue(response.data + '/api/10/new')
+                                    me.setValue(response.data + '/api/10/calculate')
                                 }
                             })
                         }
@@ -76,7 +75,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                     {
                         name: 'fiatCurrency',
                         type: 'String',
-                        description:  API_DOCUMENTATION_VARIABLES.fiats
+                        description: API_DOCUMENTATION_VARIABLES.fiats
                     },
                     {
                         name: 'cryptoCurrency',
@@ -92,12 +91,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         name: 'cryptoAmount',
                         type: 'Decimal',
                         description: 'Сумма к криптовалюте'
-                    },
-                    {
-                        name: 'requisite',
-                        type: 'String',
-                        description: 'Ваши реквизиты.'
-                    },
+                    }
                 ]
             }),
             columns: [
@@ -120,7 +114,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
         },
         {
             xtype: 'panel',
-            title: 'Пример ответа в случае, если сделка создана',
+            title: 'Пример ответа в случае, расчёт произведен успешно.',
             collapsible: true,
             collapsed: true,
             layout: {
@@ -135,12 +129,10 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                     width: 400,
                     editable: false,
                     value: '{\n' +
-                        '   "code": 0,\n' +
-                        '   "description": "Сделка создана.",\n' +
+                        '   "code": 19,\n' +
+                        '   "description": "Расчёт произведен.",\n' +
                         '   "data":{\n' +
-                        '      "id": 8,\n' +
                         '      "amountToPay": "5000",\n' +
-                        '      "requisite": "1111 1111 1111 1111",\n' +
                         '      "cryptoAmount": "0.00217"\n' +
                         '   }\n' +
                         '}'
@@ -183,7 +175,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/api/10/statusCodes/new',
+                    url: '/api/10/statusCodes/calculate',
                     reader: {
                         type: 'json',
                         rootProperty: 'body.data'
@@ -205,7 +197,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                     width: 35,
                     dataIndex: 'code',
                     renderer: function (val) {
-                        if (val !== 0) {
+                        if (val !== 19) {
                             return '<i class="fas fa-circle redColor"></i>'
                         } else {
                             return '<i class="fas fa-circle limeColor"></i>'
@@ -216,7 +208,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
         },
         {
             xtype: 'grid',
-            title: 'Данные созданной сделки',
+            title: 'Данные расчёта',
             collapsed: true,
             collapsible: true,
             store: Ext.create('Ext.data.Store', {
@@ -225,16 +217,8 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                 ],
                 data: [
                     {
-                        field: 'id',
-                        description: 'Идентификатор сделки.'
-                    },
-                    {
                         field: 'amountToPay',
                         description: 'Сумма к оплате.'
-                    },
-                    {
-                        field: 'requisite',
-                        description: 'Реквизиты для перевода.'
                     },
                     {
                         field: 'cryptoAmount',
