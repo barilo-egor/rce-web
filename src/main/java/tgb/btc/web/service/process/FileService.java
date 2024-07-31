@@ -1,5 +1,6 @@
 package tgb.btc.web.service.process;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +36,12 @@ public class FileService implements IFileService {
 
     @Override
     public String saveToTelegram(MultipartFile file) throws IOException {
-        File convFile = new File("images/" + file.getOriginalFilename());
+        String originalFileName = file.getOriginalFilename();
+        if (StringUtils.isEmpty(originalFileName)) {
+            throw new BaseException("У файла отсутствует originalFilename.");
+        }
+        File convFile = new File("images/" + System.currentTimeMillis()
+                + originalFileName.substring(originalFileName.indexOf(".")));
         if (!convFile.createNewFile()) {
             throw new BaseException("Ошибка при создании файла для чека.");
         }
