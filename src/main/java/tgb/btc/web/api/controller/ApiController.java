@@ -19,8 +19,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
 import tgb.btc.web.constant.ControllerMapping;
@@ -46,9 +45,7 @@ import java.util.stream.Collectors;
 @RequestMapping(ControllerMapping.API10)
 public class ApiController extends BaseController {
 
-    private ApiDealRepository apiDealRepository;
-
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private ApiDealProcessService apiDealProcessService;
 
@@ -63,6 +60,11 @@ public class ApiController extends BaseController {
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
         this.apiDealService = apiDealService;
+    }
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Autowired
@@ -83,16 +85,6 @@ public class ApiController extends BaseController {
     @Autowired
     public void setApiDealProcessService(ApiDealProcessService apiDealProcessService) {
         this.apiDealProcessService = apiDealProcessService;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
-    }
-
-    @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
     }
 
     @GetMapping("/documentation")
@@ -128,11 +120,11 @@ public class ApiController extends BaseController {
             return apiStatusCode.toJson();
         if (Objects.isNull(id))
             return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
-        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
+        if (apiDealService.getCountByTokenAndPid(token, id) == 0) {
             log.debug("Запрос на перевод несуществующей сделки {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         }
-        ApiDealStatus apiDealStatus = apiDealRepository.getApiDealStatusByPid(id);
+        ApiDealStatus apiDealStatus = apiDealService.getApiDealStatusByPid(id);
         if (ApiDealStatus.PAID.equals(apiDealStatus)) {
             log.debug("Повторная попытка перевести сделку {} в статус {}.", id, ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_ALREADY_PAID.toJson();
@@ -142,7 +134,7 @@ public class ApiController extends BaseController {
                     ApiDealStatus.PAID.name());
             return ApiStatusCode.DEAL_CONFIRMED.toJson();
         }
-        ApiDeal apiDeal = apiDealRepository.getByPid(id);
+        ApiDeal apiDeal = apiDealService.getByPid(id);
         if (ApiDealStatus.CANCELED.equals(apiDeal.getApiDealStatus())) {
             log.debug("Попытка перевести сделку в статус {} которая отменена клиентом.", ApiDealStatus.PAID);
             return ApiStatusCode.DEAL_CANCELED.toJson();
@@ -153,7 +145,7 @@ public class ApiController extends BaseController {
             log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
             return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
         }
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
         if (Objects.nonNull(notifier))
             notifier.notifyNewApiDeal(id);
         notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
@@ -173,18 +165,18 @@ public class ApiController extends BaseController {
             return apiStatusCode.toJson();
         if (Objects.isNull(id))
             return ApiStatusCode.DEAL_ID_EXPECTED.toJson();
-        if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
+        if (apiDealService.getCountByTokenAndPid(token, id) == 0) {
             return ApiStatusCode.DEAL_NOT_EXISTS.toJson();
         } else {
-            ApiDealStatus status = apiDealRepository.getApiDealStatusByPid(id);
+            ApiDealStatus status = apiDealService.getApiDealStatusByPid(id);
             if (ApiDealStatus.CREATED.equals(status) || ApiDealStatus.PAID.equals(status)) {
-                apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.CANCELED, id);
+                apiDealService.updateApiDealStatusByPid(ApiDealStatus.CANCELED, id);
                 if (ApiDealStatus.PAID.equals(status)) {
                     notificationsAPI.send(NotificationType.API_DEAL_CANCELED,
                             "API сделка №" + id + " была отменена клиентом");
                 }
                 log.debug("АПИ сделка {} переведена в статус {}.", id, ApiDealStatus.CANCELED.name());
-                apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(id),
+                apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(id),
                         ApiUserNotificationType.CANCELED_DEAL, "Отмена сделки №" + id);
                 return ApiStatusCode.DEAL_DELETED.toJson();
             } else
@@ -207,11 +199,11 @@ public class ApiController extends BaseController {
         boolean isFewDeals = ids.size() > 1;
         for (Long id : ids) {
             ObjectNode resultNode;
-            if (apiDealRepository.getCountByTokenAndPid(token, id) == 0) {
+            if (apiDealService.getCountByTokenAndPid(token, id) == 0) {
                 resultNode = ApiStatusCode.DEAL_NOT_EXISTS.toJson();
             } else {
                 ObjectNode data = JacksonUtil.getEmpty()
-                        .put("status", apiDealRepository.getApiDealStatusByPid(id).name());
+                        .put("status", apiDealService.getApiDealStatusByPid(id).name());
                 if (isFewDeals) {
                     data.put("id", id);
                 }
@@ -315,11 +307,11 @@ public class ApiController extends BaseController {
     }
 
     private ApiStatusCode hasAccess(String token) {
-        if (StringUtils.isEmpty(token) || apiUserRepository.countByToken(token) == 0) {
+        if (StringUtils.isEmpty(token) || apiUserService.countByToken(token) == 0) {
             log.debug("Отказ в доступе по токену {}.", token);
             return ApiStatusCode.EMPTY_TOKEN;
         }
-        if (BooleanUtils.isTrue(apiUserRepository.isBanned(apiUserRepository.getPidByToken(token)))) {
+        if (BooleanUtils.isTrue(apiUserService.isBanned(apiUserService.getPidByToken(token)))) {
             log.debug("Отказ в доступе АПИ клиенту в бане с токеном {}.", token);
             return ApiStatusCode.USER_BANNED;
         }

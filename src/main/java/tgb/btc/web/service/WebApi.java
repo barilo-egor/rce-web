@@ -12,7 +12,6 @@ import tgb.btc.api.bot.WebAPI;
 import tgb.btc.library.bean.web.Role;
 import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.repository.web.WebUserRepository;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.login.LoginController;
@@ -29,8 +28,6 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Slf4j
 public class WebApi implements WebAPI {
 
-    private WebUserRepository webUserRepository;
-
     private IWebUserService webUserService;
 
     @Autowired
@@ -38,15 +35,10 @@ public class WebApi implements WebAPI {
         this.webUserService = webUserService;
     }
 
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
-    }
-
     @Override
     public void submitLogin(Long chatId) {
         EmitterVO emitter = LoginController.LOGIN_EMITTER_MAP.get(chatId);
-        WebUser webUser = webUserRepository.getByChatId(chatId);
+        WebUser webUser = webUserService.getByChatId(chatId);
         authorize(webUser, emitter.getRequest());
         try {
             emitter.getEmitter().send(JacksonUtil.getEmpty().put("success", true));
@@ -89,7 +81,7 @@ public class WebApi implements WebAPI {
             emitter.getEmitter().send(JacksonUtil.getEmpty().put("success", true));
             emitter.getEmitter().complete();
         } catch (IOException e) {
-            log.error("Ошибка отправки через SSE успешной регистрации chatId=" + chatId + ":", e);
+            log.error("Ошибка отправки через SSE успешной регистрации chatId={}:", chatId, e);
             emitter.getEmitter().completeWithError(e);
             RegistrationController.REGISTER_EMITTER_MAP.remove(chatId);
             log.error("SSE соединение для пользователя chatId={} завершено с ошибкой и удалено.", chatId);

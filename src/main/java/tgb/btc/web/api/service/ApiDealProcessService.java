@@ -19,8 +19,8 @@ import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.scheduler.ICurrencyGetter;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
-import tgb.btc.library.repository.web.ApiUserRepository;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -45,7 +45,7 @@ import java.util.Objects;
 @Slf4j
 public class ApiDealProcessService implements IApiDealProcessService {
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private IApiDealService apiDealService;
 
@@ -64,6 +64,11 @@ public class ApiDealProcessService implements IApiDealProcessService {
     private NotificationsAPI notificationsAPI;
 
     private IFileService fileService;
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     @Autowired
     public void setFileService(IFileService fileService) {
@@ -110,11 +115,6 @@ public class ApiDealProcessService implements IApiDealProcessService {
         this.calculateService = calculateService;
     }
 
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
-    }
-
     public ObjectNode newDeal(String token, DealType dealType, BigDecimal amount, BigDecimal cryptoAmount,
                               CryptoCurrency cryptoCurrency, String requisite, FiatCurrency fiatCurrency) {
         ApiDealVO apiDealVO = new ApiDealVO(token, dealType, amount, cryptoAmount, cryptoCurrency, requisite, fiatCurrency);
@@ -124,7 +124,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
             return ApiResponseUtil.build(code);
         }
 
-        ApiUser apiUser = apiUserRepository.getByToken(token);
+        ApiUser apiUser = apiUserService.getByToken(token);
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
         fiatCurrency = Objects.nonNull(apiDealVO.getFiatCurrency())
                 ? apiDealVO.getFiatCurrency()
@@ -158,7 +158,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
             log.debug("Отказ по валидности={} в подсчете, token={}", code.name(), token);
             return ApiResponseUtil.build(code);
         }
-        ApiUser apiUser = apiUserRepository.getByToken(token);
+        ApiUser apiUser = apiUserService.getByToken(token);
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
         fiatCurrency = Objects.nonNull(apiDealVO.getFiatCurrency())
                 ? apiDealVO.getFiatCurrency()
@@ -213,7 +213,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
         log.debug("Создание диспута пользователем {}. fiatSum={}, fiatCurrency={}, dealType={},"
                 + "cryptoCurrency={}, requisite={}", principal.getName(), fiatSum.toPlainString(), fiatCurrency.name(),
                 dealType.name(), cryptoCurrency.name(), requisite);
-        ApiUser apiUser = apiUserRepository.getByUsername(principal.getName());
+        ApiUser apiUser = apiUserService.getByUsername(principal.getName());
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
         builder.dealType(dealType)
                 .fiatCurrency(fiatCurrency)
