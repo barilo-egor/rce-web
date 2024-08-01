@@ -250,21 +250,29 @@ public class ApiDealProcessService implements IApiDealProcessService {
 
     public ObjectNode calculateData(DealAmount dealAmount) {
         ObjectNode data = JacksonUtil.toObjectNode(dealAmount, dAmount -> JacksonUtil.getEmpty()
-                .put("amountToPay", bigDecimalService.roundToPlainString(
-                        DealType.isBuy(dAmount.getDealType()) ? dAmount.getAmount() : dAmount.getCryptoAmount(), 8)));
-        if (DealType.isBuy(dealAmount.getDealType()))
+                .put("amountToPay",
+                        DealType.isBuy(dAmount.getDealType())
+                                ? bigDecimalService.roundToPlainString(dAmount.getAmount(), 0)
+                                : bigDecimalService.roundToPlainString(dAmount.getCryptoAmount(), 8)));
+        if (DealType.isBuy(dealAmount.getDealType())) {
             data.put("cryptoAmount", bigDecimalService.roundToPlainString(dealAmount.getCryptoAmount(), 8));
-        else data.put("amount", dealAmount.getAmount());
+        } else {
+            data.put("amount", bigDecimalService.roundToPlainString(dealAmount.getAmount(), 0));
+        }
         return data;
     }
 
     public ObjectNode dealData(ApiDeal apiDeal, String requisite) {
         ObjectNode data = JacksonUtil.toObjectNode(apiDeal, deal -> JacksonUtil.getEmpty()
                 .put("id", deal.getPid())
-                .put("amountToPay", bigDecimalService.roundToPlainString(deal.getAmountToPay(), 8))
+                .put("amountToPay", bigDecimalService.roundToPlainString(deal.getAmountToPay(),
+                        DealType.isBuy(deal.getDealType()) ? 0 : 8))
                 .put("requisite", requisite));
-        if (DealType.isBuy(apiDeal.getDealType())) data.put("cryptoAmount", bigDecimalService.roundToPlainString(apiDeal.getCryptoAmount(), 8));
-        else data.put("amount", apiDeal.getAmount());
+        if (DealType.isBuy(apiDeal.getDealType())) {
+            data.put("cryptoAmount", bigDecimalService.roundToPlainString(apiDeal.getCryptoAmount(), 8));
+        } else {
+            data.put("amount", bigDecimalService.roundToPlainString(apiDeal.getAmount(), 0));
+        }
         return data;
     }
 }
