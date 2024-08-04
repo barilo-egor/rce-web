@@ -231,7 +231,7 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> updateDealRequestGroup(Long pid) {
         groupChatService.updateTypeByPid(GroupChatType.DEAL_REQUEST, pid);
         if (Objects.nonNull(notifier)) notifier.sendGreetingToNewDealRequestGroup();
-        notificationsAPI.send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, groupChatService.getByType(GroupChatType.DEAL_REQUEST)
+        notificationsAPI.send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findFirst()
                 .orElseThrow(() -> new BaseException("Не найдена группа для отправки запросов сразу после обновления.")));
         return new SuccessResponse<>();
     }

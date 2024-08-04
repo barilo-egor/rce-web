@@ -21,7 +21,7 @@ public class WebGroupChatService implements IWebGroupChatService {
 
     @Override
     public GroupChat getDealRequests() {
-        return groupChatService.getByType(GroupChatType.DEAL_REQUEST)
+        return groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findFirst()
                 .orElse(GroupChat.empty());
     }
 
