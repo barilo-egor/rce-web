@@ -12,7 +12,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
 
         window.setMasked('Создание типа оплаты')
         if (!form.validate()) {
-            form.setMasked(false)
+            window.setMasked(false)
             ExtMessages.topToast('Введите верные данные.')
             return
         }
@@ -26,6 +26,22 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             failure: function (form, response) {
                 window.setMasked(false)
                 RequestUtil.FORM.formFailure(form, response)
+            }
+        })
+    },
+
+    loadPaymentTypes: function (me) {
+        me.getStore().load()
+    },
+
+    selectPaymentType: function (me) {
+        ExtUtil.referenceQuery('apiClientsPanel').setMasked('Загрузка клиентов')
+        Ext.getStore('apiClientStore').load({
+            params: {
+                paymentTypePid: ExtUtil.referenceQuery('paymentTypesGrid').getSelection().get('pid')
+            },
+            callback: function () {
+                ExtUtil.referenceQuery('apiClientsPanel').setMasked(false)
             }
         })
     }

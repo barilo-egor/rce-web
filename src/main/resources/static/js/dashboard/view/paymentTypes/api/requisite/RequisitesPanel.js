@@ -1,12 +1,16 @@
 Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
     extend: 'Ext.Panel',
     xtype: 'requisitespanel',
+    reference: 'requisitesPanel',
 
     title: 'Реквизиты',
     masked: {
         xtype: 'loadmask',
         message: 'Выберите тип оплаты',
-        indicator: false
+        indicator: false,
+        style: {
+            opacity: 0.5
+        }
     },
 
     tbar: {

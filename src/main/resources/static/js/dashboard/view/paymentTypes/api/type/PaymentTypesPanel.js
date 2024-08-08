@@ -28,26 +28,25 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
     items: [
         {
             xtype: 'grid',
+            reference: 'paymentTypesGrid',
+            store: 'paymentTypeStore',
+
+            listeners: {
+                painted: 'loadPaymentTypes',
+                select: 'selectPaymentType',
+            },
 
             columns: [
                 {
                     text: 'Название',
+                    dataIndex: 'name',
                     flex: 1,
                     menuDisabled: true
                 },
                 {
                     text: 'ID',
+                    dataIndex: 'id',
                     flex: 1,
-                    menuDisabled: true
-                },
-                {
-                    text: 'Количество реквизитов',
-                    width: 180,
-                    menuDisabled: true
-                },
-                {
-                    text: 'Количество клиентов',
-                    width: 170,
                     menuDisabled: true
                 }
             ]
