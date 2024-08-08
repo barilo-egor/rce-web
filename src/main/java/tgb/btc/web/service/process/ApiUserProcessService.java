@@ -10,7 +10,6 @@ import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.bean.web.api.UsdApiUserCourse;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
-import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
@@ -104,12 +103,7 @@ public class ApiUserProcessService implements IApiUserProcessService {
             apiUser.setUsdApiUserCourseList(usdApiUserCourseList);
         }
         if (Objects.nonNull(apiUserVO.getUsdCourseBYN())) {
-            UsdApiUserCourse byn;
-            try {
-                byn = apiUser.getCourse(FiatCurrency.BYN);
-            } catch (BaseException e) {
-                byn = null;
-            }
+            UsdApiUserCourse byn = apiUser.getCourse(FiatCurrency.BYN);
             if (Objects.isNull(byn)) {
                 UsdApiUserCourse usdApiUserCourse = usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.BYN)
@@ -122,12 +116,7 @@ public class ApiUserProcessService implements IApiUserProcessService {
             }
         }
         if (Objects.nonNull(apiUserVO.getUsdCourseRUB())) {
-            UsdApiUserCourse rub;
-            try {
-                rub = apiUser.getCourse(FiatCurrency.RUB);
-            } catch (BaseException e) {
-                rub = null;
-            }
+            UsdApiUserCourse rub = apiUser.getCourse(FiatCurrency.RUB);
             if (Objects.isNull(rub)) {
                 UsdApiUserCourse usdApiUserCourse = usdApiUserCourseService.save(UsdApiUserCourse.builder()
                         .fiatCurrency(FiatCurrency.RUB)
