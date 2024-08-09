@@ -11,6 +11,7 @@ import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseResponseEntityController;
 import tgb.btc.web.interfaces.IObjectNodeService;
+import tgb.btc.web.interfaces.payment.types.IWebApiRequisitesService;
 import tgb.btc.web.interfaces.users.IWebApiUsersService;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
@@ -24,12 +25,15 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     private final IWebApiUsersService webApiUsersService;
 
+    private final IWebApiRequisitesService webApiRequisitesService;
+
     @Autowired
     public ApiPaymentTypesController(IObjectNodeService objectNodeService, IApiPaymentTypeService apiPaymentTypeService,
-            IWebApiUsersService webApiUsersService) {
+            IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService) {
         super(objectNodeService);
         this.apiPaymentTypeService = apiPaymentTypeService;
         this.webApiUsersService = webApiUsersService;
+        this.webApiRequisitesService = webApiRequisitesService;
     }
 
     @PostMapping
@@ -62,5 +66,13 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     public ResponseEntity<ObjectNode> deletePaymentType(@PathVariable Long paymentTypePid,
             @PathVariable String apiUserId) {
         return webApiUsersService.deletePaymentType(paymentTypePid, apiUserId);
+    }
+
+    @GetMapping("/{paymentTypePid}/requisite")
+    public ResponseEntity<List<ObjectNode>> getRequisite(@PathVariable Long paymentTypePid) {
+        return new ResponseEntity<>(
+                webApiRequisitesService.findAll(paymentTypePid),
+                HttpStatus.ACCEPTED
+        );
     }
 }

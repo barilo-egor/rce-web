@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tgb.btc.web.interfaces.IObjectNodeService;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +25,13 @@ public class ObjectNodeService implements IObjectNodeService {
     public List<ObjectNode> toObjects(String propertyName, List<String> values) {
         return values.stream()
                 .map(value -> defaultMapper.createObjectNode().put(propertyName, value))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T> List<ObjectNode> map(List<T> objects, Function<T, ObjectNode> mapFunction) {
+        return objects.stream()
+                .map(mapFunction)
                 .collect(Collectors.toList());
     }
 }
