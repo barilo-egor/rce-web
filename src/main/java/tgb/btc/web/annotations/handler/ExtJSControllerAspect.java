@@ -18,7 +18,7 @@ public class ExtJSControllerAspect {
     }
 
     @Around("@within(tgb.btc.web.annotations.ExtJSController) && execution(* *(..))")
-    public Object handleApiResponse(ProceedingJoinPoint joinPoint) {
+    public Object handleApiResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         return extJSResponseHandler.handle(joinPoint);
     }
 }

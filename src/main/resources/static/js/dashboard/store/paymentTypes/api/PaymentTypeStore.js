@@ -9,5 +9,17 @@ Ext.define('Dashboard.store.paymentTypes.api.PaymentTypeStore', {
             type: 'json',
             rootProperty: 'data'
         }
+    },
+    listeners: {
+        load: function (store) {
+            let paymentTypePid = ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
+            if (paymentTypePid) {
+                Ext.getStore('apiClientStore').load({
+                    params: {
+                        paymentTypePid: paymentTypePid
+                    }
+                })
+            }
+        }
     }
 });

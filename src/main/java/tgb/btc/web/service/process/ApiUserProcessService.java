@@ -1,5 +1,6 @@
 package tgb.btc.web.service.process;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -171,6 +172,15 @@ public class ApiUserProcessService implements IApiUserProcessService {
                     .build());
         }
         return calculations;
+    }
+
+    @Override
+    public List<String> getIdByPaymentTypePid(Boolean isAdding, Long paymentTypePid) {
+        if (BooleanUtils.isTrue(isAdding)) {
+            return apiUserService.getIdExcludePaymentTypePid(paymentTypePid);
+        } else {
+            return apiUserService.getIdByPaymentTypePid(paymentTypePid);
+        }
     }
 
 }

@@ -7,12 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiPaymentType;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
-import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.web.annotations.ExtJSController;
-import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseResponseEntityController;
 import tgb.btc.web.interfaces.IObjectNodeService;
+import tgb.btc.web.interfaces.users.IWebApiUsersService;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
 import java.util.List;
@@ -23,14 +22,14 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     private final IApiPaymentTypeService apiPaymentTypeService;
 
-    private final IApiUserService apiUserService;
+    private final IWebApiUsersService webApiUsersService;
 
     @Autowired
     public ApiPaymentTypesController(IObjectNodeService objectNodeService, IApiPaymentTypeService apiPaymentTypeService,
-                                     IApiUserService apiUserService) {
+            IWebApiUsersService webApiUsersService) {
         super(objectNodeService);
         this.apiPaymentTypeService = apiPaymentTypeService;
-        this.apiUserService = apiUserService;
+        this.webApiUsersService = webApiUsersService;
     }
 
     @PostMapping
@@ -45,10 +44,23 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     }
 
     @GetMapping("/client")
-    public ResponseEntity<List<ObjectNode>> getClient(@RequestParam Long paymentTypePid) {
+    public ResponseEntity<List<ObjectNode>> getClient(@RequestParam Long paymentTypePid,
+            @RequestParam(required = false) Boolean isAdding) {
         return new ResponseEntity<>(
-                objectNodeService.toObjects("id", apiUserService.getIdByPaymentTypePid(paymentTypePid)),
+                webApiUsersService.getIdByPaymentTypePid(isAdding, paymentTypePid),
                 HttpStatus.ACCEPTED
         );
+    }
+
+    @PutMapping("/{paymentTypePid}/client/{apiUserId}")
+    public ResponseEntity<ObjectNode> addPaymentType(@PathVariable Long paymentTypePid,
+            @PathVariable String apiUserId) {
+        return webApiUsersService.addPaymentType(paymentTypePid, apiUserId);
+    }
+
+    @DeleteMapping("/{paymentTypePid}/client/{apiUserId}")
+    public ResponseEntity<ObjectNode> deletePaymentType(@PathVariable Long paymentTypePid,
+            @PathVariable String apiUserId) {
+        return webApiUsersService.deletePaymentType(paymentTypePid, apiUserId);
     }
 }

@@ -12,4 +12,6 @@ public interface IApiUserProcessService {
 
     List<Calculation> getCalculations(ApiUser apiUser);
 
+    List<String> getIdByPaymentTypePid(Boolean isAdding, Long paymentTypePid);
+
 }

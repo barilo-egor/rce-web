@@ -23,23 +23,23 @@ public class ExtJSResponseHandler {
         this.objectNodeService = objectNodeService;
     }
 
-    public Object handle(ProceedingJoinPoint joinPoint) {
-        try {
-            Object result = joinPoint.proceed();
-            if (result instanceof ResponseEntity) {
+    public Object handle(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = joinPoint.proceed();
+        if (result instanceof ResponseEntity) {
+            try {
                 ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
                 ObjectNode responseNode = objectMapper.createObjectNode();
                 responseNode.put("success", responseEntity.getStatusCode().is2xxSuccessful());
                 responseNode.set("data", objectMapper.valueToTree(responseEntity.getBody()));
                 return ResponseEntity.status(responseEntity.getStatusCode()).body(responseNode);
+            } catch (Exception e) {
+                log.error("Ошибка при обертке ответа для ExtJS.", e);
+                ObjectNode responseNode = objectMapper.createObjectNode();
+                responseNode.put("success", false);
+                responseNode.set("data", objectNodeService.message(e.getMessage()));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseNode);
             }
-            return result;
-        } catch (Throwable e) {
-            log.error("Ошибка при обертке ответа для ExtJS.", e);
-            ObjectNode responseNode = objectMapper.createObjectNode();
-            responseNode.put("success", false);
-            responseNode.set("data", objectNodeService.message(e.getMessage()));
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseNode);
         }
+        return result;
     }
 }

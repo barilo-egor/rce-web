@@ -1,16 +1,11 @@
 package tgb.btc.web.annotations.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import tgb.btc.web.interfaces.IObjectNodeService;
 
 @Aspect
 @Component
@@ -25,7 +20,7 @@ public class ExtJSResponseAspect {
     }
 
     @Around("@annotation(tgb.btc.web.annotations.ExtJSResponse)")
-    public Object handleApiResponse(ProceedingJoinPoint joinPoint) {
+    public Object handleApiResponse(ProceedingJoinPoint joinPoint) throws Throwable {
         return extJSResponseHandler.handle(joinPoint);
     }
 }

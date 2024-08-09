@@ -20,6 +20,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             url: '/paymentTypes/api',
             success: function (form, response) {
                 window.setMasked(false)
+                Ext.getStore('paymentTypeStore').reload()
                 ExtMessages.topToast('Тип оплаты ' + response.data.name + ' успешно создан')
                 ExtUtil.closeWindow(me)
             },
@@ -38,7 +39,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         ExtUtil.referenceQuery('apiClientsPanel').setMasked('Загрузка клиентов')
         Ext.getStore('apiClientStore').load({
             params: {
-                paymentTypePid: ExtUtil.referenceQuery('paymentTypesGrid').getSelection().get('pid')
+                paymentTypePid: ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
             },
             callback: function () {
                 ExtUtil.referenceQuery('apiClientsPanel').setMasked(false)

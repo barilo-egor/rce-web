@@ -33,7 +33,14 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
 
             listeners: {
                 painted: 'loadPaymentTypes',
-                select: 'selectPaymentType',
+                select: 'selectPaymentType'
+            },
+            getPidOfSelected: function() {
+                let selection = this.getSelection()
+                if (selection) {
+                    return selection.get('pid')
+                }
+                return null
             },
 
             columns: [

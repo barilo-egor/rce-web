@@ -2,6 +2,11 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
     extend: 'Ext.Panel',
     xtype: 'apiclientspanel',
     reference: 'apiClientsPanel',
+    requires: [
+        'Dashboard.view.paymentTypes.api.client.ApiClientsController',
+        'Dashboard.view.paymentTypes.api.client.ApiClientsGridMenu'
+    ],
+    controller: 'apiClientsController',
 
     title: 'API клиенты',
     masked: {
@@ -17,7 +22,8 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
         items: [
             {
                 iconCls: 'x-fa fa-plus forestgreenColor',
-                tooltip: 'Добавить клиента'
+                tooltip: 'Добавить клиента',
+                handler: 'addClientDialog'
             },
             '->',
             {
@@ -31,7 +37,21 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
     items: [
         {
             xtype: 'grid',
+            reference: 'apiClientsGrid',
             store: 'apiClientStore',
+
+            getIdOfSelected: function() {
+                let selection = this.getSelection()
+                if (selection) {
+                    return selection.get('id')
+                }
+                return null
+            },
+
+            listeners: {
+                childcontextmenu: 'openGridMenu',
+            },
+
             columns: [
                 {
                     text: 'ID',
