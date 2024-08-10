@@ -19,6 +19,11 @@ Ext.define('Dashboard.store.paymentTypes.api.PaymentTypeStore', {
                         paymentTypePid: paymentTypePid
                     }
                 })
+                Ext.getStore('requisiteStore').load({
+                    params: {
+                        paymentTypePid: paymentTypePid
+                    }
+                })
             }
         }
     }

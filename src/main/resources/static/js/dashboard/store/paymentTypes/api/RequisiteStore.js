@@ -1,10 +1,10 @@
-Ext.define('Dashboard.store.paymentTypes.api.ApiClientStore', {
+Ext.define('Dashboard.store.paymentTypes.api.RequisiteStore', {
     extend: 'Ext.data.Store',
-    storeId: 'apiClientStore',
+    storeId: 'requisiteStore',
     autoLoad: false,
     proxy: {
         type: 'ajax',
-        url: '/paymentTypes/api/client',
+        url: '/paymentTypes/api/requisite',
         reader: {
             type: 'json',
             rootProperty: 'data'

@@ -31,10 +31,8 @@ public class WebApiRequisitesService implements IWebApiRequisitesService {
     }
 
     @Override
-    public List<ObjectNode> findAll(Long paymentTypePid) {
+    public List<ApiRequisite> findAll(Long paymentTypePid) {
         ApiPaymentType apiPaymentType = apiPaymentTypeService.findById(paymentTypePid);
-        List<ApiRequisite> apiRequisites = apiRequisiteService.findAll(Example.of(ApiRequisite.builder().apiPaymentType(apiPaymentType).build()));
-        // TODO HERE
-        return objectNodeService.map(apiRequisites, apiRequisite -> )
+        return apiRequisiteService.findAll(Example.of(ApiRequisite.builder().apiPaymentType(apiPaymentType).build()));
     }
 }

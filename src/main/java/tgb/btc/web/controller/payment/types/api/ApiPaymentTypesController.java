@@ -6,13 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiPaymentType;
+import tgb.btc.library.bean.web.api.ApiRequisite;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
+import tgb.btc.library.service.bean.web.ApiRequisiteService;
 import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseResponseEntityController;
 import tgb.btc.web.interfaces.IObjectNodeService;
 import tgb.btc.web.interfaces.payment.types.IWebApiRequisitesService;
 import tgb.btc.web.interfaces.users.IWebApiUsersService;
+import tgb.btc.web.vo.form.ApiRequisiteForm;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
 import java.util.List;
@@ -26,14 +29,16 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     private final IWebApiUsersService webApiUsersService;
 
     private final IWebApiRequisitesService webApiRequisitesService;
+    private final ApiRequisiteService apiRequisiteService;
 
     @Autowired
     public ApiPaymentTypesController(IObjectNodeService objectNodeService, IApiPaymentTypeService apiPaymentTypeService,
-            IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService) {
+                                     IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService, ApiRequisiteService apiRequisiteService) {
         super(objectNodeService);
         this.apiPaymentTypeService = apiPaymentTypeService;
         this.webApiUsersService = webApiUsersService;
         this.webApiRequisitesService = webApiRequisitesService;
+        this.apiRequisiteService = apiRequisiteService;
     }
 
     @PostMapping
@@ -68,11 +73,25 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         return webApiUsersService.deletePaymentType(paymentTypePid, apiUserId);
     }
 
-    @GetMapping("/{paymentTypePid}/requisite")
-    public ResponseEntity<List<ObjectNode>> getRequisite(@PathVariable Long paymentTypePid) {
+    @GetMapping("/requisite")
+    public ResponseEntity<List<ApiRequisite>> getRequisite(@RequestParam Long paymentTypePid) {
         return new ResponseEntity<>(
                 webApiRequisitesService.findAll(paymentTypePid),
                 HttpStatus.ACCEPTED
         );
+    }
+
+    @PostMapping("/requisite")
+    public ResponseEntity<List<ApiRequisite>> createRequisite(@RequestBody ApiRequisiteForm apiRequisiteForm) {
+        apiRequisiteService.save(apiRequisiteForm.getPaymentTypePid(), apiRequisiteForm.getRequisite());
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping("/requisite/{requisitePid}")
+    public ResponseEntity updateRequisite(@PathVariable Long requisitePid,
+                                          @RequestParam(required = false) Boolean isOn,
+                                          @RequestParam(required = false) String requisite) {
+        apiRequisiteService.update(requisitePid, requisite, isOn);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

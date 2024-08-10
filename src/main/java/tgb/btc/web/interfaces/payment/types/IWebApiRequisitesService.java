@@ -1,11 +1,11 @@
 package tgb.btc.web.interfaces.payment.types;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tgb.btc.library.bean.web.api.ApiRequisite;
 
 import java.util.List;
 
 public interface IWebApiRequisitesService {
 
-    List<ObjectNode> findAll(Long paymentTypePid);
+    List<ApiRequisite> findAll(Long paymentTypePid);
 
 }

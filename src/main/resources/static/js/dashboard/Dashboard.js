@@ -26,6 +26,7 @@ Ext.application({
         'Dashboard.store.enum.RoleStore',
         'Dashboard.store.deal.api.CalculationsStore',
         'Dashboard.store.paymentTypes.api.PaymentTypeStore',
-        'Dashboard.store.paymentTypes.api.ApiClientStore'
+        'Dashboard.store.paymentTypes.api.ApiClientStore',
+        'Dashboard.store.paymentTypes.api.RequisiteStore'
     ]
 })

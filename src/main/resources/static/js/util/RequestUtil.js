@@ -21,7 +21,11 @@ let RequestUtil = {
                         config.masked.setMasked(false)
                     }
                 }
-                ExtMessages.error('Ошибка', Ext.decode(response.responseText).data.message)
+                if (response.status === 500) {
+                    ExtMessages.error('Ошибка', Ext.decode(response.responseText).data.message)
+                } else {
+                    ExtMessages.error('Ошибка запроса', 'Статус: ' + response.status + ' ' + response.statusText)
+                }
             }
         }
         Ext.Ajax.request(config)
