@@ -8,7 +8,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.CreatePaymentTypeDialog', {
 
     title: 'Создание типа оплаты',
     width: 400,
-    height: 250,
+    height: 370,
     closable: true,
 
     layout: {
@@ -68,6 +68,12 @@ Ext.define('Dashboard.view.paymentTypes.api.type.CreatePaymentTypeDialog', {
                             message: 'Длина названия должна быть больше 3-х символов'
                         }
                     ]
+                },
+                {
+                    xtype: 'textareafield',
+
+                    label: 'Примечение',
+                    name: 'comment'
                 }
             ]
         }

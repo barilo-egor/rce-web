@@ -47,12 +47,18 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                 {
                     text: 'Название',
                     dataIndex: 'name',
-                    flex: 1,
+                    width: 250,
                     menuDisabled: true
                 },
                 {
                     text: 'ID',
                     dataIndex: 'id',
+                    width: 150,
+                    menuDisabled: true
+                },
+                {
+                    text: 'Примечание',
+                    dataIndex: 'comment',
                     flex: 1,
                     menuDisabled: true
                 }

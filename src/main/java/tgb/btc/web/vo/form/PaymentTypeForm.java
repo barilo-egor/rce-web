@@ -17,7 +17,9 @@ public class PaymentTypeForm {
     @NotNull
     private String name;
 
+    private String comment;
+
     public ApiPaymentType toApiPaymentType() {
-        return ApiPaymentType.builder().id(id).name(name).build();
+        return ApiPaymentType.builder().id(id).name(name).comment(comment).build();
     }
 }
