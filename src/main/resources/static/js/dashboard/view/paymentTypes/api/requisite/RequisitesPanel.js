@@ -28,9 +28,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
             {
                 iconCls: 'x-fa fa-question',
                 tooltip: 'Помощь',
-                handler: function (me) {
-
-                }
+                handler: 'help'
             }
         ]
     },
@@ -42,10 +40,21 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
             reference: 'apiRequisitesGrid',
             store: 'requisiteStore',
 
+            listeners: {
+                childcontextmenu: 'openGridMenu',
+            },
+
             getPidOfSelected: function() {
                 let selection = this.getSelection()
                 if (selection) {
                     return selection.get('pid')
+                }
+                return null
+            },
+            getRequisiteOfSelected: function() {
+                let selection = this.getSelection()
+                if (selection) {
+                    return selection.get('requisite')
                 }
                 return null
             },
@@ -58,22 +67,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
                     dataIndex: 'isOn',
                     menuDisabled: true,
                     listeners: {
-                        checkchange: function (me, rowIndex, checked) {
-                            ExtUtil.mask('apiRequisitesGrid', 'Обновление реквизита')
-                            let url = '/paymentTypes/api/requisite/' + ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
-                            RequestUtil.request({
-                                url: url,
-                                method: 'PATCH',
-                                params: {
-                                    isOn: checked === true
-                                },
-                                masked: 'apiRequisitesGrid',
-                                success: function (response) {
-                                    ExtUtil.maskOff('apiRequisitesGrid')
-                                    ExtMessages.topToast('Реквизит ' + (checked === true ? 'включен' : 'выключен'))
-                                }
-                            })
-                        }
+                        checkchange: 'turnRequisite'
                     }
                 },
                 {

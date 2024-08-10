@@ -22,5 +22,29 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
                 RequestUtil.FORM.formFailure(form, response)
             }
         })
+    },
+
+    editRequisite: function (me) {
+        let field = ExtUtil.referenceQuery('requisiteField')
+        if (!field.validate()) {
+            ExtMessages.topToast('Неверно заполнена форма')
+            return
+        }
+        ExtUtil.mask('editRequisiteDialog', 'Обновление реквизита')
+        let url = '/paymentTypes/api/requisite/' + ExtUtil.referenceQuery('paymentTypePidField').getValue()
+        RequestUtil.request({
+            url: url,
+            method: 'PATCH',
+            params: {
+                requisite: field.getValue()
+            },
+            masked: 'editRequisiteDialog',
+            success: function (response) {
+                Ext.getStore('paymentTypeStore').reload()
+                ExtMessages.topToast('Реквизит обновлен')
+                ExtUtil.maskOff('editRequisiteDialog')
+                ExtUtil.closeWindow(me)
+            }
+        })
     }
 })

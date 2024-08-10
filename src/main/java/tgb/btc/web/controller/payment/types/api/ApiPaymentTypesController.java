@@ -88,10 +88,16 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     }
 
     @PatchMapping("/requisite/{requisitePid}")
-    public ResponseEntity updateRequisite(@PathVariable Long requisitePid,
+    public ResponseEntity<Object> updateRequisite(@PathVariable Long requisitePid,
                                           @RequestParam(required = false) Boolean isOn,
                                           @RequestParam(required = false) String requisite) {
         apiRequisiteService.update(requisitePid, requisite, isOn);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping("/requisite/{requisitePid}")
+    public ResponseEntity<Object> deleteRequisite(@PathVariable Long requisitePid) {
+        apiRequisiteService.deleteById(requisitePid);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
