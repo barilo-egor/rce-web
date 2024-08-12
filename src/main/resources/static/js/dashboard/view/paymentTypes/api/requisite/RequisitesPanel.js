@@ -8,13 +8,19 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
     controller: 'requisiteController',
 
     title: 'Реквизиты',
-    masked: {
-        xtype: 'loadmask',
-        message: 'Выберите тип оплаты',
-        indicator: false,
-        style: {
-            opacity: 0.5
-        }
+    setDefaultMask: function () {
+        this.setMasked({
+            xtype: 'loadmask',
+            message: 'Выберите тип оплаты',
+            indicator: false,
+            style: {
+                opacity: 0.5
+            }
+        })
+    },
+
+    listeners: {
+        painted: 'setMask'
     },
 
     tbar: {

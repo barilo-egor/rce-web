@@ -22,5 +22,9 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsController', {
         })
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
+    },
+
+    setMask: function (me) {
+        me.setDefaultMask()
     }
 })

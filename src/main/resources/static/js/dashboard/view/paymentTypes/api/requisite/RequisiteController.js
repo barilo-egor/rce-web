@@ -44,5 +44,9 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisiteController', {
 
     help: function (me) {
 
+    },
+
+    setMask: function (me) {
+        me.setDefaultMask()
     }
 })

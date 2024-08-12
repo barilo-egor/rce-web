@@ -63,5 +63,21 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
                 ExtUtil.maskOff('paymentTypesGrid')
             }
         })
+    },
+
+    addDealTypeChange: function (me) {
+        ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+        ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
+        if (me.getValue() === 'BUY') {
+            ExtUtil.referenceQuery('cryptoCurrencyAddField').setHidden(true)
+            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(true)
+            ExtUtil.referenceQuery('fiatCurrencyAddField').setHidden(false)
+            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(false)
+        } else {
+            ExtUtil.referenceQuery('fiatCurrencyAddField').setHidden(true)
+            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(true)
+            ExtUtil.referenceQuery('cryptoCurrencyAddField').setHidden(false)
+            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(false)
+        }
     }
 })

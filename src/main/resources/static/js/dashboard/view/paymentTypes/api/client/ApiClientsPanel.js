@@ -9,13 +9,19 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
     controller: 'apiClientsController',
 
     title: 'API клиенты',
-    masked: {
-        xtype: 'loadmask',
-        message: 'Выберите тип оплаты',
-        indicator: false,
-        style: {
-            opacity: 0.5
-        }
+    setDefaultMask: function () {
+        this.setMasked({
+            xtype: 'loadmask',
+            message: 'Выберите тип оплаты',
+            indicator: false,
+            style: {
+                opacity: 0.5
+            }
+        })
+    },
+
+    listeners: {
+        painted: 'setMask'
     },
 
     tbar: {

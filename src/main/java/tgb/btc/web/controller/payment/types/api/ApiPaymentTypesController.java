@@ -20,6 +20,7 @@ import tgb.btc.web.vo.form.ApiRequisiteForm;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ExtJSController
 @RequestMapping(ControllerMapping.API_PAYMENT_TYPES)
@@ -49,13 +50,18 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ApiPaymentType>> get(@RequestParam DealType dealType) {
-        return new ResponseEntity<>(apiPaymentTypeService.findAll(dealType), HttpStatus.ACCEPTED);
+    public ResponseEntity<List<ObjectNode>> get(@RequestParam DealType dealType) {
+        return new ResponseEntity<>(
+                apiPaymentTypeService.findAll(dealType).stream()
+                        .map(ApiPaymentType::map)
+                        .collect(Collectors.toList()),
+                HttpStatus.ACCEPTED
+        );
     }
 
     @GetMapping("/client")
     public ResponseEntity<List<ObjectNode>> getClient(@RequestParam Long paymentTypePid,
-            @RequestParam(required = false) Boolean isAdding) {
+                                                      @RequestParam(required = false) Boolean isAdding) {
         return new ResponseEntity<>(
                 webApiUsersService.getIdByPaymentTypePid(isAdding, paymentTypePid),
                 HttpStatus.ACCEPTED
@@ -64,13 +70,13 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PutMapping("/{paymentTypePid}/client/{apiUserId}")
     public ResponseEntity<ObjectNode> addPaymentType(@PathVariable Long paymentTypePid,
-            @PathVariable String apiUserId) {
+                                                     @PathVariable String apiUserId) {
         return webApiUsersService.addPaymentType(paymentTypePid, apiUserId);
     }
 
     @DeleteMapping("/{paymentTypePid}/client/{apiUserId}")
     public ResponseEntity<ObjectNode> deletePaymentType(@PathVariable Long paymentTypePid,
-            @PathVariable String apiUserId) {
+                                                        @PathVariable String apiUserId) {
         return webApiUsersService.deletePaymentType(paymentTypePid, apiUserId);
     }
 
@@ -90,8 +96,8 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PatchMapping("/requisite/{requisitePid}")
     public ResponseEntity<Object> updateRequisite(@PathVariable Long requisitePid,
-                                          @RequestParam(required = false) Boolean isOn,
-                                          @RequestParam(required = false) String requisite) {
+                                                  @RequestParam(required = false) Boolean isOn,
+                                                  @RequestParam(required = false) String requisite) {
         apiRequisiteService.update(requisitePid, requisite, isOn);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
