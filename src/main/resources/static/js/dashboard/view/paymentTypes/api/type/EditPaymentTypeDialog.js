@@ -17,7 +17,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
     items: [
         {
             xtype: 'formpanel',
-            reference: 'createPaymentTypeForm',
+            reference: 'editPaymentTypeForm',
 
             width: '100%',
             jsonSubmit: true,
@@ -38,6 +38,9 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
                     msgTarget: 'side',
                     required: true,
                     requiredMessage: 'ID обязателен для заполнения',
+                    bind: {
+                        value: '{id}'
+                    },
 
                     validators: [
                         {
@@ -59,6 +62,9 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
                     name: 'name',
                     required: true,
                     requiredMessage: 'Название обязательно для заполнения',
+                    bind: {
+                        value: '{name}'
+                    },
 
                     validators: [
                         {
@@ -70,6 +76,9 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
                 },
                 {
                     xtype: 'textareafield',
+                    bind: {
+                        value: '{comment}'
+                    },
 
                     label: 'Примечение',
                     name: 'comment'

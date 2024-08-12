@@ -79,5 +79,37 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             ExtUtil.referenceQuery('cryptoCurrencyAddField').setHidden(false)
             ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(false)
         }
+    },
+
+    openGridMenu: function (me, eObj) {
+        me.deselectAll();
+        me.setSelection(eObj.record);
+        if (!me.menu) {
+            me.menu = Ext.create('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu')
+        }
+        me.menu.showAt(eObj.event.getX(), eObj.event.getY());
+        eObj.event.stopEvent()
+    },
+
+    edit: function (me) {
+        let form = ExtUtil.referenceQuery('editPaymentTypeForm')
+        if (!form.validate()) {
+            ExtMessages.topToast('Неверно заполнена форма')
+            return
+        }
+        ExtUtil.mask('editPaymentTypeDialog')
+        let values = ExtUtil.referenceQuery('editPaymentTypeForm').getValues()
+        RequestUtil.request({
+            url: '/paymentTypes/api/' + ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected(),
+            method: 'PATCH',
+            params: values,
+            masked: 'editPaymentTypeDialog',
+            success: function () {
+                ExtMessages.topToast('Тип оплаты обновлен')
+                ExtUtil.maskOff('editPaymentTypeDialog')
+                ExtUtil.referenceQuery('editPaymentTypeDialog').close()
+                Ext.getStore('paymentTypeStore').reload()
+            }
+        })
     }
 })

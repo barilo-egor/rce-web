@@ -2,7 +2,8 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
     extend: 'Ext.Panel',
     xtype: 'paymenttypespanel',
     requires: [
-        'Dashboard.view.paymentTypes.api.type.PaymentTypesController'
+        'Dashboard.view.paymentTypes.api.type.PaymentTypesController',
+        'Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu'
     ],
     controller: 'paymentTypesController',
 
@@ -60,7 +61,8 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
             store: 'paymentTypeStore',
 
             listeners: {
-                select: 'selectPaymentType'
+                select: 'selectPaymentType',
+                childcontextmenu: 'openGridMenu',
             },
             getPidOfSelected: function() {
                 let selection = this.getSelection()
@@ -68,6 +70,9 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                     return selection.get('pid')
                 }
                 return null
+            },
+            getSelectedRec: function () {
+                return this.getSelection()
             },
 
             columns: [

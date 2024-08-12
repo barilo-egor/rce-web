@@ -52,7 +52,7 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     @PatchMapping("/{pid}")
     public ResponseEntity<ObjectNode> update(@PathVariable Long pid, @RequestParam String id, @RequestParam String name,
                                              @RequestParam String comment) {
-        ApiPaymentType apiPaymentType = apiPaymentTypeService.update(pid, id, name, comment);
+        ApiPaymentType apiPaymentType = apiPaymentTypeService.update(pid, name, id, comment);
         return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.ACCEPTED);
     }
 
