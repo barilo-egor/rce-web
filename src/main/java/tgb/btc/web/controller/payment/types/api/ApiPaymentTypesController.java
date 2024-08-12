@@ -49,6 +49,14 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{pid}")
+    public ResponseEntity<ObjectNode> update(@PathVariable Long pid, @RequestParam String id, @RequestParam String name,
+                                             @RequestParam String comment) {
+        ApiPaymentType apiPaymentType = apiPaymentTypeService.update(pid, id, name, comment);
+        return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.ACCEPTED);
+    }
+
+
     @GetMapping
     public ResponseEntity<List<ObjectNode>> get(@RequestParam DealType dealType) {
         return new ResponseEntity<>(

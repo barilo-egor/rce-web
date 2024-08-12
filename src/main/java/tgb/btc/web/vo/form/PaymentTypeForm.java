@@ -8,6 +8,8 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
+import java.util.Objects;
+
 @Data
 @Builder
 public class PaymentTypeForm {
