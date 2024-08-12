@@ -13,12 +13,12 @@ Ext.define('Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer', {
     },
     items: [
         {
-            flex: 0.6,
+            flex: 0.7,
             xtype: 'paymenttypespanel',
             margin: '10 5 10 10',
         },
         {
-            flex: 0.4,
+            flex: 0.3,
             xtype: 'container',
             layout: {
                 type: 'vbox',

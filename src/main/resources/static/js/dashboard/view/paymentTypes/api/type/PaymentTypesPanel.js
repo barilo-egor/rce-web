@@ -9,30 +9,62 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
     shadow: true,
     title: 'Типы оплат',
 
-    tbar: {
-        items: [
-            {
-                iconCls: 'x-fa fa-plus forestgreenColor',
-                tooltip: 'Добавить тип оплаты',
-                handler: 'createDialog'
-            },
-            '->',
-            {
-                iconCls: 'x-fa fa-question',
-                tooltip: 'Помощь'
-            }
-        ]
-    },
-
     layout: 'fit',
     items: [
+        {
+            xtype: 'toolbar',
+            docked: 'top',
+            items: [
+                {
+                    iconCls: 'x-fa fa-plus forestgreenColor',
+                    tooltip: 'Добавить тип оплаты',
+                    handler: 'createDialog'
+                },
+                '->',
+                {
+                    iconCls: 'x-fa fa-question',
+                    tooltip: 'Помощь'
+                }
+            ]
+        },
+        {
+            xtype: 'toolbar',
+            docked: 'top',
+            items: [
+                {
+                    xtype: 'combobox',
+                    reference: 'dealTypeField',
+                    label: 'Тип сделки',
+                    displayField: 'nominative',
+                    editable: false,
+                    queryMode: 'local',
+                    valueField: 'name',
+                    store: {
+                        type: 'dealTypesStore',
+                        listeners: {
+                            load: function (me, records) {
+                                let rec = me.getAt(0)
+                                ExtUtil.referenceQuery('dealTypeField').setValue(rec)
+                                Ext.getStore('paymentTypeStore').load({
+                                    params: {
+                                        dealType: rec.get('name')
+                                    }
+                                })
+                            }
+                        }
+                    },
+                    listeners: {
+                        change: 'dealTypeChange'
+                    }
+                }
+            ]
+        },
         {
             xtype: 'grid',
             reference: 'paymentTypesGrid',
             store: 'paymentTypeStore',
 
             listeners: {
-                painted: 'loadPaymentTypes',
                 select: 'selectPaymentType'
             },
             getPidOfSelected: function() {

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiPaymentType;
 import tgb.btc.library.bean.web.api.ApiRequisite;
+import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.service.bean.web.ApiRequisiteService;
 import tgb.btc.web.annotations.ExtJSController;
@@ -48,8 +49,8 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ApiPaymentType>> get() {
-        return new ResponseEntity<>(apiPaymentTypeService.findAll(), HttpStatus.ACCEPTED);
+    public ResponseEntity<List<ApiPaymentType>> get(@RequestParam DealType dealType) {
+        return new ResponseEntity<>(apiPaymentTypeService.findAll(dealType), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/client")

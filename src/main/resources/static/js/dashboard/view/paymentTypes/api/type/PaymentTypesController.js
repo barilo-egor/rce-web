@@ -31,10 +31,6 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         })
     },
 
-    loadPaymentTypes: function (me) {
-        me.getStore().load()
-    },
-
     selectPaymentType: function (me) {
         ExtUtil.referenceQuery('apiClientsPanel').setMasked('Загрузка клиентов')
         let paymentTypePid = ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
@@ -52,6 +48,19 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             },
             callback: function () {
                 ExtUtil.referenceQuery('requisitesPanel').setMasked(false)
+            }
+        })
+    },
+
+    dealTypeChange: function (me) {
+        let value = me.getValue()
+        ExtUtil.mask('paymentTypesGrid', 'Загрузка типов оплат')
+        Ext.getStore('paymentTypeStore').load({
+            params: {
+                dealType: value
+            },
+            callback: function () {
+                ExtUtil.maskOff('paymentTypesGrid')
             }
         })
     }
