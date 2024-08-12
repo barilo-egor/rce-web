@@ -3,7 +3,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
     alias: 'controller.paymentTypesController',
 
     createDialog: function () {
-        Ext.create('Dashboard.view.paymentTypes.api.type.CreatePaymentTypeDialog').show()
+        Ext.create('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog').show()
     },
 
     create: function (me) {

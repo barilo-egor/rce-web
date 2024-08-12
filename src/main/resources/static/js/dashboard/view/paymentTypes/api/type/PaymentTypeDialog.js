@@ -1,6 +1,6 @@
-Ext.define('Dashboard.view.paymentTypes.api.type.CreatePaymentTypeDialog', {
+Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
     extend: 'Ext.Dialog',
-    reference: 'createPaymentTypeDialog',
+    reference: 'paymentTypeDialog',
     requires: [
         'Dashboard.view.paymentTypes.api.type.PaymentTypesController'
     ],
