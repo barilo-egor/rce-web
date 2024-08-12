@@ -29,12 +29,6 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
                 iconCls: 'x-fa fa-plus forestgreenColor',
                 tooltip: 'Добавить реквизит',
                 handler: 'createRequisiteDialog'
-            },
-            '->',
-            {
-                iconCls: 'x-fa fa-question',
-                tooltip: 'Помощь',
-                handler: 'help'
             }
         ]
     },

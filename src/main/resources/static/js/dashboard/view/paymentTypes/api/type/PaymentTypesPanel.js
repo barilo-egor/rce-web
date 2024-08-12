@@ -19,11 +19,6 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                     iconCls: 'x-fa fa-plus forestgreenColor',
                     tooltip: 'Добавить тип оплаты',
                     handler: 'createDialog'
-                },
-                '->',
-                {
-                    iconCls: 'x-fa fa-question',
-                    tooltip: 'Помощь'
                 }
             ]
         },

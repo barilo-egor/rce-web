@@ -30,11 +30,6 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
                 iconCls: 'x-fa fa-plus forestgreenColor',
                 tooltip: 'Добавить клиента',
                 handler: 'addClientDialog'
-            },
-            '->',
-            {
-                iconCls: 'x-fa fa-question',
-                tooltip: 'Помощь'
             }
         ]
     },
