@@ -18,10 +18,10 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         }
         form.submit({
             url: '/paymentTypes/api',
-            success: function (form, response) {
+            success: function () {
                 window.setMasked(false)
                 Ext.getStore('paymentTypeStore').reload()
-                ExtMessages.topToast('Тип оплаты ' + response.data.name + ' успешно создан')
+                ExtMessages.topToast('Тип оплаты успешно создан')
                 ExtUtil.closeWindow(me)
             },
             failure: function (form, response) {

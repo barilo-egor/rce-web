@@ -10,6 +10,7 @@ import tgb.btc.library.bean.web.api.ApiRequisite;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.service.bean.web.ApiRequisiteService;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseResponseEntityController;
@@ -45,8 +46,8 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PostMapping
     public ResponseEntity<ObjectNode> create(@RequestBody PaymentTypeForm paymentTypeForm) {
-        ApiPaymentType apiPaymentType = apiPaymentTypeService.save(paymentTypeForm.toApiPaymentType());
-        return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.CREATED);
+        apiPaymentTypeService.save(paymentTypeForm.toApiPaymentType());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{pid}")
