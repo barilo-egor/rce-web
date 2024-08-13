@@ -28,18 +28,23 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
             reference: 'copyRequisiteMenuButton',
             iconCls: 'x-fa fa-trash-alt redColor',
             handler: function (me) {
-                // ExtUtil.mask('apiRequisitesGrid')
-                // let url = '/paymentTypes/api/requisite/' + ExtUtil.referenceQuery('apiRequisitesGrid').getPidOfSelected()
-                // RequestUtil.request({
-                //     url: url,
-                //     method: 'DELETE',
-                //     masked: 'apiClientsGrid',
-                //     success: function () {
-                //         Ext.getStore('paymentTypeStore').reload()
-                //         ExtMessages.topToast('Реквизит удален')
-                //         ExtUtil.maskOff('apiClientsGrid')
-                //     }
-                // })
+                ExtMessages.confirm('Внимание', 'Вместе с типом будут удалены всего его реквизиты, а также связи с АПИ клиентами. Продолжить?',
+                    function () {
+                        ExtUtil.mask('paymentTypesGrid')
+                        let url = '/paymentTypes/api/' + ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
+                        RequestUtil.request({
+                            url: url,
+                            method: 'DELETE',
+                            masked: 'paymentTypesGrid',
+                            success: function () {
+                                Ext.getStore('paymentTypeStore').reload()
+                                ExtMessages.topToast('Тип оплаты удален')
+                                ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+                                ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
+                                ExtUtil.maskOff('paymentTypesGrid')
+                            }
+                        })
+                    })
             }
         }
     ]

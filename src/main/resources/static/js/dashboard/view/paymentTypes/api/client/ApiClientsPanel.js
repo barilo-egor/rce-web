@@ -10,6 +10,7 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsPanel', {
 
     title: 'API клиенты',
     setDefaultMask: function () {
+        Ext.getStore('apiClientStore').removeAll()
         this.setMasked({
             xtype: 'loadmask',
             message: 'Выберите тип оплаты',

@@ -9,6 +9,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
 
     title: 'Реквизиты',
     setDefaultMask: function () {
+        Ext.getStore('requisiteStore').removeAll()
         this.setMasked({
             xtype: 'loadmask',
             message: 'Выберите тип оплаты',

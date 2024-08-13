@@ -56,6 +56,12 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.ACCEPTED);
     }
 
+    @DeleteMapping("/{pid}")
+    public ResponseEntity<ObjectNode> delete(@PathVariable Long pid) {
+        apiPaymentTypeService.delete(pid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
     @GetMapping
     public ResponseEntity<List<ObjectNode>> get(@RequestParam DealType dealType) {
