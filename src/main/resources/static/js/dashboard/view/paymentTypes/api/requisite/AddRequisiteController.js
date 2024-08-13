@@ -13,7 +13,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
             url: '/paymentTypes/api/requisite',
             success: function (form, response) {
                 ExtUtil.maskOff('addRequisiteDialog')
-                Ext.getStore('paymentTypeStore').reload()
+                Ext.getStore('apiPaymentTypeStore').reload()
                 ExtMessages.topToast('Реквизит успешно создан')
                 ExtUtil.closeWindow(me)
             },
@@ -40,7 +40,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
             },
             masked: 'editRequisiteDialog',
             success: function (response) {
-                Ext.getStore('paymentTypeStore').reload()
+                Ext.getStore('apiPaymentTypeStore').reload()
                 ExtMessages.topToast('Реквизит обновлен')
                 ExtUtil.maskOff('editRequisiteDialog')
                 ExtUtil.closeWindow(me)

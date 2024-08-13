@@ -1,5 +1,6 @@
 package tgb.btc.web.interfaces;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface IObjectNodeService {
 
     <T> List<ObjectNode> map(List<T> objects, Function<T, ObjectNode> mapFunction);
 
+    ArrayNode autocomplete(List<String> values);
 }

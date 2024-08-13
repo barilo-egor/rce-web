@@ -16,7 +16,7 @@ Ext.define('Dashboard.view.paymentTypes.api.client.ApiClientsGridMenu', {
                     method: 'DELETE',
                     masked: 'apiClientsGrid',
                     success: function () {
-                        Ext.getStore('paymentTypeStore').reload()
+                        Ext.getStore('apiPaymentTypeStore').reload()
                         ExtMessages.topToast('Клиент отвязан от типа оплаты')
                         ExtUtil.maskOff('apiClientsGrid')
                     }

@@ -1,6 +1,6 @@
-Ext.define('Dashboard.store.paymentTypes.api.PaymentTypeStore', {
+Ext.define('Dashboard.store.paymentTypes.api.ApiPaymentTypeStore', {
     extend: 'Ext.data.Store',
-    storeId: 'paymentTypeStore',
+    storeId: 'apiPaymentTypeStore',
     autoLoad: false,
     proxy: {
         type: 'ajax',

@@ -37,7 +37,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
                             method: 'DELETE',
                             masked: 'paymentTypesGrid',
                             success: function () {
-                                Ext.getStore('paymentTypeStore').reload()
+                                Ext.getStore('apiPaymentTypeStore').reload()
                                 ExtMessages.topToast('Тип оплаты удален')
                                 ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
                                 ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()

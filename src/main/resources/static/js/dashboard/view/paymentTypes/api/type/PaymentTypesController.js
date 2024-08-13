@@ -20,7 +20,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             url: '/paymentTypes/api',
             success: function () {
                 window.setMasked(false)
-                Ext.getStore('paymentTypeStore').reload()
+                Ext.getStore('apiPaymentTypeStore').reload()
                 ExtMessages.topToast('Тип оплаты успешно создан')
                 ExtUtil.closeWindow(me)
             },
@@ -55,9 +55,10 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
     dealTypeChange: function (me) {
         let value = me.getValue()
         ExtUtil.mask('paymentTypesGrid', 'Загрузка типов оплат')
-        Ext.getStore('paymentTypeStore').load({
+        Ext.getStore('apiPaymentTypeStore').load({
             params: {
-                dealType: value
+                dealType: value,
+                apiUserId: ExtUtil.referenceQuery('apiUserIdCombo').getValue()
             },
             callback: function () {
                 ExtUtil.maskOff('paymentTypesGrid')
@@ -108,8 +109,32 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
                 ExtMessages.topToast('Тип оплаты обновлен')
                 ExtUtil.maskOff('editPaymentTypeDialog')
                 ExtUtil.referenceQuery('editPaymentTypeDialog').close()
-                Ext.getStore('paymentTypeStore').reload()
+                Ext.getStore('apiPaymentTypeStore').reload()
             }
         })
+    },
+
+    selectApiUserId: function (me, newValue) {
+        Ext.getStore('apiPaymentTypeStore').load({
+            params: {
+                dealType: ExtUtil.referenceQuery('dealTypeField').getValue(),
+                apiUserId: newValue.get('value')
+            }
+        })
+        ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+        ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
+        ExtUtil.referenceQuery('dropClientFilterButton').setHidden(false)
+        // me.setDisabled(true)
+    },
+
+    dropClientFilter: function (me) {
+        ExtUtil.referenceQuery('apiUserIdCombo').setValue(null)
+        Ext.getStore('apiPaymentTypeStore').load({
+            params: {
+                dealType: ExtUtil.referenceQuery('dealTypeField').getValue()
+            }
+        })
+        me.setHidden(true)
+        // ExtUtil.referenceQuery('apiUserIdCombo').setDisabled(false)
     }
 })

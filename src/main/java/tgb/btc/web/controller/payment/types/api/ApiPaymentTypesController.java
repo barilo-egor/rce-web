@@ -10,7 +10,7 @@ import tgb.btc.library.bean.web.api.ApiRequisite;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.service.bean.web.ApiRequisiteService;
-import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseResponseEntityController;
@@ -32,16 +32,20 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     private final IWebApiUsersService webApiUsersService;
 
     private final IWebApiRequisitesService webApiRequisitesService;
+
     private final ApiRequisiteService apiRequisiteService;
+
+    private final ApiUserService apiUserService;
 
     @Autowired
     public ApiPaymentTypesController(IObjectNodeService objectNodeService, IApiPaymentTypeService apiPaymentTypeService,
-                                     IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService, ApiRequisiteService apiRequisiteService) {
+                                     IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService, ApiRequisiteService apiRequisiteService, ApiUserService apiUserService) {
         super(objectNodeService);
         this.apiPaymentTypeService = apiPaymentTypeService;
         this.webApiUsersService = webApiUsersService;
         this.webApiRequisitesService = webApiRequisitesService;
         this.apiRequisiteService = apiRequisiteService;
+        this.apiUserService = apiUserService;
     }
 
     @PostMapping
@@ -65,9 +69,10 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
 
     @GetMapping
-    public ResponseEntity<List<ObjectNode>> get(@RequestParam DealType dealType) {
+    public ResponseEntity<List<ObjectNode>> get(@RequestParam DealType dealType,
+                                                @RequestParam(required = false) String apiUserId) {
         return new ResponseEntity<>(
-                apiPaymentTypeService.findAll(dealType).stream()
+                apiPaymentTypeService.findAll(dealType, apiUserId).stream()
                         .map(ApiPaymentType::map)
                         .collect(Collectors.toList()),
                 HttpStatus.ACCEPTED

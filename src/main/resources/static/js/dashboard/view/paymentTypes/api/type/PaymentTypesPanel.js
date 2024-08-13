@@ -41,9 +41,10 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                             load: function (me, records) {
                                 let rec = me.getAt(0)
                                 ExtUtil.referenceQuery('dealTypeField').setValue(rec)
-                                Ext.getStore('paymentTypeStore').load({
+                                Ext.getStore('apiPaymentTypeStore').load({
                                     params: {
-                                        dealType: rec.get('name')
+                                        dealType: rec.get('name'),
+                                        apiUserId: ExtUtil.referenceQuery('apiUserIdCombo').getValue()
                                     }
                                 })
                             }
@@ -52,13 +53,46 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                     listeners: {
                         change: 'dealTypeChange'
                     }
+                },
+                {
+                    xtype: 'combobox',
+                    reference: 'apiUserIdCombo',
+                    margin: '0 0 0 30',
+                    label: 'Поиск по id',
+                    queryMode: 'remote',
+                    displayField: 'value',
+                    valueField: 'value',
+                    triggerAction: 'query',
+                    forceSelection: true,
+                    minChars: 1,
+                    store: {
+                        fields: ['value'],
+                        proxy: {
+                            type: 'ajax',
+                            url: '/autocomplete/client/id',
+                            reader: {
+                                type: 'json',
+                                rootProperty: 'data'
+                            }
+                        }
+                    },
+                    listeners: {
+                        select: 'selectApiUserId'
+                    }
+                },
+                {
+                    xtype: 'button',
+                    reference: 'dropClientFilterButton',
+                    text: 'Сбросить фильтр клиента',
+                    hidden: true,
+                    handler: 'dropClientFilter'
                 }
             ]
         },
         {
             xtype: 'grid',
             reference: 'paymentTypesGrid',
-            store: 'paymentTypeStore',
+            store: 'apiPaymentTypeStore',
 
             listeners: {
                 select: 'selectPaymentType',

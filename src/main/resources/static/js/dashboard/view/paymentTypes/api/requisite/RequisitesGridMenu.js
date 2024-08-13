@@ -32,7 +32,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu', {
                     method: 'DELETE',
                     masked: 'apiClientsGrid',
                     success: function () {
-                        Ext.getStore('paymentTypeStore').reload()
+                        Ext.getStore('apiPaymentTypeStore').reload()
                         ExtMessages.topToast('Реквизит удален')
                         ExtUtil.maskOff('apiClientsGrid')
                     }

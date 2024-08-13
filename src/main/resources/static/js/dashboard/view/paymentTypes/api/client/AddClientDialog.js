@@ -67,7 +67,7 @@ Ext.define('Dashboard.view.paymentTypes.api.client.AddClientDialog', {
                                 method: 'PUT',
                                 masked: 'addClientDialog',
                                 success: function () {
-                                    Ext.getStore('paymentTypeStore').reload()
+                                    Ext.getStore('apiPaymentTypeStore').reload()
                                     ExtMessages.topToast('Клиент успешно связан с типом оплаты')
                                     ExtUtil.maskOff('addClientDialog')
                                     ExtUtil.referenceQuery('addClientDialog').close()

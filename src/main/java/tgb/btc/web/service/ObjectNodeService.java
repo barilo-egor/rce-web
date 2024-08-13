@@ -1,6 +1,7 @@
 package tgb.btc.web.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 import tgb.btc.web.interfaces.IObjectNodeService;
@@ -33,5 +34,13 @@ public class ObjectNodeService implements IObjectNodeService {
         return objects.stream()
                 .map(mapFunction)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ArrayNode autocomplete(List<String> values) {
+        return defaultMapper.createArrayNode().addAll(values.stream()
+                .map(value -> defaultMapper.createObjectNode()
+                        .put("value", value))
+                .collect(Collectors.toList()));
     }
 }
