@@ -88,13 +88,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
                         type: 'dealTypesStore',
                         listeners: {
                             load: function (me, records) {
-                                let rec = me.getAt(0)
-                                ExtUtil.referenceQuery('addDealTypeField').setValue(rec)
-                                Ext.getStore('paymentTypeStore').load({
-                                    params: {
-                                        dealType: rec.get('name')
-                                    }
-                                })
+                                ExtUtil.referenceQuery('addDealTypeField').setValue(me.getAt(0))
                             }
                         }
                     },
