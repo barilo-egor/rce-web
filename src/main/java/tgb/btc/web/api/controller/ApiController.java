@@ -22,7 +22,9 @@ import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.web.IApiRequisiteService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
 import tgb.btc.web.constant.ControllerMapping;
@@ -62,6 +64,20 @@ public class ApiController extends BaseController {
     private IApiDealService apiDealService;
 
     private IApiPaymentTypeService apiPaymentTypeService;
+
+    private IBigDecimalService bigDecimalService;
+
+    private IApiRequisiteService apiRequisiteService;
+
+    @Autowired
+    public void setApiRequisiteService(IApiRequisiteService apiRequisiteService) {
+        this.apiRequisiteService = apiRequisiteService;
+    }
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
 
     @Autowired
     public void setApiPaymentTypeService(
@@ -112,14 +128,16 @@ public class ApiController extends BaseController {
             @RequestParam(required = false) BigDecimal cryptoAmount,
             @RequestParam(required = false) String cryptoCurrency,
             @RequestParam(required = false) String requisite,
-            @RequestParam(required = false) String fiatCurrency) {
+            @RequestParam(required = false) String fiatCurrency,
+            @RequestParam(required = false) String paymentTypeId) {
         log.debug("Запрос на создание АПИ сделки IP={}", RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) {
             return apiStatusCode.toJson();
         }
         return apiDealProcessService.newDeal(token, DealType.valueOfNullable(dealType), amount, cryptoAmount,
-                CryptoCurrency.valueOfNullable(cryptoCurrency), requisite, FiatCurrency.valueOfNullable(fiatCurrency));
+                CryptoCurrency.valueOfNullable(cryptoCurrency), requisite, FiatCurrency.valueOfNullable(fiatCurrency),
+                paymentTypeId);
     }
 
     @PostMapping("/paid")
@@ -320,7 +338,13 @@ public class ApiController extends BaseController {
 
     @GetMapping("/getPaymentTypes")
     @ResponseBody
-    public JsonNode getPaymentTypes(HttpServletRequest request, String token, @RequestParam(required = false) DealType dealType) {
+    public JsonNode getPaymentTypes(HttpServletRequest request, String token, @RequestParam(required = false) String dealType) {
+        DealType dealTypeEnum = null;
+        if (StringUtils.isNotEmpty(dealType)) {
+            dealTypeEnum = DealType.valueOfNullable(dealType);
+            if (Objects.isNull(dealTypeEnum))
+                return ApiStatusCode.EMPTY_DEAL_TYPE.toJson();
+        }
         log.debug("Запрос на получение АПИ типов оплат IP={}", RequestUtil.getIp(request));
         if (StringUtils.isEmpty(token))
             return ApiStatusCode.EMPTY_TOKEN.toJson();
@@ -328,12 +352,9 @@ public class ApiController extends BaseController {
         if (Objects.nonNull(apiStatusCode))
             return apiStatusCode.toJson();
         ApiUser apiUser = apiUserService.getByToken(token);
-        if (CollectionUtils.isEmpty(apiUser.getPaymentTypes())) {
+        List<ApiPaymentType> apiPaymentTypes = apiPaymentTypeService.getAvailable(apiUser, dealTypeEnum);
+        if (CollectionUtils.isEmpty(apiPaymentTypes)) {
             return ApiStatusCode.PAYMENT_TYPES_NOT_FOUND.toJson();
-        }
-        List<ApiPaymentType> apiPaymentTypes = new ArrayList<>(apiUser.getPaymentTypes());
-        if (Objects.nonNull(dealType)) {
-            apiPaymentTypes.removeIf(apiPaymentType -> !apiPaymentType.getDealType().equals(dealType));
         }
         List<ObjectNode> mappedPaymentTypes = new ArrayList<>();
         for (ApiPaymentType apiPaymentType : apiPaymentTypes) {
@@ -346,7 +367,8 @@ public class ApiController extends BaseController {
             } else {
                 mappedPaymentType.put("cryptoCurrency", apiPaymentType.getCryptoCurrency().name());
             }
-            mappedPaymentType.put("minSum", apiPaymentType.getMinSum());
+            BigDecimal minSum = apiPaymentType.getMinSum().stripTrailingZeros();
+            mappedPaymentType.put("minSum", bigDecimalService.toPlainString(minSum));
             mappedPaymentTypes.add(mappedPaymentType);
         }
         return JacksonUtil.getEmptyArray().addAll(mappedPaymentTypes);

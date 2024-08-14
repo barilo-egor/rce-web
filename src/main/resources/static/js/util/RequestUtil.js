@@ -30,7 +30,14 @@ let RequestUtil = {
         }
         let requestObject = Ext.apply({}, config)
         requestObject.success = function (rawResponse) {
-            let response = Ext.JSON.decode(rawResponse.responseText)
+            let response
+            try {
+                if (rawResponse.responseText && rawResponse.responseText.length > 0) {
+                    response = Ext.JSON.decode(rawResponse.responseText)
+                }
+            } catch (e) {
+                console.error('Ошибка при парсинге ответа.')
+            }
             config.success(response, rawResponse)
         }
         Ext.Ajax.request(requestObject)

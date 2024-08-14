@@ -31,7 +31,9 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
     DEAL_CANCELED(18, "Сделка отменена клиентом."),
     AMOUNT_CALCULATED(19, "Расчёт произведен."),
     OK(20, "OK"),
-    PAYMENT_TYPES_NOT_FOUND(21, "Типы оплат не найдены.");
+    PAYMENT_TYPES_NOT_FOUND(21, "Типы оплат не найдены."),
+    PAYMENT_TYPE_NOT_FOUND(22, "Тип оплаты не найден."),
+    REQUISITE_NOT_FOUND(22, "Не найден реквизит.");
 
     public static final List<ApiStatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
             ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND, MIN_SUM, USER_BANNED);

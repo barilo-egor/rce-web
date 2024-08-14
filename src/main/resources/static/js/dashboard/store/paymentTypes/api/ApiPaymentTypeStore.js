@@ -24,6 +24,9 @@ Ext.define('Dashboard.store.paymentTypes.api.ApiPaymentTypeStore', {
                         paymentTypePid: paymentTypePid
                     }
                 })
+            } else {
+                ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+                ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
             }
         }
     }
