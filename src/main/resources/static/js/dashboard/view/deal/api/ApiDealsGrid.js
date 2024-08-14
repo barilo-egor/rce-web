@@ -106,6 +106,11 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     menuDisabled: true,
                 },
                 {
+                    text: 'Тип оплаты',
+                    dataIndex: 'apiPaymentType',
+                    width: 130
+                },
+                {
                     text: 'Реквизит',
                     dataIndex: 'requisite',
                     flex: 1,
