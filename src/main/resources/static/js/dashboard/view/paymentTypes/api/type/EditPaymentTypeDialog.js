@@ -41,7 +41,6 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
                     bind: {
                         value: '{id}'
                     },
-
                     validators: [
                         {
                             type: 'length',
@@ -52,6 +51,23 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
                             type: 'format',
                             matcher: /^[a-zA-Z0-9_]+$/,
                             message: 'ID может содержать только буквы, цифры и подчеркивания'
+                        },
+                        function (val) {
+                            if (val === ExtUtil.referenceQuery('paymentTypesGrid').getSelectedRec().get('id')) return true
+                            let result
+                            RequestUtil.request({
+                                url: '/paymentTypes/api/exists/' + val,
+                                method: 'GET',
+                                async: false,
+                                success: function (response) {
+                                    if (response.data === true) {
+                                        result = 'Данный ID уже занят'
+                                    } else {
+                                        result = true
+                                    }
+                                }
+                            })
+                            return result
                         }
                     ]
                 },

@@ -49,6 +49,22 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
                             type: 'format',
                             matcher: /^[a-zA-Z0-9_]+$/,
                             message: 'ID может содержать только буквы, цифры и подчеркивания'
+                        },
+                        function (val) {
+                            let result
+                            RequestUtil.request({
+                                url: '/paymentTypes/api/exists/' + val,
+                                method: 'GET',
+                                async: false,
+                                success: function (response) {
+                                    if (response.data === true) {
+                                        result = 'Данный ID уже занят'
+                                    } else {
+                                        result = true
+                                    }
+                                }
+                            })
+                            return result
                         }
                     ]
                 },

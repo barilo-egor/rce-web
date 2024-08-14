@@ -28,6 +28,11 @@ let RequestUtil = {
                 }
             }
         }
-        Ext.Ajax.request(config)
+        let requestObject = Ext.apply({}, config)
+        requestObject.success = function (rawResponse) {
+            let response = Ext.JSON.decode(rawResponse.responseText)
+            config.success(response, rawResponse)
+        }
+        Ext.Ajax.request(requestObject)
     }
 }

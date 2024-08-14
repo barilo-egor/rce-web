@@ -55,6 +55,11 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/exists/{id}")
+    public ResponseEntity<Boolean> exists(@PathVariable String id) {
+        return new ResponseEntity<>(apiPaymentTypeService.exists(id), HttpStatus.ACCEPTED);
+    }
+
     @PatchMapping("/{pid}")
     public ResponseEntity<ObjectNode> update(@PathVariable Long pid, @RequestParam String id, @RequestParam String name,
                                              @RequestParam String comment, @RequestParam BigDecimal minSum) {
