@@ -111,8 +111,14 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGrid', {
                     width: 130
                 },
                 {
-                    text: 'Реквизит',
+                    text: 'Реквизит клиента',
                     dataIndex: 'requisite',
+                    flex: 1,
+                    menuDisabled: true
+                },
+                {
+                    text: 'Реквизит обменника',
+                    dataIndex: 'apiRequisite',
                     flex: 1,
                     menuDisabled: true
                 }
