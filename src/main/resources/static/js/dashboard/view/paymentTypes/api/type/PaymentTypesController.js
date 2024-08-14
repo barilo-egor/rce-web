@@ -124,7 +124,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
         ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
         ExtUtil.referenceQuery('dropClientFilterButton').setHidden(false)
-        // me.setDisabled(true)
+        me.setReadOnly(true)
     },
 
     dropClientFilter: function (me) {
@@ -135,6 +135,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             }
         })
         me.setHidden(true)
-        // ExtUtil.referenceQuery('apiUserIdCombo').setDisabled(false)
+        ExtUtil.referenceQuery('apiUserIdCombo').setReadOnly(false)
+        ExtUtil.referenceQuery('apiUserIdCombo').setReadOnly(false)
     }
 })

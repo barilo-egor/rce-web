@@ -26,6 +26,10 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
         {
             xtype: 'toolbar',
             docked: 'top',
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
             items: [
                 {
                     xtype: 'combobox',
@@ -81,11 +85,22 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                     }
                 },
                 {
-                    xtype: 'button',
-                    reference: 'dropClientFilterButton',
-                    text: 'Сбросить фильтр клиента',
-                    hidden: true,
-                    handler: 'dropClientFilter'
+                    xtype: 'container',
+
+                    layout: {
+                        type: 'vbox',
+                        pack: 'end'
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            reference: 'dropClientFilterButton',
+                            iconCls: 'x-fa fa-times-circle',
+                            hidden: true,
+                            tooltip: 'Очистка фильтра клиента',
+                            handler: 'dropClientFilter'
+                        }
+                    ]
                 }
             ]
         },
