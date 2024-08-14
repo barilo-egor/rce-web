@@ -12,6 +12,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
+import tgb.btc.library.bean.web.api.ApiPaymentType;
+import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
@@ -19,6 +21,7 @@ import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
@@ -36,6 +39,7 @@ import tgb.btc.web.vo.SuccessResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -56,6 +60,14 @@ public class ApiController extends BaseController {
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
 
     private IApiDealService apiDealService;
+
+    private IApiPaymentTypeService apiPaymentTypeService;
+
+    @Autowired
+    public void setApiPaymentTypeService(
+            IApiPaymentTypeService apiPaymentTypeService) {
+        this.apiPaymentTypeService = apiPaymentTypeService;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -304,6 +316,40 @@ public class ApiController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> getDealStatuses() {
         return SuccessResponseUtil.data(List.of(ApiDealStatus.values()));
+    }
+
+    @GetMapping("/getPaymentTypes")
+    @ResponseBody
+    public JsonNode getPaymentTypes(HttpServletRequest request, String token, @RequestParam(required = false) DealType dealType) {
+        log.debug("Запрос на получение АПИ типов оплат IP={}", RequestUtil.getIp(request));
+        if (StringUtils.isEmpty(token))
+            return ApiStatusCode.EMPTY_TOKEN.toJson();
+        ApiStatusCode apiStatusCode = hasAccess(token);
+        if (Objects.nonNull(apiStatusCode))
+            return apiStatusCode.toJson();
+        ApiUser apiUser = apiUserService.getByToken(token);
+        if (CollectionUtils.isEmpty(apiUser.getPaymentTypes())) {
+            return ApiStatusCode.PAYMENT_TYPES_NOT_FOUND.toJson();
+        }
+        List<ApiPaymentType> apiPaymentTypes = new ArrayList<>(apiUser.getPaymentTypes());
+        if (Objects.nonNull(dealType)) {
+            apiPaymentTypes.removeIf(apiPaymentType -> !apiPaymentType.getDealType().equals(dealType));
+        }
+        List<ObjectNode> mappedPaymentTypes = new ArrayList<>();
+        for (ApiPaymentType apiPaymentType : apiPaymentTypes) {
+            ObjectNode mappedPaymentType = JacksonUtil.getEmpty();
+            mappedPaymentType.put("name", apiPaymentType.getName());
+            mappedPaymentType.put("id", apiPaymentType.getId());
+            mappedPaymentType.put("dealType", apiPaymentType.getDealType().name());
+            if (DealType.isBuy(apiPaymentType.getDealType())) {
+                mappedPaymentType.put("fiatCurrency", apiPaymentType.getFiatCurrency().name());
+            } else {
+                mappedPaymentType.put("cryptoCurrency", apiPaymentType.getCryptoCurrency().name());
+            }
+            mappedPaymentType.put("minSum", apiPaymentType.getMinSum());
+            mappedPaymentTypes.add(mappedPaymentType);
+        }
+        return JacksonUtil.getEmptyArray().addAll(mappedPaymentTypes);
     }
 
     private ApiStatusCode hasAccess(String token) {
