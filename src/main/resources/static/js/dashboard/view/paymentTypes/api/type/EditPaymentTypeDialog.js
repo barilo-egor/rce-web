@@ -82,6 +82,15 @@ Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
 
                     label: 'Примечение',
                     name: 'comment'
+                },
+                {
+                    xtype: 'numberfield',
+                    decimals: 8,
+                    label: 'Минимальная сумма',
+                    bind: {
+                        value: '{minSum}'
+                    },
+                    name: 'minSum'
                 }
             ]
         }

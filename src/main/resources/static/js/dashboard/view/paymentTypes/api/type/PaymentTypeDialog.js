@@ -140,6 +140,14 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
                     listeners: {
                         change: 'comboChange',
                     }
+                },
+                {
+                    xtype: 'numberfield',
+                    decimals: 8,
+                    label: 'Минимальная сумма',
+                    value: 0,
+                    required: true,
+                    name: 'minSum'
                 }
             ]
         }

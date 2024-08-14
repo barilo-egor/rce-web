@@ -62,7 +62,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                     xtype: 'combobox',
                     reference: 'apiUserIdCombo',
                     margin: '0 0 0 30',
-                    label: 'Поиск по id',
+                    label: 'Поиск по id клиента',
                     queryMode: 'remote',
                     displayField: 'value',
                     valueField: 'value',
@@ -140,6 +140,11 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                 {
                     text: 'Тип',
                     dataIndex: 'dealType',
+                    width: 120
+                },
+                {
+                    text: 'Мин.сумма',
+                    dataIndex: 'minSum',
                     width: 120
                 },
                 {

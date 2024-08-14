@@ -17,7 +17,8 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
                             pid: selected.get('pid'),
                             id: selected.get('id'),
                             name: selected.get('name'),
-                            comment: selected.get('comment')
+                            comment: selected.get('comment'),
+                            minSum: Number(selected.get('minSum'))
                         }
                     }
                 }).show()

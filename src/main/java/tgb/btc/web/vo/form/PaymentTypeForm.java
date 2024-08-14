@@ -8,7 +8,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
-import java.util.Objects;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -30,6 +30,8 @@ public class PaymentTypeForm {
 
     private CryptoCurrency cryptoCurrency;
 
+    private BigDecimal minSum;
+
     public ApiPaymentType toApiPaymentType() {
         return ApiPaymentType.builder()
                 .id(id)
@@ -38,6 +40,7 @@ public class PaymentTypeForm {
                 .dealType(dealType)
                 .fiatCurrency(DealType.BUY.equals(dealType) ? fiatCurrency : null)
                 .cryptoCurrency(DealType.SELL.equals(dealType) ? cryptoCurrency : null)
+                .minSum(minSum)
                 .build();
     }
 }

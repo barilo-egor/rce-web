@@ -20,6 +20,7 @@ import tgb.btc.web.interfaces.users.IWebApiUsersService;
 import tgb.btc.web.vo.form.ApiRequisiteForm;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,8 +57,8 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PatchMapping("/{pid}")
     public ResponseEntity<ObjectNode> update(@PathVariable Long pid, @RequestParam String id, @RequestParam String name,
-                                             @RequestParam String comment) {
-        ApiPaymentType apiPaymentType = apiPaymentTypeService.update(pid, name, id, comment);
+                                             @RequestParam String comment, @RequestParam BigDecimal minSum) {
+        ApiPaymentType apiPaymentType = apiPaymentTypeService.update(pid, name, id, comment, minSum);
         return new ResponseEntity<>(apiPaymentType.map(), HttpStatus.ACCEPTED);
     }
 

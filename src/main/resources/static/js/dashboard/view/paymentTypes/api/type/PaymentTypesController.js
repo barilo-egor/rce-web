@@ -55,6 +55,13 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
     dealTypeChange: function (me) {
         let value = me.getValue()
         ExtUtil.mask('paymentTypesGrid', 'Загрузка типов оплат')
+        if (value === 'BUY') {
+            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(true)
+            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(false)
+        } else {
+            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(true)
+            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(false)
+        }
         Ext.getStore('apiPaymentTypeStore').load({
             params: {
                 dealType: value,
@@ -71,14 +78,10 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
         if (me.getValue() === 'BUY') {
             ExtUtil.referenceQuery('cryptoCurrencyAddField').setHidden(true)
-            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(true)
             ExtUtil.referenceQuery('fiatCurrencyAddField').setHidden(false)
-            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(false)
         } else {
             ExtUtil.referenceQuery('fiatCurrencyAddField').setHidden(true)
-            ExtUtil.referenceQuery('fiatCurrencyColumn').setHidden(true)
             ExtUtil.referenceQuery('cryptoCurrencyAddField').setHidden(false)
-            ExtUtil.referenceQuery('cryptoCurrencyColumn').setHidden(false)
         }
     },
 
