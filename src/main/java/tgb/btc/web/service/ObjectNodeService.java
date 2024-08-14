@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
+import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.web.interfaces.IObjectNodeService;
 
 import java.util.List;
@@ -26,6 +27,13 @@ public class ObjectNodeService implements IObjectNodeService {
     public List<ObjectNode> toObjects(String propertyName, List<String> values) {
         return values.stream()
                 .map(value -> defaultMapper.createObjectNode().put(propertyName, value))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T extends JsonConvertable> List<ObjectNode> map(List<T> objects) {
+        return objects.stream()
+                .map(JsonConvertable::map)
                 .collect(Collectors.toList());
     }
 
