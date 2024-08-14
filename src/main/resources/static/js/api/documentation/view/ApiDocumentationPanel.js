@@ -18,7 +18,8 @@ Ext.define('ApiDocumentation.view.ApiDocumentationPanel', {
         'ApiDocumentation.view.CancelDealFieldSet',
         'ApiDocumentation.view.GetStatusFieldSet',
         'ApiDocumentation.view.CalculateDealFieldSet',
-        'ApiDocumentation.view.DealActiveTimeFieldSet'
+        'ApiDocumentation.view.DealActiveTimeFieldSet',
+        'ApiDocumentation.view.GetPaymentTypesFieldSet'
     ],
 
     title: 'API документация',
@@ -50,6 +51,9 @@ Ext.define('ApiDocumentation.view.ApiDocumentationPanel', {
         },
         {
             xtype: 'dealactivetimefieldset'
+        },
+        {
+            xtype: 'getpaymenttypesfieldset'
         }
     ]
 })

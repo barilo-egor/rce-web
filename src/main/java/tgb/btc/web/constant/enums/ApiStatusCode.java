@@ -46,6 +46,7 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
     public static final List<ApiStatusCode> CALCULATE_DEAL_STATUSES = List.of(AMOUNT_CALCULATED, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS, ONLY_ONE_AMOUNT_NEEDED,
             EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, MIN_SUM, USER_BANNED);
     public static final List<ApiStatusCode> DEAL_ACTIVE_TIME_STATUSES = List.of(OK, EMPTY_TOKEN);
+    public static final List<ApiStatusCode> GET_PAYMENT_TYPES_STATUSES = List.of(PAYMENT_TYPES_FOUND, PAYMENT_TYPES_NOT_FOUND, EMPTY_DEAL_TYPE);
 
     final int code;
 

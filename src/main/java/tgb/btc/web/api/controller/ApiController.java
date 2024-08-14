@@ -327,8 +327,14 @@ public class ApiController extends BaseController {
 
     @GetMapping("/statusCodes/getDealActiveTime")
     @ResponseBody
-    public SuccessResponse<?> getDealActiveTime() {
+    public SuccessResponse<?> statusCodesGetDealActiveTime() {
         return SuccessResponseUtil.data(ApiStatusCode.DEAL_ACTIVE_TIME_STATUSES);
+    }
+
+    @GetMapping("/statusCodes/getPaymentTypes")
+    @ResponseBody
+    public SuccessResponse<?> statusCodesGetPaymentTypes() {
+        return SuccessResponseUtil.data(ApiStatusCode.GET_PAYMENT_TYPES_STATUSES);
     }
 
     @GetMapping("/getDealStatuses")

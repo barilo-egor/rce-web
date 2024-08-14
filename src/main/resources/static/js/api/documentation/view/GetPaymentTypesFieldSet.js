@@ -67,6 +67,11 @@ Ext.define('ApiDocumentation.view.GetPaymentTypesFieldSet', {
                         name: 'token',
                         type: 'String',
                         description: 'Ваш api-токен'
+                    },
+                    {
+                        name: 'dealType',
+                        type: 'String',
+                        description: 'Optional. Тип сделки: BUY - покупка, SELL - продажа'
                     }
                 ]
             }),
@@ -183,7 +188,7 @@ Ext.define('ApiDocumentation.view.GetPaymentTypesFieldSet', {
                     width: 35,
                     dataIndex: 'code',
                     renderer: function (val) {
-                        if (val === 20) {
+                        if (val === 23) {
                             return '<i class="fas fa-circle limeColor"></i>'
                         } else {
                             return '<i class="fas fa-circle redColor"></i>'
