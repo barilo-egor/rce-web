@@ -33,10 +33,12 @@ public enum ApiStatusCode implements ObjectNodeConvertable<ApiStatusCode> {
     OK(20, "OK"),
     PAYMENT_TYPES_NOT_FOUND(21, "Типы оплат не найдены."),
     PAYMENT_TYPE_NOT_FOUND(22, "Тип оплаты не найден."),
-    REQUISITE_NOT_FOUND(22, "Не найден реквизит.");
+    REQUISITE_NOT_FOUND(22, "Не найден реквизит."),
+    PAYMENT_TYPES_FOUND(23, "Типы оплат найдены");
 
     public static final List<ApiStatusCode> NEW_DEAL_STATUSES = List.of(CREATED_DEAL, EMPTY_TOKEN, EMPTY_DEAL_TYPE, EMPTY_AMOUNTS,
-            ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND, MIN_SUM, USER_BANNED);
+            ONLY_ONE_AMOUNT_NEEDED, EMPTY_CRYPTO_CURRENCY, EMPTY_REQUISITE, USER_NOT_FOUND, MIN_SUM, USER_BANNED,
+            PAYMENT_TYPE_NOT_FOUND, REQUISITE_NOT_FOUND);
     public static final List<ApiStatusCode> PAID_STATUSES = List.of(STATUS_PAID_UPDATED, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_ALREADY_PAID,
             PAYMENT_TIME_IS_UP, DEAL_ID_EXPECTED, USER_BANNED, DEAL_CONFIRMED);
     public static final List<ApiStatusCode> CANCEL_STATUSES = List.of(DEAL_DELETED, EMPTY_TOKEN, DEAL_NOT_EXISTS, DEAL_CONFIRMED, DEAL_ID_EXPECTED, USER_BANNED);

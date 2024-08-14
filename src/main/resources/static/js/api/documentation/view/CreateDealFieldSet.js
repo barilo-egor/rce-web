@@ -98,6 +98,11 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         type: 'String',
                         description: 'Ваши реквизиты.'
                     },
+                    {
+                        name: 'paymentTypeId',
+                        type: 'String',
+                        description: 'Optional. Идентификатор типа оплаты.'
+                    }
                 ]
             }),
             columns: [

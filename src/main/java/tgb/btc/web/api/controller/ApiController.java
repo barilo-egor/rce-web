@@ -34,6 +34,7 @@ import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
 import tgb.btc.web.service.NotificationsAPI;
+import tgb.btc.web.util.ApiResponseUtil;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -371,7 +372,7 @@ public class ApiController extends BaseController {
             mappedPaymentType.put("minSum", bigDecimalService.toPlainString(minSum));
             mappedPaymentTypes.add(mappedPaymentType);
         }
-        return JacksonUtil.getEmptyArray().addAll(mappedPaymentTypes);
+        return ApiResponseUtil.build(ApiStatusCode.PAYMENT_TYPES_FOUND, JacksonUtil.getEmptyArray().addAll(mappedPaymentTypes));
     }
 
     private ApiStatusCode hasAccess(String token) {

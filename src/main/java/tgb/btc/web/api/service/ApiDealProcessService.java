@@ -184,7 +184,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
                 ? apiPaymentType.getMinSum()
                 : null;
         if (apiDeal.getCryptoAmount().compareTo(minSum) < 0
-                || (Objects.nonNull(paymentTypeMinSum) && paymentTypeMinSum.compareTo(minSum) < 0)) {
+                || (Objects.nonNull(paymentTypeMinSum) && apiDeal.getAmount().compareTo(minSum) < 0)) {
             log.debug("Отказ в создании АПИ сделки с суммой меньше минимальной клиенту {}", apiUser.getId());
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
                     JacksonUtil.getEmpty().put("minSum", bigDecimalService.roundToPlainString(minSum, 8)));

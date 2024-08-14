@@ -1,5 +1,6 @@
 package tgb.btc.web.vo.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -12,9 +13,9 @@ public class ApiResponse implements ObjectNodeConvertable<ApiResponse> {
 
     private final ApiStatusCode statusCode;
 
-    private ObjectNode data;
+    private JsonNode data;
 
-    public ApiResponse(ApiStatusCode statusCode, ObjectNode data) {
+    public ApiResponse(ApiStatusCode statusCode, JsonNode data) {
         this.statusCode = statusCode;
         this.data = data;
     }
