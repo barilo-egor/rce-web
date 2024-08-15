@@ -167,9 +167,11 @@ public class ApiDealProcessService implements IApiDealProcessService {
         }
 
         CalculateDataForm.CalculateDataFormBuilder builder = CalculateDataForm.builder();
-        fiatCurrency = Objects.nonNull(apiDealVO.getFiatCurrency())
-                ? apiDealVO.getFiatCurrency()
-                : apiUser.getFiatCurrency();
+        if (Objects.isNull(apiDealVO.getFiatCurrency())) {
+            apiDealVO.setFiatCurrency(apiUser.getFiatCurrency());
+        }
+        fiatCurrency = apiDealVO.getFiatCurrency();
+
         builder.dealType(apiDealVO.getDealType())
                 .fiatCurrency(fiatCurrency)
                 .usdCourse(apiUser.getCourse(fiatCurrency).getCourse())
