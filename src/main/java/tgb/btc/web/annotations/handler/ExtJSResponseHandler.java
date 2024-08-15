@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tgb.btc.web.interfaces.IObjectNodeService;
+import tgb.btc.web.vo.PagingResponse;
 
 @Service
 @Slf4j
@@ -30,7 +31,13 @@ public class ExtJSResponseHandler {
                 ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
                 ObjectNode responseNode = objectMapper.createObjectNode();
                 responseNode.put("success", responseEntity.getStatusCode().is2xxSuccessful());
-                responseNode.set("data", objectMapper.valueToTree(responseEntity.getBody()));
+                if (responseEntity.getBody() instanceof PagingResponse) {
+                    PagingResponse<?> pagingResponse = (PagingResponse<?>) responseEntity.getBody();
+                    responseNode.put("total", pagingResponse.getTotalCount());
+                    responseNode.put("data", objectMapper.valueToTree(pagingResponse.getList()));
+                } else {
+                    responseNode.set("data", objectMapper.valueToTree(responseEntity.getBody()));
+                }
                 return ResponseEntity.status(responseEntity.getStatusCode()).body(responseNode);
             } catch (Exception e) {
                 log.error("Ошибка при обертке ответа для ExtJS.", e);

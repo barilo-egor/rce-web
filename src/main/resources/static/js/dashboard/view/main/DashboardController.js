@@ -87,6 +87,11 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         ExtMessages.topToast('Группа запросов сделок была обновлена')
                     }
                     break
+                case 'REVIEW_ACTION':
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

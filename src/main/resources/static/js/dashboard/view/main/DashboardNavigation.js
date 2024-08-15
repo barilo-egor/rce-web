@@ -105,12 +105,12 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     id: 'apiDealsMenuNode',
                                     leaf: true
                                 },
-                                // {
-                                //     text: MENU_ITEMS.REVIEWS,
-                                //     iconCls: 'x-fa fa-comment-dots',
-                                //     id: 'reviewsMenuNode',
-                                //     leaf: true
-                                // }
+                                {
+                                    text: MENU_ITEMS.REVIEWS,
+                                    iconCls: 'x-fa fa-comment-dots',
+                                    id: 'reviewsMenuNode',
+                                    leaf: true
+                                }
                             ]
                         },
                         {
