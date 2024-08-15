@@ -1,5 +1,7 @@
 package tgb.btc.web.controller.deal.review;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +50,9 @@ public class ReviewController extends BaseResponseEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<PagingResponse<Review>> findAll(Integer limit, Integer page, ExtSort sort) {
-        return new ResponseEntity<>(webReviewService.findAll(limit, page, sort), HttpStatus.ACCEPTED);
+    public ResponseEntity<PagingResponse<Review>> findAll(Integer limit, Integer page, String sort) throws JsonProcessingException {
+        return new ResponseEntity<>(webReviewService.findAll(limit, page,
+                sort), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{pid}")

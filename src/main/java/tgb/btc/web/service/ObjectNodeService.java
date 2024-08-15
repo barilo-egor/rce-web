@@ -1,5 +1,6 @@
 package tgb.btc.web.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -50,5 +51,10 @@ public class ObjectNodeService implements IObjectNodeService {
                 .map(value -> defaultMapper.createObjectNode()
                         .put("value", value))
                 .collect(Collectors.toList()));
+    }
+
+    @Override
+    public <T> T readValue(String str, Class<T> clazz) throws JsonProcessingException {
+        return defaultMapper.readValue(str, clazz);
     }
 }
