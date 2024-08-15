@@ -120,7 +120,7 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @DeleteMapping("/requisite/{requisitePid}")
     public ResponseEntity<Object> deleteRequisite(@PathVariable Long requisitePid) {
-        apiRequisiteService.deleteById(requisitePid);
+        apiRequisiteService.delete(requisitePid);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
