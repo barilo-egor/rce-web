@@ -38,22 +38,26 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
             columns: [
                 {
                     text: '№',
-                    dataIndex: 'pid'
+                    dataIndex: 'pid',
+                    menuDisabled: true
                 },
                 {
                     text: 'Chat id',
                     width: 150,
-                    dataIndex: 'chatId'
+                    dataIndex: 'chatId',
+                    menuDisabled: true
                 },
                 {
                     text: 'Username',
                     width: 200,
-                    dataIndex: 'username'
+                    dataIndex: 'username',
+                    menuDisabled: true
                 },
                 {
                     text: 'Текст',
                     flex: 1,
-                    dataIndex: 'text'
+                    dataIndex: 'text',
+                    menuDisabled: true
                 }
             ]
         }
