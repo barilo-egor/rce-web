@@ -31,7 +31,7 @@ Ext.define('Dashboard.view.deal.review.ReviewGridMenu', {
                     masked: 'reviewContainer',
                     success: function () {
                         ExtUtil.maskOff('reviewContainer')
-                        ExtMessages.topToast('Отзыв опубликован')
+                        ExtMessages.topToast('Отзыв удален')
                     }
                 })
             }
