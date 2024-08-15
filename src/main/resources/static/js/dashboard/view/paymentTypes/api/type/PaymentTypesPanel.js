@@ -140,25 +140,29 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                 {
                     text: 'Тип',
                     dataIndex: 'dealType',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true
                 },
                 {
                     text: 'Мин.сумма',
                     dataIndex: 'minSum',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true
                 },
                 {
                     text: 'Валюта',
                     reference: 'fiatCurrencyColumn',
                     dataIndex: 'fiatCurrency',
-                    width: 120
+                    width: 120,
+                    menuDisabled: true
                 },
                 {
                     text: 'Валюта',
                     reference: 'cryptoCurrencyColumn',
                     dataIndex: 'cryptoCurrency',
                     hidden: true,
-                    width: 120
+                    width: 120,
+                    menuDisabled: true
                 },
                 {
                     text: 'Примечание',

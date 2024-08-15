@@ -2,6 +2,7 @@ Ext.define('Dashboard.store.paymentTypes.api.ApiPaymentTypeStore', {
     extend: 'Ext.data.Store',
     storeId: 'apiPaymentTypeStore',
     autoLoad: false,
+    pageSize: 0,
     proxy: {
         type: 'ajax',
         url: '/paymentTypes/api',
