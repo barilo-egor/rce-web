@@ -92,6 +92,13 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         Ext.getStore('reviewStore').reload()
                     }
                     break
+                case 'NEW_REVIEW':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

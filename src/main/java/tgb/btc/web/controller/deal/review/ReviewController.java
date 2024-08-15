@@ -62,7 +62,7 @@ public class ReviewController extends BaseResponseEntityController {
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/pid")
+    @DeleteMapping("/{pid}")
     public ResponseEntity<Boolean> delete(Principal principal, @PathVariable Long pid) {
         String text= reviewService.findById(pid).getText();
         reviewService.deleteById(pid);

@@ -9,7 +9,7 @@ Ext.define('Dashboard.view.deal.review.ReviewGridMenu', {
             handler: function (me) {
                 ExtUtil.mask('reviewContainer')
                 RequestUtil.request({
-                    url: 'deal/review/' + ExtUtil.referenceQuery('reviewGrid').getPidOfSelected(),
+                    url: '/deal/review/' + ExtUtil.referenceQuery('reviewGrid').getPidOfSelected(),
                     masked: 'reviewContainer',
                     method: 'POST',
                     success: function () {
@@ -26,7 +26,7 @@ Ext.define('Dashboard.view.deal.review.ReviewGridMenu', {
             handler: function (me) {
                 ExtUtil.mask('reviewContainer')
                 RequestUtil.request({
-                    url: 'deal/review/' + ExtUtil.referenceQuery('reviewGrid').getPidOfSelected(),
+                    url: '/deal/review/' + ExtUtil.referenceQuery('reviewGrid').getPidOfSelected(),
                     method: 'DELETE',
                     masked: 'reviewContainer',
                     success: function () {

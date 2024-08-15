@@ -12,6 +12,7 @@ public enum NotificationType {
     NEW_PAYMENT,
     COURSE_GET_FAILED,
     CHANGED_DEAL_REQUEST_GROUP,
-    REVIEW_ACTION
+    REVIEW_ACTION,
+    NEW_REVIEW
     ;
 }

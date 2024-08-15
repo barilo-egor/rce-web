@@ -3,7 +3,7 @@ Ext.define('Dashboard.store.deal.review.ReviewStore', {
     storeId: 'reviewStore',
     autoLoad: false,
     remoteSort: true,
-    pageSize: 5,
+    pageSize: 50,
     proxy: {
         type: 'ajax',
         url: '/deal/review',

@@ -37,6 +37,10 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
 
             columns: [
                 {
+                    text: '№',
+                    dataIndex: 'pid'
+                },
+                {
                     text: 'Chat id',
                     width: 150,
                     dataIndex: 'chatId'
