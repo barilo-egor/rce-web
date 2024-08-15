@@ -3,7 +3,8 @@ const MENU_ITEMS = {
     API_DEALS: 'API сделки',
     WEB_USERS: 'WEB пользователи',
     API_USERS: 'API клиенты',
-    API_PAYMENT_TYPES: 'API типы оплат'
+    API_PAYMENT_TYPES: 'API типы оплат',
+    REVIEWS: 'Отзывы'
 }
 
 Ext.define('Dashboard.view.main.DashboardNavigation', {
@@ -17,7 +18,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Dashboard.view.deal.api.ApiDealsContainer',
         'Dashboard.view.users.web.WebUsersContainer',
         'Dashboard.view.users.api.ApiUsersContainer',
-        'Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer'
+        'Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer',
+        'Dashboard.view.deal.review.ReviewContainer'
     ],
     controller: 'dashboardController',
 
@@ -71,6 +73,13 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                             ExtUtil.referenceQuery('dashboardWorkspace').add({
                                 xtype: 'apipaymenttypescontainer'
                             })
+                            break
+                        case MENU_ITEMS.REVIEWS:
+                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
+                            ExtUtil.referenceQuery('dashboardWorkspace').add({
+                                xtype: 'reviewcontainer'
+                            })
+                            break
                     }
                 }
             },
@@ -80,7 +89,7 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                     expanded: true,
                     children: [
                         {
-                            text: 'Сделки',
+                            text: 'Заявки',
                             iconCls: 'x-fa fa-list-alt',
                             expanded: true,
                             children: [
@@ -95,7 +104,13 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     iconCls: 'x-fa fa-laptop-code',
                                     id: 'apiDealsMenuNode',
                                     leaf: true
-                                }
+                                },
+                                // {
+                                //     text: MENU_ITEMS.REVIEWS,
+                                //     iconCls: 'x-fa fa-comment-dots',
+                                //     id: 'reviewsMenuNode',
+                                //     leaf: true
+                                // }
                             ]
                         },
                         {
