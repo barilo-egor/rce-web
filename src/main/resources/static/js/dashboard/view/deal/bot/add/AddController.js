@@ -2,14 +2,6 @@ Ext.define('Dashboard.view.deal.bot.add.AddController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.addController',
 
-    comboChange: function (me) {
-        if (ExtUtil.referenceQuery('enterInCryptoCheckbox').getChecked()) {
-            ExtUtil.referenceQuery('fiatAmountField').setValue(null)
-        } else {
-            ExtUtil.referenceQuery('cryptoAmountField').setValue(null)
-        }
-    },
-
     checkBoxChange: function (me, newValue) {
         if (!newValue) return
         let cryptoEnter = me.getReference() === 'enterInCryptoCheckbox'

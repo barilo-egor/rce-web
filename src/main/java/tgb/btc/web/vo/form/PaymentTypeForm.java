@@ -4,7 +4,6 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import tgb.btc.library.bean.web.api.ApiPaymentType;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 
@@ -28,8 +27,6 @@ public class PaymentTypeForm {
 
     private FiatCurrency fiatCurrency;
 
-    private CryptoCurrency cryptoCurrency;
-
     private BigDecimal minSum;
 
     public ApiPaymentType toApiPaymentType() {
@@ -38,8 +35,7 @@ public class PaymentTypeForm {
                 .name(name)
                 .comment(comment)
                 .dealType(dealType)
-                .fiatCurrency(DealType.BUY.equals(dealType) ? fiatCurrency : null)
-                .cryptoCurrency(DealType.SELL.equals(dealType) ? cryptoCurrency : null)
+                .fiatCurrency(fiatCurrency)
                 .minSum(minSum)
                 .build();
     }

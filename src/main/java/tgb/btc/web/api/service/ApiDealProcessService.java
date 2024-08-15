@@ -156,6 +156,9 @@ public class ApiDealProcessService implements IApiDealProcessService {
         String responseRequisite = Objects.nonNull(apiRequisite)
                 ? apiRequisite.getRequisite()
                 : null;
+        if (StringUtils.isEmpty(responseRequisite) && !DealType.isBuy(dealType)) {
+            responseRequisite = variablePropertiesReader.getWallet(cryptoCurrency);
+        }
         if (StringUtils.isEmpty(responseRequisite)) {
             if (Objects.isNull(apiPaymentType)) {
                 return ApiStatusCode.PAYMENT_TYPE_NOT_FOUND.toJson();

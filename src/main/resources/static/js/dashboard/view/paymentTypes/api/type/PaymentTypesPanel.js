@@ -151,16 +151,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
                 },
                 {
                     text: 'Валюта',
-                    reference: 'fiatCurrencyColumn',
                     dataIndex: 'fiatCurrency',
-                    width: 120,
-                    menuDisabled: true
-                },
-                {
-                    text: 'Валюта',
-                    reference: 'cryptoCurrencyColumn',
-                    dataIndex: 'cryptoCurrency',
-                    hidden: true,
                     width: 120,
                     menuDisabled: true
                 },

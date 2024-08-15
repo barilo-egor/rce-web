@@ -369,11 +369,7 @@ public class ApiController extends BaseController {
             mappedPaymentType.put("name", apiPaymentType.getName());
             mappedPaymentType.put("id", apiPaymentType.getId());
             mappedPaymentType.put("dealType", apiPaymentType.getDealType().name());
-            if (DealType.isBuy(apiPaymentType.getDealType())) {
-                mappedPaymentType.put("fiatCurrency", apiPaymentType.getFiatCurrency().name());
-            } else {
-                mappedPaymentType.put("cryptoCurrency", apiPaymentType.getCryptoCurrency().name());
-            }
+            mappedPaymentType.put("fiatCurrency", apiPaymentType.getFiatCurrency().name());
             BigDecimal minSum = apiPaymentType.getMinSum().stripTrailingZeros();
             mappedPaymentType.put("minSum", bigDecimalService.toPlainString(minSum));
             mappedPaymentTypes.add(mappedPaymentType);

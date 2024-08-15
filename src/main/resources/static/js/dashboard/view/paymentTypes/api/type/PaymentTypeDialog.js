@@ -107,9 +107,6 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
                                 ExtUtil.referenceQuery('addDealTypeField').setValue(me.getAt(0))
                             }
                         }
-                    },
-                    listeners: {
-                        change: 'addDealTypeChange'
                     }
                 },
                 {
@@ -129,32 +126,6 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog', {
                                 ExtUtil.referenceQuery('fiatCurrencyAddField').setValue(me.getAt(0))
                             }
                         }
-                    },
-                    listeners: {
-                        change: 'comboChange',
-                    }
-                },
-                {
-                    xtype: 'combobox',
-                    reference: 'cryptoCurrencyAddField',
-                    label: 'Криптовалюта',
-                    name: 'cryptoCurrency',
-                    displayField: 'shortName',
-                    editable: false,
-                    hidden: true,
-                    required: true,
-                    valueField: 'name',
-                    queryMode: 'local',
-                    store: {
-                        type: 'cryptoCurrenciesStore',
-                        listeners: {
-                            load: function (me, records) {
-                                ExtUtil.referenceQuery('cryptoCurrencyAddField').setValue(me.getAt(0))
-                            }
-                        }
-                    },
-                    listeners: {
-                        change: 'comboChange',
                     }
                 },
                 {
