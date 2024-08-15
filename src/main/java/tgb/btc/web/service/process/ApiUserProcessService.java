@@ -143,8 +143,6 @@ public class ApiUserProcessService implements IApiUserProcessService {
         }
         apiUser.setId(apiUserVO.getId());
         apiUser.setPersonalDiscount(apiUserVO.getPersonalDiscount());
-        apiUser.setBuyRequisite(apiUserVO.getBuyRequisite());
-        apiUser.setSellRequisite(apiUserVO.getSellRequisite());
         apiUser.setFiatCurrency(apiUserVO.getFiatCurrency());
         apiUser = apiUserService.save(apiUser);
         if (isChatUpdated) {

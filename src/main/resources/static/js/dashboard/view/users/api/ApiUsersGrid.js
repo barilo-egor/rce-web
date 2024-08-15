@@ -83,18 +83,6 @@ Ext.define('Dashboard.view.users.api.ApiUsersGrid', {
                     menuDisabled: true,
                 },
                 {
-                    text: 'Реквизит покупки',
-                    dataIndex: 'buyRequisite',
-                    flex: 1,
-                    menuDisabled: true,
-                },
-                {
-                    text: 'Реквизит продажи',
-                    dataIndex: 'sellRequisite',
-                    flex: 1,
-                    menuDisabled: true,
-                },
-                {
                     text: 'Фиат',
                     dataIndex: 'fiatCurrency',
                     renderer: function (val) {

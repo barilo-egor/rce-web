@@ -73,8 +73,6 @@ public class ApiDealMappingService implements IApiDealMappingService {
                             ApiDealStatus.ACCEPTED, deal.getApiUser().getPid()))
                     .put("isBanned", BooleanUtils.isTrue(apiUser.getIsBanned()))
                     .put("personalDiscount", bigDecimalService.roundToPlainString(apiUser.getPersonalDiscount()))
-                    .put("buyRequisite", apiUser.getBuyRequisite())
-                    .put("sellRequisite", apiUser.getSellRequisite())
                     .put("bynUsdCourse", Objects.nonNull(bynUsdCourse) ? bigDecimalService.roundToPlainString(bynUsdCourse.getCourse()) : StringUtils.EMPTY)
                     .put("rubUsdCourse", Objects.nonNull(rubUsdCourse) ? bigDecimalService.roundToPlainString(rubUsdCourse.getCourse()) : StringUtils.EMPTY)
                     .put("registrationDate", apiUser.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));

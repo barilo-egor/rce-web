@@ -155,7 +155,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
         ApiRequisite apiRequisite = getApiRequisite(apiPaymentType);
         String responseRequisite = Objects.nonNull(apiRequisite)
                 ? apiRequisite.getRequisite()
-                : apiUser.getRequisite(dealType);
+                : null;
         if (StringUtils.isEmpty(responseRequisite)) {
             if (Objects.isNull(apiPaymentType)) {
                 return ApiStatusCode.PAYMENT_TYPE_NOT_FOUND.toJson();

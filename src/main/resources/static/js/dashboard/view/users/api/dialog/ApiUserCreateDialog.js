@@ -75,20 +75,6 @@ Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
         {
             items: [
                 {
-                    xtype: 'textfield',
-                    reference: 'buyRequisiteCreateField',
-                    label: 'Реквизит покупки'
-                },
-                {
-                    xtype: 'textfield',
-                    reference: 'sellRequisiteCreateField',
-                    label: 'Реквизит продажи'
-                },
-            ]
-        },
-        {
-            items: [
-                {
                     xtype: 'numberfield',
                     reference: 'usdCourseBYNCreateField',
                     label: 'Курс BYN'

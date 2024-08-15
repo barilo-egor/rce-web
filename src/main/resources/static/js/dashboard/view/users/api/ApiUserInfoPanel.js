@@ -130,34 +130,6 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     }
                 },
                 {
-                    xtype: 'textareafield',
-                    label: 'Реквизит покупки',
-                    maxLength: 254,
-                    reference: 'buyRequisiteField',
-                    listeners: {
-                        change: 'change'
-                    },
-                    setUserValue: function (user) {
-                        this.defaultValue = user.buyRequisite
-                        this.setValue(user.buyRequisite)
-                        this.fireEvent('change')
-                    }
-                },
-                {
-                    xtype: 'textareafield',
-                    label: 'Реквизит продажи',
-                    maxLength: 254,
-                    reference: 'sellRequisiteField',
-                    listeners: {
-                        change: 'change'
-                    },
-                    setUserValue: function (user) {
-                        this.defaultValue = user.sellRequisite
-                        this.setValue(user.sellRequisite)
-                        this.fireEvent('change')
-                    }
-                },
-                {
                     xtype: 'combobox',
                     label: 'Фиат по умолчанию',
                     reference: 'fiatCurrencyField',
