@@ -131,7 +131,7 @@ Ext.define('ApiDocumentation.view.GetStatusFieldSet', {
                         '       "code": 8,\n' +
                         '       "description": "Сделка найдена.",\n' +
                         '       "data":{\n' +
-                        '           "status": "CONFIRMED"\n' +
+                        '           "status": "ACCEPTED"\n' +
                         '           "id": 10\n' +
                         '       }\n' +
                         '   },\n' +
