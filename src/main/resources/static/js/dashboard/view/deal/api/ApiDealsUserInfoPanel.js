@@ -86,20 +86,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsUserInfoPanel', {
                     }
                 },
                 {
-                    label: 'Реквизит покупки',
-                    reference: 'buyRequisiteDisplayField',
-                    setUserValue: function (user) {
-                        this.setValue(user.buyRequisite ? user.buyRequisite : 'Отсутствует')
-                    }
-                },
-                {
-                    label: 'Реквизит продажи',
-                    reference: 'sellRequisiteDisplayField',
-                    setUserValue: function (user) {
-                        this.setValue(user.sellRequisite ? user.sellRequisite : 'Отсутствует')
-                    }
-                },
-                {
                     label: 'Курс доллара BYN',
                     reference: 'bynUsdCourseDisplayField',
                     setUserValue: function (user) {

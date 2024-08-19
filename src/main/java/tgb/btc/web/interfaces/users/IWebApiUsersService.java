@@ -9,8 +9,7 @@ import java.util.List;
 
 public interface IWebApiUsersService {
 
-    List<ApiUser> findAll(String id, FiatCurrency fiatCurrency, String token, String buyRequisite,
-            String sellRequisite);
+    List<ApiUser> findAll(String id, FiatCurrency fiatCurrency, String token);
 
     List<ObjectNode> getIdByPaymentTypePid(Boolean isAdding, Long paymentTypePid);
 

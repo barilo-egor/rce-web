@@ -46,7 +46,7 @@ public class WebApiUsersService implements IWebApiUsersService {
     }
 
     @Override
-    public List<ApiUser> findAll(String id, FiatCurrency fiatCurrency, String token, String buyRequisite, String sellRequisite) {
+    public List<ApiUser> findAll(String id, FiatCurrency fiatCurrency, String token) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder hqlQuery = new StringBuilder(FIND_ALL_QUERY);
         if (StringUtils.isNotBlank(id)) {
@@ -63,16 +63,6 @@ public class WebApiUsersService implements IWebApiUsersService {
             appendCriterion(hqlQuery);
             hqlQuery.append(" token=:token");
             params.put("token", token);
-        }
-        if (StringUtils.isNotBlank(buyRequisite)) {
-            appendCriterion(hqlQuery);
-            hqlQuery.append(" buyRequisite=:buyRequisite");
-            params.put("buyRequisite", buyRequisite);
-        }
-        if (StringUtils.isNotBlank(sellRequisite)) {
-            appendCriterion(hqlQuery);
-            hqlQuery.append(" sellRequisite=:sellRequisite");
-            params.put("sellRequisite", sellRequisite);
         }
         Query query = entityManager.createQuery(hqlQuery.toString(), ApiUser.class);
         params.forEach(query::setParameter);

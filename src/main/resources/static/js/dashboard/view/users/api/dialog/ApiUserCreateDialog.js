@@ -11,8 +11,7 @@ Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
             handler: function (me) {
                 ExtUtil.mask('createDialog', 'Создание клиента')
                 let fieldReference = [
-                    'idCreateField', 'personalDiscountCreateField', 'buyRequisiteCreateField',
-                    'sellRequisiteCreateField', 'usdCourseBYNCreateField', 'usdCourseRUBCreateField',
+                    'idCreateField', 'personalDiscountCreateField', 'usdCourseBYNCreateField', 'usdCourseRUBCreateField',
                     'fiatCurrencyCreateField'
                 ]
                 let isValid = true

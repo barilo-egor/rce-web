@@ -94,11 +94,9 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> findAll(@RequestParam(required = false) String id,
             @RequestParam(required = false) FiatCurrency fiatCurrency,
-            @RequestParam(required = false) String token,
-            @RequestParam(required = false) String buyRequisite,
-            @RequestParam(required = false) String sellRequisite) {
+            @RequestParam(required = false) String token) {
         return SuccessResponseUtil.jsonData(
-                webApiUsersService.findAll(id, fiatCurrency, token, buyRequisite, sellRequisite));
+                webApiUsersService.findAll(id, fiatCurrency, token));
     }
 
     @GetMapping("/generateToken")
