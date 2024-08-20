@@ -1,8 +1,8 @@
-Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu', {
+Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesGridMenu', {
     extend: 'Ext.menu.Menu',
-    xtype: 'requisitesgridmenu',
+    xtype: 'apirequisitesgridmenu',
     requires: [
-        'Dashboard.view.paymentTypes.api.requisite.EditRequisiteDialog'
+        'Dashboard.view.paymentTypes.api.requisite.EditApiRequisiteDialog'
     ],
 
     items: [
@@ -10,7 +10,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu', {
             text: 'Редактировать',
             iconCls: 'x-fa fa-pen',
             handler: function (me) {
-                Ext.create('Dashboard.view.paymentTypes.api.requisite.EditRequisiteDialog', {
+                Ext.create('Dashboard.view.paymentTypes.api.requisite.EditApiRequisiteDialog', {
                     viewModel: {
                         data: {
                             requisitePid: ExtUtil.referenceQuery('apiRequisitesGrid').getPidOfSelected(),

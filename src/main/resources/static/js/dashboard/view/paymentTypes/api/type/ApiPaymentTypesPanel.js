@@ -1,11 +1,11 @@
-Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesPanel', {
+Ext.define('Dashboard.view.paymentTypes.api.type.ApiPaymentTypesPanel', {
     extend: 'Ext.Panel',
-    xtype: 'paymenttypespanel',
+    xtype: 'apipaymenttypespanel',
     requires: [
-        'Dashboard.view.paymentTypes.api.type.PaymentTypesController',
-        'Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu'
+        'Dashboard.view.paymentTypes.api.type.ApiPaymentTypesController',
+        'Dashboard.view.paymentTypes.api.requisite.ApiRequisitesGridMenu'
     ],
-    controller: 'paymentTypesController',
+    controller: 'apiPaymentTypesController',
 
     shadow: true,
     title: 'Типы оплат',

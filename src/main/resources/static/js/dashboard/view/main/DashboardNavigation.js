@@ -4,7 +4,8 @@ const MENU_ITEMS = {
     WEB_USERS: 'WEB пользователи',
     API_USERS: 'API клиенты',
     API_PAYMENT_TYPES: 'API типы оплат',
-    REVIEWS: 'Отзывы'
+    REVIEWS: 'Отзывы',
+    PAYMENT_TYPES: 'Типы оплат'
 }
 
 Ext.define('Dashboard.view.main.DashboardNavigation', {
@@ -19,7 +20,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Dashboard.view.users.web.WebUsersContainer',
         'Dashboard.view.users.api.ApiUsersContainer',
         'Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer',
-        'Dashboard.view.deal.review.ReviewContainer'
+        'Dashboard.view.deal.review.ReviewContainer',
+        'Dashboard.view.paymentTypes.bot.PaymentTypesContainer'
     ],
     controller: 'dashboardController',
 
@@ -43,44 +45,34 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                 },
                 itemclick: function (sender, info) {
                     if (!info.item.getLeaf()) return
+                    let xtype
                     switch (info.item.getText()) {
                         case MENU_ITEMS.BOT_DEALS:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'botdealscontainer'
-                            })
+                            xtype = 'botdealscontainer'
                             break
                         case MENU_ITEMS.API_DEALS:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'apidealscontainer'
-                            })
+                            xtype = 'apidealscontainer'
                             break
                         case MENU_ITEMS.WEB_USERS:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'webuserscontainer'
-                            })
+                            xtype = 'webuserscontainer'
                             break
                         case MENU_ITEMS.API_USERS:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'apiuserscontainer'
-                            })
+                            xtype = 'apiuserscontainer'
                             break
                         case MENU_ITEMS.API_PAYMENT_TYPES:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'apipaymenttypescontainer'
-                            })
+                            xtype = 'apipaymenttypescontainer'
                             break
                         case MENU_ITEMS.REVIEWS:
-                            ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
-                            ExtUtil.referenceQuery('dashboardWorkspace').add({
-                                xtype: 'reviewcontainer'
-                            })
+                            xtype = 'reviewcontainer'
+                            break
+                        case MENU_ITEMS.PAYMENT_TYPES:
+                            xtype = 'paymenttypescontainer'
                             break
                     }
+                    ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
+                    ExtUtil.referenceQuery('dashboardWorkspace').add({
+                        xtype: xtype
+                    })
                 }
             },
 
@@ -139,6 +131,12 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     text: MENU_ITEMS.API_PAYMENT_TYPES,
                                     iconCls: 'x-fa fa-laptop-code',
                                     id: 'apiPaymentTypesMenuNode',
+                                    leaf: true
+                                },
+                                {
+                                    text: MENU_ITEMS.PAYMENT_TYPES,
+                                    iconCls: 'x-fa fa-money-check-alt',
+                                    id: 'securePaymentDetailsMenuNode',
                                     leaf: true
                                 }
                             ]

@@ -1,12 +1,12 @@
-Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisiteController', {
+Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisiteController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.requisiteController',
+    alias: 'controller.apiRequisiteController',
     requires: [
-        'Dashboard.view.paymentTypes.api.requisite.AddRequisiteDialog'
+        'Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteDialog'
     ],
 
     createRequisiteDialog: function () {
-        Ext.create('Dashboard.view.paymentTypes.api.requisite.AddRequisiteDialog', {
+        Ext.create('Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteDialog', {
             viewModel: {
                 data: {
                     paymentTypePid: ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected()
@@ -19,7 +19,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisiteController', {
         me.deselectAll();
         me.setSelection(eObj.record);
         if (!me.menu) {
-            me.menu = Ext.create('Dashboard.view.paymentTypes.api.requisite.RequisitesGridMenu')
+            me.menu = Ext.create('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesGridMenu')
         }
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()

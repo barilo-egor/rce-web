@@ -1,11 +1,11 @@
-Ext.define('Dashboard.view.paymentTypes.api.requisite.RequisitesPanel', {
+Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel', {
     extend: 'Ext.Panel',
-    xtype: 'requisitespanel',
-    reference: 'requisitesPanel',
+    xtype: 'apirequisitespanel',
+    reference: 'apiRequisitesPanel',
     requires: [
-        'Dashboard.view.paymentTypes.api.requisite.RequisiteController'
+        'Dashboard.view.paymentTypes.api.requisite.ApiRequisiteController'
     ],
-    controller: 'requisiteController',
+    controller: 'apiRequisiteController',
 
     title: 'Реквизиты',
     setDefaultMask: function () {

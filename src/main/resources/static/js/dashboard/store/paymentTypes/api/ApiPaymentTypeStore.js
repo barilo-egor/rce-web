@@ -26,7 +26,7 @@ Ext.define('Dashboard.store.paymentTypes.api.ApiPaymentTypeStore', {
                     }
                 })
             } else {
-                ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+                ExtUtil.referenceQuery('apiRequisitesPanel').setDefaultMask()
                 ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
             }
         }

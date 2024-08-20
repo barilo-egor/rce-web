@@ -1,10 +1,10 @@
-Ext.define('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
+Ext.define('Dashboard.view.paymentTypes.api.type.EditApiPaymentTypeDialog', {
     extend: 'Ext.Dialog',
-    reference: 'editPaymentTypeDialog',
+    reference: 'editApiPaymentTypeDialog',
     requires: [
-        'Dashboard.view.paymentTypes.api.type.PaymentTypesController'
+        'Dashboard.view.paymentTypes.api.type.ApiPaymentTypesController'
     ],
-    controller: 'paymentTypesController',
+    controller: 'apiPaymentTypesController',
 
     title: 'Редактирование типа оплаты',
     width: 400,

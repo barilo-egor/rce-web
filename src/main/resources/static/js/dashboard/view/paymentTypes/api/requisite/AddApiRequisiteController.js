@@ -1,6 +1,6 @@
-Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
+Ext.define('Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.addRequisiteController',
+    alias: 'controller.addApiRequisiteController',
 
     createRequisite: function (me) {
         let form = ExtUtil.referenceQuery('addRequisiteForm')
@@ -8,17 +8,17 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
             ExtMessages.topToast('Неверно заполнена форма')
             return
         }
-        ExtUtil.mask('addRequisiteDialog', 'Создание реквизита')
+        ExtUtil.mask('addApiRequisiteDialog', 'Создание реквизита')
         form.submit({
             url: '/paymentTypes/api/requisite',
             success: function (form, response) {
-                ExtUtil.maskOff('addRequisiteDialog')
+                ExtUtil.maskOff('addApiRequisiteDialog')
                 Ext.getStore('apiPaymentTypeStore').reload()
                 ExtMessages.topToast('Реквизит успешно создан')
                 ExtUtil.closeWindow(me)
             },
             failure: function (form, response) {
-                ExtUtil.maskOff('addRequisiteDialog')
+                ExtUtil.maskOff('addApiRequisiteDialog')
                 RequestUtil.FORM.formFailure(form, response)
             }
         })
@@ -30,7 +30,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
             ExtMessages.topToast('Неверно заполнена форма')
             return
         }
-        ExtUtil.mask('editRequisiteDialog', 'Обновление реквизита')
+        ExtUtil.mask('editApiRequisiteDialog', 'Обновление реквизита')
         let url = '/paymentTypes/api/requisite/' + ExtUtil.referenceQuery('paymentTypePidField').getValue()
         RequestUtil.request({
             url: url,
@@ -38,11 +38,11 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddRequisiteController', {
             params: {
                 requisite: field.getValue()
             },
-            masked: 'editRequisiteDialog',
+            masked: 'editApiRequisiteDialog',
             success: function (response) {
                 Ext.getStore('apiPaymentTypeStore').reload()
                 ExtMessages.topToast('Реквизит обновлен')
-                ExtUtil.maskOff('editRequisiteDialog')
+                ExtUtil.maskOff('editApiRequisiteDialog')
                 ExtUtil.closeWindow(me)
             }
         })

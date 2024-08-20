@@ -2,9 +2,9 @@ Ext.define('Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer', {
     extend: 'Ext.Container',
     xtype: 'apipaymenttypescontainer',
     requires: [
-        'Dashboard.view.paymentTypes.api.requisite.RequisitesPanel',
+        'Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel',
         'Dashboard.view.paymentTypes.api.client.ApiClientsPanel',
-        'Dashboard.view.paymentTypes.api.type.PaymentTypesPanel'
+        'Dashboard.view.paymentTypes.api.type.ApiPaymentTypesPanel'
     ],
 
     layout: {
@@ -14,7 +14,7 @@ Ext.define('Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer', {
     items: [
         {
             flex: 0.7,
-            xtype: 'paymenttypespanel',
+            xtype: 'apipaymenttypespanel',
             margin: '10 5 10 10',
         },
         {
@@ -30,7 +30,7 @@ Ext.define('Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer', {
             },
             items: [
                 {
-                    xtype: 'requisitespanel',
+                    xtype: 'apirequisitespanel',
                     margin: '10 10 5 5'
                 },
                 {

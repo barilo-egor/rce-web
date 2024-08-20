@@ -1,8 +1,8 @@
-Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
+Ext.define('Dashboard.view.paymentTypes.api.type.ApiPaymentTypeGridMenu', {
     extend: 'Ext.menu.Menu',
-    xtype: 'requisitesgridmenu',
+    xtype: 'apirequisitesgridmenu',
     requires: [
-        'Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog'
+        'Dashboard.view.paymentTypes.api.type.EditApiPaymentTypeDialog'
     ],
 
     items: [
@@ -11,7 +11,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
             iconCls: 'x-fa fa-pen',
             handler: function (me) {
                 let selected = ExtUtil.referenceQuery('paymentTypesGrid').getSelectedRec()
-                Ext.create('Dashboard.view.paymentTypes.api.type.EditPaymentTypeDialog', {
+                Ext.create('Dashboard.view.paymentTypes.api.type.EditApiPaymentTypeDialog', {
                     viewModel: {
                         data: {
                             pid: selected.get('pid'),
@@ -40,7 +40,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu', {
                             success: function () {
                                 Ext.getStore('apiPaymentTypeStore').reload()
                                 ExtMessages.topToast('Тип оплаты удален')
-                                ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+                                ExtUtil.referenceQuery('apiRequisitesPanel').setDefaultMask()
                                 ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
                                 ExtUtil.maskOff('paymentTypesGrid')
                             }

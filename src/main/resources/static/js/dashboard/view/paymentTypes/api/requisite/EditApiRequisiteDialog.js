@@ -1,10 +1,10 @@
-Ext.define('Dashboard.view.paymentTypes.api.requisite.EditRequisiteDialog', {
+Ext.define('Dashboard.view.paymentTypes.api.requisite.EditApiRequisiteDialog', {
     extend: 'Ext.Dialog',
-    reference: 'editRequisiteDialog',
+    reference: 'editApiRequisiteDialog',
     requires: [
-        'Dashboard.view.paymentTypes.api.requisite.AddRequisiteController'
+        'Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteController'
     ],
-    controller: 'addRequisiteController',
+    controller: 'addApiRequisiteController',
 
     closable: true,
     title: 'Редактирование реквизита',

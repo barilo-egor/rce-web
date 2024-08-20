@@ -1,9 +1,9 @@
-Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
+Ext.define('Dashboard.view.paymentTypes.api.type.ApiPaymentTypesController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.paymentTypesController',
+    alias: 'controller.apiPaymentTypesController',
 
     createDialog: function () {
-        Ext.create('Dashboard.view.paymentTypes.api.type.PaymentTypeDialog').show()
+        Ext.create('Dashboard.view.paymentTypes.api.type.ApiPaymentTypeDialog').show()
     },
 
     create: function (me) {
@@ -47,7 +47,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
                 paymentTypePid: paymentTypePid
             },
             callback: function () {
-                ExtUtil.referenceQuery('requisitesPanel').setMasked(false)
+                ExtUtil.referenceQuery('apiRequisitesPanel').setMasked(false)
             }
         })
     },
@@ -70,7 +70,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
         me.deselectAll();
         me.setSelection(eObj.record);
         if (!me.menu) {
-            me.menu = Ext.create('Dashboard.view.paymentTypes.api.type.PaymentTypeGridMenu')
+            me.menu = Ext.create('Dashboard.view.paymentTypes.api.type.ApiPaymentTypeGridMenu')
         }
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
@@ -82,17 +82,17 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
             ExtMessages.topToast('Неверно заполнена форма')
             return
         }
-        ExtUtil.mask('editPaymentTypeDialog')
+        ExtUtil.mask('editApiPaymentTypeDialog')
         let values = ExtUtil.referenceQuery('editPaymentTypeForm').getValues()
         RequestUtil.request({
             url: '/paymentTypes/api/' + ExtUtil.referenceQuery('paymentTypesGrid').getPidOfSelected(),
             method: 'PATCH',
             params: values,
-            masked: 'editPaymentTypeDialog',
+            masked: 'editApiPaymentTypeDialog',
             success: function () {
                 ExtMessages.topToast('Тип оплаты обновлен')
-                ExtUtil.maskOff('editPaymentTypeDialog')
-                ExtUtil.referenceQuery('editPaymentTypeDialog').close()
+                ExtUtil.maskOff('editApiPaymentTypeDialog')
+                ExtUtil.referenceQuery('editApiPaymentTypeDialog').close()
                 Ext.getStore('apiPaymentTypeStore').reload()
             }
         })
@@ -105,7 +105,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.PaymentTypesController', {
                 apiUserId: newValue.get('value')
             }
         })
-        ExtUtil.referenceQuery('requisitesPanel').setDefaultMask()
+        ExtUtil.referenceQuery('apiRequisitesPanel').setDefaultMask()
         ExtUtil.referenceQuery('apiClientsPanel').setDefaultMask()
         ExtUtil.referenceQuery('dropClientFilterButton').setHidden(false)
         me.setReadOnly(true)
