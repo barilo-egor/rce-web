@@ -3,7 +3,8 @@ Ext.define('Dashboard.view.paymentTypes.bot.PaymentTypesContainer', {
     xtype: 'paymenttypescontainer',
     requires: [
         'Dashboard.view.paymentTypes.bot.type.PaymentTypesPanel',
-        'Dashboard.view.paymentTypes.bot.requisite.RequisitesPanel'
+        'Dashboard.view.paymentTypes.bot.requisite.RequisitesPanel',
+        'Dashboard.view.paymentTypes.bot.details.SecurePaymentDetailsPanel'
     ],
 
     layout: {
@@ -34,9 +35,7 @@ Ext.define('Dashboard.view.paymentTypes.bot.PaymentTypesContainer', {
         },
         {
             flex: 0.4,
-            xtype: 'panel',
-            title: 'Защитные реквизиты',
-            shadow: true,
+            xtype: 'securepaymentdetailspanel',
             margin: '5 10 10 10'
         }
     ]
