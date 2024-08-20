@@ -20,7 +20,9 @@ let ExtMessages = {
                 {
                     text: 'Да',
                     handler: function (me) {
+                        me.up('dialog').setMasked('Пожалуйста, подождите.')
                         handler()
+                        me.up('dialog').setMasked(false)
                         me.up('dialog').close()
                     }
                 },
