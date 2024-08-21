@@ -70,6 +70,11 @@ public class BotDealsController extends BaseController {
     private IBigDecimalService bigDecimalService;
 
     @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
     public void setBigDecimalService(IBigDecimalService bigDecimalService) {
         this.bigDecimalService = bigDecimalService;
     }
