@@ -18,7 +18,16 @@ Ext.define('ApiDashboard.view.MainToolbarController', {
     },
 
     openSse: function () {
-        const eventSource = new EventSource("/dashboard/api/notifications/listen");
+        let pid
+        RequestUtil.request({
+            url: 'dashboard/api/notifications/getPid',
+            method: 'GET',
+            async: false,
+            success: function (response) {
+               pid = response.data
+            }
+        })
+        const eventSource = new EventSource("/dashboard/api/notifications/listen?pid=" + pid);
         eventSource.onmessage = e => {
             let response = Ext.JSON.decode(e.data);
             switch (response.type) {
