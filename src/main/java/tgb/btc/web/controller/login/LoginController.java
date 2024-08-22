@@ -77,11 +77,14 @@ public class LoginController extends BaseController {
         Long finalChatId = chatId;
         emitter.onCompletion(() ->
                 LOGIN_EMITTER_MAP.remove(finalChatId));
-        emitter.onTimeout(() ->
-                LOGIN_EMITTER_MAP.remove(finalChatId));
+        emitter.onTimeout(() -> {
+            LOGIN_EMITTER_MAP.remove(finalChatId);
+            emitter.complete();
+        });
         emitter.onError((e) -> {
             log.error("Ошибка SSE Emitter авторизации.", e);
             LOGIN_EMITTER_MAP.remove(finalChatId);
+            emitter.completeWithError(e);
         });
         LOGIN_EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);

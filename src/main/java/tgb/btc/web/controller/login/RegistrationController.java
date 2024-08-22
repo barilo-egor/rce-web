@@ -58,11 +58,14 @@ public class RegistrationController extends BaseController {
         SseEmitter emitter = new SseEmitter(30000L);
         emitter.onCompletion(() ->
                 REGISTER_EMITTER_MAP.remove(chatId));
-        emitter.onTimeout(() ->
-                REGISTER_EMITTER_MAP.remove(chatId));
+        emitter.onTimeout(() -> {
+            REGISTER_EMITTER_MAP.remove(chatId);
+            emitter.complete();
+        });
         emitter.onError(e -> {
             log.error("Ошибка SSE Emitter подтверждения chatId для регистрации.", e);
             REGISTER_EMITTER_MAP.remove(chatId);
+            emitter.completeWithError(e);
         });
         REGISTER_EMITTER_MAP.put(chatId, EmitterVO.builder()
                 .emitter(emitter)

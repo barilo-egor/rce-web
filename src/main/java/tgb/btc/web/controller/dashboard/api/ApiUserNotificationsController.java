@@ -31,9 +31,18 @@ public class ApiUserNotificationsController {
     public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
         Long pid = apiUserService.getPidByUsername(principal.getName());
-        sseEmitter.onError(throwable -> LISTENERS.remove(pid));
-        sseEmitter.onTimeout(() -> LISTENERS.remove(pid));
-        if (Objects.isNull(pid)) return null;
+        if (Objects.isNull(pid)) {
+            sseEmitter.complete();
+            return null;
+        }
+        sseEmitter.onError(throwable -> {
+            LISTENERS.remove(pid);
+            sseEmitter.completeWithError(throwable);
+        });
+        sseEmitter.onTimeout(() -> {
+            LISTENERS.remove(pid);
+            sseEmitter.complete();
+        });
         LISTENERS.put(pid, sseEmitter);
         log.debug("API пользователь {} стал SSE слушателем.", principal.getName());
         return sseEmitter;
