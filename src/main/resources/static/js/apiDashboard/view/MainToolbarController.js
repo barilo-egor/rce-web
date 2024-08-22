@@ -24,7 +24,7 @@ Ext.define('ApiDashboard.view.MainToolbarController', {
             method: 'GET',
             async: false,
             success: function (response) {
-               pid = response.data
+               pid = response
             }
         })
         const eventSource = new EventSource("/dashboard/api/notifications/listen?pid=" + pid);
