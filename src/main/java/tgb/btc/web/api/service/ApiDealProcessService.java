@@ -184,15 +184,13 @@ public class ApiDealProcessService implements IApiDealProcessService {
             builder.cryptoAmount(apiDealVO.getCryptoAmount());
         }
         ApiDeal apiDeal = create(apiDealVO, apiUser, calculateService.calculate(builder.build()), apiPaymentType, apiRequisite);
-        BigDecimal minSum = variablePropertiesReader.getBigDecimal(VariableType.MIN_SUM, dealType, cryptoCurrency);
         BigDecimal paymentTypeMinSum = Objects.nonNull(apiPaymentType)
                 ? apiPaymentType.getMinSum()
                 : null;
-        if (apiDeal.getCryptoAmount().compareTo(minSum) < 0
-                || (Objects.nonNull(paymentTypeMinSum) && apiDeal.getAmount().compareTo(minSum) < 0)) {
+        if (Objects.nonNull(paymentTypeMinSum) && apiDeal.getAmount().compareTo(paymentTypeMinSum) < 0) {
             log.debug("Отказ в создании АПИ сделки с суммой меньше минимальной клиенту {}", apiUser.getId());
             return ApiResponseUtil.build(ApiStatusCode.MIN_SUM,
-                    JacksonUtil.getEmpty().put("minSum", bigDecimalService.roundToPlainString(minSum, 8)));
+                    JacksonUtil.getEmpty().put("minSum", bigDecimalService.roundToPlainString(paymentTypeMinSum, 8)));
         }
         log.debug("АПИ клиент {} создал новую АПИ сделку {}.", apiUser.getId(), apiDeal.getPid());
         apiUserNotificationsAPI.send(apiUser.getPid(), ApiUserNotificationType.CREATED_DEAL,
