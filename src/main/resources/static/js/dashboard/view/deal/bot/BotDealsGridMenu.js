@@ -16,6 +16,9 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             ExtUtil.referenceQuery('confirmDealWithRequestMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL'
                     || ExtUtil.referenceQuery('dealRequestGroupField').groupPid === null)
+            ExtUtil.referenceQuery('autoWithdrawalMenuButton')
+                .setHidden(deal.dealType.name === 'SELL' || !(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED')
+                    || deal.cryptoCurrency !== 'LITECOIN')
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')
@@ -164,6 +167,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                             pid: deal.pid
                         },
                         success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена')
                             Ext.getStore('botDealStore').reload()
                         }
                     })
@@ -186,11 +190,33 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                             isNeedRequest: true
                         },
                         success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена')
                             Ext.getStore('botDealStore').reload()
                         }
                     })
                 }
                 ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и отправить запрос на вывод?',
+                    confirmFn)
+            }
+        },
+        {
+            text: 'Автовывод',
+            reference: 'autoWithdrawalMenuButton',
+            iconCls: 'x-fa fa-share',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let confirmFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/autoWithdrawal/' + deal.pid,
+                        method: 'POST',
+                        success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена и валюта отправлена')
+                            ExtUtil.referenceQuery('litecoinBalanceField').reload()
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    })
+                }
+                ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и выполнить автовывод?',
                     confirmFn)
             }
         },

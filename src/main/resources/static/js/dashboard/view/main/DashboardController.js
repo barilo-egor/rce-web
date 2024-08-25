@@ -87,6 +87,16 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         ExtMessages.topToast('Группа запросов сделок была обновлена')
                     }
                     break
+                case 'CHANGED_AUTO_WITHDRAWAL_GROUP':
+                    if (workspaceItem.xtype === 'botdealscontainer') {
+                        let field = ExtUtil.referenceQuery('autoWithdrawalGroupField')
+                        field.setValue(response.data.title)
+                        field.groupPid = response.data.pid
+                        if (response.message)
+                            ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                        ExtMessages.topToast('Группа автовывода сделок была обновлена')
+                    }
+                    break
                 case 'REVIEW_ACTION':
                     if (workspaceItem.xtype === 'reviewcontainer') {
                         Ext.getStore('reviewStore').reload()

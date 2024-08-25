@@ -77,6 +77,7 @@ public class DealMappingService implements IDealMappingService {
         result.set("dealType", dealType);
         result.put("cryptoAmount", bigDecimalService.roundToPlainString(deal.getCryptoAmount(), deal.getCryptoCurrency().getScale())
                 + " " + deal.getCryptoCurrency().getShortName());
+        result.put("cryptoCurrency", deal.getCryptoCurrency().name());
         result.put("amount", bigDecimalService.roundToPlainString(deal.getAmount()) + " " + deal.getFiatCurrency().getCode());
         result.put("deliveryType", Objects.nonNull(deal.getDeliveryType())
                 ? deliveryTypeService.getDisplayName(deal.getDeliveryType())

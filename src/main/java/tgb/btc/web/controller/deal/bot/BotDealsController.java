@@ -14,6 +14,7 @@ import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.bot.GroupChatType;
 import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
@@ -68,6 +69,13 @@ public class BotDealsController extends BaseController {
     private IDealMappingService dealMappingService;
 
     private IBigDecimalService bigDecimalService;
+
+    private IAutoWithdrawalService autoWithdrawalService;
+
+    @Autowired
+    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
+        this.autoWithdrawalService = autoWithdrawalService;
+    }
 
     @Autowired
     public void setModifyDealService(IModifyDealService modifyDealService) {
@@ -239,5 +247,33 @@ public class BotDealsController extends BaseController {
         notificationsAPI.send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findFirst()
                 .orElseThrow(() -> new BaseException("Не найдена группа для отправки запросов сразу после обновления.")));
         return new SuccessResponse<>();
+    }
+
+    @PostMapping("/updateAutoWithdrawalGroup")
+    @ResponseBody
+    public SuccessResponse<?> updateAutoWithdrawalGroup(Long pid) {
+        groupChatService.updateTypeByPid(GroupChatType.AUTO_WITHDRAWAL, pid);
+        if (Objects.nonNull(notifier)) notifier.sendGreetingToNewAutoWithdrawalGroup();
+        notificationsAPI.send(NotificationType.CHANGED_AUTO_WITHDRAWAL_GROUP, groupChatService.getAllByType(GroupChatType.AUTO_WITHDRAWAL).stream().findFirst()
+                .orElseThrow(() -> new BaseException("Не найдена группа для отправки автовыводов сразу после обновления.")));
+        return new SuccessResponse<>();
+    }
+
+    @GetMapping("/getBalance/{currency}")
+    @ResponseBody
+    public SuccessResponse<?> getBalance(@PathVariable CryptoCurrency currency) {
+        return SuccessResponseUtil.data(autoWithdrawalService.getBalance(currency),
+                data -> JacksonUtil.getEmpty().put("value", data.toPlainString()));
+    }
+
+    @PostMapping("/autoWithdrawal/{dealPid}")
+    @ResponseBody
+    public SuccessResponse<?> autoWithdrawal(Principal principal, @PathVariable Long dealPid) {
+        autoWithdrawalService.withdrawal(dealPid);
+        modifyDealService.confirm(dealPid);
+        notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
+        notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
+        log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом.", principal.getName(), dealPid);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("value", data));
     }
 }
