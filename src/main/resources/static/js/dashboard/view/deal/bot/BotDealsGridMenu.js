@@ -205,7 +205,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             iconCls: 'x-fa fa-share',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
-                if (Number(ExtUtil.referenceQuery('litecoinBalanceField').getValue()) < deal.cryptoAmount) {
+                if (Number(ExtUtil.referenceQuery('litecoinBalanceField').getValue()) < Number(deal.cryptoAmountNumber)) {
                     ExtMessages.info('Внимание', 'На балансе недостаточно средств для автовывода сделки.')
                     return
                 }

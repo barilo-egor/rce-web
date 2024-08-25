@@ -97,7 +97,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     listeners: {
                         painted: function (me) {
                             ExtUtil.mRequest({
-                                url: '/deal/bot/getDealRequestGroup',
+                                url: '/deal/bot/getAutoWithdrawalGroup',
                                 method: 'GET',
                                 success: function (response) {
                                     me.setValue(response.body.data.title)
