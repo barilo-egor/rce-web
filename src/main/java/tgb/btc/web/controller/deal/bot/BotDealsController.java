@@ -233,6 +233,16 @@ public class BotDealsController extends BaseController {
         );
     }
 
+    @GetMapping("/getAutoWithdrawalGroup")
+    @ResponseBody
+    public SuccessResponse<?> getAutoWithdrawalGroup() {
+        return SuccessResponseUtil.data(webGroupChatService.getAutoWithdrawal(),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
     @GetMapping("/getDefaultGroups")
     @ResponseBody
     public SuccessResponse<?> getDefaultGroups() {

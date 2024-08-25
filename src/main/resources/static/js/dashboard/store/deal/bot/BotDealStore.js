@@ -20,6 +20,9 @@ Ext.define('Dashboard.store.deal.bot.BotDealStore', {
     listeners: {
         beforeload: function(me, operation) {
             operation.setParams(me.getFiltersFromPanel())
+        },
+        load: function () {
+            ExtUtil.referenceQuery('litecoinBalanceField').reload()
         }
     },
 

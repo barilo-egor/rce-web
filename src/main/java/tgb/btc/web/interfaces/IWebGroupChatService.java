@@ -8,6 +8,8 @@ public interface IWebGroupChatService {
 
     GroupChat getDealRequests();
 
+    GroupChat getAutoWithdrawal();
+
     List<GroupChat> getDefaultGroups();
 
     GroupChat getApiDealRequests(Long apiUserPid);

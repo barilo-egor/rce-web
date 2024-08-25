@@ -26,6 +26,12 @@ public class WebGroupChatService implements IWebGroupChatService {
     }
 
     @Override
+    public GroupChat getAutoWithdrawal() {
+        return groupChatService.getAllByType(GroupChatType.AUTO_WITHDRAWAL).stream().findFirst()
+                .orElse(GroupChat.empty());
+    }
+
+    @Override
     public List<GroupChat> getDefaultGroups() {
         return groupChatService.getAllByType(GroupChatType.DEFAULT);
     }
