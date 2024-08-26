@@ -1,6 +1,8 @@
 package tgb.btc.web.controller.payment.types.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,12 @@ import tgb.btc.web.vo.form.ApiRequisiteForm;
 import tgb.btc.web.vo.form.PaymentTypeForm;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @ExtJSController
 @RequestMapping(ControllerMapping.API_PAYMENT_TYPES)
+@Slf4j
 public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     private final IApiPaymentTypeService apiPaymentTypeService;
@@ -111,9 +115,11 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
     }
 
     @PatchMapping("/requisite/{requisitePid}")
-    public ResponseEntity<Object> updateRequisite(@PathVariable Long requisitePid,
+    public ResponseEntity<Object> updateRequisite(Principal principal, @PathVariable Long requisitePid,
                                                   @RequestParam(required = false) Boolean isOn,
                                                   @RequestParam(required = false) String requisite) {
+        log.debug("Пользователь {} обновил реквизит {}: isOn={}, requisite={}", principal.getName(),
+                requisitePid, isOn, requisite);
         apiRequisiteService.update(requisitePid, requisite, isOn);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
