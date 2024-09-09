@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.bean.bot.SecurePaymentDetails;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
 import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.controller.BaseResponseEntityController;
@@ -16,12 +18,22 @@ import java.util.List;
 @RequestMapping("/paymentTypes/bot")
 public class BotPaymentTypesController extends BaseResponseEntityController {
 
-    private ISecurePaymentDetailsService securePaymentDetailsService;
+    private final ISecurePaymentDetailsService securePaymentDetailsService;
+
+    private final IPaymentTypeService paymentTypeService;
 
     @Autowired
-    protected BotPaymentTypesController(IObjectNodeService objectNodeService, ISecurePaymentDetailsService securePaymentDetailsService) {
+    protected BotPaymentTypesController(IObjectNodeService objectNodeService,
+                                        ISecurePaymentDetailsService securePaymentDetailsService,
+                                        IPaymentTypeService paymentTypeService) {
         super(objectNodeService);
         this.securePaymentDetailsService = securePaymentDetailsService;
+        this.paymentTypeService = paymentTypeService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PaymentType>> getPaymentTypes() {
+        return new ResponseEntity<>(paymentTypeService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/securePaymentDetails")
