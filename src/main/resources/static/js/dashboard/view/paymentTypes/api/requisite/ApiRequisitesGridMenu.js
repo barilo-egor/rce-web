@@ -15,6 +15,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesGridMenu', {
                         data: {
                             requisitePid: ExtUtil.referenceQuery('apiRequisitesGrid').getPidOfSelected(),
                             requisite: ExtUtil.referenceQuery('apiRequisitesGrid').getRequisiteOfSelected(),
+                            comment: ExtUtil.referenceQuery('apiRequisitesGrid').getCommentOfSelected(),
                         }
                     }
                 }).show()

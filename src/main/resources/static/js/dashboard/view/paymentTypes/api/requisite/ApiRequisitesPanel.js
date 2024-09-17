@@ -9,7 +9,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel', {
 
     title: 'Реквизиты',
     setDefaultMask: function () {
-        Ext.getStore('requisiteStore').removeAll()
+        Ext.getStore('apiRequisiteStore').removeAll()
         this.setMasked({
             xtype: 'loadmask',
             message: 'Выберите тип оплаты',
@@ -39,7 +39,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel', {
         {
             xtype: 'grid',
             reference: 'apiRequisitesGrid',
-            store: 'requisiteStore',
+            store: 'apiRequisiteStore',
 
             listeners: {
                 childcontextmenu: 'openGridMenu',
@@ -59,6 +59,13 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel', {
                 }
                 return null
             },
+            getCommentOfSelected: function () {
+                let selection = this.getSelection()
+                if (selection) {
+                    return selection.get('comment')
+                }
+                return null
+            },
 
             columns: [
                 {
@@ -74,8 +81,13 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisitesPanel', {
                 {
                     text: 'Реквизит',
                     dataIndex: 'requisite',
-                    flex: 1,
+                    flex: 0.6,
                     menuDisabled: true
+                },
+                {
+                    text: 'Примечание',
+                    dataIndex: 'comment',
+                    flex: 0.4
                 }
             ]
         },

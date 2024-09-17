@@ -20,7 +20,7 @@ Ext.define('Dashboard.store.paymentTypes.api.ApiPaymentTypeStore', {
                         paymentTypePid: paymentTypePid
                     }
                 })
-                Ext.getStore('requisiteStore').load({
+                Ext.getStore('apiRequisiteStore').load({
                     params: {
                         paymentTypePid: paymentTypePid
                     }

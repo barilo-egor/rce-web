@@ -10,7 +10,6 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.EditApiRequisiteDialog', {
     title: 'Редактирование реквизита',
 
     width: 550,
-    height: 210,
 
     layout: 'fit',
     items: [
@@ -45,6 +44,16 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.EditApiRequisiteDialog', {
                     requiredMessage: 'Реквизит обязателен для заполнения.',
                     bind: {
                         value: '{requisite}'
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    reference: 'commentField',
+                    label: 'Примечание',
+                    dataIndex: 'comment',
+                    flex: 0.4,
+                    bind: {
+                        value: '{comment}'
                     }
                 }
             ]

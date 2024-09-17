@@ -12,4 +12,6 @@ public class ApiRequisiteForm {
     private Long paymentTypePid;
 
     private String requisite;
+
+    private String comment;
 }

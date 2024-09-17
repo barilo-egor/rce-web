@@ -10,7 +10,6 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteDialog', {
     title: 'Добавление реквизита',
 
     width: 550,
-    height: 210,
 
     layout: 'fit',
     items: [
@@ -41,6 +40,11 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteDialog', {
                     name: 'requisite',
                     required: true,
                     requiredMessage: 'Реквизит обязателен для заполнения.'
+                },
+                {
+                    xtype: 'textfield',
+                    label: 'Примечание',
+                    name: 'comment'
                 }
             ]
         }

@@ -2,7 +2,6 @@ package tgb.btc.web.controller.payment.types.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +38,7 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @Autowired
     public ApiPaymentTypesController(IObjectNodeService objectNodeService, IApiPaymentTypeService apiPaymentTypeService,
-                                     IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService,
+            IWebApiUsersService webApiUsersService, IWebApiRequisitesService webApiRequisitesService,
             ApiRequisiteService apiRequisiteService) {
         super(objectNodeService);
         this.apiPaymentTypeService = apiPaymentTypeService;
@@ -80,10 +79,9 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         return new ResponseEntity<>(apiPaymentTypeService.exists(id), HttpStatus.ACCEPTED);
     }
 
-
     @GetMapping("/client")
     public ResponseEntity<List<ObjectNode>> getClient(@RequestParam Long paymentTypePid,
-                                                      @RequestParam(required = false) Boolean isAdding) {
+            @RequestParam(required = false) Boolean isAdding) {
         return new ResponseEntity<>(
                 webApiUsersService.getIdByPaymentTypePid(isAdding, paymentTypePid), HttpStatus.ACCEPTED
         );
@@ -91,13 +89,13 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PutMapping("/{paymentTypePid}/client/{apiUserId}")
     public ResponseEntity<ObjectNode> addPaymentType(@PathVariable Long paymentTypePid,
-                                                     @PathVariable String apiUserId) {
+            @PathVariable String apiUserId) {
         return webApiUsersService.addPaymentType(paymentTypePid, apiUserId);
     }
 
     @DeleteMapping("/{paymentTypePid}/client/{apiUserId}")
     public ResponseEntity<ObjectNode> deletePaymentType(@PathVariable Long paymentTypePid,
-                                                        @PathVariable String apiUserId) {
+            @PathVariable String apiUserId) {
         return webApiUsersService.deletePaymentType(paymentTypePid, apiUserId);
     }
 
@@ -110,17 +108,19 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
 
     @PostMapping("/requisite")
     public ResponseEntity<List<ApiRequisite>> createRequisite(@RequestBody ApiRequisiteForm apiRequisiteForm) {
-        apiRequisiteService.save(apiRequisiteForm.getPaymentTypePid(), apiRequisiteForm.getRequisite());
+        apiRequisiteService.save(apiRequisiteForm.getPaymentTypePid(), apiRequisiteForm.getRequisite(),
+                apiRequisiteForm.getComment());
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @PatchMapping("/requisite/{requisitePid}")
     public ResponseEntity<Object> updateRequisite(Principal principal, @PathVariable Long requisitePid,
-                                                  @RequestParam(required = false) Boolean isOn,
-                                                  @RequestParam(required = false) String requisite) {
-        log.debug("Пользователь {} обновил реквизит {}: isOn={}, requisite={}", principal.getName(),
-                requisitePid, isOn, requisite);
-        apiRequisiteService.update(requisitePid, requisite, isOn);
+            @RequestParam(required = false) Boolean isOn,
+            @RequestParam(required = false) String requisite,
+            @RequestParam(required = false) String comment) {
+        log.debug("Пользователь {} обновил реквизит {}: isOn={}, requisite={}, comment={}", principal.getName(),
+                requisitePid, isOn, requisite, comment);
+        apiRequisiteService.update(requisitePid, requisite, comment, isOn);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
@@ -129,4 +129,5 @@ public class ApiPaymentTypesController extends BaseResponseEntityController {
         apiRequisiteService.delete(requisitePid);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
 }

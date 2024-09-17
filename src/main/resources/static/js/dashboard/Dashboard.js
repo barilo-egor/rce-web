@@ -27,7 +27,7 @@ Ext.application({
         'Dashboard.store.deal.api.CalculationsStore',
         'Dashboard.store.paymentTypes.api.ApiPaymentTypeStore',
         'Dashboard.store.paymentTypes.api.ApiClientStore',
-        'Dashboard.store.paymentTypes.api.RequisiteStore',
+        'Dashboard.store.paymentTypes.api.ApiRequisiteStore',
         'Dashboard.store.deal.review.ReviewStore',
         'Dashboard.store.paymentTypes.bot.PaymentTypeStore',
         'Dashboard.store.paymentTypes.bot.SecurePaymentDetailsStore',

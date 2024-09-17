@@ -27,7 +27,7 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.ApiRequisiteController', {
 
     turnRequisite: function (me, rowIndex, checked) {
         ExtUtil.mask('apiRequisitesGrid', 'Обновление реквизита')
-        let url = '/paymentTypes/api/requisite/' + Ext.getStore('requisiteStore').getAt(rowIndex).get('pid')
+        let url = '/paymentTypes/api/requisite/' + Ext.getStore('apiRequisiteStore').getAt(rowIndex).get('pid')
         RequestUtil.request({
             url: url,
             method: 'PATCH',

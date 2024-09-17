@@ -42,7 +42,7 @@ Ext.define('Dashboard.view.paymentTypes.api.type.ApiPaymentTypesController', {
                 ExtUtil.referenceQuery('apiClientsPanel').setMasked(false)
             }
         })
-        Ext.getStore('requisiteStore').load({
+        Ext.getStore('apiRequisiteStore').load({
             params: {
                 paymentTypePid: paymentTypePid
             },

@@ -25,18 +25,20 @@ Ext.define('Dashboard.view.paymentTypes.api.requisite.AddApiRequisiteController'
     },
 
     editRequisite: function (me) {
-        let field = ExtUtil.referenceQuery('requisiteField')
-        if (!field.validate()) {
+        let requisiteField = ExtUtil.referenceQuery('requisiteField')
+        if (!requisiteField.validate()) {
             ExtMessages.topToast('Неверно заполнена форма')
             return
         }
+        let comment = ExtUtil.referenceQuery('commentField').getValue()
         ExtUtil.mask('editApiRequisiteDialog', 'Обновление реквизита')
         let url = '/paymentTypes/api/requisite/' + ExtUtil.referenceQuery('paymentTypePidField').getValue()
         RequestUtil.request({
             url: url,
             method: 'PATCH',
             params: {
-                requisite: field.getValue()
+                requisite: requisiteField.getValue(),
+                comment: comment
             },
             masked: 'editApiRequisiteDialog',
             success: function (response) {
