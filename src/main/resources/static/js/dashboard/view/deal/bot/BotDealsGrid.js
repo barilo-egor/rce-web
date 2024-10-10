@@ -117,16 +117,42 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 {
                     xtype: 'textfield',
                     reference: 'litecoinBalanceField',
-                    label: 'Litecoin баланс',
+                    label: 'LTC баланс',
                     labelAlign: 'left',
                     labelWidth: 110,
-                    width: 230,
+                    width: 190,
                     clearable: false,
                     editable: false,
                     reload: function () {
                         let me = this
                         ExtUtil.mRequest({
                             url: '/deal/bot/getBalance/LITECOIN',
+                            method: 'GET',
+                            success: function (response) {
+                                me.setValue(response.body.data.value)
+                            }
+                        })
+                    },
+                    listeners: {
+                        painted: function (me) {
+                            me.reload()
+                        }
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    reference: 'litecoinBalanceField',
+                    label: 'BTC баланс',
+                    labelAlign: 'left',
+                    labelWidth: 110,
+                    width: 190,
+                    clearable: false,
+                    editable: false,
+                    margin: '10 0 0 0',
+                    reload: function () {
+                        let me = this
+                        ExtUtil.mRequest({
+                            url: '/deal/bot/getBalance/BITCOIN',
                             method: 'GET',
                             success: function (response) {
                                 me.setValue(response.body.data.value)
