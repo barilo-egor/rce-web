@@ -148,7 +148,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     width: 190,
                     clearable: false,
                     editable: false,
-                    margin: '10 0 0 0',
+                    margin: '0 0 10 0',
                     reload: function () {
                         let me = this
                         ExtUtil.mRequest({
