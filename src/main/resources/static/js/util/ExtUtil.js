@@ -165,8 +165,8 @@ let ExtUtil = {
             let response = Ext.JSON.decode(rawResponse.responseText)
             if (!response.success) {
                 let addingText = response.description
-                    ? ': ' + response.description
-                    : '. Информация отсутствует.'
+                    ? response.description
+                    : 'Информация отсутствует.'
                 ExtMessages.error('Ошибка', addingText)
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
                 else if (config.loadingComponentRef) ExtUtil.maskOff(config.loadingComponentRef)
