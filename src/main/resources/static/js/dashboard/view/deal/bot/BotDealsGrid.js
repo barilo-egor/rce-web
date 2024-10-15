@@ -6,7 +6,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
     requires: [
         'Dashboard.view.deal.bot.BotDealsController',
         'Dashboard.view.deal.bot.BotDealsGridMenu',
-        'Dashboard.view.deal.bot.add.AddDialog'
+        'Dashboard.view.deal.bot.add.AddDialog',
+        'Dashboard.view.deal.bot.pool.BitcoinPoolDialog'
     ],
     controller: 'botDealsController',
 
@@ -120,7 +121,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'LTC баланс',
                     labelAlign: 'left',
                     labelWidth: 110,
-                    width: 190,
+                    width: 170,
                     clearable: false,
                     editable: false,
                     reload: function () {
@@ -145,7 +146,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'BTC баланс',
                     labelAlign: 'left',
                     labelWidth: 110,
-                    width: 190,
+                    width: 170,
                     clearable: false,
                     editable: false,
                     margin: '0 0 0 10',
@@ -163,6 +164,15 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                         painted: function (me) {
                             me.reload()
                         }
+                    }
+                },
+                {
+                    xtype: 'button',
+                    reference: 'bitcoinPoolButton',
+                    iconCls: 'x-fa fa-clipboard-list',
+                    tooltip: 'Пул сделок на автовывод',
+                    handler: function () {
+                        Ext.create('Dashboard.view.deal.bot.pool.BitcoinPoolDialog').show()
                     }
                 }
             ]

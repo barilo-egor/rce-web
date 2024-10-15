@@ -18,13 +18,15 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                     || ExtUtil.referenceQuery('dealRequestGroupField').groupPid === null)
             ExtUtil.referenceQuery('autoWithdrawalMenuButton')
                 .setHidden(deal.dealType.name === 'SELL' || !(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED')
-                    || deal.cryptoCurrency !== 'LITECOIN')
+                    || deal.cryptoCurrency !== 'LITECOIN' || deal.cryptoCurrency !== 'BITCOIN')
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')
                 .setHidden(!(status === 'VERIFICATION_RECEIVED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('deleteDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED' || createType === 'MANUAL'))
+            ExtUtil.referenceQuery('addToPoolMenuButton')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') && deal.cryptoCurrency !== 'LITECOIN')
         }
     },
 
@@ -222,6 +224,22 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                 }
                 ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и выполнить автовывод?',
                     confirmFn)
+            }
+        },
+        {
+            text: 'Добавить в пул',
+            reference: 'addToPoolMenuButton',
+            iconCls: 'x-fa fa-plus-square darkGreen',
+            handler: function (me) {
+                let dealPid = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData().pid
+                ExtUtil.mRequest({
+                    url: '/deal/bot/addToPool',
+                    params: {
+                        pid: dealPid
+                    },
+                    success: function (response) {
+                    }
+                })
             }
         },
         {

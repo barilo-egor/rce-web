@@ -14,6 +14,7 @@ public enum NotificationType {
     CHANGED_DEAL_REQUEST_GROUP,
     CHANGED_AUTO_WITHDRAWAL_GROUP,
     REVIEW_ACTION,
-    NEW_REVIEW
+    NEW_REVIEW,
+    POOL_CHANGED
     ;
 }

@@ -93,4 +93,10 @@ public class NotificationsAPI implements INotificationsAPI {
     public void newReview(Long aLong) {
         send(NotificationType.NEW_REVIEW, "Поступил новый отзыв №" + aLong);
     }
+
+    @Override
+    public void poolChanged() {
+        send(NotificationType.POOL_CHANGED, "Пул сделок BTC был обновлен.");
+    }
+
 }

@@ -31,5 +31,6 @@ Ext.application({
         'Dashboard.store.deal.review.ReviewStore',
         'Dashboard.store.paymentTypes.bot.PaymentTypeStore',
         'Dashboard.store.paymentTypes.bot.SecurePaymentDetailsStore',
+        'Dashboard.store.deal.bot.BitcoinPoolStore'
     ]
 })

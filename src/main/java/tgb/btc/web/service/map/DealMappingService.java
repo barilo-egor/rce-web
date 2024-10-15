@@ -16,8 +16,10 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.interfaces.map.IDealMappingService;
+import tgb.btc.web.service.ObjectNodeService;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,8 @@ public class DealMappingService implements IDealMappingService {
     private IBigDecimalService bigDecimalService;
 
     private IDealCountService dealCountService;
+
+    private ObjectNodeService objectNodeService;
 
     @Autowired
     public void setDealCountService(IDealCountService dealCountService) {
@@ -117,4 +121,18 @@ public class DealMappingService implements IDealMappingService {
         result.set("paymentReceipts", paymentReceipts);
         return result;
     }
+
+    @Override
+    public List<ObjectNode> mapPool(List<Deal> deals) {
+        return objectNodeService.map(deals, deal -> objectNodeService.getDefaultMapper().createObjectNode()
+                .put("pid", deal.getPid())
+                .put("cryptoAmount", deal.getCryptoAmount())
+                .put("wallet", deal.getWallet()));
+    }
+
+    @Autowired
+    public void setObjectNodeService(ObjectNodeService objectNodeService) {
+        this.objectNodeService = objectNodeService;
+    }
+
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
@@ -18,11 +20,13 @@ import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.process.IDealPoolService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
+import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.IWebGroupChatService;
@@ -71,6 +75,13 @@ public class BotDealsController extends BaseController {
     private IBigDecimalService bigDecimalService;
 
     private IAutoWithdrawalService autoWithdrawalService;
+
+    private IDealPoolService dealPoolService;
+
+    @Autowired
+    public void setDealPoolService(IDealPoolService dealPoolService) {
+        this.dealPoolService = dealPoolService;
+    }
 
     @Autowired
     public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
@@ -285,5 +296,27 @@ public class BotDealsController extends BaseController {
         notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
         log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом.", principal.getName(), dealPid);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("value", data));
+    }
+
+    @GetMapping("/poolDeals")
+    @ExtJSResponse
+    public ResponseEntity<List<ObjectNode>> poolDeals(@RequestParam CryptoCurrency cryptoCurrency) {
+        return new ResponseEntity<>(dealMappingService.mapPool(dealPoolService.getAllByDealStatusAndCryptoCurrency(cryptoCurrency)), HttpStatus.OK);
+    }
+
+    @PostMapping("/clearPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> clearPool(@RequestParam CryptoCurrency cryptoCurrency) {
+        dealPoolService.clearPool(cryptoCurrency);
+        notificationsAPI.poolChanged();
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/addToPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> addToPool(@RequestParam Long pid) {
+        dealPoolService.addToPool(pid);
+        notificationsAPI.poolChanged();
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

@@ -57,4 +57,9 @@ public class ObjectNodeService implements IObjectNodeService {
     public <T> T readValue(String str, Class<T> clazz) throws JsonProcessingException {
         return defaultMapper.readValue(str, clazz);
     }
+
+    @Override
+    public ObjectMapper getDefaultMapper() {
+        return defaultMapper;
+    }
 }
