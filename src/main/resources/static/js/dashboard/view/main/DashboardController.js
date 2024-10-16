@@ -113,6 +113,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     Ext.getStore('bitcoinPoolStore').reload()
+                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
                     break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))

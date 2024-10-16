@@ -26,7 +26,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             ExtUtil.referenceQuery('deleteDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED' || createType === 'MANUAL'))
             ExtUtil.referenceQuery('addToPoolMenuButton')
-                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') && deal.cryptoCurrency !== 'LITECOIN')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || deal.cryptoCurrency !== 'BITCOIN')
         }
     },
 

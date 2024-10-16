@@ -20,6 +20,7 @@ import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.interfaces.service.process.IDealPoolService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.process.CalculateService;
@@ -306,17 +307,29 @@ public class BotDealsController extends BaseController {
 
     @PostMapping("/clearPool")
     @ExtJSResponse
-    public ResponseEntity<Boolean> clearPool(@RequestParam CryptoCurrency cryptoCurrency) {
-        dealPoolService.clearPool(cryptoCurrency);
-        notificationsAPI.poolChanged();
+    public ResponseEntity<Boolean> clearPool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
+        dealPoolService.clearPool(cryptoCurrency, webUserService.getChatIdByUsername(principal.getName()));
         return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    private IWebUserService webUserService;
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @PostMapping("/addToPool")
     @ExtJSResponse
-    public ResponseEntity<Boolean> addToPool(@RequestParam Long pid) {
-        dealPoolService.addToPool(pid);
-        notificationsAPI.poolChanged();
+    public ResponseEntity<Boolean> addToPool(Principal principal, @RequestParam Long pid) {
+        dealPoolService.addToPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/removeFromPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> removeFromPool(Principal principal, @RequestParam Long pid) {
+        dealPoolService.deleteFromPool(pid, webUserService.getChatIdByUsername(principal.getName()));
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

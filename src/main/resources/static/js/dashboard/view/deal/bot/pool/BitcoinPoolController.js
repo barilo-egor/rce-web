@@ -5,59 +5,62 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolController', {
         'Dashboard.view.deal.bot.pool.BitcoinPoolGridMenu'
     ],
 
-    init: function(grid) {
-        if (Ext.os.is.Desktop) {
-            grid.el.on({
-                scope: this,
-                contextmenu: this.onContextMenu
-            });
-        }
+    show: function () {
+        let controller = this
+        let store = Ext.getStore('bitcoinPoolStore')
+        ExtUtil.mask('bitcoinPoolTotalContainer', 'Загрузка')
+        ExtUtil.referenceQuery('dealPoolSizeField').setValue(store.getTotalCount())
+        let totalSum = 0
+        store.getRange().forEach(record => totalSum = totalSum + record.get('cryptoAmount'))
+        ExtUtil.referenceQuery('dealPoolSumField').setValue(totalSum)
+        ExtUtil.maskOff('bitcoinPoolTotalContainer')
+        store.addListener('load', controller.setPoolSize)
+        store.addListener('load', controller.setPoolSum)
+        debugger
     },
 
-    destroy: function() {
-        this.toolMenu = Ext.destroy(this.toolMenu);
-
-        this.callParent();
+    destroy: function () {
+        let controller = this
+        Ext.getStore('bitcoinPoolStore').removeListener('load', controller.setPoolSize)
+        Ext.getStore('bitcoinPoolStore').removeListener('load', controller.setPoolSum)
+        debugger
     },
 
-    getMenu: function() {
-        var menu = this.toolMenu,
-            view = this.getView();
-
-        if (!menu) {
-            this.toolMenu = menu = Ext.create(Ext.apply({
-                ownerCmp: view
-            }, view.toolContextMenu));
-        }
-
-        return menu;
+    setPoolSize: function (store, records) {
+        ExtUtil.referenceQuery('dealPoolSizeField').setValue(records.length)
     },
 
-    updateMenu: function(record, el, e, align) {
-        var menu = this.getMenu();
-
-        this.getViewModel().set('record', record.getData());
-        menu.autoFocus = !e.pointerType;
-        menu.showBy(el, align);
+    setPoolSum: function (store, records) {
+        let totalSum = 0
+        records.forEach(record => totalSum = totalSum + record.get('cryptoAmount'))
+        ExtUtil.referenceQuery('dealPoolSumField').setValue(totalSum)
     },
 
-    onContextMenu: function(e) {
-        var grid = this.getView(),
-            target = e.getTarget(grid.itemSelector),
-            item;
+    removeFromPool: function (grid, info) {
+        ExtUtil.mRequest({
+            url: '/deal/bot/removeFromPool?pid=' + info.record.get('pid'),
+            method: 'DELETE',
+            success: function (response) {
 
-        if (target) {
-            e.stopEvent();
-
-            item = Ext.getCmp(target.id);
-
-            if (item) {
-                this.updateMenu(item.getRecord(), item.el, e, 't-b?');
             }
-        }
+        })
     },
 
-    onMenu: function(grid, context) {
-        this.updateMenu(context.record, context.tool.el, context.event, 'r-l?');
+    clearPool: function () {
+        let dealsSize = Ext.getStore('bitcoinPoolStore').getTotalCount()
+        ExtMessages.confirm('Внимание', 'Вы собираетесь удалить все <b>' + dealsSize + '</b> сделок из BTC пула. Продолжить?',
+            function () {
+                ExtUtil.mask('bitcoinPoolDialog', 'Очищается пул')
+                ExtUtil.mRequest({
+                    url: '/deal/bot/clearPool',
+                    params: {
+                        cryptoCurrency: 'BITCOIN'
+                    },
+                    loadingComponentRef: 'bitcoinPoolDialog',
+                    success: function (response) {
+                        ExtUtil.maskOff('bitcoinPoolDialog')
+                    }
+                })
+            })
     }
 })

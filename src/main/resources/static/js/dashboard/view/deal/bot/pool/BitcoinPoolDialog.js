@@ -9,11 +9,19 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolDialog', {
 
     title: 'Пул BTC сделок',
     closable: true,
-    width: 700,
+    width: 800,
     height: 500,
     emptyText: 'Сделки отсутствуют',
 
-    layout: 'fit',
+    layout: {
+        type: 'vbox',
+        align: 'right'
+    },
+
+    listeners: {
+        show: 'show',
+        destroy: 'destroy'
+    },
 
     buttons: [
         {
@@ -23,28 +31,38 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolDialog', {
         {
             xtype: 'button',
             text: 'Очистить пул',
-            handler: function () {
-                let dealsSize = Ext.getStore('bitcoinPoolStore').getTotalCount()
-                ExtMessages.confirm('Внимание', 'Вы собираетесь удалить все <b>' + dealsSize + '</b> сделок из BTC пула. Продолжить?',
-                    function () {
-                        ExtUtil.mask('bitcoinPoolDialog', 'Очищается пул')
-                        ExtUtil.mRequest({
-                            url: '/deal/bot/clearPool',
-                            params: {
-                                cryptoCurrency: 'BITCOIN'
-                            },
-                            loadingComponentRef: 'bitcoinPoolDialog',
-                            success: function (response) {
-                                ExtUtil.maskOff('bitcoinPoolDialog')
-                            }
-                        })
-                    })
-            }
+            handler: 'clearPool'
         }
     ],
     items: [
         {
-            xtype: 'bitcoinpoolgrid'
+            xtype: 'bitcoinpoolgrid',
+            flex: 1,
+            width: '100%'
+        },
+        {
+            xtype: 'panel',
+            reference: 'bitcoinPoolTotalContainer',
+            layout: {
+                type: 'hbox'
+            },
+            defaults: {
+                xtype: 'textfield',
+                readOnly: true,
+                clearable: false,
+                margin: '0 15 0 0',
+                width: 120
+            },
+            items: [
+                {
+                    reference: 'dealPoolSizeField',
+                    label: 'Количество сделок'
+                },
+                {
+                    reference: 'dealPoolSumField',
+                    label: 'Общая сумма',
+                }
+            ]
         }
     ]
 })
