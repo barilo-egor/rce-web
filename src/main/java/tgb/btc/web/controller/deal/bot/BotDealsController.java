@@ -31,6 +31,7 @@ import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.IWebGroupChatService;
+import tgb.btc.web.interfaces.deal.IDealProcessService;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 import tgb.btc.web.service.NotificationsAPI;
@@ -78,6 +79,13 @@ public class BotDealsController extends BaseController {
     private IAutoWithdrawalService autoWithdrawalService;
 
     private IDealPoolService dealPoolService;
+
+    private IDealProcessService dealProcessService;
+
+    @Autowired
+    public void setDealProcessService(IDealProcessService dealProcessService) {
+        this.dealProcessService = dealProcessService;
+    }
 
     @Autowired
     public void setDealPoolService(IDealPoolService dealPoolService) {
@@ -330,6 +338,13 @@ public class BotDealsController extends BaseController {
     @ExtJSResponse
     public ResponseEntity<Boolean> removeFromPool(Principal principal, @RequestParam Long pid) {
         dealPoolService.deleteFromPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/completePool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> completePool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
+        dealProcessService.completePool(principal, cryptoCurrency);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

@@ -62,5 +62,25 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolController', {
                     }
                 })
             })
+    },
+
+    poolWithdrawal: function () {
+        let dealsSize = ExtUtil.referenceQuery('dealPoolSizeField').getValue()
+        let totalAmount = ExtUtil.referenceQuery('dealPoolSumField').getValue()
+        ExtMessages.confirm('Внимание', 'Вы собираетесь подтвердить и вывести все <b>' + dealsSize
+            + '</b> сделок из пула на общую сумму <b>' + totalAmount + '</b> . Продолжить?',
+            function () {
+                ExtUtil.mask('bitcoinPoolDialog', 'Вывод пула')
+                ExtUtil.mRequest({
+                    url: '/deal/bot/completePool',
+                    params: {
+                        cryptoCurrency: 'BITCOIN'
+                    },
+                    loadingComponentRef: 'bitcoinPoolDialog',
+                    success: function (response) {
+                        ExtUtil.maskOff('bitcoinPoolDialog')
+                    }
+                })
+            })
     }
 })

@@ -18,7 +18,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                     || ExtUtil.referenceQuery('dealRequestGroupField').groupPid === null)
             ExtUtil.referenceQuery('autoWithdrawalMenuButton')
                 .setHidden(deal.dealType.name === 'SELL' || !(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED')
-                    || deal.cryptoCurrency !== 'LITECOIN' || deal.cryptoCurrency !== 'BITCOIN')
+                    || (deal.cryptoCurrency !== 'LITECOIN' && deal.cryptoCurrency !== 'BITCOIN'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')

@@ -26,7 +26,8 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolDialog', {
     buttons: [
         {
             xtype: 'button',
-            text: 'Автовывод'
+            text: 'Автовывод',
+            handler: 'poolWithdrawal'
         },
         {
             xtype: 'button',
