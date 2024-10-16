@@ -1,6 +1,7 @@
 package tgb.btc.web.service.deal;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
@@ -48,7 +49,7 @@ public class DealProcessService implements IDealProcessService {
                         .map(Deal::getCryptoAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
                 BigDecimal balance = autoWithdrawalService.getBalance(CryptoCurrency.BITCOIN);
-                if (balance.compareTo(totalAmount) < 0) {
+                if (BooleanUtils.isNotTrue(autoWithdrawalService.getMinAmount()) && balance.compareTo(totalAmount) < 0) {
                     throw new BaseException("Недостаточно средств на балансе.");
                 }
                 autoWithdrawalService.withdrawal(deals.stream().map(Deal::getPid).collect(Collectors.toList()));
