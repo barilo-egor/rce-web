@@ -79,6 +79,8 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolController', {
                     loadingComponentRef: 'bitcoinPoolDialog',
                     success: function (response) {
                         ExtUtil.maskOff('bitcoinPoolDialog')
+                        ExtUtil.referenceQuery('bitcoinPoolDialog').close()
+                        ExtMessages.info('Информация', 'Сделки успешно выведены.')
                     }
                 })
             })
