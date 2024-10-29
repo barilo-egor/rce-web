@@ -13,12 +13,20 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                 .setHidden(createType === 'MANUAL')
             ExtUtil.referenceQuery('confirmDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
+            ExtUtil.referenceQuery('confirmDealWithRequestMenuButton')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL'
+                    || ExtUtil.referenceQuery('dealRequestGroupField').groupPid === null)
+            ExtUtil.referenceQuery('autoWithdrawalMenuButton')
+                .setHidden(deal.dealType.name === 'SELL' || !(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED')
+                    || (deal.cryptoCurrency !== 'LITECOIN' && deal.cryptoCurrency !== 'BITCOIN'))
             ExtUtil.referenceQuery('additionalVerificationMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'VERIFICATION_REJECTED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('showVerificationMenuButton')
                 .setHidden(!(status === 'VERIFICATION_RECEIVED') || createType === 'MANUAL')
             ExtUtil.referenceQuery('deleteDealMenuButton')
                 .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED' || createType === 'MANUAL'))
+            ExtUtil.referenceQuery('addToPoolMenuButton')
+                .setHidden(!(status === 'PAID' || status === 'AWAITING_VERIFICATION' || status === 'VERIFICATION_RECEIVED' || status === 'VERIFICATION_REJECTED') || deal.cryptoCurrency !== 'BITCOIN')
         }
     },
 
@@ -32,6 +40,25 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                 ExtMessages.topToast('Реквизит скопирован в буфер обмена')
             }
         },
+        {
+            text: 'Скопировать фиат.сумму',
+            reference: 'copyAmountMenuButton',
+            iconCls: 'x-fa fa-copy',
+            handler: function (me) {
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('amount').split(' ')[0])
+                ExtMessages.topToast('Фиат.сумма скопирована в буфер обмена')
+            }
+        },
+        {
+            text: 'Скопировать сумму крипты',
+            reference: 'copyCryptoAmountMenuButton',
+            iconCls: 'x-fa fa-copy',
+            handler: function (me) {
+                navigator.clipboard.writeText(ExtUtil.referenceQuery('botDealsGrid').getSelection().get('cryptoAmount').split(' ')[0])
+                ExtMessages.topToast('Сумма крипты скопирована в буфер обмена')
+            }
+        },
+        '-',
         {
             text: 'Показать чек',
             reference: 'showCheckMenuButton',
@@ -142,12 +169,77 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                             pid: deal.pid
                         },
                         success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена')
                             Ext.getStore('botDealStore').reload()
                         }
                     })
                 }
                 ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
                     confirmFn)
+            }
+        },
+        {
+            text: 'Подтвердить с запросом',
+            reference: 'confirmDealWithRequestMenuButton',
+            iconCls: 'x-fa fa-check-circle darkGreen',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                let confirmFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/confirm',
+                        params: {
+                            pid: deal.pid,
+                            isNeedRequest: true
+                        },
+                        success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена')
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    })
+                }
+                ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и отправить запрос на вывод?',
+                    confirmFn)
+            }
+        },
+        {
+            text: 'Автовывод',
+            reference: 'autoWithdrawalMenuButton',
+            iconCls: 'x-fa fa-share',
+            handler: function (me) {
+                let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
+                if (Number(ExtUtil.referenceQuery('litecoinBalanceField').getValue()) < Number(deal.cryptoAmountNumber)) {
+                    ExtMessages.info('Внимание', 'На балансе недостаточно средств для автовывода сделки.')
+                    return
+                }
+                let confirmFn = function () {
+                    ExtUtil.mRequest({
+                        url: '/deal/bot/autoWithdrawal/' + deal.pid,
+                        method: 'POST',
+                        success: function (response) {
+                            ExtMessages.topToast('Сделка подтверждена и валюта отправлена')
+                            ExtUtil.referenceQuery('litecoinBalanceField').reload()
+                            Ext.getStore('botDealStore').reload()
+                        }
+                    })
+                }
+                ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + ' и выполнить автовывод?',
+                    confirmFn)
+            }
+        },
+        {
+            text: 'Добавить в пул',
+            reference: 'addToPoolMenuButton',
+            iconCls: 'x-fa fa-plus-square darkGreen',
+            handler: function (me) {
+                let dealPid = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData().pid
+                ExtUtil.mRequest({
+                    url: '/deal/bot/addToPool',
+                    params: {
+                        pid: dealPid
+                    },
+                    success: function (response) {
+                    }
+                })
             }
         },
         {

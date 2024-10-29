@@ -2,7 +2,10 @@ package tgb.btc.web.controller.deal.bot;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
@@ -11,21 +14,29 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.bot.DealRepository;
-import tgb.btc.library.service.bean.bot.DealService;
+import tgb.btc.library.constants.enums.bot.GroupChatType;
+import tgb.btc.library.exception.BaseException;
+import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
+import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
+import tgb.btc.library.interfaces.service.process.IDealPoolService;
+import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
-import tgb.btc.library.util.BigDecimalUtil;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
+import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.constant.enums.NotificationType;
-import tgb.btc.web.constant.enums.mapper.DealMapper;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.interfaces.IWebGroupChatService;
+import tgb.btc.web.interfaces.deal.IDealProcessService;
+import tgb.btc.web.interfaces.deal.IWebDealService;
+import tgb.btc.web.interfaces.map.IDealMappingService;
 import tgb.btc.web.service.NotificationsAPI;
-import tgb.btc.web.service.deal.WebDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
-import tgb.btc.web.vo.bean.DealVO;
 import tgb.btc.web.vo.form.BotDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,11 +52,11 @@ import java.util.Objects;
 @Slf4j
 public class BotDealsController extends BaseController {
 
-    private WebDealService webDealService;
+    private IWebDealService webDealService;
 
     private AdditionalVerificationProcessor additionalVerificationProcessor;
 
-    private DealService dealService;
+    private IModifyDealService modifyDealService;
 
     private INotifier notifier;
 
@@ -53,9 +64,64 @@ public class BotDealsController extends BaseController {
 
     private DealReportService dealReportService;
 
-    private DealRepository dealRepository;
+    private IReadDealService readDealService;
 
     private CalculateService calculateService;
+
+    private IWebGroupChatService webGroupChatService;
+
+    private IGroupChatService groupChatService;
+
+    private IDealMappingService dealMappingService;
+
+    private IBigDecimalService bigDecimalService;
+
+    private IAutoWithdrawalService autoWithdrawalService;
+
+    private IDealPoolService dealPoolService;
+
+    private IDealProcessService dealProcessService;
+
+    @Autowired
+    public void setDealProcessService(IDealProcessService dealProcessService) {
+        this.dealProcessService = dealProcessService;
+    }
+
+    @Autowired
+    public void setDealPoolService(IDealPoolService dealPoolService) {
+        this.dealPoolService = dealPoolService;
+    }
+
+    @Autowired
+    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
+        this.autoWithdrawalService = autoWithdrawalService;
+    }
+
+    @Autowired
+    public void setModifyDealService(IModifyDealService modifyDealService) {
+        this.modifyDealService = modifyDealService;
+    }
+
+    @Autowired
+    public void setBigDecimalService(IBigDecimalService bigDecimalService) {
+        this.bigDecimalService = bigDecimalService;
+    }
+
+    @Autowired
+    public void setDealMappingService(IDealMappingService dealMappingService) {
+        this.dealMappingService = dealMappingService;
+    }
+
+    @Autowired
+    public void setGroupChatService(IGroupChatService groupChatService) {
+        this.groupChatService = groupChatService;
+    }
+
+    @Autowired
+    public void setWebGroupChatService(IWebGroupChatService webGroupChatService) {
+        this.webGroupChatService = webGroupChatService;
+    }
+
     @Autowired
     public void setNotificationsAPI(NotificationsAPI notificationsAPI) {
         this.notificationsAPI = notificationsAPI;
@@ -67,8 +133,8 @@ public class BotDealsController extends BaseController {
     }
 
     @Autowired
-    public void setDealRepository(DealRepository dealRepository) {
-        this.dealRepository = dealRepository;
+    public void setReadDealService(IReadDealService readDealService) {
+        this.readDealService = readDealService;
     }
 
     @Autowired
@@ -87,12 +153,7 @@ public class BotDealsController extends BaseController {
     }
 
     @Autowired
-    public void setDealService(DealService dealService) {
-        this.dealService = dealService;
-    }
-
-    @Autowired
-    public void setWebDealService(WebDealService webDealService) {
+    public void setWebDealService(IWebDealService webDealService) {
         this.webDealService = webDealService;
     }
 
@@ -100,20 +161,21 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public ObjectNode findAll(@RequestBody BotDealsSearchForm botDealsSearchForm) {
         Map<String, Object> parameters = new HashMap<>();
-        List<DealVO> dealVOList = webDealService.findAll(botDealsSearchForm.getPage(),
+        List<Deal> deals = webDealService.findAll(botDealsSearchForm.getPage(),
                 botDealsSearchForm.getLimit(),
                 null,
                 botDealsSearchForm.getWhereStr(parameters),
                 botDealsSearchForm.getSortStr(), parameters);
-        return JacksonUtil.pagingData(dealVOList,
+        return JacksonUtil.pagingData(deals,
                 webDealService.count(botDealsSearchForm.getWhereStr(parameters), parameters),
-                DealMapper.FIND_ALL);
+                deal -> dealMappingService.mapFindAll(deal));
     }
 
     @PostMapping("/confirm")
     @ResponseBody
-    public SuccessResponse<?> confirm(Principal principal, Long pid) {
-        dealService.confirm(pid);
+    public SuccessResponse<?> confirm(Principal principal, Long pid, Boolean isNeedRequest) {
+        modifyDealService.confirm(pid);
+        if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawDeal("веба", principal.getName(), pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка подтверждена.");
@@ -133,7 +195,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> delete(Principal principal, Long pid, Boolean isBanUser) {
         if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
-        dealService.deleteDeal(pid, isBanUser);
+        modifyDealService.deleteDeal(pid, isBanUser);
         notificationsAPI.send(NotificationType.DELETE_BOT_DEAL);
         log.debug("Пользователь {} удалил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
@@ -152,7 +214,7 @@ public class BotDealsController extends BaseController {
     @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
-        byte[] result = dealReportService.loadReport(dealRepository.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
+        byte[] result = dealReportService.loadReport(readDealService.getDealsByPids((List<Long>) request.getSession().getAttribute("dealsPids")));
         log.debug("Пользователь {} экспортировал сделки из бота.", principal.getName());
         request.getSession().removeAttribute("dealsPids");
         return result;
@@ -169,7 +231,7 @@ public class BotDealsController extends BaseController {
                 fiatCurrency, dealType, isEnteredInCrypto, personalDiscount);
         return SuccessResponseUtil.data(isEnteredInCrypto ? dealAmount.getAmount() : dealAmount.getCryptoAmount(),
                 data -> JacksonUtil.getEmpty().put("amount",
-                        BigDecimalUtil.roundToPlainString(data, isEnteredInCrypto ? 0 : cryptoCurrency.getScale())));
+                        bigDecimalService.roundToPlainString(data, isEnteredInCrypto ? 0 : cryptoCurrency.getScale())));
     }
 
     @PostMapping("/saveDeal")
@@ -179,5 +241,110 @@ public class BotDealsController extends BaseController {
         Deal deal = webDealService.createManual(principal.getName(), cryptoAmount, amount, cryptoCurrency, dealType, fiatCurrency);
         log.debug("Пользователь {} создал ручную сделку={}", principal.getName(), deal.manualToString());
         return SuccessResponseUtil.toast("Сделка №" + deal.getPid() + " создана");
+    }
+
+    @GetMapping("/getDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> getDealRequestGroup() {
+        return SuccessResponseUtil.data(webGroupChatService.getDealRequests(),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
+    @GetMapping("/getAutoWithdrawalGroup")
+    @ResponseBody
+    public SuccessResponse<?> getAutoWithdrawalGroup() {
+        return SuccessResponseUtil.data(webGroupChatService.getAutoWithdrawal(),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
+    @GetMapping("/getDefaultGroups")
+    @ResponseBody
+    public SuccessResponse<?> getDefaultGroups() {
+        return SuccessResponseUtil.jsonData(webGroupChatService.getDefaultGroups());
+    }
+
+    @PostMapping("/updateDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> updateDealRequestGroup(Long pid) {
+        groupChatService.updateTypeByPid(GroupChatType.DEAL_REQUEST, pid);
+        if (Objects.nonNull(notifier)) notifier.sendGreetingToNewDealRequestGroup();
+        notificationsAPI.send(NotificationType.CHANGED_DEAL_REQUEST_GROUP, groupChatService.getAllByType(GroupChatType.DEAL_REQUEST).stream().findFirst()
+                .orElseThrow(() -> new BaseException("Не найдена группа для отправки запросов сразу после обновления.")));
+        return new SuccessResponse<>();
+    }
+
+    @PostMapping("/updateAutoWithdrawalGroup")
+    @ResponseBody
+    public SuccessResponse<?> updateAutoWithdrawalGroup(Long pid) {
+        groupChatService.updateTypeByPid(GroupChatType.AUTO_WITHDRAWAL, pid);
+        if (Objects.nonNull(notifier)) notifier.sendGreetingToNewAutoWithdrawalGroup();
+        notificationsAPI.send(NotificationType.CHANGED_AUTO_WITHDRAWAL_GROUP, groupChatService.getAllByType(GroupChatType.AUTO_WITHDRAWAL).stream().findFirst()
+                .orElseThrow(() -> new BaseException("Не найдена группа для отправки автовыводов сразу после обновления.")));
+        return new SuccessResponse<>();
+    }
+
+    @GetMapping("/getBalance/{currency}")
+    @ResponseBody
+    public SuccessResponse<?> getBalance(@PathVariable CryptoCurrency currency) {
+        return SuccessResponseUtil.data(autoWithdrawalService.getBalance(currency),
+                data -> JacksonUtil.getEmpty().put("value", data.toPlainString()));
+    }
+
+    @PostMapping("/autoWithdrawal/{dealPid}")
+    @ResponseBody
+    public SuccessResponse<?> autoWithdrawal(Principal principal, @PathVariable Long dealPid) {
+        autoWithdrawalService.withdrawal(dealPid);
+        modifyDealService.confirm(dealPid);
+        notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
+        notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
+        log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом.", principal.getName(), dealPid);
+        return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("value", data));
+    }
+
+    @GetMapping("/poolDeals")
+    @ExtJSResponse
+    public ResponseEntity<List<ObjectNode>> poolDeals(@RequestParam CryptoCurrency cryptoCurrency) {
+        return new ResponseEntity<>(dealMappingService.mapPool(dealPoolService.getAllByDealStatusAndCryptoCurrency(cryptoCurrency)), HttpStatus.OK);
+    }
+
+    @PostMapping("/clearPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> clearPool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
+        dealPoolService.clearPool(cryptoCurrency, webUserService.getChatIdByUsername(principal.getName()));
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    private IWebUserService webUserService;
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
+    }
+
+    @PostMapping("/addToPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> addToPool(Principal principal, @RequestParam Long pid) {
+        dealPoolService.addToPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/removeFromPool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> removeFromPool(Principal principal, @RequestParam Long pid) {
+        dealPoolService.deleteFromPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/completePool")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> completePool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
+        dealProcessService.completePool(principal, cryptoCurrency);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

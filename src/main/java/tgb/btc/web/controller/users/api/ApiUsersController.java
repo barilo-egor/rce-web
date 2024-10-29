@@ -3,22 +3,21 @@ package tgb.btc.web.controller.users.api;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.repository.web.ApiCalculationRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.service.bean.web.ApiUserService;
-import tgb.btc.library.service.bean.web.WebUserService;
+import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
-import tgb.btc.web.service.deal.WebApiDealService;
-import tgb.btc.web.service.process.ApiCalculationProcessService;
-import tgb.btc.web.service.process.ApiUserProcessService;
-import tgb.btc.web.service.users.WebApiUsersService;
+import tgb.btc.web.interfaces.IWebGroupChatService;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
+import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
+import tgb.btc.web.interfaces.process.IApiUserProcessService;
+import tgb.btc.web.interfaces.users.IWebApiUsersService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.api.Calculation;
@@ -33,60 +32,61 @@ import java.util.Objects;
 @Slf4j
 public class ApiUsersController extends BaseController {
 
-    private WebApiUsersService webApiUsersService;
+    private IWebApiUsersService webApiUsersService;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserProcessService apiUserProcessService;
 
-    private ApiUserProcessService apiUserProcessService;
+    private IApiUserService apiUserService;
 
-    private ApiUserService apiUserService;
+    private IWebApiDealService webApiDealService;
 
-    private WebApiDealService webApiDealService;
+    private IApiCalculationProcessService apiCalculationProcessService;
 
-    private ApiCalculationProcessService apiCalculationProcessService;
+    private IApiCalculationService apiCalculationService;
 
-    private ApiCalculationRepository apiCalculationRepository;
+    private IWebUserService webUserService;
 
-    private WebUserService webUserService;
+    private IWebGroupChatService webGroupChatService;
 
     @Autowired
-    public void setWebUserService(WebUserService webUserService) {
+    public void setWebGroupChatService(IWebGroupChatService webGroupChatService) {
+        this.webGroupChatService = webGroupChatService;
+    }
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
     }
 
     @Autowired
-    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
-        this.apiCalculationRepository = apiCalculationRepository;
+    public void setApiCalculationService(
+            IApiCalculationService apiCalculationService) {
+        this.apiCalculationService = apiCalculationService;
     }
 
     @Autowired
     public void setApiCalculationProcessService(
-            ApiCalculationProcessService apiCalculationProcessService) {
+            IApiCalculationProcessService apiCalculationProcessService) {
         this.apiCalculationProcessService = apiCalculationProcessService;
     }
 
     @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 
     @Autowired
-    public void setApiUserService(ApiUserService apiUserService) {
+    public void setApiUserService(IApiUserService apiUserService) {
         this.apiUserService = apiUserService;
     }
 
     @Autowired
-    public void setApiUserProcessService(ApiUserProcessService apiUserProcessService) {
+    public void setApiUserProcessService(IApiUserProcessService apiUserProcessService) {
         this.apiUserProcessService = apiUserProcessService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
-    }
-
-    @Autowired
-    public void setWebApiUsersService(WebApiUsersService webApiUsersService) {
+    public void setWebApiUsersService(IWebApiUsersService webApiUsersService) {
         this.webApiUsersService = webApiUsersService;
     }
 
@@ -94,18 +94,16 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> findAll(@RequestParam(required = false) String id,
             @RequestParam(required = false) FiatCurrency fiatCurrency,
-            @RequestParam(required = false) String token,
-            @RequestParam(required = false) String buyRequisite,
-            @RequestParam(required = false) String sellRequisite) {
+            @RequestParam(required = false) String token) {
         return SuccessResponseUtil.jsonData(
-                webApiUsersService.findAll(id, fiatCurrency, token, buyRequisite, sellRequisite));
+                webApiUsersService.findAll(id, fiatCurrency, token));
     }
 
     @GetMapping("/generateToken")
     @ResponseBody
     public SuccessResponse<?> generateToken() {
         String token = RandomStringUtils.randomAlphanumeric(42);
-        while (apiUserRepository.countByToken(token) > 0) {
+        while (apiUserService.countByToken(token) > 0) {
             token = RandomStringUtils.randomAlphanumeric(42);
         }
         return SuccessResponseUtil.data(token, data -> JacksonUtil.getEmpty().put("token", data));
@@ -123,7 +121,7 @@ public class ApiUsersController extends BaseController {
     @GetMapping("/isExistById")
     @ResponseBody
     public SuccessResponse<?> isExistById(String id) {
-        return SuccessResponseUtil.data(apiUserRepository.countById(id) > 0,
+        return SuccessResponseUtil.data(apiUserService.countById(id) > 0,
                 data -> JacksonUtil.getEmpty().put("exist", data));
     }
 
@@ -153,17 +151,17 @@ public class ApiUsersController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> hasCalculations(Long apiUserPid) {
         return SuccessResponseUtil.jsonData(() -> JacksonUtil.getEmpty().put("hasCalculations",
-                apiCalculationRepository.countAllByApiUser(apiUserRepository.getById(apiUserPid)) > 0));
+                apiCalculationService.countAllByApiUser(apiUserService.findById(apiUserPid)) > 0));
     }
 
     @GetMapping("/getCalculations")
     @ResponseBody
     public ObjectNode getCalculations(Long apiUserPid) {
         if (Objects.isNull(apiUserPid)) return JacksonUtil.getEmpty();
-        ApiUser apiUser = apiUserRepository.getById(apiUserPid);
+        ApiUser apiUser = apiUserService.findById(apiUserPid);
         List<Calculation> calculations = apiUserProcessService.getCalculations(apiUser);
         ObjectNode result = apiCalculationProcessService.mapToTree(calculations);
-        JacksonUtil.pagingData(result, apiCalculationRepository.countAllByApiUser(apiUser));
+        JacksonUtil.pagingData(result, apiCalculationService.countAllByApiUser(apiUser));
         return result;
     }
 
@@ -179,5 +177,21 @@ public class ApiUsersController extends BaseController {
     public SuccessResponse<?> removeWebUser(String username, Long apiUserPid) {
         webUserService.removeWebUser(username, apiUserPid);
         return SuccessResponseUtil.toast("WEB пользователь отвязан.");
+    }
+
+    @GetMapping("/getApiDealRequestGroup")
+    @ResponseBody
+    public SuccessResponse<?> getApiDealRequestGroup(Long apiUserPid) {
+        return SuccessResponseUtil.data(webGroupChatService.getApiDealRequests(apiUserPid),
+                data -> JacksonUtil.getEmpty()
+                        .put("title", data.getTitle())
+                        .put("pid", data.getPid())
+        );
+    }
+
+    @GetMapping("/getDefaultGroups")
+    @ResponseBody
+    public SuccessResponse<?> getDefaultGroups() {
+        return SuccessResponseUtil.jsonData(webGroupChatService.getDefaultGroups());
     }
 }

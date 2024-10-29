@@ -28,13 +28,13 @@ public class ApiDealVO {
 
     private FiatCurrency fiatCurrency;
 
-    public ApiStatusCode verify() {
+    public ApiStatusCode verify(boolean isRequisiteRequired) {
         if (Objects.isNull(token)) return ApiStatusCode.EMPTY_TOKEN;
         if (Objects.isNull(dealType)) return ApiStatusCode.EMPTY_DEAL_TYPE;
         if (Objects.isNull(amount) && Objects.isNull(cryptoAmount)) return ApiStatusCode.EMPTY_AMOUNTS;
         if (Objects.nonNull(amount) && Objects.nonNull(cryptoAmount)) return ApiStatusCode.ONLY_ONE_AMOUNT_NEEDED;
         if (Objects.isNull(cryptoCurrency)) return ApiStatusCode.EMPTY_CRYPTO_CURRENCY;
-        if (Objects.isNull(requisite)) return ApiStatusCode.EMPTY_REQUISITE;
+        if (isRequisiteRequired && Objects.isNull(requisite)) return ApiStatusCode.EMPTY_REQUISITE;
         return null;
     }
 

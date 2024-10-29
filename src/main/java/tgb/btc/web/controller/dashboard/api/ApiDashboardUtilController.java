@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.JsonConvertable;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.service.bean.web.ApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.config.SessionEventListener;
@@ -26,20 +28,25 @@ import java.security.Principal;
 @Slf4j
 public class ApiDashboardUtilController extends BaseController {
 
-    private ApiUserService apiUserService;
+    private IApiUserService apiUserService;
 
-    private ApiUserRepository apiUserRepository;
+    private IWebUserService webUserService;
 
-    private WebUserRepository webUserRepository;
+    private IApiDealService apiDealService;
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
+
+    @Autowired
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Autowired
@@ -75,14 +82,14 @@ public class ApiDashboardUtilController extends BaseController {
     @GetMapping("/getToken")
     @ResponseBody
     public SuccessResponse<?> getToken(Principal principal) {
-        return SuccessResponseUtil.data(apiUserRepository.getByUsername(principal.getName()).getToken(),
+        return SuccessResponseUtil.data(apiUserService.getByUsername(principal.getName()).getToken(),
                 data -> JacksonUtil.getEmpty().put("token", data));
     }
 
     @GetMapping("/getSoundEnabled")
     @ResponseBody
     public SuccessResponse<?> getSoundEnabled(Principal principal) {
-        return SuccessResponseUtil.data(BooleanUtils.isNotFalse(webUserRepository.getSoundEnabledByUsername(principal.getName())),
+        return SuccessResponseUtil.data(BooleanUtils.isNotFalse(webUserService.getSoundEnabledByUsername(principal.getName())),
                 data -> JacksonUtil.getEmpty().put("soundEnabled", data));
     }
 
@@ -99,9 +106,9 @@ public class ApiDashboardUtilController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> updateLogin(Principal principal, String login) {
         String oldUsername = principal.getName();
-        webUserRepository.updateUsername(login, oldUsername);
+        webUserService.updateUsername(login, oldUsername);
         log.debug("Пользователь {} сменил username на {}", oldUsername, login);
-        Long chatId = webUserRepository.getChatIdByUsername(login);
+        Long chatId = webUserService.getChatIdByUsername(login);
         SessionEventListener.HTTP_SESSIONS.get(chatId).invalidate();
         SessionEventListener.HTTP_SESSIONS.remove(chatId);
         return new SuccessResponse<>();
@@ -110,7 +117,27 @@ public class ApiDashboardUtilController extends BaseController {
     @PostMapping("/updateSoundEnabled")
     @ResponseBody
     public SuccessResponse<?> updateSoundEnabled(Principal principal, Boolean soundEnabled) {
-        webUserRepository.updateSoundEnabled(principal.getName(), soundEnabled);
+        webUserService.updateSoundEnabled(principal.getName(), soundEnabled);
         return SuccessResponseUtil.toast(soundEnabled ? "Звуковые оповещения включены." : "Звуковые оповещения отключены.");
+    }
+
+    @GetMapping("/defaultFiat")
+    @ResponseBody
+    public SuccessResponse<?> defaultFiat(Principal principal) {
+        FiatCurrency fiatCurrency = apiUserService.getFiatCurrencyByUsername(principal.getName());
+        return SuccessResponseUtil.data(fiatCurrency);
+    }
+
+    @GetMapping("/mostUsedCryptoCurrency")
+    @ResponseBody
+    public SuccessResponse<?> mostUsedCryptoCurrency(Principal principal) {
+        return SuccessResponseUtil.data(apiUserService.findMostFrequentCryptoCurrency(principal.getName()));
+    }
+
+    @GetMapping("/lastDealRequisite")
+    @ResponseBody
+    public SuccessResponse<?> lastDealRequisite(Principal principal) {
+        return SuccessResponseUtil.data(apiDealService.getRequisiteFromLastDeal(principal.getName()),
+                data -> JacksonUtil.getEmpty().put("value", data));
     }
 }

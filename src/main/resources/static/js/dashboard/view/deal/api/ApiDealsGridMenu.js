@@ -16,12 +16,24 @@ Ext.define('Dashboard.view.deal.api.ApiDealsGridMenu', {
             iconCls: 'x-fa fa-copy blackColor',
             handler: 'copyRequisite'
         },
+        {
+            text: 'Показать чек',
+            reference: 'showCheckMenuButton',
+            iconCls: 'x-fa fa-receipt lightBlue',
+            handler: 'showCheck'
+        },
         '-',
         {
             text: 'Подтвердить',
             reference: 'acceptDealMenuButton',
             iconCls: 'x-fa fa-check-circle darkGreen',
             handler: 'confirmDeal'
+        },
+        {
+            text: 'Подтвердить с запросом',
+            reference: 'acceptDealWithRequestMenuButton',
+            iconCls: 'x-fa fa-check-circle darkGreen',
+            handler: 'confirmDealWithRequest'
         },
         {
             text: 'Отклонить',

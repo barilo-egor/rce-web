@@ -4,49 +4,42 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tgb.btc.library.bean.web.Role;
-import tgb.btc.library.bean.web.WebUser;
 import tgb.btc.library.constants.enums.web.RoleConstants;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.web.RoleRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
-import tgb.btc.web.constant.enums.mapper.WebUserMapper;
-import tgb.btc.web.service.users.WebWebUsersService;
+import tgb.btc.web.interfaces.map.IWebUserMappingService;
+import tgb.btc.web.interfaces.users.IWebWebUsersService;
 import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/users/web/")
 @Slf4j
 public class WebUsersController {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
-    private RoleRepository roleRepository;
+    private IWebWebUsersService webWebUsersService;
 
-    private WebWebUsersService webWebUsersService;
+    private IWebUserMappingService webUserMappingService;
 
     @Autowired
-    public void setWebWebUsersService(WebWebUsersService webWebUsersService) {
+    public void setWebUserMappingService(IWebUserMappingService webUserMappingService) {
+        this.webUserMappingService = webUserMappingService;
+    }
+
+    @Autowired
+    public void setWebWebUsersService(IWebWebUsersService webWebUsersService) {
         this.webWebUsersService = webWebUsersService;
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @RequestMapping("/findAll")
@@ -54,7 +47,7 @@ public class WebUsersController {
     public SuccessResponse<?> findAll(@RequestParam(required = false) String username,
                                       @RequestParam(required = false) RoleConstants role,
                                       @RequestParam(required = false) Long chatId) {
-        return SuccessResponseUtil.data(webWebUsersService.findAll(username, role, chatId), WebUserMapper.FIND_ALL);
+        return SuccessResponseUtil.arrayData(webWebUsersService.findAll(username, role, chatId), webUser -> webUserMappingService.map(webUser));
     }
 
     @PostMapping("/update")
@@ -74,9 +67,9 @@ public class WebUsersController {
         boolean isExist;
         try {
             Long chatId = Long.parseLong(loginField);
-            isExist = webUserRepository.existsByChatId(chatId);
+            isExist = webUserService.existsByChatId(chatId);
         } catch (NumberFormatException e) {
-            isExist = webUserRepository.existsByUsername(loginField);
+            isExist = webUserService.existsByUsername(loginField);
         }
 
         log.debug("Проверка существования пользователя по значению \"{}\", результат={}. IP={}",

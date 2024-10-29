@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.bean.bot.DealPayment;
 import tgb.btc.library.constants.enums.properties.PropertiesPath;
-import tgb.btc.library.repository.web.DealPaymentRepository;
+import tgb.btc.library.interfaces.service.bean.web.IDealPaymentService;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.NotificationsAPI;
@@ -35,7 +35,7 @@ public class DealPaymentController extends BaseController {
         TOKEN = PropertiesPath.CONFIG_PROPERTIES.getString("payment.type.token");
     }
 
-    private DealPaymentRepository dealPaymentRepository;
+    private IDealPaymentService dealPaymentService;
 
     private NotificationsAPI notificationsAPI;
 
@@ -45,8 +45,8 @@ public class DealPaymentController extends BaseController {
     }
 
     @Autowired
-    public void setDealPaymentRepository(DealPaymentRepository dealPaymentRepository) {
-        this.dealPaymentRepository = dealPaymentRepository;
+    public void setDealPaymentService(IDealPaymentService dealPaymentService) {
+        this.dealPaymentService = dealPaymentService;
     }
 
     @PostMapping("/new")
@@ -61,7 +61,7 @@ public class DealPaymentController extends BaseController {
         Instant instant = Instant.ofEpochMilli(Long.parseLong(time));
         LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         notificationsAPI.send(NotificationType.NEW_PAYMENT, "Поступила новая оплата: " + app + ", " + phone + ".");
-        dealPaymentRepository.save(DealPayment.builder()
+        dealPaymentService.save(DealPayment.builder()
                 .title(title)
                 .message(message)
                 .app(app)
@@ -74,6 +74,6 @@ public class DealPaymentController extends BaseController {
     @GetMapping("/findAll")
     @ResponseBody
     public SuccessResponse<?> findAll() {
-        return SuccessResponseUtil.jsonData(dealPaymentRepository.findAllSortedDescDateTime());
+        return SuccessResponseUtil.jsonData(dealPaymentService.findAllSortedDescDateTime());
     }
 }

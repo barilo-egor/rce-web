@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers(
-                        "/web/registration/**", "/static/**", "/extJS/**",
+                        "/web/registration/**", "/extJS/**",
                         "/js/login/**", "/login/**", "/loginInstant",
                         "/js/util/**", "/js/registration/**",
                         "/js/api/**",

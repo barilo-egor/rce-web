@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.util.SuccessResponseUtil;
@@ -16,16 +16,16 @@ import java.security.Principal;
 @RequestMapping(ControllerMapping.ROLES)
 public class RoleController extends BaseController {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @GetMapping("/get")
     private SuccessResponse<?> getRole(Principal principal) {
-        return SuccessResponseUtil.data(webUserRepository.getByUsername(principal.getName()).getRoles());
+        return SuccessResponseUtil.data(webUserService.getByUsername(principal.getName()).getRoles());
     }
 
 }

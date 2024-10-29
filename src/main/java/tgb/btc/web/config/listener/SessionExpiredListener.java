@@ -9,7 +9,7 @@ import org.springframework.security.core.session.SessionDestroyedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.repository.web.WebUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.web.controller.common.NotificationsController;
 import tgb.btc.web.controller.dashboard.api.ApiUserNotificationsController;
 
@@ -19,11 +19,11 @@ import java.util.Objects;
 @Slf4j
 public class SessionExpiredListener implements ApplicationListener<SessionDestroyedEvent> {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SessionExpiredListener implements ApplicationListener<SessionDestro
                 log.debug("Удален SSEEmitter пользователя={} после уничтожения сессии.", user.getUsername());
                 return;
             }
-            Long chatId = webUserRepository.getChatIdByUsername(user.getUsername());
+            Long chatId = webUserService.getChatIdByUsername(user.getUsername());
             sseEmitter = ApiUserNotificationsController.LISTENERS.get(chatId);
             if (Objects.nonNull(sseEmitter)) {
                 sseEmitter.complete();

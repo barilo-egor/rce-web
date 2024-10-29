@@ -10,12 +10,11 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
-import tgb.btc.library.service.bean.web.ApiDealService;
-import tgb.btc.library.util.FiatCurrencyUtil;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
+import tgb.btc.library.interfaces.util.IFiatCurrencyService;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
-import tgb.btc.web.vo.bean.ApiDealVO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -28,24 +27,29 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class WebApiDealService {
+public class WebApiDealService implements IWebApiDealService {
 
     private EntityManager entityManager;
 
-    private ApiDealService apiDealService;
+    private IApiUserService apiUserService;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiDealService apiDealService;
 
-    private ApiDealRepository apiDealRepository;
+    private IFiatCurrencyService fiatCurrencyService;
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setFiatCurrencyService(IFiatCurrencyService fiatCurrencyService) {
+        this.fiatCurrencyService = fiatCurrencyService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Autowired
@@ -53,13 +57,9 @@ public class WebApiDealService {
         this.entityManager = entityManager;
     }
 
-    @Autowired
-    public void setApiDealService(ApiDealService apiDealService) {
-        this.apiDealService = apiDealService;
-    }
-
     @Transactional
-    public List<ApiDealVO> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
+    @Override
+    public List<ApiDeal> findAll(Long apiUserPid, Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", apiUserPid);
@@ -73,14 +73,12 @@ public class WebApiDealService {
         query.setMaxResults(limit);
         parameters.forEach(query::setParameter);
         List<ApiDeal> deals = query.getResultList();
-        return deals
-                .stream()
-                .map(this::fromDeal)
-                .collect(Collectors.toList());
+        return deals;
     }
 
     @Transactional
-    public List<ApiDealVO> findAll(Integer page, Integer limit, String whereStr, String orderStr,
+    @Override
+    public List<ApiDeal> findAll(Integer page, Integer limit, String whereStr, String orderStr,
             Map<String, Object> parameters) {
         String hqlQuery = "from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -93,13 +91,11 @@ public class WebApiDealService {
         query.setMaxResults(limit);
         parameters.forEach(query::setParameter);
         List<ApiDeal> deals = query.getResultList();
-        return deals
-                .stream()
-                .map(this::fromDeal)
-                .collect(Collectors.toList());
+        return deals;
     }
 
     @Transactional
+    @Override
     public List<Long> findAllPids(String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -111,6 +107,7 @@ public class WebApiDealService {
     }
 
     @Transactional
+    @Override
     public List<Long> findAllPids(Long userPid, String whereStr, String orderStr, Map<String, Object> parameters) {
         String hqlQuery = "select d.pid from ApiDeal d where d.apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", userPid);
@@ -122,24 +119,8 @@ public class WebApiDealService {
         return query.getResultList();
     }
 
-    private ApiDealVO fromDeal(ApiDeal deal) {
-        long dealsCounts = apiDealRepository.countByApiDealStatusAndApiUser_Pid(ApiDealStatus.ACCEPTED, deal.getApiUser().getPid());
-        return ApiDealVO.builder()
-                .pid(deal.getPid())
-                .dealStatus(deal.getApiDealStatus())
-                .dealType(deal.getDealType())
-                .cryptoCurrency(deal.getCryptoCurrency())
-                .cryptoAmount(deal.getCryptoAmount())
-                .fiatCurrency(deal.getFiatCurrency())
-                .amount(deal.getAmount())
-                .dateTime(deal.getDateTime())
-                .requisite(deal.getRequisite())
-                .apiUser(deal.getApiUser())
-                .dealsCount(dealsCounts)
-                .build();
-    }
-
     @Transactional
+    @Override
     public Long count(Long apiUserPid, String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiUser.pid=:apiUserPid";
         parameters.put("apiUserPid", apiUserPid);
@@ -150,6 +131,7 @@ public class WebApiDealService {
     }
 
     @Transactional
+    @Override
     public Long count(String whereStr, Map<String, Object> parameters) {
         String hqlQuery = "select count(pid) from ApiDeal where apiDealStatus not like 'CREATED'";
         hqlQuery = hqlQuery.concat(whereStr);
@@ -158,22 +140,24 @@ public class WebApiDealService {
         return (Long) query.getSingleResult();
     }
 
+    @Override
     public List<TotalSum> getCalculating(Long currentDealPid, Long userPid) {
-        Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
+        Long lastPaidDealPid = apiUserService.getLastPaidDealPidByUserPid(userPid);
         if (Objects.isNull(lastPaidDealPid)) {
-            lastPaidDealPid = apiDealRepository.getFirstDealPid(userPid);
+            lastPaidDealPid = apiDealService.getFirstDealPid(userPid);
         }
-        LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
-        LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(currentDealPid);
-        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeStart(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
+        LocalDateTime dateTimeLastPaidDeal = apiDealService.getDateTimeByPid(lastPaidDealPid);
+        LocalDateTime dateTimeCurrentPaidDeal = apiDealService.getDateTimeByPid(currentDealPid);
+        List<ApiDeal> apiDeals = apiDealService.getByDateBetweenExcludeStart(dateTimeLastPaidDeal, dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
         return getTotalSums(apiDeals);
     }
 
+    @Override
     public List<TotalSum> getTotalSums(List<ApiDeal> apiDeals) {
         if (CollectionUtils.isEmpty(apiDeals)) return new ArrayList<>();
         List<TotalSum> totalSums = new ArrayList<>();
         for (DealType dealType: DealType.values()) {
-            for (FiatCurrency fiatCurrency : FiatCurrencyUtil.getFiatCurrencies()) {
+            for (FiatCurrency fiatCurrency : fiatCurrencyService.getFiatCurrencies()) {
                 for (CryptoCurrency cryptoCurrency : CryptoCurrency.values()) {
                     List<ApiDeal> matchDeals = apiDeals.stream()
                             .filter(deal -> deal.getDealType().equals(dealType)

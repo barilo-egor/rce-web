@@ -4,7 +4,8 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
     reference: 'dealGrid',
     requires: [
         'ApiDashboard.view.grid.DealController',
-        'ApiDashboard.view.grid.DealGridMenu'
+        'ApiDashboard.view.grid.DealGridMenu',
+        'ApiDashboard.view.grid.CreateDisputeDialog'
     ],
     controller: 'dealController',
 
@@ -16,6 +17,11 @@ Ext.define('ApiDashboard.view.grid.DealGrid', {
                 iconCls: 'x-fa fa-sync-alt',
                 tooltip: 'Перезагрузить сделки',
                 handler: 'reloadDeals'
+            },
+            {
+                iconCls: 'x-fa fa-plus',
+                tooltip: 'Создание диспута',
+                handler: 'createDispute'
             },
             {
                 iconCls: 'x-fa fa-file-excel darkGreen',

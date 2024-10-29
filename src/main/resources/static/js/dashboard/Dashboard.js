@@ -24,6 +24,13 @@ Ext.application({
         'Dashboard.store.deal.bot.PaymentTypesComboStore',
         'Dashboard.store.enum.ApiDealStatusesStore',
         'Dashboard.store.enum.RoleStore',
-        'Dashboard.store.deal.api.CalculationsStore'
+        'Dashboard.store.deal.api.CalculationsStore',
+        'Dashboard.store.paymentTypes.api.ApiPaymentTypeStore',
+        'Dashboard.store.paymentTypes.api.ApiClientStore',
+        'Dashboard.store.paymentTypes.api.ApiRequisiteStore',
+        'Dashboard.store.deal.review.ReviewStore',
+        'Dashboard.store.paymentTypes.bot.PaymentTypeStore',
+        'Dashboard.store.paymentTypes.bot.SecurePaymentDetailsStore',
+        'Dashboard.store.deal.bot.BitcoinPoolStore'
     ]
 })

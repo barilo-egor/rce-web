@@ -9,8 +9,8 @@ Ext.define('Dashboard.view.users.api.ApiUsersController', {
     updateUser: function (me) {
         ExtUtil.mask('apiUsersContainer', 'Обновление пользователя')
         let fieldsReferences = [
-            'idField', 'buyRequisiteField', 'sellRequisiteField', 'personalDiscountField', 'usdCourseBYNField',
-            'usdCourseRUBField', 'fiatCurrencyField', 'isBannedField', 'tokenField'
+            'idField', 'personalDiscountField', 'usdCourseBYNField',
+            'usdCourseRUBField', 'fiatCurrencyField', 'isBannedField', 'tokenField', 'groupChatPidField'
         ]
         let params = ExtUtil.getJsonDataNullable(fieldsReferences)
         params.pid = ExtUtil.referenceQuery('apiUsersGrid').getSelection().get('pid')

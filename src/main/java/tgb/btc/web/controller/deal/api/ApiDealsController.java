@@ -2,23 +2,24 @@ package tgb.btc.web.controller.deal.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.service.process.ApiDealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.enums.ApiUserNotificationType;
-import tgb.btc.web.constant.enums.mapper.ApiDealMapper;
 import tgb.btc.web.controller.BaseController;
+import tgb.btc.web.interfaces.deal.IWebApiDealService;
+import tgb.btc.web.interfaces.map.IApiDealMappingService;
 import tgb.btc.web.service.ApiUserNotificationsAPI;
-import tgb.btc.web.service.deal.WebApiDealService;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
-import tgb.btc.web.vo.bean.ApiDealVO;
 import tgb.btc.web.vo.form.ApiDealsSearchForm;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,24 +35,43 @@ import java.util.Objects;
 @Slf4j
 public class ApiDealsController extends BaseController {
 
-    private WebApiDealService webApiDealService;
+    private IWebApiDealService webApiDealService;
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
     private ApiDealReportService apiDealReportService;
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
     private ApiUserNotificationsAPI apiUserNotificationsAPI;
+
+    private IApiDealMappingService apiDealMappingService;
+
+    private INotifier notifier;
+
+    @Autowired(required = false)
+    public void setNotifier(INotifier notifier) {
+        this.notifier = notifier;
+    }
+
+    @Autowired
+    public void setApiDealMappingService(IApiDealMappingService apiDealMappingService) {
+        this.apiDealMappingService = apiDealMappingService;
+    }
+
+    @Autowired
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
+    }
+
+    @Autowired
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
+    }
 
     @Autowired
     public void setApiUserNotificationsAPI(ApiUserNotificationsAPI apiUserNotificationsAPI) {
         this.apiUserNotificationsAPI = apiUserNotificationsAPI;
-    }
-
-    @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
     }
 
     @Autowired
@@ -60,12 +80,7 @@ public class ApiDealsController extends BaseController {
     }
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
-    }
-
-    @Autowired
-    public void setWebApiDealService(WebApiDealService webApiDealService) {
+    public void setWebApiDealService(IWebApiDealService webApiDealService) {
         this.webApiDealService = webApiDealService;
     }
 
@@ -73,30 +88,31 @@ public class ApiDealsController extends BaseController {
     @ResponseBody
     public ObjectNode findAll(@RequestBody ApiDealsSearchForm apiDealsSearchForm) {
         Map<String, Object> parameters = new HashMap<>();
-        List<ApiDealVO> dealVOList = webApiDealService.findAll(apiDealsSearchForm.getPage(),
+        List<ApiDeal> deals = webApiDealService.findAll(apiDealsSearchForm.getPage(),
                 apiDealsSearchForm.getLimit(),
                 apiDealsSearchForm.getWhereStr(parameters),
                 apiDealsSearchForm.getSortStr(), parameters);
-        return JacksonUtil.pagingData(dealVOList,
+        return JacksonUtil.pagingData(deals,
                 webApiDealService.count(apiDealsSearchForm.getWhereStr(parameters), parameters),
-                ApiDealMapper.FIND_ALL);
+                deal -> apiDealMappingService.mapFindAll(deal));
     }
 
     @PostMapping("/accept")
     @ResponseBody
-    public SuccessResponse<?> accept(Principal principal, Long pid) {
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
+    public SuccessResponse<?> accept(Principal principal, Long pid, Boolean isNeedRequest) {
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
-        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
+        if (Objects.nonNull(notifier) && BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal(pid);
+        apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.ACCEPTED_DEAL, "Сделка №" + pid + " подтверждена.");
         return SuccessResponseUtil.toast("Сделка подтверждена.");
     }
 
     @PostMapping("/decline")
     @ResponseBody
     public SuccessResponse<?> decline(Principal principal, Long pid) {
-        apiDealRepository.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
+        apiDealService.updateApiDealStatusByPid(ApiDealStatus.DECLINED, pid);
         log.debug("Пользователь {} отклонил АПИ сделку {}", principal.getName(), pid);
-        apiUserNotificationsAPI.send(apiDealRepository.getApiUserPidByDealPid(pid), ApiUserNotificationType.DECLINED_DEAL, "Сделка №" + pid + " отклонена.");
+        apiUserNotificationsAPI.send(apiDealService.getApiUserPidByDealPid(pid), ApiUserNotificationType.DECLINED_DEAL, "Сделка №" + pid + " отклонена.");
         return SuccessResponseUtil.toast("Сделка отклонена.");
     }
 
@@ -114,7 +130,7 @@ public class ApiDealsController extends BaseController {
     @ResponseBody
     public byte[] export(HttpServletRequest request, Principal principal) {
         List<Long> dealsPids = (List<Long>) request.getSession().getAttribute("dealsPids");
-        byte[] result = apiDealReportService.loadReport(apiDealRepository.getDealsByPids(dealsPids));
+        byte[] result = apiDealReportService.loadReport(apiDealService.getDealsByPids(dealsPids));
         log.debug("Пользователь {} выгрузил отчет по API сделкам. Количество {}.", principal.getName(), dealsPids.size());
         request.getSession().removeAttribute("dealsPids");
         return result;
@@ -123,11 +139,11 @@ public class ApiDealsController extends BaseController {
     @GetMapping(value = "/getCalculationDeals")
     @ResponseBody
     public SuccessResponse<?> getCalculationDeals(Long userPid) {
-        ApiDeal lastPaidDeal = apiUserRepository.getLastPaidDeal(userPid);
+        ApiDeal lastPaidDeal = apiUserService.getLastPaidDeal(userPid);
         if (Objects.isNull(lastPaidDeal)) {
-            lastPaidDeal = apiDealRepository.getFirstDeal(userPid);
+            lastPaidDeal = apiDealService.getFirstDeal(userPid);
         }
-        ApiDeal lastDeal = apiDealRepository.getLastDeal(userPid);
+        ApiDeal lastDeal = apiDealService.getLastDeal(userPid);
         if (Objects.isNull(lastPaidDeal) || lastPaidDeal.getPid().equals(lastDeal.getPid())) {
             return SuccessResponseUtil.getDataObjectNode(JacksonUtil.getEmpty()
                     .put("isEmpty", true)

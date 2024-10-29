@@ -17,6 +17,5 @@ Ext.define('Dashboard.store.users.api.ApiUserStore', {
         }
     },
 
-    fieldsReferences: ['idFilterField', 'fiatCurrencyFilterField', 'tokenFilterField', 'buyRequisiteFilterField',
-        'sellRequisiteFilterField']
+    fieldsReferences: ['idFilterField', 'fiatCurrencyFilterField', 'tokenFilterField']
 })

@@ -148,6 +148,8 @@ let ExtUtil = {
         requestObj.method = config.method ? config.method : 'POST'
         if (config.params) requestObj.params = config.params
         if (config.jsonData) requestObj.jsonData = config.jsonData
+        if (config.rawData) requestObj.rawData = config.rawData
+        if (config.headers) requestObj.headers = config.headers
         let failure = this.failure
         requestObj.failure = function(response) {
             if (response.status === 401) return
@@ -163,8 +165,8 @@ let ExtUtil = {
             let response = Ext.JSON.decode(rawResponse.responseText)
             if (!response.success) {
                 let addingText = response.description
-                    ? ': ' + response.description
-                    : '. Информация отсутствует.'
+                    ? response.description
+                    : 'Информация отсутствует.'
                 ExtMessages.error('Ошибка', addingText)
                 if (config.loadingComponent) config.loadingComponent.setMasked(false)
                 else if (config.loadingComponentRef) ExtUtil.maskOff(config.loadingComponentRef)

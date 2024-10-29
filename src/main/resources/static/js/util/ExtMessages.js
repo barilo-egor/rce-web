@@ -6,6 +6,7 @@ let ExtMessages = {
     topToast: function (message) {
         Ext.toast({
             message: message,
+            timeout: 3000,
             alignment: 't-t'
         })
     },
@@ -19,7 +20,9 @@ let ExtMessages = {
                 {
                     text: 'Да',
                     handler: function (me) {
+                        me.up('dialog').setMasked('Пожалуйста, подождите.')
                         handler()
+                        me.up('dialog').setMasked(false)
                         me.up('dialog').close()
                     }
                 },

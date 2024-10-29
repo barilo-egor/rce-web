@@ -21,14 +21,6 @@ public class ApiUserVO {
 
     @Getter
     @Setter
-    private String buyRequisite;
-
-    @Getter
-    @Setter
-    private String sellRequisite;
-
-    @Getter
-    @Setter
     private BigDecimal personalDiscount;
 
     @Getter
@@ -50,4 +42,8 @@ public class ApiUserVO {
     @Getter
     @Setter
     private String token;
+
+    @Getter
+    @Setter
+    private Long groupChatPid;
 }

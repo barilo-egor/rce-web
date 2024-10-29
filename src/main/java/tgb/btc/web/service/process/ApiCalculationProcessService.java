@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import tgb.btc.library.bean.web.api.ApiCalculation;
 import tgb.btc.library.bean.web.api.ApiDeal;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
-import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.repository.web.ApiCalculationRepository;
-import tgb.btc.library.repository.web.ApiDealRepository;
-import tgb.btc.library.repository.web.ApiUserRepository;
+import tgb.btc.library.interfaces.service.bean.web.IApiCalculationService;
+import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
+import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.web.interfaces.process.IApiCalculationProcessService;
 import tgb.btc.web.vo.api.Calculation;
 
 import java.time.LocalDateTime;
@@ -20,48 +20,50 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class ApiCalculationProcessService {
+public class ApiCalculationProcessService implements IApiCalculationProcessService {
 
-    private ApiUserRepository apiUserRepository;
+    private IApiUserService apiUserService;
 
-    private ApiDealRepository apiDealRepository;
+    private IApiDealService apiDealService;
 
-    private ApiCalculationRepository apiCalculationRepository;
+    private IApiCalculationService apiCalculationService;
 
     @Autowired
-    public void setApiCalculationRepository(ApiCalculationRepository apiCalculationRepository) {
-        this.apiCalculationRepository = apiCalculationRepository;
+    public void setApiUserService(IApiUserService apiUserService) {
+        this.apiUserService = apiUserService;
     }
 
     @Autowired
-    public void setApiDealRepository(ApiDealRepository apiDealRepository) {
-        this.apiDealRepository = apiDealRepository;
+    public void setApiDealService(IApiDealService apiDealService) {
+        this.apiDealService = apiDealService;
     }
 
     @Autowired
-    public void setApiUserRepository(ApiUserRepository apiUserRepository) {
-        this.apiUserRepository = apiUserRepository;
+    public void setApiCalculationService(
+            IApiCalculationService apiCalculationService) {
+        this.apiCalculationService = apiCalculationService;
     }
 
     @Transactional
+    @Override
     public void saveCalculation(Long userPid, Long newLastPaidDeal) {
-        Long lastPaidDealPid = apiUserRepository.getLastPaidDealPidByUserPid(userPid);
+        Long lastPaidDealPid = apiUserService.getLastPaidDealPidByUserPid(userPid);
         if (Objects.isNull(lastPaidDealPid)) {
-            lastPaidDealPid = apiDealRepository.getFirstDealPid(userPid);
+            lastPaidDealPid = apiDealService.getFirstDealPid(userPid);
         }
-        LocalDateTime dateTimeLastPaidDeal = apiDealRepository.getDateTimeByPid(lastPaidDealPid);
-        LocalDateTime dateTimeCurrentPaidDeal = apiDealRepository.getDateTimeByPid(newLastPaidDeal);
-        List<ApiDeal> apiDeals = apiDealRepository.getByDateBetweenExcludeStart(dateTimeLastPaidDeal,
+        LocalDateTime dateTimeLastPaidDeal = apiDealService.getDateTimeByPid(lastPaidDealPid);
+        LocalDateTime dateTimeCurrentPaidDeal = apiDealService.getDateTimeByPid(newLastPaidDeal);
+        List<ApiDeal> apiDeals = apiDealService.getByDateBetweenExcludeStart(dateTimeLastPaidDeal,
                 dateTimeCurrentPaidDeal, ApiDealStatus.ACCEPTED);
-        apiCalculationRepository.save(ApiCalculation.builder()
-                .apiUser(apiUserRepository.findById(userPid)
-                        .orElseThrow(() -> new BaseException("Пользователь с pid=" + userPid + " не найден.")))
+        apiCalculationService.save(ApiCalculation.builder()
+                .apiUser(apiUserService.findById(userPid))
                 .deals(apiDeals)
                 .dateTime(LocalDateTime.now())
                 .build());
-        apiUserRepository.updateLastPidDeal(userPid, apiDealRepository.getByPid(newLastPaidDeal));
+        apiUserService.updateLastPidDeal(userPid, apiDealService.getByPid(newLastPaidDeal));
     }
 
+    @Override
     public ObjectNode mapToTree(List<Calculation> calculations) {
         ObjectNode root = JacksonUtil.getEmpty();
         root.put("expanded", true);

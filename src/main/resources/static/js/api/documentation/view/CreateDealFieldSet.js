@@ -4,6 +4,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
 
     title: 'Создание сделки',
     collapsible: true,
+    collapsed: true,
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -97,6 +98,11 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         type: 'String',
                         description: 'Ваши реквизиты.'
                     },
+                    {
+                        name: 'paymentTypeId',
+                        type: 'String',
+                        description: 'Optional. Идентификатор типа оплаты.'
+                    }
                 ]
             }),
             columns: [
@@ -166,7 +172,7 @@ Ext.define('ApiDocumentation.view.CreateDealFieldSet', {
                         '   "code": 14,\n' +
                         '   "description": "Получившаяся сумма меньше минимально требуемой.",\n' +
                         '   "data":{\n' +
-                        '      "minSum": "0.001"\n' +
+                        '      "minSum": "500"\n' +
                         '   }\n' +
                         '}'
                 }

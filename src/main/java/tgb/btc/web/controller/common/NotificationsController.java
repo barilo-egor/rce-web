@@ -21,8 +21,14 @@ public class NotificationsController {
     public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
         LISTENERS.put(principal.getName(), sseEmitter);
-        sseEmitter.onError(throwable -> LISTENERS.remove(principal.getName()));
-        sseEmitter.onTimeout(() -> LISTENERS.remove(principal.getName()));
+        sseEmitter.onError(throwable -> {
+            LISTENERS.remove(principal.getName());
+            sseEmitter.completeWithError(throwable);
+        });
+        sseEmitter.onTimeout(() -> {
+            LISTENERS.remove(principal.getName());
+            sseEmitter.complete();
+        });
         log.debug("Пользователь {} стал SSE слушателем.", principal.getName());
         return sseEmitter;
     }

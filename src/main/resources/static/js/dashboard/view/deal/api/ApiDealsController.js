@@ -77,11 +77,17 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         if (!me.menu) {
             me.menu = Ext.create('Dashboard.view.deal.api.ApiDealsGridMenu')
         }
-        me.menu.setViewModel({
-            data: {
-                deal: eObj.record
-            }
-        })
+        let deal = eObj.record.getData()
+        let menu = me.menu
+        let status = deal.apiDealStatus.name
+        menu.lookupReference('acceptDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+        menu.lookupReference('declineDealMenuButton')
+            .setHidden(!(status === 'PAID'))
+        menu.lookupReference('acceptDealWithRequestMenuButton')
+            .setHidden(status !== 'PAID' || !deal.groupChatPid)
+        menu.lookupReference('showCheckMenuButton')
+            .setHidden(deal.apiDealType !== 'DISPUTE')
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
     },
@@ -100,15 +106,6 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
         me.getStore().load()
     },
 
-    updateMenuButtons: function (me) {
-        let deal = me.getViewModel().getData().deal.getData()
-        let status = deal.apiDealStatus.name
-        ExtUtil.referenceQuery('acceptDealMenuButton')
-            .setHidden(!(status === 'PAID'))
-        ExtUtil.referenceQuery('declineDealMenuButton')
-            .setHidden(!(status === 'PAID'))
-    },
-
     copyRequisite: function (me) {
         navigator.clipboard.writeText(ExtUtil.referenceQuery('apiDealsGrid').getSelection().get('requisite'))
         ExtMessages.topToast('Реквизит скопирован в буфер обмена')
@@ -121,6 +118,24 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
                 url: '/deal/api/accept',
                 params: {
                     pid: deal.pid
+                },
+                success: function (response) {
+                    Ext.getStore('apiDealStore').reload()
+                }
+            })
+        }
+        ExtMessages.confirm('Подтверждение сделки', 'Вы действительно хотите подтвердить сделку №' + deal.pid + '?',
+            confirmFn)
+    },
+
+    confirmDealWithRequest: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let confirmFn = function () {
+            ExtUtil.mRequest({
+                url: '/deal/api/accept',
+                params: {
+                    pid: deal.pid,
+                    isNeedRequest: true
                 },
                 success: function (response) {
                     Ext.getStore('apiDealStore').reload()
@@ -150,5 +165,64 @@ Ext.define('Dashboard.view.deal.api.ApiDealsController', {
 
     reloadDeals: function (me) {
         Ext.getStore('apiDealStore').reload()
+    },
+
+    showCheck: function (me) {
+        let deal = ExtUtil.referenceQuery('apiDealsGrid').getSelection().getData()
+        let checkImageId = deal.checkImageId
+        let receiptFormat = deal.receiptFormat
+        if (receiptFormat === 'PICTURE') {
+            Ext.create('Ext.Dialog', {
+                title: 'Чек по диспуту ' + deal.pid,
+                closable: true,
+                layout: 'fit',
+                maxHeight: '90%',
+                maxWidth: '90%',
+                scrollable: 'y',
+                masked: 'Загрузка чека',
+                items: [
+                    {
+                        xtype: 'image',
+                        src: '/image/get?imageId=' + checkImageId,
+                        width: '100%',
+                        height: '100%',
+                        shadow: true,
+                        mode: 'image',
+                        margin: '5 5 5 5',
+                        listeners: {
+                            load: function (me) {
+                                me.up('dialog').center()
+                                me.up('dialog').setMasked(false)
+                            }
+                        }
+                    }
+                ]
+            }).show()
+        } else {
+            Ext.create('Ext.Dialog', {
+                title: 'Чек по диспуту ' + deal.pid,
+                closable: true,
+                layout: 'fit',
+                height: '90%',
+                width: '90%',
+                scrollable: 'y',
+                masked: 'Загрузка чека',
+                items: [
+                    {
+                        xtype: 'panel',
+                        shadow: true,
+                        scrollable: true,
+                        html: '<iframe src="/image/getPDF?fileId=' + checkImageId
+                            + '" frameborder="0" style="display: block;overflow:visible;height:100vh;width:100vw"></iframe>',
+                        listeners: {
+                            painted: function (me) {
+                                me.up('dialog').center()
+                                me.up('dialog').setMasked(false)
+                            }
+                        }
+                    }
+                ]
+            }).show()
+        }
     }
 })

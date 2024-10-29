@@ -11,6 +11,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
     collapsed: true,
     title: 'Пользователь',
     shadow: true,
+    width: 400,
     collapsible: ExtUtilConfig.getCollapsible('right'),
 
     layout: {
@@ -36,6 +37,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
         },
         {
             xtype: 'container',
+            alignSelf: 'stretch',
             reference: 'userFieldsContainer',
             hidden: true,
 
@@ -51,7 +53,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                 align: 'stretch'
             },
             defaults: {
-                width: 200,
+                // width: 200,
                 margin: '0 20 0 20'
             },
             items: [
@@ -71,6 +73,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     setUserValue: function (user) {
                         this.defaultValue = user.id
                         this.setValue(user.id)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -88,6 +91,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     setUserValue: function (user) {
                         this.defaultValue = user.personalDiscount
                         this.setValue(user.personalDiscount)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -98,8 +102,9 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         change: 'change'
                     },
                     setUserValue: function (user) {
-                        this.defaultValue = user.isBanned
+                        this.defaultValue = user.isBanned === true
                         this.setValue(user.isBanned)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -121,30 +126,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     setUserValue: function (user) {
                         this.defaultValue = user.token
                         this.setValue(user.token)
-                    }
-                },
-                {
-                    xtype: 'textfield',
-                    label: 'Реквизит покупки',
-                    reference: 'buyRequisiteField',
-                    listeners: {
-                        change: 'change'
-                    },
-                    setUserValue: function (user) {
-                        this.defaultValue = user.buyRequisite
-                        this.setValue(user.buyRequisite)
-                    }
-                },
-                {
-                    xtype: 'textfield',
-                    label: 'Реквизит продажи',
-                    reference: 'sellRequisiteField',
-                    listeners: {
-                        change: 'change'
-                    },
-                    setUserValue: function (user) {
-                        this.defaultValue = user.sellRequisite
-                        this.setValue(user.sellRequisite)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -165,6 +147,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         let fiatCurrency = this.getStore().getRange().filter(role => role.get('name') === user.fiatCurrency.name)[0]
                         this.defaultValue = fiatCurrency.get('name')
                         this.setValue(fiatCurrency)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -179,6 +162,7 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                     setUserValue: function (user) {
                         this.defaultValue = user.usdCourseRUB
                         this.setValue(user.usdCourseRUB)
+                        this.fireEvent('change')
                     }
                 },
                 {
@@ -191,9 +175,60 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         change: 'change'
                     },
                     setUserValue: function (user) {
-                        this.defaultValue = user.usdCourseBYN
+                        this.defaultValue = typeof user.usdCourseBYN === 'undefined' ? null : user.usdCourseBYN
                         this.setValue(user.usdCourseBYN)
+                        this.fireEvent('change')
                     }
+                },
+                {
+                    xtype: 'container',
+                    reference: 'groupChatPidField',
+                    layout: 'fit',
+                    getValue: function () {
+                        return this.getItems().items[0].groupPid
+                    },
+                    setUserValue: function (user) {
+                        let field = this.getItems().items[0]
+                        field.groupPid = user.groupChat.pid
+                        this.defaultValue = user.groupChat.pid
+                        field.setValue(user.groupChat.title)
+                        field.fireEvent('change')
+                    },
+                    validate: function () {
+                        return this.getItems().items[0].validate()
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            reference: 'apiDealRequestGroupField',
+                            label: 'Группа запросов',
+                            labelAlign: 'left',
+                            labelWidth: 110,
+                            width: 230,
+                            clearable: false,
+                            editable: false,
+                            tooltip: 'Группа, в которую отправляются запросы на вывод API сделок.',
+                            listeners: {
+                                change: 'change'
+                            },
+                            triggers: {
+                                clearValue: {
+                                    iconCls: 'x-fa fa-times',
+                                    handler: function (me) {
+                                        let field = ExtUtil.referenceQuery('apiDealRequestGroupField')
+                                        field.groupPid = null
+                                        field.setValue('Отсутствует')
+                                    }
+                                },
+                                change: {
+                                    iconCls: 'x-fa fa-wrench material-blue-color',
+                                    handler: function (me) {
+                                        Ext.create('Dashboard.view.users.api.dialog.DealRequestGroupDialog').show()
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -213,7 +248,14 @@ Ext.define('Dashboard.view.users.api.ApiUserInfoPanel', {
                         this.setDisabled(true)
                         return
                     }
-                    if (field.defaultValue === field.getValue()) withDefaultValuesCounter++
+                    let value = field.getValue()
+                    let defaultValue = field.defaultValue
+                    let isBothNull = (value === null || typeof value === 'undefined')
+                        && (defaultValue === null || typeof defaultValue === 'undefined')
+                    if (defaultValue === value || isBothNull) withDefaultValuesCounter++
+                    else {
+                        debugger
+                    }
                 }
                 if (withDefaultValuesCounter === fieldsReferences.length) this.setDisabled(true)
                 else this.setDisabled(false)

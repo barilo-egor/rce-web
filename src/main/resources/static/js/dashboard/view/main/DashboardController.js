@@ -77,6 +77,44 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     playSound = true
                     break
+                case 'CHANGED_DEAL_REQUEST_GROUP':
+                    if (workspaceItem.xtype === 'botdealscontainer') {
+                        let field = ExtUtil.referenceQuery('dealRequestGroupField')
+                        field.setValue(response.data.title)
+                        field.groupPid = response.data.pid
+                        if (response.message)
+                            ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                        ExtMessages.topToast('Группа запросов сделок была обновлена')
+                    }
+                    break
+                case 'CHANGED_AUTO_WITHDRAWAL_GROUP':
+                    if (workspaceItem.xtype === 'botdealscontainer') {
+                        let field = ExtUtil.referenceQuery('autoWithdrawalGroupField')
+                        field.setValue(response.data.title)
+                        field.groupPid = response.data.pid
+                        if (response.message)
+                            ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                        ExtMessages.topToast('Группа автовывода сделок была обновлена')
+                    }
+                    break
+                case 'REVIEW_ACTION':
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                    break
+                case 'NEW_REVIEW':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                    break
+                case 'POOL_CHANGED':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    Ext.getStore('bitcoinPoolStore').reload()
+                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

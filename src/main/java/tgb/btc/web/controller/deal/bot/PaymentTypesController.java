@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.interfaces.ObjectNodeConvertable;
-import tgb.btc.library.service.bean.bot.PaymentTypeService;
+import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -16,10 +16,10 @@ import tgb.btc.web.vo.SuccessResponse;
 @RequestMapping("/deal/bot/paymentTypes")
 public class PaymentTypesController {
 
-    private PaymentTypeService paymentTypeService;
+    private IPaymentTypeService paymentTypeService;
 
     @Autowired
-    public void setPaymentTypeService(PaymentTypeService paymentTypeService) {
+    public void setPaymentTypeService(IPaymentTypeService paymentTypeService) {
         this.paymentTypeService = paymentTypeService;
     }
 

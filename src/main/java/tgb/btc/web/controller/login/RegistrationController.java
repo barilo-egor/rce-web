@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotifier;
-import tgb.btc.library.repository.bot.UserRepository;
-import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.library.service.bean.web.RoleService;
-import tgb.btc.library.service.bean.web.WebUserService;
+import tgb.btc.library.interfaces.service.bean.bot.user.IReadUserService;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.constant.ControllerMapping;
 import tgb.btc.web.controller.BaseController;
@@ -21,7 +19,6 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.EmitterVO;
 import tgb.btc.web.vo.SuccessResponse;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,13 +30,9 @@ public class RegistrationController extends BaseController {
 
     public static Map<Long, EmitterVO> REGISTER_EMITTER_MAP = new HashMap<>();
 
-    private WebUserService webUserService;
+    private IWebUserService webUserService;
 
-    private RoleService roleService;
-
-    private WebUserRepository webUserRepository;
-
-    private UserRepository userRepository;
+    private IReadUserService readUserService;
 
     private INotifier notifier;
 
@@ -49,28 +42,13 @@ public class RegistrationController extends BaseController {
     }
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
-    }
-
-    @Autowired
-    public void setRoleService(RoleService roleService) {
-        this.roleService = roleService;
-    }
-
-    @Autowired
-    public void setWebUserService(WebUserService webUserService) {
+    public void setWebUserService(IWebUserService webUserService) {
         this.webUserService = webUserService;
     }
 
-    @PostConstruct
-    public void postConstruct() {
-        roleService.initRoles();
+    @Autowired
+    public void setReadUserService(IReadUserService readUserService) {
+        this.readUserService = readUserService;
     }
 
     @GetMapping(path = "/register", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -80,11 +58,14 @@ public class RegistrationController extends BaseController {
         SseEmitter emitter = new SseEmitter(30000L);
         emitter.onCompletion(() ->
                 REGISTER_EMITTER_MAP.remove(chatId));
-        emitter.onTimeout(() ->
-                REGISTER_EMITTER_MAP.remove(chatId));
-        emitter.onError((e) -> {
+        emitter.onTimeout(() -> {
+            REGISTER_EMITTER_MAP.remove(chatId);
+            emitter.complete();
+        });
+        emitter.onError(e -> {
             log.error("Ошибка SSE Emitter подтверждения chatId для регистрации.", e);
             REGISTER_EMITTER_MAP.remove(chatId);
+            emitter.completeWithError(e);
         });
         REGISTER_EMITTER_MAP.put(chatId, EmitterVO.builder()
                 .emitter(emitter)
@@ -102,14 +83,14 @@ public class RegistrationController extends BaseController {
     @GetMapping("/isUsernameFree")
     @ResponseBody
     public SuccessResponse<?> isUsernameFree(String username) {
-        return SuccessResponseUtil.data(webUserRepository.countByUsername(username) == 0,
+        return SuccessResponseUtil.data(webUserService.countByUsername(username) == 0,
                 data -> JacksonUtil.getEmpty().put("isFree", data));
     }
 
     @GetMapping("/isChatIdValid")
     @ResponseBody
     public SuccessResponse<?> isChatIdValid(Long chatId) {
-        boolean isValid = userRepository.existsByChatId(chatId) && !webUserRepository.existsByChatId(chatId);
+        boolean isValid = readUserService.existsByChatId(chatId) && !webUserService.existsByChatId(chatId);
         return SuccessResponseUtil.data(isValid,
                 data -> JacksonUtil.getEmpty().put("isValid", data));
     }

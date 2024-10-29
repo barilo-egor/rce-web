@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.web.WebUser;
-import tgb.btc.library.repository.web.WebUserRepository;
-import tgb.btc.library.util.SystemUtil;
+import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.WebApi;
@@ -29,13 +29,20 @@ import java.util.Map;
 @Slf4j
 public class LoginController extends BaseController {
 
-    private WebUserRepository webUserRepository;
+    private IWebUserService webUserService;
 
     private INotifier notifier;
 
     private WebApi webApi;
 
+    private ConfigPropertiesReader configPropertiesReader;
+
     public static Map<Long, EmitterVO> LOGIN_EMITTER_MAP = new HashMap<>();
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
 
     @Autowired
     public void setWebApi(WebApi webApi) {
@@ -43,8 +50,8 @@ public class LoginController extends BaseController {
     }
 
     @Autowired
-    public void setWebUserRepository(WebUserRepository webUserRepository) {
-        this.webUserRepository = webUserRepository;
+    public void setWebUserService(IWebUserService webUserService) {
+        this.webUserService = webUserService;
     }
 
     @Autowired(required = false)
@@ -58,9 +65,9 @@ public class LoginController extends BaseController {
         WebUser webUser;
         try {
             chatId = Long.parseLong(loginField);
-            webUser = webUserRepository.getByChatId(chatId);
+            webUser = webUserService.getByChatId(chatId);
         } catch (NumberFormatException e) {
-            webUser = webUserRepository.getByUsername(loginField);
+            webUser = webUserService.getByUsername(loginField);
             chatId = webUser.getChatId();
         }
         if (BooleanUtils.isFalse(webUser.getEnabled())) {
@@ -70,11 +77,14 @@ public class LoginController extends BaseController {
         Long finalChatId = chatId;
         emitter.onCompletion(() ->
                 LOGIN_EMITTER_MAP.remove(finalChatId));
-        emitter.onTimeout(() ->
-                LOGIN_EMITTER_MAP.remove(finalChatId));
+        emitter.onTimeout(() -> {
+            LOGIN_EMITTER_MAP.remove(finalChatId);
+            emitter.complete();
+        });
         emitter.onError((e) -> {
             log.error("Ошибка SSE Emitter авторизации.", e);
             LOGIN_EMITTER_MAP.remove(finalChatId);
+            emitter.completeWithError(e);
         });
         LOGIN_EMITTER_MAP.put(chatId, EmitterVO.builder().emitter(emitter).request(request).build());
         notifier.sendLoginRequest(chatId);
@@ -85,8 +95,8 @@ public class LoginController extends BaseController {
     @PostMapping("/loginInstant")
     @ResponseBody
     public SuccessResponse<?> loginInstant(HttpServletRequest request, String login) {
-        if (!SystemUtil.isDev()) return null;
-        WebUser webUser = webUserRepository.getByUsername(login);
+        if (!configPropertiesReader.isDev()) return null;
+        WebUser webUser = webUserService.getByUsername(login);
         webApi.authorize(webUser, request);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("success", true));
     }

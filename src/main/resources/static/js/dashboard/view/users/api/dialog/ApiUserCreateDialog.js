@@ -11,8 +11,7 @@ Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
             handler: function (me) {
                 ExtUtil.mask('createDialog', 'Создание клиента')
                 let fieldReference = [
-                    'idCreateField', 'personalDiscountCreateField', 'buyRequisiteCreateField',
-                    'sellRequisiteCreateField', 'usdCourseBYNCreateField', 'usdCourseRUBCreateField',
+                    'idCreateField', 'personalDiscountCreateField', 'usdCourseBYNCreateField', 'usdCourseRUBCreateField',
                     'fiatCurrencyCreateField'
                 ]
                 let isValid = true
@@ -69,20 +68,6 @@ Ext.define('Dashboard.view.users.api.dialog.ApiUserCreateDialog', {
                     label: 'Персональная скидка',
                     requiredMessage: 'Введите 0, если скидка не нужна.',
                     required: true
-                },
-            ]
-        },
-        {
-            items: [
-                {
-                    xtype: 'textfield',
-                    reference: 'buyRequisiteCreateField',
-                    label: 'Реквизит покупки'
-                },
-                {
-                    xtype: 'textfield',
-                    reference: 'sellRequisiteCreateField',
-                    label: 'Реквизит продажи'
                 },
             ]
         },
