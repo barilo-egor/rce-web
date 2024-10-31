@@ -9,6 +9,7 @@ import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.process.IDealPoolService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.AutoWithdrawalService;
 import tgb.btc.library.service.bean.web.WebUserService;
 import tgb.btc.web.interfaces.deal.IDealProcessService;
@@ -30,13 +31,17 @@ public class DealProcessService implements IDealProcessService {
 
     private final WebUserService webUserService;
 
+    private final ICryptoWithdrawalService cryptoWithdrawalService;
+
     @Autowired
     public DealProcessService(IDealPoolService dealPoolService, AutoWithdrawalService autoWithdrawalService,
-            IModifyDealService modifyDealService, WebUserService webUserService) {
+            IModifyDealService modifyDealService, WebUserService webUserService,
+            ICryptoWithdrawalService cryptoWithdrawalService) {
         this.dealPoolService = dealPoolService;
         this.autoWithdrawalService = autoWithdrawalService;
         this.modifyDealService = modifyDealService;
         this.webUserService = webUserService;
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
     }
 
     @Override
@@ -48,7 +53,7 @@ public class DealProcessService implements IDealProcessService {
                 BigDecimal totalAmount = deals.stream()
                         .map(Deal::getCryptoAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
-                BigDecimal balance = autoWithdrawalService.getBalance(CryptoCurrency.BITCOIN);
+                BigDecimal balance = cryptoWithdrawalService.getBalance(CryptoCurrency.BITCOIN);
                 if (BooleanUtils.isNotTrue(autoWithdrawalService.getMinAmount()) && balance.compareTo(totalAmount) < 0) {
                     throw new BaseException("Недостаточно средств на балансе.");
                 }
