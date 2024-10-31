@@ -23,6 +23,7 @@ import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.interfaces.service.process.IDealPoolService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
@@ -81,6 +82,13 @@ public class BotDealsController extends BaseController {
     private IDealPoolService dealPoolService;
 
     private IDealProcessService dealProcessService;
+
+    private ICryptoWithdrawalService cryptoWithdrawalService;
+
+    @Autowired
+    public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
+        this.cryptoWithdrawalService = cryptoWithdrawalService;
+    }
 
     @Autowired
     public void setDealProcessService(IDealProcessService dealProcessService) {
@@ -292,7 +300,7 @@ public class BotDealsController extends BaseController {
     @GetMapping("/getBalance/{currency}")
     @ResponseBody
     public SuccessResponse<?> getBalance(@PathVariable CryptoCurrency currency) {
-        return SuccessResponseUtil.data(autoWithdrawalService.getBalance(currency),
+        return SuccessResponseUtil.data(cryptoWithdrawalService.getBalance(currency),
                 data -> JacksonUtil.getEmpty().put("value", data.toPlainString()));
     }
 
