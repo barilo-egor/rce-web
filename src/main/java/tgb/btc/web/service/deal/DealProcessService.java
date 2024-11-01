@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DealStatus;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
+import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.process.IDealPoolService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.AutoWithdrawalService;
@@ -33,15 +35,18 @@ public class DealProcessService implements IDealProcessService {
 
     private final ICryptoWithdrawalService cryptoWithdrawalService;
 
+    private final IReadDealService readDealService;
+
     @Autowired
     public DealProcessService(IDealPoolService dealPoolService, AutoWithdrawalService autoWithdrawalService,
             IModifyDealService modifyDealService, WebUserService webUserService,
-            ICryptoWithdrawalService cryptoWithdrawalService) {
+            ICryptoWithdrawalService cryptoWithdrawalService, IReadDealService readDealService) {
         this.dealPoolService = dealPoolService;
         this.autoWithdrawalService = autoWithdrawalService;
         this.modifyDealService = modifyDealService;
         this.webUserService = webUserService;
         this.cryptoWithdrawalService = cryptoWithdrawalService;
+        this.readDealService = readDealService;
     }
 
     @Override
@@ -64,5 +69,17 @@ public class DealProcessService implements IDealProcessService {
         } catch (Exception e) {
             throw new BaseException("Ошибка при попытке вывода пула: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void withdrawal(Principal principal, Long dealPid) {
+        log.debug("Запрос на авто вывод сделки {} пользователем {}.", dealPid, principal.getName());
+        Deal deal = readDealService.findById(dealPid);
+        if (DealStatus.CONFIRMED.equals(deal.getDealStatus())) {
+            throw new BaseException("Сделка уже находится в статусе \"Подтверждена\"");
+        }
+        String hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getAmount(), deal.getWallet());
+        modifyDealService.confirm(dealPid);
+        log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом. Хеш транзакции {}", principal.getName(), dealPid, hash);
     }
 }

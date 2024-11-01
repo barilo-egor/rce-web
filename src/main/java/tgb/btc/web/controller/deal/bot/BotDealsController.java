@@ -307,11 +307,13 @@ public class BotDealsController extends BaseController {
     @PostMapping("/autoWithdrawal/{dealPid}")
     @ResponseBody
     public SuccessResponse<?> autoWithdrawal(Principal principal, @PathVariable Long dealPid) {
-        autoWithdrawalService.withdrawal(dealPid);
-        modifyDealService.confirm(dealPid);
+        if (!groupChatService.hasAutoWithdrawal())
+            throw new BaseException("Не найдена установленная группа для автовывода сделок. " +
+                    "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
+                    "разделе \"Сделки из бота\".\n");
+        dealProcessService.withdrawal(principal, dealPid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
-        log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом.", principal.getName(), dealPid);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("value", data));
     }
 
