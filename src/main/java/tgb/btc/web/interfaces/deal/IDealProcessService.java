@@ -8,4 +8,6 @@ public interface IDealProcessService {
 
     void completePool(Principal principal, CryptoCurrency cryptoCurrency);
 
+    void withdrawal(Principal principal, Long dealPid);
+
 }
