@@ -78,7 +78,7 @@ public class DealProcessService implements IDealProcessService {
         if (DealStatus.CONFIRMED.equals(deal.getDealStatus())) {
             throw new BaseException("Сделка уже находится в статусе \"Подтверждена\"");
         }
-        String hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getAmount(), deal.getWallet());
+        String hash = cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
         modifyDealService.confirm(dealPid);
         log.debug("Пользователь {} подтвердил сделку из бота {} с автовыводом. Хеш транзакции {}", principal.getName(), dealPid, hash);
     }
