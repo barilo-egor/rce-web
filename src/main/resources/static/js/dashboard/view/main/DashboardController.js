@@ -109,6 +109,13 @@ Ext.define('Dashboard.view.main.DashboardController', {
                         Ext.getStore('reviewStore').reload()
                     }
                     break
+                case 'PUBLICATION_OF_REVIEWS_IS_OVER':
+                    ExtMessages.topToast(response.message)
+                    ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                    break
                 case 'POOL_CHANGED':
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
@@ -117,6 +124,11 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     setTimeout(() => {
                         if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
                     }, 2000)
+                    break
+                case 'REVIEW_PUBLISHED':
+                    if (workspaceItem.xtype === 'reviewcontainer') {
+                        Ext.getStore('reviewStore').reload()
+                    }
                     break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))

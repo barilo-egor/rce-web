@@ -20,6 +20,7 @@ import tgb.btc.web.vo.ExtSort;
 import tgb.btc.web.vo.PagingResponse;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 
 @ExtJSController
@@ -57,9 +58,19 @@ public class ReviewController extends BaseResponseEntityController {
 
     @PostMapping("/{pid}")
     public ResponseEntity<Boolean> publish(Principal principal, @PathVariable Long pid) {
-        if(Objects.nonNull(reviewAPI)) {
+        if (Objects.nonNull(reviewAPI)) {
             reviewAPI.publishReview(pid);
             log.debug("Пользователь {} опубликовал отзыв {}.", principal.getName(), pid);
+        }
+        notificationsAPI.send(NotificationType.REVIEW_ACTION);
+        return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping
+    public ResponseEntity<Boolean> publish(Principal principal, @RequestBody List<Long> pids) {
+        if (Objects.nonNull(reviewAPI)) {
+            reviewAPI.publishReview(pids);
+            log.debug("Пользователь {} опубликовал отзывы {}.", principal.getName(), pids);
         }
         notificationsAPI.send(NotificationType.REVIEW_ACTION);
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
@@ -70,6 +81,15 @@ public class ReviewController extends BaseResponseEntityController {
         String text= reviewService.findById(pid).getText();
         reviewService.deleteById(pid);
         log.debug("Пользователь {} удалил отзыв {}.", principal.getName(), text);
+        notificationsAPI.send(NotificationType.REVIEW_ACTION);
+        return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Boolean> delete(Principal principal, @RequestBody List<Long> pids) {
+        List<Review> reviews = reviewService.findAllByPids(pids);
+        reviewService.deleteAll(reviews);
+        log.debug("Пользователь {} удалил отзывы {}.", principal.getName(), pids);
         notificationsAPI.send(NotificationType.REVIEW_ACTION);
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
     }
