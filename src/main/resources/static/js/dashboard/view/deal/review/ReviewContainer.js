@@ -1,5 +1,5 @@
 Ext.define('Dashboard.view.deal.review.ReviewContainer', {
-    extend: 'Ext.Container',
+    extend: 'Ext.Panel',
     xtype: 'reviewcontainer',
     reference: 'reviewContainer',
     requires: [
@@ -7,13 +7,75 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
     ],
     controller: 'reviewController',
 
+    title: 'Отзывы',
+
     layout: 'fit',
     items: [
         {
+            xtype: 'toolbar',
+            docked: 'top',
+
+            items: [
+                {
+                    xtype: 'button',
+                    reference: 'publishSelectedButton',
+                    text: 'Опубликовать выделенные',
+                    iconCls: 'x-fa fa-paper-plane material-blue-color',
+                    hidden: true,
+                    handler: function (me) {
+                        let records = Ext.getStore(PUBLISHED_REVIEW_STORE_ID).getRange()
+                        if (records.length < 1) {
+                            ExtMessages.info('Внимание', 'Не выделена ни одна запись.')
+                            return
+                        }
+                        ExtMessages.confirm('Внимание', 'Опубликовать все выделенные отзывы?', function () {
+                            let pids = records.map(rec => rec.get('pid'))
+                            ExtUtil.mRequest({
+                                url: '/deal/review',
+                                method: 'POST',
+                                jsonData: pids,
+                                success: function (response) {
+                                    ExtUtil.referenceQuery('publishSelectedButton').setHidden(true)
+                                    ExtUtil.referenceQuery('deleteSelectedButton').setHidden(true)
+                                    Ext.getStore(PUBLISHED_REVIEW_STORE_ID).removeAll()
+                                    ExtMessages.info('Информация', 'Публикация отзывов запущена. По окончанию вам придет уведомление.')
+                                }
+                            })
+                        })
+                    }
+                },
+                {
+                    xtype: 'button',
+                    reference: 'deleteSelectedButton',
+                    text: 'Удалить выделенные',
+                    iconCls: 'x-fa fa-trash-alt redColor',
+                    hidden: true,
+                    handler: function (me) {
+                        let records = Ext.getStore(PUBLISHED_REVIEW_STORE_ID).getRange()
+                        if (records.length < 1) {
+                            ExtMessages.info('Внимание', 'Не выделена ни одна запись.')
+                            return
+                        }
+                        ExtMessages.confirm('Внимание', 'Удалить все выделенные отзывы?', function () {
+                            let pids = records.map(rec => rec.get('pid'))
+                            ExtUtil.mRequest({
+                                url: '/deal/review',
+                                method: 'DELETE',
+                                jsonData: pids,
+                                success: function (response) {
+                                    ExtUtil.referenceQuery('publishSelectedButton').setHidden(true)
+                                    ExtUtil.referenceQuery('deleteSelectedButton').setHidden(true)
+                                    Ext.getStore(PUBLISHED_REVIEW_STORE_ID).removeAll()
+                                }
+                            })
+                        })
+                    }
+                }
+            ]
+        },
+        {
             xtype: 'grid',
             reference: 'reviewGrid',
-
-            title: 'Отзывы',
             store: 'reviewStore',
 
             getPidOfSelected: function() {
@@ -30,12 +92,44 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
             listeners: {
                 painted: function (me) {
                     me.getStore().load()
+                    Ext.getStore(PUBLISHED_REVIEW_STORE_ID).removeAll()
                 },
                 childcontextmenu: 'openGridMenu',
             },
 
 
             columns: [
+                {
+                    xtype: 'checkcolumn',
+                    dataIndex: 'selected',
+                    width: 40,
+                    listeners: {
+                        checkchange: function (me, rowIndex, checked, record) {
+                            let store = Ext.getStore(PUBLISHED_REVIEW_STORE_ID)
+                            if (checked) {
+                                store.add({pid: record.get('pid')})
+                            } else {
+                                let storeRec = store.find('pid', record.get('pid'))
+                                store.removeAt(storeRec)
+                            }
+                            let totalCount = store.getRange().length
+                            let publishSelectedButton = ExtUtil.referenceQuery('publishSelectedButton')
+                            let deleteSelectedButton = ExtUtil.referenceQuery('deleteSelectedButton')
+                            if (totalCount === 1) {
+                                publishSelectedButton.setHidden(false)
+                                deleteSelectedButton.setHidden(false)
+                            } else if (totalCount === 0) {
+                                publishSelectedButton.setHidden(true)
+                                deleteSelectedButton.setHidden(true)
+                            }
+                            if (totalCount > 0) {
+                                publishSelectedButton.setText('Опубликовать выделенные (' + totalCount + ')')
+                                deleteSelectedButton.setText('Удалить выделенные (' + totalCount + ')')
+                            }
+                            debugger
+                        }
+                    }
+                },
                 {
                     text: '№',
                     dataIndex: 'pid',

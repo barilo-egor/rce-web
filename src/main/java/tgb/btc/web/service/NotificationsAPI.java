@@ -95,6 +95,16 @@ public class NotificationsAPI implements INotificationsAPI {
     }
 
     @Override
+    public void publicationOfReviewsOver() {
+        send(NotificationType.PUBLICATION_OF_REVIEWS_IS_OVER, "Публикация отзывов завершена.");
+    }
+
+    @Override
+    public void reviewPublished() {
+        send(NotificationType.REVIEW_PUBLISHED);
+    }
+
+    @Override
     public void poolChanged(String message) {
         send(NotificationType.POOL_CHANGED, message);
     }

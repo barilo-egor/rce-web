@@ -11,5 +11,10 @@ Ext.define('Dashboard.store.deal.review.ReviewStore', {
             type: 'json',
             rootProperty: 'data'
         }
+    },
+    listeners: {
+        load: function (me, records) {
+            records.forEach(record => record.set('selected', Ext.getStore(PUBLISHED_REVIEW_STORE_ID).find('pid', record.get('pid')) > -1))
+        }
     }
 })
