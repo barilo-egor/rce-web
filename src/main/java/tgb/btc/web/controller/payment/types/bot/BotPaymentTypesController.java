@@ -1,13 +1,16 @@
 package tgb.btc.web.controller.payment.types.bot;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tgb.btc.library.bean.bot.PaymentType;
 import tgb.btc.library.bean.bot.SecurePaymentDetails;
+import tgb.btc.library.constants.enums.bot.FiatCurrency;
 import tgb.btc.library.interfaces.service.bean.bot.IPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.ISecurePaymentDetailsService;
+import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.annotations.ExtJSController;
 import tgb.btc.web.controller.BaseResponseEntityController;
 import tgb.btc.web.interfaces.IObjectNodeService;
@@ -42,8 +45,12 @@ public class BotPaymentTypesController extends BaseResponseEntityController {
     }
 
     @GetMapping("/securePaymentDetails/minDealCount")
-    public ResponseEntity<Long> getSecurePaymentDetailsMinDealCount() {
-        return new ResponseEntity<>(securePaymentDetailsService.count(), HttpStatus.OK);
+    public ResponseEntity<ObjectNode> getSecurePaymentDetailsMinDealCount() {
+        ObjectNode objectNode = JacksonUtil.getEmpty();
+        for (FiatCurrency fiatCurrency : FiatCurrency.values()) {
+            objectNode.put(fiatCurrency.getName(), securePaymentDetailsService.count(fiatCurrency));
+        }
+        return new ResponseEntity<>(objectNode, HttpStatus.OK);
     }
 
     @PostMapping("/securePaymentDetails")
@@ -54,8 +61,9 @@ public class BotPaymentTypesController extends BaseResponseEntityController {
 
     @PutMapping("/securePaymentDetails/{pid}")
     public ResponseEntity<Boolean> updateSecurePaymentDetails(@PathVariable Long pid,
-                                                              @RequestParam(required = false) String details) {
-        securePaymentDetailsService.update(pid, details);
+                                                              @RequestParam(required = false) String details,
+                                                              @RequestParam FiatCurrency fiatCurrency) {
+        securePaymentDetailsService.update(pid, details, fiatCurrency);
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
     }
 

@@ -39,13 +39,22 @@ Ext.define('Dashboard.view.paymentTypes.bot.details.CreateSecurePaymentDetailsDi
                 },
                 {
                     xtype: 'numberfield',
+                    reference: 'minDealCountField',
                     readOnly: true,
                     label: 'Количество сделок для отображения реквизита',
                     tooltip: 'Значение формируется автоматически',
-                    bind: {
-                        value: '{minDealCount}'
+                    name: 'minDealCount',
+                    updateCount: function () {
+                        let fiat = ExtUtil.referenceQuery('fiatCurrencyAddField').getValue()
+                        if (fiat) {
+                            this.setValue(this.up('dialog').getViewModel().getData().minDealCount[fiat])
+                        }
                     },
-                    name: 'minDealCount'
+                    listeners: {
+                        painted: function (me) {
+                            me.updateCount()
+                        }
+                    }
                 },
                 {
                     xtype: 'textareafield',
@@ -57,6 +66,31 @@ Ext.define('Dashboard.view.paymentTypes.bot.details.CreateSecurePaymentDetailsDi
                     name: 'details',
                     required: true,
                     requiredMessage: 'Заполните реквизит.'
+                },
+                {
+                    xtype: 'combobox',
+                    reference: 'fiatCurrencyAddField',
+                    label: 'Фиатная валюта',
+                    name: 'fiatCurrency',
+                    editable: false,
+                    required: true,
+                    displayField: 'code',
+                    valueField: 'name',
+                    queryMode: 'local',
+                    store: {
+                        type: 'fiatCurrenciesStore',
+                        listeners: {
+                            load: function (me, records) {
+                                ExtUtil.referenceQuery('fiatCurrencyAddField').setValue(me.getAt(0))
+                                ExtUtil.referenceQuery('minDealCountField').updateCount()
+                            }
+                        }
+                    },
+                    listeners: {
+                        change: function () {
+                            ExtUtil.referenceQuery('minDealCountField').updateCount()
+                        }
+                    }
                 }
             ]
         }
