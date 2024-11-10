@@ -57,6 +57,14 @@ Ext.define('Dashboard.view.paymentTypes.bot.details.SecurePaymentDetailsPanel', 
                     width: 120
                 },
                 {
+                    text: 'Фиат',
+                    dataIndex: 'fiatCurrency',
+                    width: 120,
+                    renderer: function (val) {
+                        return val.displayName
+                    }
+                },
+                {
                     flex: 1,
                     text: 'Реквизит',
                     dataIndex: 'details'
