@@ -207,7 +207,10 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
             iconCls: 'x-fa fa-share',
             handler: function (me) {
                 let deal = ExtUtil.referenceQuery('botDealsGrid').getSelection().getData()
-                if (Number(ExtUtil.referenceQuery('litecoinBalanceField').getValue()) < Number(deal.cryptoAmountNumber)) {
+                let field = deal.cryptoCurrency.name === 'BITCOIN'
+                    ? ExtUtil.referenceQuery('bitcoinBalanceField')
+                    : ExtUtil.referenceQuery('litecoinBalanceField')
+                if (Number(field.getValue()) < Number(deal.cryptoAmountNumber)) {
                     ExtMessages.info('Внимание', 'На балансе недостаточно средств для автовывода сделки.')
                     return
                 }
@@ -217,7 +220,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGridMenu', {
                         method: 'POST',
                         success: function (response) {
                             ExtMessages.topToast('Сделка подтверждена и валюта отправлена')
-                            ExtUtil.referenceQuery('litecoinBalanceField').reload()
+                            field.reload()
                             Ext.getStore('botDealStore').reload()
                         }
                     })

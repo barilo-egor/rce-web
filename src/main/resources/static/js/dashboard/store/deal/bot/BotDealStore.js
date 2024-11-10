@@ -23,6 +23,7 @@ Ext.define('Dashboard.store.deal.bot.BotDealStore', {
         },
         load: function () {
             ExtUtil.referenceQuery('litecoinBalanceField').reload()
+            ExtUtil.referenceQuery('bitcoinBalanceField').reload()
         }
     },
 

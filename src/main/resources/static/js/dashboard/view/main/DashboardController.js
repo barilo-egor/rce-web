@@ -113,7 +113,10 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     ExtMessages.topToast(response.message)
                     ExtUtil.referenceQuery('notificationsTooltip').addNotification(response.message)
                     Ext.getStore('bitcoinPoolStore').reload()
-                    if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    ExtUtil.referenceQuery('bitcoinBalanceField').reload()
+                    setTimeout(() => {
+                        if (workspaceItem.xtype === 'botdealscontainer') Ext.getStore('botDealStore').reload()
+                    }, 2000)
                     break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))

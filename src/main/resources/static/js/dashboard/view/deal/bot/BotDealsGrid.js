@@ -142,7 +142,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                 },
                 {
                     xtype: 'textfield',
-                    reference: 'litecoinBalanceField',
+                    reference: 'bitcoinBalanceField',
                     label: 'BTC баланс',
                     labelAlign: 'left',
                     labelWidth: 85,

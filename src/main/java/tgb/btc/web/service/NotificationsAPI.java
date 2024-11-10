@@ -95,8 +95,8 @@ public class NotificationsAPI implements INotificationsAPI {
     }
 
     @Override
-    public void poolChanged() {
-        send(NotificationType.POOL_CHANGED, "Пул сделок BTC был обновлен.");
+    public void poolChanged(String message) {
+        send(NotificationType.POOL_CHANGED, message);
     }
 
 }

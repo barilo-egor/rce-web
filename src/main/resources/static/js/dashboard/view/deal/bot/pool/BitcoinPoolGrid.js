@@ -16,6 +16,16 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolGrid', {
 
     columns: [
         {
+            text: 'Пул ID',
+            dataIndex: 'id',
+            width: 100
+        },
+        {
+            text: 'Бот',
+            dataIndex: 'bot',
+            width: 150
+        },
+        {
             text: '№',
             width: 150,
             dataIndex: 'pid'
