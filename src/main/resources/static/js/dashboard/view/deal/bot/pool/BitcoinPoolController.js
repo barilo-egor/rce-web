@@ -11,7 +11,7 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolController', {
         ExtUtil.mask('bitcoinPoolTotalContainer', 'Загрузка')
         ExtUtil.referenceQuery('dealPoolSizeField').setValue(store.getTotalCount())
         let totalSum = 0
-        store.getRange().forEach(record => totalSum = totalSum + record.get('cryptoAmount'))
+        store.getRange().forEach(record => totalSum = totalSum + Number(record.get('cryptoAmount')))
         ExtUtil.referenceQuery('dealPoolSumField').setValue(totalSum)
         ExtUtil.maskOff('bitcoinPoolTotalContainer')
         store.addListener('load', controller.setPoolSize)
@@ -32,13 +32,13 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolController', {
 
     setPoolSum: function (store, records) {
         let totalSum = 0
-        records.forEach(record => totalSum = totalSum + record.get('cryptoAmount'))
+        records.forEach(record => totalSum = totalSum + Number(record.get('cryptoAmount')))
         ExtUtil.referenceQuery('dealPoolSumField').setValue(totalSum)
     },
 
     removeFromPool: function (grid, info) {
         ExtUtil.mRequest({
-            url: '/deal/bot/removeFromPool?pid=' + info.record.get('pid'),
+            url: '/deal/bot/removeFromPool?id=' + info.record.get('id'),
             method: 'DELETE',
             success: function (response) {
 

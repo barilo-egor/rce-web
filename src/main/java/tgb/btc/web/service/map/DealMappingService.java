@@ -9,15 +9,18 @@ import org.springframework.stereotype.Service;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
+import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
+import tgb.btc.library.vo.web.PoolDeal;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 import tgb.btc.web.service.ObjectNodeService;
 
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -123,11 +126,13 @@ public class DealMappingService implements IDealMappingService {
     }
 
     @Override
-    public List<ObjectNode> mapPool(List<Deal> deals) {
+    public List<ObjectNode> mapPool(List<PoolDeal> deals) {
         return objectNodeService.map(deals, deal -> objectNodeService.getDefaultMapper().createObjectNode()
+                .put("id", deal.getId())
+                .put("bot", deal.getBot())
                 .put("pid", deal.getPid())
-                .put("cryptoAmount", deal.getCryptoAmount())
-                .put("wallet", deal.getWallet()));
+                .put("cryptoAmount", bigDecimalService.roundToPlainString(new BigDecimal(deal.getAmount()), CryptoCurrency.BITCOIN.getScale()))
+                .put("wallet", deal.getAddress()));
     }
 
     @Autowired

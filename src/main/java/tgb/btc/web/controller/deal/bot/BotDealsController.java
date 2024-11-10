@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,28 +12,23 @@ import org.springframework.web.bind.annotation.*;
 import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.Deal;
-import tgb.btc.library.constants.enums.bot.CryptoCurrency;
-import tgb.btc.library.constants.enums.bot.DealType;
-import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.bot.GroupChatType;
+import tgb.btc.library.constants.enums.bot.*;
 import tgb.btc.library.exception.BaseException;
-import tgb.btc.library.interfaces.service.IAutoWithdrawalService;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IReadDealService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
-import tgb.btc.library.interfaces.service.process.IDealPoolService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.interfaces.web.ICryptoWithdrawalService;
 import tgb.btc.library.service.process.CalculateService;
 import tgb.btc.library.service.process.DealReportService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.calculate.DealAmount;
+import tgb.btc.library.vo.web.PoolDeal;
 import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.IWebGroupChatService;
-import tgb.btc.web.interfaces.deal.IDealProcessService;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.interfaces.map.IDealMappingService;
 import tgb.btc.web.service.NotificationsAPI;
@@ -52,6 +48,9 @@ import java.util.Objects;
 @RequestMapping("/deal/bot")
 @Slf4j
 public class BotDealsController extends BaseController {
+
+    @Value("${bot.username}")
+    private String botUsername;
 
     private IWebDealService webDealService;
 
@@ -77,32 +76,11 @@ public class BotDealsController extends BaseController {
 
     private IBigDecimalService bigDecimalService;
 
-    private IAutoWithdrawalService autoWithdrawalService;
-
-    private IDealPoolService dealPoolService;
-
-    private IDealProcessService dealProcessService;
-
     private ICryptoWithdrawalService cryptoWithdrawalService;
 
     @Autowired
     public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
         this.cryptoWithdrawalService = cryptoWithdrawalService;
-    }
-
-    @Autowired
-    public void setDealProcessService(IDealProcessService dealProcessService) {
-        this.dealProcessService = dealProcessService;
-    }
-
-    @Autowired
-    public void setDealPoolService(IDealPoolService dealPoolService) {
-        this.dealPoolService = dealPoolService;
-    }
-
-    @Autowired
-    public void setAutoWithdrawalService(IAutoWithdrawalService autoWithdrawalService) {
-        this.autoWithdrawalService = autoWithdrawalService;
     }
 
     @Autowired
@@ -183,6 +161,7 @@ public class BotDealsController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> confirm(Principal principal, Long pid, Boolean isNeedRequest) {
         modifyDealService.confirm(pid);
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, pid)).start();
         if (BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawDeal("веба", principal.getName(), pid);
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         log.debug("Пользователь {} подтвердил сделку из бота {}", principal.getName(), pid);
@@ -204,6 +183,7 @@ public class BotDealsController extends BaseController {
     public SuccessResponse<?> delete(Principal principal, Long pid, Boolean isBanUser) {
         if (Objects.nonNull(notifier)) notifier.notifyDealDeletedByAdmin(pid);
         modifyDealService.deleteDeal(pid, isBanUser);
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, pid)).start();
         notificationsAPI.send(NotificationType.DELETE_BOT_DEAL);
         log.debug("Пользователь {} удалил сделку из бота {}", principal.getName(), pid);
         return SuccessResponseUtil.toast("Сделка успешно удалена.");
@@ -307,11 +287,14 @@ public class BotDealsController extends BaseController {
     @PostMapping("/autoWithdrawal/{dealPid}")
     @ResponseBody
     public SuccessResponse<?> autoWithdrawal(Principal principal, @PathVariable Long dealPid) {
+        log.debug("Запрос на вывод сделки {} пользователем {}.", dealPid, principal.getName());
         if (!groupChatService.hasAutoWithdrawal())
             throw new BaseException("Не найдена установленная группа для автовывода сделок. " +
                     "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
                     "разделе \"Сделки из бота\".\n");
-        dealProcessService.withdrawal(principal, dealPid);
+        Deal deal = readDealService.findByPid(dealPid);
+        cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
+        new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
         return SuccessResponseUtil.data(true, data -> JacksonUtil.getEmpty().put("value", data));
@@ -320,13 +303,15 @@ public class BotDealsController extends BaseController {
     @GetMapping("/poolDeals")
     @ExtJSResponse
     public ResponseEntity<List<ObjectNode>> poolDeals(@RequestParam CryptoCurrency cryptoCurrency) {
-        return new ResponseEntity<>(dealMappingService.mapPool(dealPoolService.getAllByDealStatusAndCryptoCurrency(cryptoCurrency)), HttpStatus.OK);
+        return new ResponseEntity<>(dealMappingService.mapPool(cryptoWithdrawalService.getAllPoolDeals()), HttpStatus.OK);
     }
 
     @PostMapping("/clearPool")
     @ExtJSResponse
     public ResponseEntity<Boolean> clearPool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
-        dealPoolService.clearPool(cryptoCurrency, webUserService.getChatIdByUsername(principal.getName()));
+        log.debug("Запрос на очищение пула пользователем {}.", principal.getName());
+        cryptoWithdrawalService.clearPool();
+        log.debug("Пул очищен.");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
@@ -340,21 +325,34 @@ public class BotDealsController extends BaseController {
     @PostMapping("/addToPool")
     @ExtJSResponse
     public ResponseEntity<Boolean> addToPool(Principal principal, @RequestParam Long pid) {
-        dealPoolService.addToPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+        log.debug("Запрос на добавление сделки {} в пул пользователем {}.", pid, principal.getName());
+        Deal deal = readDealService.findByPid(pid);
+        cryptoWithdrawalService.addPoolDeal(PoolDeal.builder()
+                .pid(pid)
+                .bot(botUsername)
+                .amount(deal.getCryptoAmount().toPlainString())
+                .address(deal.getWallet())
+                .build());
+        modifyDealService.updateDealStatusByPid(DealStatus.AWAITING_WITHDRAWAL, pid);
+        log.debug("Сделка {} добавлена в пул.", pid);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @DeleteMapping("/removeFromPool")
     @ExtJSResponse
-    public ResponseEntity<Boolean> removeFromPool(Principal principal, @RequestParam Long pid) {
-        dealPoolService.deleteFromPool(pid, webUserService.getChatIdByUsername(principal.getName()));
+    public ResponseEntity<Boolean> removeFromPool(Principal principal, @RequestParam Long id) {
+        log.debug("Запрос на удаление сделки id={} из пула пользователем {}.", id, principal.getName());
+        cryptoWithdrawalService.deleteFromPool(PoolDeal.builder().id(id).build());
+        log.debug("Сделка id={} удалена из пула", id);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PostMapping("/completePool")
     @ExtJSResponse
     public ResponseEntity<Boolean> completePool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
-        dealProcessService.completePool(principal, cryptoCurrency);
+        log.debug("Запрос на завершение пула пользователем {}.", principal.getName());
+        cryptoWithdrawalService.complete();
+        log.debug("Пул завершен.");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }
