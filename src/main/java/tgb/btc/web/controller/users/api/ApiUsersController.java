@@ -2,7 +2,7 @@ package tgb.btc.web.controller.users.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -102,9 +102,9 @@ public class ApiUsersController extends BaseController {
     @GetMapping("/generateToken")
     @ResponseBody
     public SuccessResponse<?> generateToken() {
-        String token = RandomStringUtils.randomAlphanumeric(42);
+        String token = RandomStringUtils.secure().nextAlphanumeric(42);
         while (apiUserService.countByToken(token) > 0) {
-            token = RandomStringUtils.randomAlphanumeric(42);
+            token = RandomStringUtils.secure().nextAlphanumeric(42);
         }
         return SuccessResponseUtil.data(token, data -> JacksonUtil.getEmpty().put("token", data));
     }

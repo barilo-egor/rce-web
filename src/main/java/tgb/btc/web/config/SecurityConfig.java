@@ -2,92 +2,65 @@ package tgb.btc.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.headers(Customizer.withDefaults());
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
+        httpSecurity.exceptionHandling(Customizer.withDefaults());
         httpSecurity
-                .headers()
-                .frameOptions().disable();
-        httpSecurity
-                .csrf()
-                .disable();
-        httpSecurity.exceptionHandling()
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired");
-                        });
-        //  Доступ для всех
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers(
-                        "/web/registration/**", "/extJS/**",
-                        "/js/login/**", "/login/**", "/loginInstant",
-                        "/js/util/**", "/js/registration/**",
-                        "/js/api/**",
-                        "/js/common/**",
-                        "/api/**",
-                        "/registerLogin", "/telegramLogin",
-                        "/css/**", "/scss/**",
-                        "/web/main",
-                        "/registration/**",
-                        "/api/**", "/documentation/**",
-                        "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico"
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(
+                                "/web/registration/**", "/extJS/**",
+                                "/js/login/**", "/login/**", "/loginInstant",
+                                "/js/util/**", "/js/registration/**",
+                                "/js/api/**",
+                                "/js/common/**",
+                                "/api/**",
+                                "/registerLogin", "/telegramLogin",
+                                "/css/**", "/scss/**",
+                                "/web/main",
+                                "/registration/**",
+                                "/api/**", "/documentation/**",
+                                "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                                "/", "/js/mainUser/**"
+                        )
+                        .hasRole("USER")
+                        .requestMatchers(
+                                "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**",
+                                "/common/**"
+                        )
+                        .hasAnyRole("ADMIN", "OPERATOR", "API_CLIENT")
+                        .anyRequest()
+                        .authenticated())
+                .formLogin(form -> form
+                        .loginPage("/")
+                        .permitAll()
                 )
-                .permitAll();
-        // Доступ для юзеров
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers(
-                        "/", "/js/mainUser/**"
-                )
-                .hasRole("USER");
-
-        httpSecurity
-                .authorizeRequests()
-                .antMatchers(
-                        "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**",
-                        "/common/**"
-                )
-                .hasAnyRole("ADMIN", "OPERATOR", "API_CLIENT");
-
-        // Доступ всех оставшихся юрлов
-        httpSecurity
-                .authorizeRequests()
-                //Все остальные страницы требуют аутентификации
-                .anyRequest()
-                .hasAnyRole("ADMIN", "OPERATOR");
-
-        // Конфигурация логина
-        httpSecurity
-                .formLogin()
-                .loginPage("/")
-                .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .permitAll()
-                .logoutSuccessUrl("/");
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                );
+        return httpSecurity.build();
     }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers();
-    }
-
 }

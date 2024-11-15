@@ -1,7 +1,7 @@
 package tgb.btc.web.service.process;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tgb.btc.api.web.INotifier;
@@ -83,9 +83,9 @@ public class ApiUserProcessService implements IApiUserProcessService {
             apiUser = new ApiUser();
             apiUser.setRegistrationDate(LocalDate.now());
             apiUser.setIsBanned(false);
-            String token = RandomStringUtils.randomAlphanumeric(42);
+            String token = RandomStringUtils.secure().nextAlphanumeric(42);
             while (apiUserService.countByToken(token) > 0) {
-                token = RandomStringUtils.randomAlphanumeric(42);
+                token = RandomStringUtils.secure().nextAlphanumeric(42);
             }
             apiUser.setToken(token);
             List<UsdApiUserCourse> usdApiUserCourseList = new ArrayList<>();

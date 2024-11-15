@@ -1,6 +1,6 @@
 package tgb.btc.web.controller.common;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -32,6 +32,6 @@ public class ImageController {
     @GetMapping(value = "/getPDF", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
     public byte[] getPDF(@RequestParam String fileId) throws IOException {
-        return fileService.getTelegramImage(fileId, "images/" + RandomStringUtils.randomAlphanumeric(7) + ".pdf");
+        return fileService.getTelegramImage(fileId, "images/" + RandomStringUtils.secure().nextAlphanumeric(7) + ".pdf");
     }
 }
