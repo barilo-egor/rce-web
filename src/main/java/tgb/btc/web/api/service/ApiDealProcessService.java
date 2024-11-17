@@ -2,9 +2,9 @@ package tgb.btc.web.api.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -228,7 +228,7 @@ public class ApiDealProcessService implements IApiDealProcessService {
         } else if (apiRequisites.size() == 1) {
             return apiRequisites.get(0);
         } else {
-            return apiRequisites.get(RandomUtils.nextInt(apiRequisites.size()));
+            return apiRequisites.get(RandomUtils.secure().randomInt(0, apiRequisites.size()));
         }
     }
 

@@ -1,7 +1,9 @@
 package tgb.btc.web.service.users;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +15,6 @@ import tgb.btc.library.interfaces.service.bean.web.IRoleService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.web.interfaces.users.IWebWebUsersService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.*;
 
 @Service

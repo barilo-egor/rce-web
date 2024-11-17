@@ -3,9 +3,10 @@ package tgb.btc.web.api.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -39,7 +40,6 @@ import tgb.btc.web.util.RequestUtil;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -124,13 +124,13 @@ public class ApiController extends BaseController {
     @PostMapping("/new")
     @ResponseBody
     public ObjectNode newDeal(HttpServletRequest request, @RequestParam(required = false) String token,
-            @RequestParam(required = false) String dealType,
-            @RequestParam(required = false) BigDecimal amount,
-            @RequestParam(required = false) BigDecimal cryptoAmount,
-            @RequestParam(required = false) String cryptoCurrency,
-            @RequestParam(required = false) String requisite,
-            @RequestParam(required = false) String fiatCurrency,
-            @RequestParam(required = false) String paymentTypeId) {
+                              @RequestParam(required = false) String dealType,
+                              @RequestParam(required = false) BigDecimal amount,
+                              @RequestParam(required = false) BigDecimal cryptoAmount,
+                              @RequestParam(required = false) String cryptoCurrency,
+                              @RequestParam(required = false) String requisite,
+                              @RequestParam(required = false) String fiatCurrency,
+                              @RequestParam(required = false) String paymentTypeId) {
         log.debug("Запрос на создание АПИ сделки IP={}", RequestUtil.getIp(request));
         ApiStatusCode apiStatusCode = hasAccess(token);
         if (Objects.nonNull(apiStatusCode)) {

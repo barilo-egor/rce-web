@@ -1,6 +1,8 @@
 package tgb.btc.web.service.deal;
 
-import org.apache.commons.lang.StringUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,6 @@ import tgb.btc.library.interfaces.util.IFiatCurrencyService;
 import tgb.btc.web.interfaces.deal.IWebApiDealService;
 import tgb.btc.web.vo.api.TotalSum;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,12 +1,11 @@
 package tgb.btc.web.config;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

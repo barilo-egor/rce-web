@@ -1,6 +1,8 @@
 package tgb.btc.web.service.deal;
 
-import org.apache.commons.lang.StringUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,6 @@ import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.service.NotificationsAPI;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

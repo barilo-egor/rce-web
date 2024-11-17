@@ -1,5 +1,6 @@
 package tgb.btc.web.service;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,8 +19,8 @@ import tgb.btc.web.controller.login.LoginController;
 import tgb.btc.web.controller.login.RegistrationController;
 import tgb.btc.web.vo.EmitterVO;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;

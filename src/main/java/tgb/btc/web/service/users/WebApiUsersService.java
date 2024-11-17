@@ -1,8 +1,10 @@
 package tgb.btc.web.service.users;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,6 @@ import tgb.btc.web.interfaces.IObjectNodeService;
 import tgb.btc.web.interfaces.process.IApiUserProcessService;
 import tgb.btc.web.interfaces.users.IWebApiUsersService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
