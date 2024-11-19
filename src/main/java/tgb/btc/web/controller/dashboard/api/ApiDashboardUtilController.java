@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.JsonConvertable;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.service.bean.web.ApiUserService;
+import tgb.btc.library.service.properties.BotPropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.config.SessionEventListener;
 import tgb.btc.web.controller.BaseController;
@@ -33,6 +33,13 @@ public class ApiDashboardUtilController extends BaseController {
     private IWebUserService webUserService;
 
     private IApiDealService apiDealService;
+
+    private BotPropertiesReader botPropertiesReader;
+
+    @Autowired
+    public void setBotPropertiesReader(BotPropertiesReader botPropertiesReader) {
+        this.botPropertiesReader = botPropertiesReader;
+    }
 
     @Autowired
     public void setApiDealService(IApiDealService apiDealService) {
@@ -59,7 +66,7 @@ public class ApiDashboardUtilController extends BaseController {
     public SuccessResponse<?> getBotName() {
         return SuccessResponseUtil.data((JsonConvertable) () ->
                 JacksonUtil.getEmpty()
-                        .put("value", PropertiesPath.BOT_PROPERTIES.getString("bot.name"))
+                        .put("value", botPropertiesReader.getString("bot.name"))
         );
     }
 
@@ -68,7 +75,7 @@ public class ApiDashboardUtilController extends BaseController {
     public SuccessResponse<?> getBotLink() {
         return SuccessResponseUtil.data((JsonConvertable) () ->
                 JacksonUtil.getEmpty()
-                        .put("value", PropertiesPath.BOT_PROPERTIES.getString("bot.link"))
+                        .put("value", botPropertiesReader.getString("bot.link"))
         );
     }
 

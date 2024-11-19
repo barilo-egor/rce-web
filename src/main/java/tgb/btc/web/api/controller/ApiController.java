@@ -18,7 +18,6 @@ import tgb.btc.library.bean.web.api.ApiUser;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
 import tgb.btc.library.constants.enums.bot.DealType;
 import tgb.btc.library.constants.enums.bot.FiatCurrency;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.constants.enums.properties.VariableType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.interfaces.service.bean.web.IApiDealService;
@@ -26,6 +25,9 @@ import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.web.IApiRequisiteService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
+import tgb.btc.library.service.properties.ServerPropertiesReader;
+import tgb.btc.library.service.properties.VariablePropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
 import tgb.btc.web.constant.ControllerMapping;
@@ -69,6 +71,27 @@ public class ApiController extends BaseController {
     private IBigDecimalService bigDecimalService;
 
     private IApiRequisiteService apiRequisiteService;
+
+    private ConfigPropertiesReader configPropertiesReader;
+
+    private VariablePropertiesReader variablePropertiesReader;
+
+    private ServerPropertiesReader serverPropertiesReader;
+
+    @Autowired
+    public void setServerPropertiesReader(ServerPropertiesReader serverPropertiesReader) {
+        this.serverPropertiesReader = serverPropertiesReader;
+    }
+
+    @Autowired
+    public void setVariablePropertiesReader(VariablePropertiesReader variablePropertiesReader) {
+        this.variablePropertiesReader = variablePropertiesReader;
+    }
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
 
     @Autowired
     public void setApiRequisiteService(IApiRequisiteService apiRequisiteService) {
@@ -171,7 +194,7 @@ public class ApiController extends BaseController {
             return ApiStatusCode.DEAL_CANCELED.toJson();
         }
         LocalDateTime now = LocalDateTime.now();
-        if (now.minusMinutes(PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L))
+        if (now.minusMinutes(variablePropertiesReader.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L))
                 .isAfter(apiDeal.getDateTime())) {
             log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
             return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
@@ -260,7 +283,7 @@ public class ApiController extends BaseController {
             return apiStatusCode.toJson();
         return ApiStatusCode.OK.toJson().set("data", JacksonUtil.getEmpty()
                 .put("dealActiveTime",
-                        PropertiesPath.VARIABLE_PROPERTIES.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)));
+                        variablePropertiesReader.getLong(VariableType.DEAL_ACTIVE_TIME.getKey(), 15L)));
     }
 
     @GetMapping("/calculate")
@@ -286,13 +309,13 @@ public class ApiController extends BaseController {
     public ObjectNode getUrl() {
         return JacksonUtil.getEmpty()
                 .put("success", true)
-                .put("data", PropertiesPath.SERVER_PROPERTIES.getString("main.url"));
+                .put("data", serverPropertiesReader.getString("main.url"));
     }
 
     @GetMapping("/getFiat")
     @ResponseBody
     public String getFiat() {
-        return PropertiesPath.CONFIG_PROPERTIES.getString("bot.fiat.currencies");
+        return configPropertiesReader.getString("bot.fiat.currencies");
     }
 
     @GetMapping("statusCodes/calculate")
