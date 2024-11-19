@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tgb.btc.library.bean.bot.DealPayment;
-import tgb.btc.library.constants.enums.properties.PropertiesPath;
 import tgb.btc.library.interfaces.service.bean.web.IDealPaymentService;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.web.constant.enums.NotificationType;
 import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.service.NotificationsAPI;
@@ -28,11 +28,18 @@ import java.util.Objects;
 @RequestMapping("/deal/payment")
 public class DealPaymentController extends BaseController {
 
+    private ConfigPropertiesReader configPropertiesReader;
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
+
     private static String TOKEN = null;
 
     @PostConstruct
     public void setToken() {
-        TOKEN = PropertiesPath.CONFIG_PROPERTIES.getString("payment.type.token");
+        TOKEN = configPropertiesReader.getString("payment.type.token");
     }
 
     private IDealPaymentService dealPaymentService;

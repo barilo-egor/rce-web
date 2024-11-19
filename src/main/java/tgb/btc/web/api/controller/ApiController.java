@@ -26,6 +26,7 @@ import tgb.btc.library.interfaces.service.bean.web.IApiPaymentTypeService;
 import tgb.btc.library.interfaces.service.bean.web.IApiRequisiteService;
 import tgb.btc.library.interfaces.service.bean.web.IApiUserService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
+import tgb.btc.library.service.properties.ConfigPropertiesReader;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.web.api.service.ApiDealProcessService;
 import tgb.btc.web.constant.ControllerMapping;
@@ -69,6 +70,13 @@ public class ApiController extends BaseController {
     private IBigDecimalService bigDecimalService;
 
     private IApiRequisiteService apiRequisiteService;
+
+    private ConfigPropertiesReader configPropertiesReader;
+
+    @Autowired
+    public void setConfigPropertiesReader(ConfigPropertiesReader configPropertiesReader) {
+        this.configPropertiesReader = configPropertiesReader;
+    }
 
     @Autowired
     public void setApiRequisiteService(IApiRequisiteService apiRequisiteService) {
@@ -292,7 +300,7 @@ public class ApiController extends BaseController {
     @GetMapping("/getFiat")
     @ResponseBody
     public String getFiat() {
-        return PropertiesPath.CONFIG_PROPERTIES.getString("bot.fiat.currencies");
+        return configPropertiesReader.getString("bot.fiat.currencies");
     }
 
     @GetMapping("statusCodes/calculate")
