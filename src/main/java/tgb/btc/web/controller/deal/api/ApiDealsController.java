@@ -100,6 +100,10 @@ public class ApiDealsController extends BaseController {
     @PostMapping("/accept")
     @ResponseBody
     public SuccessResponse<?> accept(Principal principal, Long pid, Boolean isNeedRequest) {
+        ApiDealStatus apiDealStatus = apiDealService.getApiDealStatusByPid(pid);
+        if (!ApiDealStatus.PAID.equals(apiDealStatus)) {
+            return SuccessResponseUtil.warningString("Заявка уже обработана.");
+        }
         apiDealService.updateApiDealStatusByPid(ApiDealStatus.ACCEPTED, pid);
         log.debug("Пользователь {} подтвердил АПИ сделку {}", principal.getName(), pid);
         if (Objects.nonNull(notifier) && BooleanUtils.isTrue(isNeedRequest)) notifier.sendRequestToWithdrawApiDeal(pid);
