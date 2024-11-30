@@ -17,7 +17,7 @@ Ext.define('Login.controller.LoginController', {
             })
             return
         }
-        if (IS_DEV && loginField === 'admin' || loginField === 'operator') {
+        if (IS_DEV && (loginField === 'admin' || loginField === 'operator')) {
             ExtUtil.mRequest({
                 url: '/loginInstant',
                 params: {

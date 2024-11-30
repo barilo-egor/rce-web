@@ -109,4 +109,9 @@ public class NotificationsAPI implements INotificationsAPI {
         send(NotificationType.POOL_CHANGED, message);
     }
 
+    @Override
+    public void apiDealDeclined(Long aLong) {
+        send(NotificationType.API_DEAL_AUTO_DECLINED, "Заявка №" + aLong + " автоматически отклонена по истечению времени.");
+    }
+
 }
