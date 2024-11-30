@@ -199,7 +199,9 @@ public class ApiController extends BaseController {
             log.debug("Время для оплаты по сделке {} вышло.", apiDeal.getPid());
             return ApiStatusCode.PAYMENT_TIME_IS_UP.toJson();
         }
-        apiDealService.updateApiDealStatusByPid(ApiDealStatus.PAID, id);
+        apiDeal.setApiDealStatus(ApiDealStatus.PAID);
+        apiDeal.setPaidDateTime(LocalDateTime.now());
+        apiDealService.save(apiDeal);
         if (Objects.nonNull(notifier))
             notifier.notifyNewApiDeal(id);
         notificationsAPI.send(NotificationType.NEW_API_DEAL, "Поступила новая API сделка №" + id);
