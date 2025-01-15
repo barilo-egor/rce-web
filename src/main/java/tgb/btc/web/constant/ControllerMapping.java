@@ -21,4 +21,6 @@ public interface ControllerMapping {
     String PAYMENT_TYPES = "/paymentTypes";
 
     String API_PAYMENT_TYPES = PAYMENT_TYPES + API;
+
+    String MESSAGES_TEXT = "/messages_text";
 }
