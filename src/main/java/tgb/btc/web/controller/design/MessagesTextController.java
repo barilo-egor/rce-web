@@ -6,6 +6,8 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.design.IMessageImageService;
 import tgb.btc.web.annotations.ExtJSResponse;
@@ -96,6 +98,23 @@ public class MessagesTextController extends BaseResponseEntityController {
     @ExtJSResponse
     public ResponseEntity<?> update(@PathVariable MessageImage messageImage, @RequestParam(required = false) String text) {
         messageImageService.updateText(messageImage, text);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/image/{messageImage}")
+    @ExtJSResponse
+    public ResponseEntity<?> setImage(@RequestParam MultipartFile file, @PathVariable MessageImage messageImage) {
+        if (file.isEmpty()) {
+            throw new BaseException("Файл пуст.");
+        }
+        messageImageService.setImage(messageImage, file);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/image/{messageImage}")
+    @ExtJSResponse
+    public ResponseEntity<?> deleteImage(@PathVariable MessageImage messageImage) {
+        messageImageService.deleteImage(messageImage);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

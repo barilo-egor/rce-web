@@ -5,11 +5,7 @@ Ext.define('Dashboard.view.design.message.MessagesTextContainer', {
         'Dashboard.view.design.message.MessagesTextController'
     ],
     controller: 'messagesTextController',
-
-    listeners: {
-        add: 'setPasteHandler',
-        destroy: 'dropPasteHandler'
-    },
+    reference: 'messagesTextContainer',
 
     layout: 'fit',
     items: [
@@ -75,10 +71,13 @@ Ext.define('Dashboard.view.design.message.MessagesTextContainer', {
 
                             shadow: true,
                             margin: '10 5 10 10',
-                            layout: 'fit',
+                            layout: {
+                                type: 'vbox',
+                                align: 'stretch'
+                            },
                             items: [
                                 {
-                                    flex: 0.5,
+                                    flex: 1,
                                     xtype: 'textareafield',
                                     reference: 'messageTextField',
                                     margin: '10 10 10 10',
@@ -88,6 +87,40 @@ Ext.define('Dashboard.view.design.message.MessagesTextContainer', {
                                         }
                                     }
                                 },
+                                {
+                                    xtype: 'container',
+                                    reference: 'messageImageEditButtonsContainer',
+
+                                    margin: '5 0 5 0',
+
+                                    layout: {
+                                        type: 'hbox',
+                                        align: 'middle',
+                                        pack: 'center'
+                                    },
+                                    disableButtons: function () {
+                                        this.items.items[0].setDisabled(true)
+                                        this.items.items[1].setDisabled(true)
+                                    },
+                                    enableButtons: function () {
+                                        this.items.items[0].setDisabled(false)
+                                        this.items.items[1].setDisabled(false)
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'button',
+                                            text: 'Сохранить',
+                                            handler: 'saveMessageImage',
+                                            disabled: true
+                                        },
+                                        {
+                                            xtype: 'button',
+                                            text: 'Отмена',
+                                            handler: 'cancelEdit',
+                                            disabled: true
+                                        }
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -102,41 +135,9 @@ Ext.define('Dashboard.view.design.message.MessagesTextContainer', {
 
                             layout: {
                                 type: 'vbox',
-                                align: 'center'
+                                align: 'center',
+                                pack: 'center'
                             }
-                        }
-                    ]
-                },
-                {
-                    xtype: 'container',
-                    reference: 'messageImageEditButtonsContainer',
-
-                    margin: '5 0 5 0',
-
-                    layout: {
-                        type: 'hbox',
-                        align: 'middle',
-                        pack: 'center'
-                    },
-                    disableButtons: function () {
-                        this.items.items[0].setDisabled(true)
-                        this.items.items[1].setDisabled(true)
-                    },
-                    enableButtons: function () {
-                        this.items.items[0].setDisabled(false)
-                        this.items.items[1].setDisabled(false)
-                    },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Сохранить',
-                            handler: 'saveMessageImage',
-                            disabled: true
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Отмена',
-                            disabled: true
                         }
                     ]
                 }
