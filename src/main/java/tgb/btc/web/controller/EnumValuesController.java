@@ -2,6 +2,8 @@ package tgb.btc.web.controller;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +16,12 @@ import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.constants.enums.web.ApiDealStatus;
 import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
+import tgb.btc.library.interfaces.enums.MessageImage;
 import tgb.btc.library.interfaces.service.bean.web.IWebUserService;
 import tgb.btc.library.interfaces.util.IFiatCurrencyService;
+import tgb.btc.web.annotations.ExtJSResponse;
 import tgb.btc.web.util.SuccessResponseUtil;
+import tgb.btc.web.vo.MessageImageVO;
 import tgb.btc.web.vo.SuccessResponse;
 
 import java.security.Principal;
@@ -95,5 +100,11 @@ public class EnumValuesController extends BaseController {
     @ResponseBody
     public SuccessResponse<?> apiDealStatuses() {
         return SuccessResponseUtil.data(Arrays.asList(ApiDealStatus.values()));
+    }
+
+    @GetMapping("/messageImages")
+    @ExtJSResponse
+    public ResponseEntity<?> messageImages() {
+        return new ResponseEntity<>(Arrays.stream(MessageImage.values()).map(MessageImageVO::from).toList(), HttpStatus.OK);
     }
 }

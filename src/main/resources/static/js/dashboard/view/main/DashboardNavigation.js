@@ -5,7 +5,8 @@ const MENU_ITEMS = {
     API_USERS: 'API клиенты',
     API_PAYMENT_TYPES: 'API типы оплат',
     REVIEWS: 'Отзывы',
-    PAYMENT_TYPES: 'Типы оплат'
+    PAYMENT_TYPES: 'Типы оплат',
+    MESSAGES_TEXT: 'Текста сообщений'
 }
 
 Ext.define('Dashboard.view.main.DashboardNavigation', {
@@ -21,7 +22,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Dashboard.view.users.api.ApiUsersContainer',
         'Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer',
         'Dashboard.view.deal.review.ReviewContainer',
-        'Dashboard.view.paymentTypes.bot.PaymentTypesContainer'
+        'Dashboard.view.paymentTypes.bot.PaymentTypesContainer',
+        'Dashboard.view.design.message.MessagesTextContainer'
     ],
     controller: 'dashboardController',
 
@@ -68,6 +70,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                         case MENU_ITEMS.PAYMENT_TYPES:
                             xtype = 'paymenttypescontainer'
                             break
+                        case MENU_ITEMS.MESSAGES_TEXT:
+                            xtype = 'messagestextcontainer'
                     }
                     ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
                     ExtUtil.referenceQuery('dashboardWorkspace').add({
@@ -137,6 +141,18 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     text: MENU_ITEMS.PAYMENT_TYPES,
                                     iconCls: 'x-fa fa-money-check-alt',
                                     id: 'securePaymentDetailsMenuNode',
+                                    leaf: true
+                                }
+                            ]
+                        },
+                        {
+                            text: 'Дизайн',
+                            iconCls: 'x-fa fa-palette',
+                            children: [
+                                {
+                                    text: MENU_ITEMS.MESSAGES_TEXT,
+                                    iconCls: 'x-fa fa-comment-dots',
+                                    id: 'messageTextMenuNode',
                                     leaf: true
                                 }
                             ]
