@@ -150,15 +150,18 @@ let ExtUtil = {
         if (config.jsonData) requestObj.jsonData = config.jsonData
         if (config.rawData) requestObj.rawData = config.rawData
         if (config.headers) requestObj.headers = config.headers
-        let failure = this.failure
-        requestObj.failure = function(response) {
-            if (response.status === 401) return
-            if (config.loadingComponent) {
-                config.loadingComponent.setMasked(false)
-            } else if (config.loadingComponentRef) {
-                ExtUtil.maskOff(config.loadingComponentRef)
+        if (config.failure) requestObj.failure = config.failure
+        else {
+            let failure = this.failure
+            requestObj.failure = function (response) {
+                if (response.status === 401) return
+                if (config.loadingComponent) {
+                    config.loadingComponent.setMasked(false)
+                } else if (config.loadingComponentRef) {
+                    ExtUtil.maskOff(config.loadingComponentRef)
+                }
+                failure(response)
             }
-            failure(response)
         }
         requestObj.async = config.async !== false
         requestObj.success = function (rawResponse) {
