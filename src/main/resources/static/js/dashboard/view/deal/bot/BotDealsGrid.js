@@ -131,6 +131,12 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             method: 'GET',
                             success: function (response) {
                                 me.setValue(response.body.data.value)
+                            },
+                            failure: function (response) {
+                                if (response.status === 401) return
+                                if (response.status === 403) {
+                                    me.setHidden(true)
+                                }
                             }
                         })
                     },
@@ -157,6 +163,12 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             method: 'GET',
                             success: function (response) {
                                 me.setValue(response.body.data.value)
+                            },
+                            failure: function (response) {
+                                if (response.status === 401) return
+                                if (response.status === 403) {
+                                    me.setHidden(true)
+                                }
                             }
                         })
                     },
