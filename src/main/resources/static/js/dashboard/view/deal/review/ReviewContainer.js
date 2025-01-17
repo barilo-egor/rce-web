@@ -126,7 +126,6 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                                 publishSelectedButton.setText('Опубликовать выделенные (' + totalCount + ')')
                                 deleteSelectedButton.setText('Удалить выделенные (' + totalCount + ')')
                             }
-                            debugger
                         }
                     }
                 },

@@ -20,6 +20,9 @@ public class NotificationsController {
     @RequestMapping(path = "/listen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter listen(Principal principal) {
         SseEmitter sseEmitter = new SseEmitter(-1L);
+        if (LISTENERS.containsKey(principal.getName())) {
+            LISTENERS.get(principal.getName()).complete();
+        }
         LISTENERS.put(principal.getName(), sseEmitter);
         sseEmitter.onError(throwable -> {
             LISTENERS.remove(principal.getName());

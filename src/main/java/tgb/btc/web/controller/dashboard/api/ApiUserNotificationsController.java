@@ -55,6 +55,9 @@ public class ApiUserNotificationsController {
             LISTENERS.remove(pid);
             sseEmitter.complete();
         });
+        if (LISTENERS.containsKey(pid)) {
+            LISTENERS.get(pid).complete();
+        }
         LISTENERS.put(pid, sseEmitter);
         log.debug("API пользователь {} стал SSE слушателем.", principal.getName());
         return sseEmitter;
