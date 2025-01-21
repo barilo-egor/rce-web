@@ -41,6 +41,16 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolGrid', {
             flex: 0.35
         },
         {
+            text: 'Доставка',
+            dataIndex: 'deliveryType',
+            width: 100
+        },
+        {
+            text: 'Время',
+            dataIndex: 'dateTime',
+            width: 100
+        },
+        {
             width: 40,
             cell: {
                 tools: {

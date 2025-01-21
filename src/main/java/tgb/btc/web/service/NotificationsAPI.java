@@ -57,7 +57,10 @@ public class NotificationsAPI implements INotificationsAPI {
         emittersToRemove.forEach((key, value) -> {
             log.debug("Удаление и завершение с ошибкой SSE уведомлений пользователя {}.", key);
             SseEmitter sseEmitter = LISTENERS.get(key);
-            if (Objects.nonNull(sseEmitter)) sseEmitter.completeWithError(value);
+            if (Objects.nonNull(sseEmitter)) {
+                sseEmitter.completeWithError(value);
+                LISTENERS.remove(key);
+            }
         });
         emittersToRemove.keySet().forEach(LISTENERS::remove);
     }

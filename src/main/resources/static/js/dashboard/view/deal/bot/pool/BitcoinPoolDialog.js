@@ -9,7 +9,7 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolDialog', {
 
     title: 'Пул BTC сделок',
     closable: true,
-    width: 800,
+    width: 1000,
     height: 500,
     emptyText: 'Сделки отсутствуют',
 
