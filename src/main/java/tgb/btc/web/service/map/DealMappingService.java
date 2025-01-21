@@ -10,10 +10,10 @@ import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.bean.bot.User;
 import tgb.btc.library.bean.bot.UserDiscount;
 import tgb.btc.library.constants.enums.bot.CryptoCurrency;
+import tgb.btc.library.constants.enums.bot.DeliveryType;
 import tgb.btc.library.interfaces.enums.IDeliveryTypeService;
 import tgb.btc.library.interfaces.service.bean.bot.IUserDiscountService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.read.IDealCountService;
-import tgb.btc.library.interfaces.service.bean.bot.deal.read.IReportDealService;
 import tgb.btc.library.interfaces.util.IBigDecimalService;
 import tgb.btc.library.util.web.JacksonUtil;
 import tgb.btc.library.vo.web.PoolDeal;
@@ -24,12 +24,9 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class DealMappingService implements IDealMappingService {
-
-    private IReportDealService reportDealService;
 
     private IUserDiscountService userDiscountService;
 
@@ -54,11 +51,6 @@ public class DealMappingService implements IDealMappingService {
     @Autowired
     public void setDeliveryTypeService(IDeliveryTypeService deliveryTypeService) {
         this.deliveryTypeService = deliveryTypeService;
-    }
-
-    @Autowired
-    public void setReportDealService(IReportDealService reportDealService) {
-        this.reportDealService = reportDealService;
     }
 
     @Autowired
@@ -120,7 +112,7 @@ public class DealMappingService implements IDealMappingService {
                 .map(paymentReceipt -> JacksonUtil.getEmpty()
                         .put("format", paymentReceipt.getReceiptFormat().name())
                         .put("fileId", paymentReceipt.getReceipt()))
-                .collect(Collectors.toList()));
+                .toList());
         result.set("paymentReceipts", paymentReceipts);
         return result;
     }
@@ -132,7 +124,10 @@ public class DealMappingService implements IDealMappingService {
                 .put("bot", deal.getBot())
                 .put("pid", deal.getPid())
                 .put("cryptoAmount", bigDecimalService.roundToPlainString(new BigDecimal(deal.getAmount()), CryptoCurrency.BITCOIN.getScale()))
-                .put("wallet", deal.getAddress()));
+                .put("wallet", deal.getAddress())
+                .put("deliveryType", DeliveryType.VIP.equals(deal.getDeliveryType()) ? "VIP" : "Обычный")
+                .put("addTime", deal.getAddDate().format(DateTimeFormatter.ofPattern("mm:ss")))
+        );
     }
 
     @Autowired
