@@ -126,7 +126,7 @@ public class DealMappingService implements IDealMappingService {
                 .put("cryptoAmount", bigDecimalService.roundToPlainString(new BigDecimal(deal.getAmount()), CryptoCurrency.BITCOIN.getScale()))
                 .put("wallet", deal.getAddress())
                 .put("deliveryType", DeliveryType.VIP.equals(deal.getDeliveryType()) ? "VIP" : "Обычный")
-                .put("addTime", deal.getAddDate().format(DateTimeFormatter.ofPattern("mm:ss")))
+                .put("addTime", deal.getAddDate().format(DateTimeFormatter.ofPattern("hh:mm")))
         );
     }
 
