@@ -47,7 +47,7 @@ Ext.define('Dashboard.view.deal.bot.pool.BitcoinPoolGrid', {
         },
         {
             text: 'Время',
-            dataIndex: 'dateTime',
+            dataIndex: 'addTime',
             width: 100
         },
         {
