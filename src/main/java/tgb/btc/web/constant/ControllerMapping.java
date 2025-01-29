@@ -23,4 +23,8 @@ public interface ControllerMapping {
     String API_PAYMENT_TYPES = PAYMENT_TYPES + API;
 
     String MESSAGES_TEXT = "/messages_text";
+
+    String AUDIT = "/audit";
+
+    String BALANCE_AUDIT = AUDIT + "/balance";
 }

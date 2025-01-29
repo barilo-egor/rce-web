@@ -53,6 +53,11 @@
                 IS_DEV = response.body.data.isDev
             }
         })
+		const VARS = {
+            STORE_IDS: {
+                BALANCE_AUDIT_STORE: 'balanceAuditStore'
+			}
+		}
 	</script>
     <script type="text/javascript" th:src="@{/js/dashboard/Dashboard.js}"></script>
 </head>
