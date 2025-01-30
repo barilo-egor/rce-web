@@ -6,7 +6,8 @@ const MENU_ITEMS = {
     API_PAYMENT_TYPES: 'API типы оплат',
     REVIEWS: 'Отзывы',
     PAYMENT_TYPES: 'Типы оплат',
-    MESSAGES_TEXT: 'Текста сообщений'
+    MESSAGES_TEXT: 'Текста сообщений',
+    BALANCE_AUDIT: 'Изменения баланса'
 }
 
 Ext.define('Dashboard.view.main.DashboardNavigation', {
@@ -23,7 +24,8 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
         'Dashboard.view.paymentTypes.api.ApiPaymentTypesContainer',
         'Dashboard.view.deal.review.ReviewContainer',
         'Dashboard.view.paymentTypes.bot.PaymentTypesContainer',
-        'Dashboard.view.design.message.MessagesTextContainer'
+        'Dashboard.view.design.message.MessagesTextContainer',
+        'Dashboard.view.audit.balance.BalanceAuditContainer'
     ],
     controller: 'dashboardController',
 
@@ -72,6 +74,10 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                             break
                         case MENU_ITEMS.MESSAGES_TEXT:
                             xtype = 'messagestextcontainer'
+                            break
+                        case MENU_ITEMS.BALANCE_AUDIT:
+                            xtype = 'balanceauditcontainer'
+                            break
                     }
                     ExtUtil.referenceQuery('dashboardWorkspace').getItems().items.forEach(item => item.destroy())
                     ExtUtil.referenceQuery('dashboardWorkspace').add({
@@ -153,6 +159,18 @@ Ext.define('Dashboard.view.main.DashboardNavigation', {
                                     text: MENU_ITEMS.MESSAGES_TEXT,
                                     iconCls: 'x-fa fa-comment-dots',
                                     id: 'messageTextMenuNode',
+                                    leaf: true
+                                }
+                            ]
+                        },
+                        {
+                            text: 'Аудит',
+                            iconCls: 'x-fa fa-history',
+                            children: [
+                                {
+                                    text: MENU_ITEMS.BALANCE_AUDIT,
+                                    iconCls: 'x-fa fa-hand-holding-usd',
+                                    id: 'balanceAuditMenuNode',
                                     leaf: true
                                 }
                             ]
