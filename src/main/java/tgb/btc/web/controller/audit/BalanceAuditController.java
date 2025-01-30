@@ -25,7 +25,8 @@ public class BalanceAuditController extends BaseResponseEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<PagingResponse<ObjectNode>> findAll(Integer limit, Integer page, String sort) {
-        return new ResponseEntity<>(webBalanceAuditService.findAll(limit, page, sort), HttpStatus.OK);
+    public ResponseEntity<PagingResponse<ObjectNode>> findAll(Integer limit, Integer page, String sort, Long targetChatId,
+            Long initiatorChatId) {
+        return new ResponseEntity<>(webBalanceAuditService.findAll(targetChatId, initiatorChatId, limit, page, sort), HttpStatus.OK);
     }
 }

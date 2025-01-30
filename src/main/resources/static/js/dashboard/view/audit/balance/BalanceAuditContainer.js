@@ -24,6 +24,7 @@ Ext.define('Dashboard.view.audit.balance.BalanceAuditContainer', {
                     items: [
                         {
                             xtype: 'container',
+                            reference: 'balanceAuditSearchForm',
                             layout: {
                                 type: 'hbox',
                                 align: 'center'
@@ -33,7 +34,7 @@ Ext.define('Dashboard.view.audit.balance.BalanceAuditContainer', {
                                 {
                                     xtype: 'textfield',
                                     label: 'Chat id',
-                                    margin: '0 50 0 0'
+                                    margin: '0 50 0 0',
                                 },
                                 {
                                     xtype: 'textfield',
@@ -43,7 +44,10 @@ Ext.define('Dashboard.view.audit.balance.BalanceAuditContainer', {
                         },
                         {
                             xtype: 'button',
-                            text: 'Искать'
+                            text: 'Искать',
+                            handler: function (me) {
+                                Ext.getStore(VARS.STORE_IDS.BALANCE_AUDIT_STORE).load()
+                            }
                         }
                     ]
                 },

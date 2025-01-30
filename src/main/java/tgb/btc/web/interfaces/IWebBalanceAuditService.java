@@ -5,6 +5,6 @@ import tgb.btc.web.vo.PagingResponse;
 
 public interface IWebBalanceAuditService {
 
-    PagingResponse<ObjectNode> findAll(Integer limit, Integer page, String sortStr);
+    PagingResponse<ObjectNode> findAll(Long targetChatId, Long initiatorChatId, Integer limit, Integer page, String sortStr);
 
 }

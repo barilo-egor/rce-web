@@ -28,7 +28,7 @@ public class WebBalanceAuditService implements IWebBalanceAuditService {
     }
 
     @Override
-    public PagingResponse<ObjectNode> findAll(Integer limit, Integer page, String sortStr) {
+    public PagingResponse<ObjectNode> findAll(Long targetChatId, Long initiatorChatId, Integer limit, Integer page, String sortStr) {
         ExtSort sort = null;
         if (StringUtils.isNotEmpty(sortStr)) {
             try {
@@ -39,12 +39,12 @@ public class WebBalanceAuditService implements IWebBalanceAuditService {
         }
         List<BalanceAudit> audits;
         if (Objects.nonNull(sort) && Objects.nonNull(sort.getDirection()) && Objects.nonNull(sort.getProperty())) {
-            audits = balanceAuditService.findAll(page - 1, limit,
+            audits = balanceAuditService.findAll(targetChatId, initiatorChatId, page - 1, limit,
                     Sort.by(sort.getDirection().equalsIgnoreCase("asc")
                             ? Sort.Order.asc(sort.getProperty())
                             : Sort.Order.desc(sort.getProperty())));
         } else {
-            audits = balanceAuditService.findAll(page - 1, limit, Sort.by(Sort.Order.desc("dateTime")));
+            audits = balanceAuditService.findAll(targetChatId, initiatorChatId, page - 1, limit, Sort.by(Sort.Order.desc("dateTime")));
         }
         PagingResponse<ObjectNode> response = new PagingResponse<>();
         response.setList(audits.stream().map(audit -> JacksonUtil.getEmpty()
@@ -60,7 +60,7 @@ public class WebBalanceAuditService implements IWebBalanceAuditService {
                         : "-")
                 .put("dateTime", audit.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")))
         ).toList());
-        response.setTotalCount(balanceAuditService.count());
+        response.setTotalCount(balanceAuditService.count(targetChatId, initiatorChatId));
         return response;
     }
 }

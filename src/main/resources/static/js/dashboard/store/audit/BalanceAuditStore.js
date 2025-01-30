@@ -11,5 +11,16 @@ Ext.define('Dashboard.store.audit.BalanceAuditStore', {
             type: 'json',
             rootProperty: 'data'
         }
+    },
+
+    listeners: {
+        beforeload: function (me, operation) {
+            let form = ExtUtil.referenceQuery('balanceAuditSearchForm')
+            let params = {}
+            params.targetChatId = form.items.items[0].getValue()
+            params.initiatorChatId = form.items.items[1].getValue()
+
+            operation.setParams(params)
+        }
     }
 })
