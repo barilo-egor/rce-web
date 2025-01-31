@@ -16,6 +16,21 @@ Ext.define('Dashboard.view.audit.balance.BalanceAuditContainer', {
             },
             items: [
                 {
+                    xtype: 'toolbar',
+                    docked: 'top',
+
+                    items: [
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-sync-alt material-blue-color',
+                            tooltip: 'Перезагрузить записи',
+                            handler: function () {
+                                Ext.getStore(VARS.STORE_IDS.BALANCE_AUDIT_STORE).reload()
+                            }
+                        },
+                    ]
+                },
+                {
                     xtype: 'container',
                     layout: {
                         type: 'vbox',
