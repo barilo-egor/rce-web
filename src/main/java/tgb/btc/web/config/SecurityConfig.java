@@ -45,8 +45,6 @@ public class SecurityConfig {
                                 "/", "/js/mainUser/**"
                         )
                         .hasRole("USER")
-                        .requestMatchers("/deal/bot/getBalance/**")
-                        .hasRole("ADMIN")
                         .requestMatchers(
                                 "/dashboard/api/**", "/js/apiDashboard/**", "/util/getNotificationSound", "/enum/**",
                                 "/common/**"

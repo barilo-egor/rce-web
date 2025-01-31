@@ -7,7 +7,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
         'Dashboard.view.deal.bot.BotDealsController',
         'Dashboard.view.deal.bot.BotDealsGridMenu',
         'Dashboard.view.deal.bot.add.AddDialog',
-        'Dashboard.view.deal.bot.pool.BitcoinPoolDialog'
+        'Dashboard.view.deal.bot.pool.BitcoinPoolDialog',
+        'Dashboard.view.deal.bot.ChangeWalletWindow'
     ],
     controller: 'botDealsController',
 
@@ -51,7 +52,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'Группа запросов',
                     labelAlign: 'left',
                     labelWidth: 110,
-                    width: 230,
+                    width: 280,
                     clearable: false,
                     editable: false,
                     tooltip: 'Группа, в которую отправляются запросы на вывод сделок.',
@@ -82,7 +83,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'Группа автовыводов',
                     labelAlign: 'left',
                     labelWidth: 130,
-                    width: 230,
+                    width: 280,
                     margin: '0 0 0 15',
                     clearable: false,
                     editable: false,
@@ -121,7 +122,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'LTC баланс',
                     labelAlign: 'left',
                     labelWidth: 85,
-                    width: 170,
+                    width: 210,
                     clearable: false,
                     editable: false,
                     reload: function () {
@@ -130,12 +131,10 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             url: '/deal/bot/getBalance/LITECOIN',
                             method: 'GET',
                             success: function (response) {
-                                me.setValue(response.body.data.value)
-                            },
-                            failure: function (response) {
-                                if (response.status === 401) return
-                                if (response.status === 403) {
+                                if (response.body.data.value === false) {
                                     me.setHidden(true)
+                                } else {
+                                    me.setValue(response.body.data.value)
                                 }
                             }
                         })
@@ -143,6 +142,20 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     listeners: {
                         painted: function (me) {
                             me.reload()
+                        }
+                    },
+                    triggers: {
+                        change: {
+                            iconCls: 'x-fa fa-wrench material-blue-color',
+                            handler: function (me) {
+                                Ext.create('Dashboard.view.deal.bot.ChangeWalletWindow', {
+                                    viewModel: {
+                                        data: {
+                                            title: 'Замена LTC кошелька'
+                                        }
+                                    }
+                                }).show()
+                            }
                         }
                     }
                 },
@@ -152,7 +165,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'BTC баланс',
                     labelAlign: 'left',
                     labelWidth: 85,
-                    width: 170,
+                    width: 210,
                     clearable: false,
                     editable: false,
                     margin: '0 0 0 10',
@@ -162,12 +175,10 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             url: '/deal/bot/getBalance/BITCOIN',
                             method: 'GET',
                             success: function (response) {
-                                me.setValue(response.body.data.value)
-                            },
-                            failure: function (response) {
-                                if (response.status === 401) return
-                                if (response.status === 403) {
+                                if (response.body.data.value === false) {
                                     me.setHidden(true)
+                                } else {
+                                    me.setValue(response.body.data.value)
                                 }
                             }
                         })
@@ -176,6 +187,20 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                         painted: function (me) {
                             me.reload()
                         }
+                    },
+                    triggers: {
+                        change: {
+                            iconCls: 'x-fa fa-wrench material-blue-color',
+                            handler: function (me) {
+                                Ext.create('Dashboard.view.deal.bot.ChangeWalletWindow', {
+                                    viewModel: {
+                                        data: {
+                                            title: 'Замена LTC кошелька'
+                                        }
+                                    }
+                                }).show()
+                            }
+                        }
                     }
                 },
                 {
@@ -183,6 +208,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     reference: 'bitcoinPoolButton',
                     iconCls: 'x-fa fa-clipboard-list',
                     tooltip: 'Пул сделок на автовывод',
+                    margin: '0 0 0 10',
                     handler: function () {
                         Ext.create('Dashboard.view.deal.bot.pool.BitcoinPoolDialog').show()
                     }

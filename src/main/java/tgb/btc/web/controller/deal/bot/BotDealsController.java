@@ -14,6 +14,7 @@ import tgb.btc.api.bot.AdditionalVerificationProcessor;
 import tgb.btc.api.web.INotifier;
 import tgb.btc.library.bean.bot.Deal;
 import tgb.btc.library.constants.enums.bot.*;
+import tgb.btc.library.constants.enums.web.RoleConstants;
 import tgb.btc.library.exception.BaseException;
 import tgb.btc.library.interfaces.service.bean.bot.IGroupChatService;
 import tgb.btc.library.interfaces.service.bean.bot.deal.IModifyDealService;
@@ -32,6 +33,7 @@ import tgb.btc.web.controller.BaseController;
 import tgb.btc.web.interfaces.IWebGroupChatService;
 import tgb.btc.web.interfaces.deal.IWebDealService;
 import tgb.btc.web.interfaces.map.IDealMappingService;
+import tgb.btc.web.interfaces.users.IWebWebUsersService;
 import tgb.btc.web.service.NotificationsAPI;
 import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
@@ -78,6 +80,13 @@ public class BotDealsController extends BaseController {
     private IBigDecimalService bigDecimalService;
 
     private ICryptoWithdrawalService cryptoWithdrawalService;
+
+    private IWebWebUsersService webWebUsersService;
+
+    @Autowired
+    public void setWebWebUsersService(IWebWebUsersService webWebUsersService) {
+        this.webWebUsersService = webWebUsersService;
+    }
 
     @Autowired
     public void setCryptoWithdrawalService(ICryptoWithdrawalService cryptoWithdrawalService) {
@@ -280,7 +289,10 @@ public class BotDealsController extends BaseController {
 
     @GetMapping("/getBalance/{currency}")
     @ResponseBody
-    public SuccessResponse<?> getBalance(@PathVariable CryptoCurrency currency) {
+    public SuccessResponse<?> getBalance(Principal principal, @PathVariable CryptoCurrency currency) {
+        if (!webWebUsersService.hasAccess(RoleConstants.ROLE_ADMIN, principal.getName())) {
+            return SuccessResponseUtil.data(false, data -> JacksonUtil.getEmpty().put("value", data));
+        }
         return SuccessResponseUtil.data(cryptoWithdrawalService.getBalance(currency),
                 data -> JacksonUtil.getEmpty().put("value", data.toPlainString()));
     }
