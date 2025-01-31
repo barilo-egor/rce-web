@@ -41,6 +41,8 @@ public class SecurityConfig {
                                 "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico"
                         )
                         .permitAll()
+                        .requestMatchers("/deal/bot/changeWallet")
+                        .hasRole("ADMIN")
                         .requestMatchers(
                                 "/", "/js/mainUser/**"
                         )

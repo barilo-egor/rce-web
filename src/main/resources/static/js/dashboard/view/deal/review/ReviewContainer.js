@@ -18,6 +18,14 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
             items: [
                 {
                     xtype: 'button',
+                    iconCls: 'x-fa fa-sync-alt material-blue-color',
+                    tooltip: 'Перезагрузить отзывы',
+                    handler: function () {
+                        Ext.getStore('reviewStore').reload()
+                    }
+                },
+                {
+                    xtype: 'button',
                     reference: 'publishSelectedButton',
                     text: 'Опубликовать выделенные',
                     iconCls: 'x-fa fa-paper-plane material-blue-color',

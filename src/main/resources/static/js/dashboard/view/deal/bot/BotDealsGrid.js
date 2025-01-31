@@ -122,7 +122,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'LTC баланс',
                     labelAlign: 'left',
                     labelWidth: 85,
-                    width: 210,
+                    width: 250,
                     clearable: false,
                     editable: false,
                     reload: function () {
@@ -151,10 +151,17 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                                 Ext.create('Dashboard.view.deal.bot.ChangeWalletWindow', {
                                     viewModel: {
                                         data: {
-                                            title: 'Замена LTC кошелька'
+                                            title: 'Замена LTC кошелька',
+                                            cryptoCurrency: 'LITECOIN'
                                         }
                                     }
                                 }).show()
+                            }
+                        },
+                        update: {
+                            iconCls: 'x-fa fa-sync-alt material-blue-color',
+                            handler: function (me) {
+                                me.reload()
                             }
                         }
                     }
@@ -165,7 +172,7 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     label: 'BTC баланс',
                     labelAlign: 'left',
                     labelWidth: 85,
-                    width: 210,
+                    width: 250,
                     clearable: false,
                     editable: false,
                     margin: '0 0 0 10',
@@ -195,10 +202,17 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                                 Ext.create('Dashboard.view.deal.bot.ChangeWalletWindow', {
                                     viewModel: {
                                         data: {
-                                            title: 'Замена LTC кошелька'
+                                            title: 'Замена BTC кошелька',
+                                            cryptoCurrency: 'BITCOIN'
                                         }
                                     }
                                 }).show()
+                            }
+                        },
+                        update: {
+                            iconCls: 'x-fa fa-sync-alt material-blue-color',
+                            handler: function (me) {
+                                me.reload()
                             }
                         }
                     }

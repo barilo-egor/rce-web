@@ -39,7 +39,6 @@ import tgb.btc.web.util.SuccessResponseUtil;
 import tgb.btc.web.vo.SuccessResponse;
 import tgb.btc.web.vo.form.BotDealsSearchForm;
 
-
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
@@ -366,6 +365,15 @@ public class BotDealsController extends BaseController {
         log.debug("Запрос на завершение пула пользователем {}.", principal.getName());
         cryptoWithdrawalService.complete();
         log.debug("Пул завершен.");
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/changeWallet")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> changeWallet(Principal principal, CryptoCurrency cryptoCurrency, String seedPhrase) {
+        log.debug("Запрос на замену кошелька пользователем {}.", principal.getName());
+        cryptoWithdrawalService.changeWallet(cryptoCurrency, seedPhrase);
+        log.debug("Кошелек заменен.");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }
