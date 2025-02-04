@@ -305,7 +305,7 @@ public class BotDealsController extends BaseController {
                     "Добавьте бота в группу, выдайте разрешения на отправку сообщений и выберите группу на сайте в " +
                     "разделе \"Сделки из бота\".\n");
         Deal deal = readDealService.findByPid(dealPid);
-        cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet());
+        cryptoWithdrawalService.withdrawal(deal.getCryptoCurrency(), deal.getCryptoAmount(), deal.getWallet(), null);
         new Thread(() -> cryptoWithdrawalService.deleteFromPool(botUsername, dealPid)).start();
         notificationsAPI.send(NotificationType.CONFIRM_BOT_DEAL);
         notifier.sendAutoWithdrawDeal("веба", principal.getName(), dealPid);
@@ -363,7 +363,7 @@ public class BotDealsController extends BaseController {
     @ExtJSResponse
     public ResponseEntity<Boolean> completePool(Principal principal, @RequestParam CryptoCurrency cryptoCurrency) {
         log.debug("Запрос на завершение пула пользователем {}.", principal.getName());
-        cryptoWithdrawalService.complete();
+        cryptoWithdrawalService.complete(null);
         log.debug("Пул завершен.");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
