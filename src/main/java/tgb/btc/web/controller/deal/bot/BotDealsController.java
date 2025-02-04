@@ -376,4 +376,10 @@ public class BotDealsController extends BaseController {
         log.debug("Кошелек заменен.");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
+
+    @GetMapping("/getFeeRate")
+    @ExtJSResponse
+    public ResponseEntity<String> getFeeRate(CryptoCurrency currency) {
+        return new ResponseEntity<>(cryptoWithdrawalService.getFeeRate(currency), HttpStatus.OK);
+    }
 }
