@@ -139,6 +139,9 @@ Ext.define('Dashboard.view.main.DashboardController', {
                     if (workspaceItem.xtype === 'apidealscontainer') Ext.getStore('apiDealStore').reload()
                     playSound = true
                     break
+                case 'FEE_RATE_UPDATED':
+                    ExtUtil.referenceQuery('bitcoinCommissionField').reload()
+                    break
             }
             if (playSound && NOTIFICATION_SOUND_ON) NOTIFICATION_SOUND.play().catch(error => console.log('Ошибка воспроизведения звука оповещения. ', error))
         }

@@ -327,13 +327,6 @@ public class BotDealsController extends BaseController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    private IWebUserService webUserService;
-
-    @Autowired
-    public void setWebUserService(IWebUserService webUserService) {
-        this.webUserService = webUserService;
-    }
-
     @PostMapping("/addToPool")
     @ExtJSResponse
     public ResponseEntity<Boolean> addToPool(Principal principal, @RequestParam Long pid) {
@@ -377,9 +370,16 @@ public class BotDealsController extends BaseController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @GetMapping("/getFeeRate")
+    @GetMapping("/getFeeRate/{currency}")
     @ExtJSResponse
-    public ResponseEntity<String> getFeeRate(CryptoCurrency currency) {
+    public ResponseEntity<String> getFeeRate(@PathVariable CryptoCurrency currency) {
         return new ResponseEntity<>(cryptoWithdrawalService.getFeeRate(currency), HttpStatus.OK);
+    }
+
+    @PostMapping("/updateFeeRate/{currency}")
+    @ExtJSResponse
+    public ResponseEntity<Boolean> updateFeeRate(@PathVariable CryptoCurrency currency, @RequestParam Integer newValue) {
+        cryptoWithdrawalService.putFeeRate(currency, newValue.toString());
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

@@ -8,7 +8,8 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
         'Dashboard.view.deal.bot.BotDealsGridMenu',
         'Dashboard.view.deal.bot.add.AddDialog',
         'Dashboard.view.deal.bot.pool.BitcoinPoolDialog',
-        'Dashboard.view.deal.bot.ChangeWalletWindow'
+        'Dashboard.view.deal.bot.ChangeWalletWindow',
+        'Dashboard.view.deal.bot.ChangeCommissionDialog'
     ],
     controller: 'botDealsController',
 
@@ -162,8 +163,18 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             iconCls: 'x-fa fa-sync-alt material-blue-color',
                             handler: function (me) {
                                 me.reload()
+                                ExtMessages.topToast('Значение LTC баланса перезагружено')
                             }
                         }
+                    }
+                },
+                {
+                    xtype: 'component',
+                    html: '|',
+                    style: {
+                        'margin-left': '10px',
+                        'margin-right': '10px',
+                        'color': 'gray'
                     }
                 },
                 {
@@ -213,6 +224,56 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                             iconCls: 'x-fa fa-sync-alt material-blue-color',
                             handler: function (me) {
                                 me.reload()
+                                ExtMessages.topToast('Значение BTC баланса перезагружено')
+                            }
+                        }
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    reference: 'bitcoinCommissionField',
+                    label: 'Комиссия BTC sat/byte',
+                    labelAlign: 'left',
+                    labelWidth: 120,
+                    width: 200,
+                    clearable: false,
+                    editable: false,
+                    margin: '0 0 0 10',
+                    reload: function () {
+                        let me = this
+                        ExtUtil.mRequest({
+                            url: '/deal/bot/getFeeRate/BITCOIN',
+                            method: 'GET',
+                            success: function (response) {
+                                me.setValue(response.data)
+                            }
+                        })
+                    },
+                    listeners: {
+                        painted: function (me) {
+                            me.reload()
+                        }
+                    },
+                    triggers: {
+                        change: {
+                            iconCls: 'x-fa fa-wrench material-blue-color',
+                            handler: function (me) {
+                                Ext.create('Dashboard.view.deal.bot.ChangeCommissionDialog', {
+                                    viewModel: {
+                                        data: {
+                                            title: 'Обновление значения комиссии',
+                                            cryptoCurrency: 'BITCOIN',
+                                            value: me.getValue()
+                                        }
+                                    }
+                                }).show()
+                            }
+                        },
+                        update: {
+                            iconCls: 'x-fa fa-sync-alt material-blue-color',
+                            handler: function (me) {
+                                me.reload()
+                                ExtMessages.topToast('Значение комиссии перезагружено')
                             }
                         }
                     }
@@ -226,7 +287,16 @@ Ext.define('Dashboard.view.deal.bot.BotDealsGrid', {
                     handler: function () {
                         Ext.create('Dashboard.view.deal.bot.pool.BitcoinPoolDialog').show()
                     }
-                }
+                },
+                {
+                    xtype: 'component',
+                    html: '|',
+                    style: {
+                        'margin-left': '10px',
+                        'margin-right': '10px',
+                        'color': 'gray'
+                    }
+                },
             ]
         },
         {
