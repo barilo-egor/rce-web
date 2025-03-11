@@ -40,12 +40,12 @@ public class WebReviewService implements IWebReviewService {
         }
         List<Review> reviews;
         if (Objects.nonNull(sort) && Objects.nonNull(sort.getDirection()) && Objects.nonNull(sort.getProperty())) {
-            reviews = reviewService.findAllByIsPublished(false, page - 1, limit,
+            reviews = reviewService.findAllByIsAccepted(false, page - 1, limit,
                     Sort.by(sort.getDirection().equalsIgnoreCase("asc")
                             ? Sort.Order.asc(sort.getProperty())
                             : Sort.Order.desc(sort.getProperty())));
         } else {
-            reviews = reviewService.findAllByIsPublished(false, page - 1, limit, Sort.by(Sort.Order.desc("pid")));
+            reviews = reviewService.findAllByIsAccepted(false, page - 1, limit, Sort.by(Sort.Order.desc("pid")));
         }
         PagingResponse<Review> response = new PagingResponse<>();
         response.setList(reviews);
