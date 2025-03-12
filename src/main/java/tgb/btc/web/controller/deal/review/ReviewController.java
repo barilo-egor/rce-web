@@ -19,7 +19,6 @@ import tgb.btc.web.vo.PagingResponse;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Objects;
 
 @ExtJSController
 @RequestMapping("/deal/review")
@@ -56,10 +55,7 @@ public class ReviewController extends BaseResponseEntityController {
 
     @PostMapping("/{pid}")
     public ResponseEntity<Boolean> publish(Principal principal, @PathVariable Long pid) {
-        if (Objects.nonNull(reviewAPI)) {
-            reviewAPI.publishReview(pid);
-            log.debug("Пользователь {} опубликовал отзыв {}.", principal.getName(), pid);
-        }
+        webReviewService.updateToAccepted(principal, List.of(pid));
         notificationsAPI.send(NotificationType.REVIEW_ACTION);
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
     }
