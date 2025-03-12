@@ -1,6 +1,5 @@
 package tgb.btc.web.service.review;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -49,7 +48,7 @@ public class WebReviewService implements IWebReviewService {
         }
         PagingResponse<Review> response = new PagingResponse<>();
         response.setList(reviews);
-        response.setTotalCount(reviewService.count(Example.of(Review.builder().isPublished(false).build())));
+        response.setTotalCount(reviewService.count(Example.of(Review.builder().isAccepted(false).build())));
         return response;
     }
 
