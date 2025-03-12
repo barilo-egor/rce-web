@@ -1,7 +1,6 @@
 package tgb.btc.web.controller.deal.review;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import tgb.btc.web.controller.BaseResponseEntityController;
 import tgb.btc.web.interfaces.IObjectNodeService;
 import tgb.btc.web.interfaces.review.IWebReviewService;
 import tgb.btc.web.service.NotificationsAPI;
-import tgb.btc.web.vo.ExtSort;
 import tgb.btc.web.vo.PagingResponse;
 
 import java.security.Principal;
@@ -68,10 +66,7 @@ public class ReviewController extends BaseResponseEntityController {
 
     @PostMapping
     public ResponseEntity<Boolean> publish(Principal principal, @RequestBody List<Long> pids) {
-        if (Objects.nonNull(reviewAPI)) {
-            reviewAPI.publishReview(pids);
-            log.debug("Пользователь {} опубликовал отзывы {}.", principal.getName(), pids);
-        }
+        webReviewService.updateToAccepted(principal, pids);
         notificationsAPI.send(NotificationType.REVIEW_ACTION);
         return new ResponseEntity<>(true, HttpStatus.ACCEPTED);
     }

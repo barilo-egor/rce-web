@@ -27,8 +27,8 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                 {
                     xtype: 'button',
                     reference: 'publishSelectedButton',
-                    text: 'Опубликовать выделенные',
-                    iconCls: 'x-fa fa-paper-plane material-blue-color',
+                    text: 'Одобрить выделенные',
+                    iconCls: 'x-fa fa-check-double material-blue-color',
                     hidden: true,
                     handler: function (me) {
                         let records = Ext.getStore(PUBLISHED_REVIEW_STORE_ID).getRange()
@@ -36,7 +36,7 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                             ExtMessages.info('Внимание', 'Не выделена ни одна запись.')
                             return
                         }
-                        ExtMessages.confirm('Внимание', 'Опубликовать все выделенные отзывы?', function () {
+                        ExtMessages.confirm('Внимание', 'Одобрить все выделенные отзывы?', function () {
                             let pids = records.map(rec => rec.get('pid'))
                             ExtUtil.mRequest({
                                 url: '/deal/review',
@@ -46,7 +46,7 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                                     ExtUtil.referenceQuery('publishSelectedButton').setHidden(true)
                                     ExtUtil.referenceQuery('deleteSelectedButton').setHidden(true)
                                     Ext.getStore(PUBLISHED_REVIEW_STORE_ID).removeAll()
-                                    ExtMessages.info('Информация', 'Публикация отзывов запущена. По окончанию вам придет уведомление.')
+                                    ExtMessages.info('Информация', 'Все выделенные отзывы одобрены и буду опубликованы согласно очереди.')
                                 }
                             })
                         })
@@ -131,7 +131,7 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                                 deleteSelectedButton.setHidden(true)
                             }
                             if (totalCount > 0) {
-                                publishSelectedButton.setText('Опубликовать выделенные (' + totalCount + ')')
+                                publishSelectedButton.setText('Одобрить выделенные (' + totalCount + ')')
                                 deleteSelectedButton.setText('Удалить выделенные (' + totalCount + ')')
                             }
                         }
