@@ -29,6 +29,7 @@ Ext.application({
         'Dashboard.store.paymentTypes.api.ApiClientStore',
         'Dashboard.store.paymentTypes.api.ApiRequisiteStore',
         'Dashboard.store.deal.review.ReviewStore',
+        'Dashboard.store.deal.review.ReviewQueueStore',
         'Dashboard.store.paymentTypes.bot.PaymentTypeStore',
         'Dashboard.store.paymentTypes.bot.SecurePaymentDetailsStore',
         'Dashboard.store.deal.bot.BitcoinPoolStore',

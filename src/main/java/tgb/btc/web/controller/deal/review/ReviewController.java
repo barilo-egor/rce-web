@@ -48,8 +48,9 @@ public class ReviewController extends BaseResponseEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<PagingResponse<Review>> findAll(Integer limit, Integer page, String sort) throws JsonProcessingException {
-        return new ResponseEntity<>(webReviewService.findAll(limit, page,
+    public ResponseEntity<PagingResponse<Review>> findAll(@RequestParam Boolean isAccepted,
+            Integer limit, Integer page, String sort) throws JsonProcessingException {
+        return new ResponseEntity<>(webReviewService.findAll(isAccepted, limit, page,
                 sort), HttpStatus.ACCEPTED);
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IWebReviewService {
 
-    PagingResponse<Review> findAll(Integer limit, Integer page, String sort);
+    PagingResponse<Review> findAll(Boolean isAccepted, Integer limit, Integer page, String sort);
 
     void updateToAccepted(Principal principal, List<Long> pids);
 

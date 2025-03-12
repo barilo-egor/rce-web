@@ -6,7 +6,7 @@ Ext.define('Dashboard.store.deal.review.ReviewStore', {
     pageSize: 50,
     proxy: {
         type: 'ajax',
-        url: '/deal/review',
+        url: '/deal/review?isAccepted=false',
         reader: {
             type: 'json',
             rootProperty: 'data'

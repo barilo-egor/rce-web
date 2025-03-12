@@ -31,7 +31,7 @@ public class WebReviewService implements IWebReviewService {
     }
 
     @Override
-    public PagingResponse<Review> findAll(Integer limit, Integer page, String sortStr) {
+    public PagingResponse<Review> findAll(Boolean isAccepted, Integer limit, Integer page, String sortStr) {
         ExtSort sort = null;
         if (StringUtils.isNotEmpty(sortStr)) {
             try {
@@ -42,16 +42,16 @@ public class WebReviewService implements IWebReviewService {
         }
         List<Review> reviews;
         if (Objects.nonNull(sort) && Objects.nonNull(sort.getDirection()) && Objects.nonNull(sort.getProperty())) {
-            reviews = reviewService.findAllByIsAccepted(false, page - 1, limit,
+            reviews = reviewService.findAllByIsAccepted(Objects.nonNull(isAccepted) && isAccepted, page - 1, limit,
                     Sort.by(sort.getDirection().equalsIgnoreCase("asc")
                             ? Sort.Order.asc(sort.getProperty())
                             : Sort.Order.desc(sort.getProperty())));
         } else {
-            reviews = reviewService.findAllByIsAccepted(false, page - 1, limit, Sort.by(Sort.Order.desc("pid")));
+            reviews = reviewService.findAllByIsAccepted(Objects.nonNull(isAccepted) && isAccepted, page - 1, limit, Sort.by(Sort.Order.desc("pid")));
         }
         PagingResponse<Review> response = new PagingResponse<>();
         response.setList(reviews);
-        response.setTotalCount(reviewService.count(Example.of(Review.builder().isAccepted(false).build())));
+        response.setTotalCount(reviewService.count(Example.of(Review.builder().isAccepted(Objects.nonNull(isAccepted) && isAccepted).build())));
         return response;
     }
 
