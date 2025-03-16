@@ -4,8 +4,8 @@ Ext.define('Dashboard.view.deal.review.ReviewGridMenu', {
 
     items: [
         {
-            text: 'Опубликовать',
-            iconCls: 'x-fa fa-paper-plane material-blue-color',
+            text: 'Одобрить',
+            iconCls: 'x-fa fa-check material-blue-color',
             handler: function (me) {
                 ExtUtil.mask('reviewContainer')
                 RequestUtil.request({
@@ -14,7 +14,7 @@ Ext.define('Dashboard.view.deal.review.ReviewGridMenu', {
                     method: 'POST',
                     success: function () {
                         ExtUtil.maskOff('reviewContainer')
-                        ExtMessages.topToast('Отзыв опубликован')
+                        ExtMessages.topToast('Отзыв одобрен')
                     }
                 })
             }
