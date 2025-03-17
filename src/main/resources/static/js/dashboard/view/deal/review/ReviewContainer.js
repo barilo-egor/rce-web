@@ -3,15 +3,68 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
     xtype: 'reviewcontainer',
     reference: 'reviewContainer',
     requires: [
-        'Dashboard.view.deal.review.ReviewController'
+        'Dashboard.view.deal.review.ReviewController',
+        'Dashboard.view.deal.review.ChangeIntervalWindow'
     ],
     controller: 'reviewController',
+
+    listeners: {
+        painted: function (me) {
+            ExtUtil.referenceQuery('reviewPublishIntervalField').reload()
+        }
+    },
+
+    tbar: [
+        {
+            xtype: 'numberfield',
+            reference: 'reviewPublishIntervalField',
+            label: 'Интервал публикации отзывов(в минутах)',
+            clearable: false,
+            editable: false,
+            reload: function () {
+                ExtUtil.mask('reviewContainer', 'Загрузка')
+                ExtUtil.mRequest({
+                    url: '/deal/review/publishInterval',
+                    method: 'GET',
+                    loadingComponentRef: 'reviewContainer',
+                    success: function (response) {
+                        ExtUtil.referenceQuery('reviewPublishIntervalField').setValue(response.data)
+                        ExtUtil.maskOff('reviewContainer')
+                    }
+                })
+            },
+            triggers: {
+                change: {
+                    iconCls: 'x-fa fa-wrench material-blue-color',
+                    handler: function (me) {
+                        Ext.create('Dashboard.view.deal.review.ChangeIntervalWindow', {
+                            viewModel: {
+                                data: {
+                                    value: ExtUtil.referenceQuery('reviewPublishIntervalField').getValue()
+                                }
+                            }
+                        }).show()
+                    }
+                }
+            },
+        }
+    ],
 
     items: [
         {
             flex: 1,
             xtype: 'panel',
             title: 'Новые отзывы',
+
+            listeners: {
+                collapse: function () {
+                    let publishSelectedButton = ExtUtil.referenceQuery('publishSelectedButton')
+                    let deleteSelectedButton = ExtUtil.referenceQuery('deleteSelectedButton')
+                    publishSelectedButton.setHidden(true)
+                    deleteSelectedButton.setHidden(true)
+                    Ext.getStore(PUBLISHED_REVIEW_STORE_ID).removeAll()
+                }
+            },
 
             layout: 'fit',
             items: [
@@ -195,6 +248,7 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                         painted: function (me) {
                             me.getStore().load()
                         },
+                        childcontextmenu: 'openGridMenu',
                     },
 
 
@@ -221,6 +275,18 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
                             flex: 1,
                             dataIndex: 'text',
                             menuDisabled: true
+                        },
+                        {
+                            width: 40,
+                            menuDisabled: true,
+                            cell: {
+                                tools: {
+                                    delete: {
+                                        iconCls: 'x-fa fa-trash-alt redColor',
+                                        handler: 'deleteReview'
+                                    },
+                                }
+                            }
                         }
                     ]
                 }

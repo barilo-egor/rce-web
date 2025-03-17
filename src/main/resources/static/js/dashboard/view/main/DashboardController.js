@@ -100,6 +100,7 @@ Ext.define('Dashboard.view.main.DashboardController', {
                 case 'REVIEW_ACTION':
                     if (workspaceItem.xtype === 'reviewcontainer') {
                         Ext.getStore('reviewStore').reload()
+                        Ext.getStore('reviewQueueStore').reload()
                     }
                     break
                 case 'NEW_REVIEW':

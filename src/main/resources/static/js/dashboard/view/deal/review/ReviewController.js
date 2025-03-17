@@ -10,5 +10,18 @@ Ext.define('Dashboard.view.deal.review.ReviewController', {
         }
         me.menu.showAt(eObj.event.getX(), eObj.event.getY());
         eObj.event.stopEvent()
+    },
+
+    deleteReview: function (grid, info) {
+        ExtUtil.mask('reviewContainer')
+        RequestUtil.request({
+            url: '/deal/review/' + info.record.get('pid'),
+            method: 'DELETE',
+            masked: 'reviewContainer',
+            success: function () {
+                ExtUtil.maskOff('reviewContainer')
+                ExtMessages.topToast('Отзыв удален')
+            }
+        })
     }
 })
