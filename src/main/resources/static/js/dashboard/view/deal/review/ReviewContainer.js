@@ -225,6 +225,7 @@ Ext.define('Dashboard.view.deal.review.ReviewContainer', {
             flex: 1,
             xtype: 'panel',
             title: 'В очереди на публикацию',
+            emptyText: 'Отзывы на публикацию отсутствуют',
 
             layout: 'fit',
             items: [
