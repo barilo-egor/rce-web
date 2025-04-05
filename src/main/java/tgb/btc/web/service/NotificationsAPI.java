@@ -50,7 +50,7 @@ public class NotificationsAPI implements INotificationsAPI {
                                 .build()
                                 .map()
                 );
-            } catch (IOException | IllegalArgumentException e) {
+            } catch (IOException | IllegalArgumentException | IllegalStateException e) {
                 emittersToRemove.put(key, e);
             }
         });
