@@ -50,12 +50,12 @@ public class MerchantReceiver {
     @PostMapping("/payfinity")
     @ResponseStatus(HttpStatus.OK)
     public void payFinity(@RequestBody PayFinityRequest payFinityRequest) {
-        payFinityMerchantService.updateStatus(payFinityRequest.getTrackerId());
+        payFinityMerchantService.updateStatus(payFinityRequest.getTrackerID());
     }
 
     @Data
     public static class PayFinityRequest {
 
-        private String trackerId;
+        private String trackerID;
     }
 }
