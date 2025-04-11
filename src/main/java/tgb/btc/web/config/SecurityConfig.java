@@ -39,7 +39,7 @@ public class SecurityConfig {
                                 "/registration/**",
                                 "/api/**", "/documentation/**",
                                 "/users/web/exist", "/util/isDev", "/deal/payment/new", "/favicon.ico",
-                                "/merchant/alfateam", "/merchant/payfinity"
+                                "/merchant/alfateam", "/merchant/payfinity", "/merchant/honeymoney"
                         )
                         .permitAll()
                         .requestMatchers("/deal/bot/changeWallet")
